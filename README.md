@@ -4,7 +4,7 @@ Felicity Egtb - A Xiangqi (Chinese chess) Endgame database
 
 Overview
 -----------
-Felicity Egtb is a Xiangqi Endgame database (tablebase) released with some endgames and probing code. The probing code is  written in C++ (using standad C++11 library). Xiangqi developer could use this to add freely and quickly tablebase probing to their Xiangqi engines.
+Felicity Egtb is a Xiangqi Endgame database (tablebase) released with some endgames and probing code. The probing code is  written in C++ (using standad C++11 library). Xiangqi developers could use this to add freely and quickly tablebase probing to their Xiangqi engines.
 
 
 New design
@@ -28,13 +28,14 @@ Click to open FelicityEgtb.xcodeproj with XCode and run it
 
 #### Linux / MacOS with gcc, g++
 
-    bash comp.sh
+    bash build.sh
 
 #### Windows with VisualStudio
 Click to open VisualStudio.sln with VisualStudio  (2017) and run it
 
 
 The screen shot of the demo as the below:
+
 ![Demo](https://github.com/nguyenpham/FelicityEgtb/blob/master/demo1.png)
 
 
@@ -98,6 +99,12 @@ In case you want to compile those code manually with gcc, g++, you may use gcc t
     g++ -o yourenginename *.o
 
 
+Working
+---------
+- Better probing code
+- Reduce sizes
+- Add more endgames
+
 
 History
 --------
@@ -108,7 +115,7 @@ History
 Terms of use
 ---------------
 
-The files in folder lzma are copyrighted by 7-zip.org and were released under public domain.
+The files in folder lzma are copyrighted by [7-zip.org](http://7-zip.org) and were released under public domain (free).
 Our code and data (egtb files) are released under the liberal [MIT license](http://en.wikipedia.org/wiki/MIT_License), so basically you can use it with almost no restrictions.
 
 
