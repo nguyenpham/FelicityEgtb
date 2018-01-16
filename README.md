@@ -9,12 +9,14 @@ Felicity Egtb is a Xiangqi Endgame database (tablebase) released with some endga
 
 New design
 --------------
-We have developed succefully a special design and algorithms for our tablebase to massively reduce the data size, compared with traditional one. All one-attacker endgames are about 10 time smaller, take only 14 MB in storage (traditional one may take over 250 MB in storage). They can be loaded partly or all into memory (depend on loading params). If loading all into memory, they will be auto decompressed and take about 250 MB memory (traditional one may take over 2 GB memory).
+We have developed succefully a special design and algorithms for our tablebase to massively reduce the data size, compared with traditional ones. All one-attacker endgames are about 10 times smaller, take only 14 MB in storage (traditional one may take over 250 MB in compressed form). They can be loaded partly or all into memory (depend on loading params). If loading all into memory, they will be auto decompressed and take about 250 MB memory (traditional one may take over 2 GB memory in uncompressed form).
 
 
 Endgames
 ------------
-At current state, the tablebase has all endgames of one attacker (Rook, Cannon, Horse, Pawn) with all combinations of defenders.
+At current state, the tablebase has all endgames of one attacker (Rook, Cannon, Horse, Pawn) with all combinations of defenders. Total is 108 endgames, 14 MB.
+
+Felicity egtb uses DTM metric.
 
 
 Demo
@@ -32,7 +34,9 @@ Click to open FelicityEgtb.xcodeproj with XCode and run it
 Click to open VisualStudio.sln with VisualStudio  (2017) and run it
 
 
+The screen shot of the demo as the below:
 ![Demo](https://github.com/nguyenpham/FelicityEgtb/blob/master/demo1.png)
+
 
 Using
 -------
@@ -62,7 +66,7 @@ You may check if it could load some tablebases and print out an error message:
         std::cerr << "Error: could not load any data" << std::endl;
     }
 
-With memory mode egtb::EgtbMemMode::all as above example, all data will be loaded, auto decompressed into memory (RAM) and the library won't access external storage anymore. With mode egtb::EgtbMemMode::small, the library will load only files' headers into memory and alloc some buffers in the memory (total about few MB). If the data in those buffers are out of range (missed the caches), The library will access external storage to read data in block, decompressed and return results when probing.
+With memory mode egtb::EgtbMemMode::all as above example, all data will be loaded, auto decompressed into memory (RAM) and the library won't access external storage anymore. With mode egtb::EgtbMemMode::tiny, the library will load only files' headers into memory and alloc some buffers in the memory (total about few MB). If the data in those buffers are out of range (missed the caches), The library will access external storage to read data in block, decompressed and return results when probing.
 
 Now you may query scores (distance to mate) for any position. Your input could be fen strings or vectors of pieces which each piece has type, side and location:
 
@@ -85,9 +89,9 @@ Now you may query scores (distance to mate) for any position. Your input could b
 
 Compile
 ----------
-If you use other C++ IDE such as Visual Studio, you need to creat a new project and add all our code with prefix Egtb and all file in zlib, set compile flags to C++11, then those IDEs can compile those source code automatically.
+If you use other C++ IDE such as Visual Studio, xCode, you need to creat a new project and add all our code with prefix Egtb and all file in lzma folder, set compile flags to C++11, then those IDEs can compile those source code automatically.
 
-In case you want to compile those code manually with gcc, g++, you can use gcc to compile all C files, g++ for cpp files, then use g++ to link into executive file:
+In case you want to compile those code manually with gcc, g++, you may use gcc to compile all C files, g++ for cpp files, then use g++ to link into executive file:
 
     gcc -std=c99 -c ./lzma/*.c
     g++ -std=c++11 -c *.cpp -O3 -DNDEBUG
@@ -98,7 +102,7 @@ In case you want to compile those code manually with gcc, g++, you can use gcc t
 History
 --------
 
-16 Jan 2018: version 1.00
+- 16 Jan 2018: version 1.00
 
 
 Terms of use
@@ -111,6 +115,6 @@ Our code and data (egtb files) are released under the liberal [MIT license](http
 Credits
 --------
 
-Felicity Egtb was written by Nguyen Hong Pham (axchess at yahoo dot com)
+Felicity Egtb was written by Nguyen Hong Pham (axchess at yahoo dot com).
 
 
