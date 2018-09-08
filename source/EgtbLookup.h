@@ -37,6 +37,8 @@ namespace egtb {
         const int EGTBLU_HEADER_SIZE              = 48;
         const int EGTBLU_HEADER_SIGN              = 1765;
         const int EGTBLU_PROPERTY_COMPRESS        = (1 << 4);
+        const int EGTBLU_PROPERTY_VERSION_2       = (1 << 5);
+
         const int EGTBLU_COMPRESS_BLOCK_SIZE      = (7 * 22 * 32);
         const int EGTBLU_SMART_MODE_THRESHOLD     = 10L * 1024 * 1024L;
 
@@ -66,6 +68,10 @@ namespace egtb {
 
         void removeBuffers();
 
+        bool isVersion2() const {
+            return property & EGTBLU_PROPERTY_VERSION_2;
+        }
+
     private:
         u32*        keyTable;
         u32*        blockTable;
@@ -81,7 +87,7 @@ namespace egtb {
         EgtbLoadMode loadMode;
         EgtbLoadStatus loadStatus;
 
-        std::mutex  mtx;
+        std::mutex  mtx, loadMutex;
 
         int  getScore(i64 key, int groupIdx, int subIdx);
         int  getCell(int groupIdx, int itemidx, int subIdx);

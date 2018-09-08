@@ -1,0 +1,8 @@
+*.o
+*.exe
+*.dll
+*.zip
+.vs
+x64
+FelicityEgtb.xcodeproj/project.xcworkspace/xcshareddata
+FelicityEgtb.xcodeproj/project.xcworkspace/xcuserdata/

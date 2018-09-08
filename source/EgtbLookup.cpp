@@ -61,6 +61,8 @@ void EgtbLookup::removeBuffers() {
     if (pCompressBuf) free(pCompressBuf);
 
     reset();
+
+    loadStatus = EgtbLoadStatus::none;
 }
 
 std::string EgtbLookup::getName() const {
@@ -335,17 +337,22 @@ int EgtbLookup::getCell(int groupIdx, int itemidx, int subIdx) {
 
     const int8_t* pScore = data[groupIdx];
     i64 idx = (itemidx - startpos[groupIdx]) * luGroupSizes[groupIdx] + subIdx;
+
     int score = (int)pScore[idx];
-    if (score != 0) {
+    if (isVersion2()) {
+        score = EgtbFile::cellToScore(score);
+    } else if (score != 0) {
         score += score > 0 ? EGTB_SCORE_BASE : -EGTB_SCORE_BASE;
     }
-
     return score;
 }
 
 int EgtbLookup::lookup(const int* pieceList, Side side, const int* idxArr, const i64* idxMult, u32 order) {
     if (loadStatus == EgtbLoadStatus::none) {
-        _preload();
+        std::lock_guard<std::mutex> thelock(loadMutex);
+        if (loadStatus == EgtbLoadStatus::none) {
+            _preload();
+        }
     }
 
     if (loadStatus == EgtbLoadStatus::error) {
