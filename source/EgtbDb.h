@@ -57,6 +57,7 @@ namespace egtb {
 
         // Scores
         int getScore(const EgtbBoard& board, AcceptScore accept = AcceptScore::real);
+        int getScore(const EgtbBoard& board, Side side, AcceptScore accept = AcceptScore::real);
         int getScore(const char* fenString, AcceptScore accept=AcceptScore::real);
         int getScore(const std::vector<Piece> pieceVec, Side side, AcceptScore accept=AcceptScore::real);
 
@@ -65,17 +66,27 @@ namespace egtb {
         int probe(const std::vector<Piece> pieceVec, Side side, MoveList& moveList);
         int probe(const char* fenString, MoveList& moveList);
 
-    private:
-        int getScore(const int* pieceList, Side side, AcceptScore accept = AcceptScore::real);
+        std::vector<EgtbFile*>& getEgtbFileVec() {
+            return egtbFileVec;
+        }
+        const std::vector<EgtbFile*>& getEgtbFileVec() const {
+            return egtbFileVec;
+        }
 
         EgtbFile* getEgtbFile(const std::string& name);
+        int getScore(const int* pieceList, Side side, AcceptScore accept = AcceptScore::real);
+
+    protected:
+
         virtual EgtbFile* getEgtbFile(const int* pieceList) const;
 
         void closeAll();
 
         void addEgtbFile(EgtbFile *egtbFile);
 
-    private:
+        virtual EgtbFile* createEgtbFile() const;
+
+    protected:
         std::vector<std::string> folders;
         std::map<int, EgtbFile*> map;
         std::map<std::string, EgtbFile*> nameMap;

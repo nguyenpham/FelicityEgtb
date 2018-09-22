@@ -33,7 +33,7 @@ namespace egtb {
 
 
     class EgtbLookup {
-    private:
+    protected:
         const int EGTBLU_HEADER_SIZE              = 48;
         const int EGTBLU_HEADER_SIGN              = 1765;
         const int EGTBLU_PROPERTY_COMPRESS        = (1 << 4);
@@ -72,7 +72,13 @@ namespace egtb {
             return property & EGTBLU_PROPERTY_VERSION_2;
         }
 
-    private:
+        std::string getPath() const {
+            return path;
+        }
+
+        static const int luGroupSizes[2];
+        
+    protected:
         u32*        keyTable;
         u32*        blockTable;
 

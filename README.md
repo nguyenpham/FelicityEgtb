@@ -88,6 +88,45 @@ Now you may query scores (distance to mate) for any position. Your input could b
     std::cout << "Queried, score: " << score << std::endl;
 
 
+Search
+--------
+Serch in alphabeta function only, not in quescience function:
+
+    if not root node && the last move is capture && total attack pieces <= egtbDb.attackPieceCount {
+        int egtbScore = egtbDb.getScore(current board);
+        if (egtbScore != EGTB_SCORE_MISSING && egtbScore != EGTB_SCORE_UNKNOWN) {
+        if (egtbScore == EGTB_SCORE_DRAW) {
+            value = VALUE_DRAW;
+        } else {
+            value = VALUE_MATE - abs(egtbScore) - current_ply - 1;
+            if (score < 0) value = -value;
+        }
+        return value;
+    }
+
+
+Notations
+-----------
+Felicity egtb uses following notations:
+- k: king, a: advisor, e: elephant, r: rook, c: cannon, h: horse, p: pawn
+- m: ministry (other name for elephant pieces) when number of elephants is from 0 to 2. This symbol is used to denote the endgame is a special one, applied our research to reduce file sizes significally.
+- w: white, b: black
+
+
+File extensions
+-----------------
+- .xtb: xiangqi tablebase, not compressed
+- .ztb: xiangqi tablebase, compressed
+- .znt: xiangqi tablebase, compressed, using our special techniques to reduce file sizes significally
+- .ltb: lookup table, support for our special technique files
+- .zlt: lookup table, compressed
+
+
+UCI options
+-------------
+You may share Felicity egtb between engines. So far those may need only the path of the main folder of the egtb. That path can pass from UCI GUI via UCI option. We suggest to use the name "FelicityPath" for that option.
+
+
 Compile
 ----------
 If you use other C++ IDE such as Visual Studio, xCode, you need to creat a new project and add all our code with prefix Egtb and all file in lzma folder, set compile flags to C++11, then those IDEs can compile those source code automatically.

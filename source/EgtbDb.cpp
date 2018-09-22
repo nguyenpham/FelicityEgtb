@@ -31,7 +31,7 @@ using namespace egtb;
 EgtbDb::EgtbDb() {
 }
 
-EgtbDb::EgtbDb(const std::string& folder, EgtbMemMode egtbMemMode) {
+EgtbDb::EgtbDb(const std::string& folder, EgtbMemMode egtbMemMode){
     preload(folder, egtbMemMode);
 }
 
@@ -64,6 +64,10 @@ void EgtbDb::addFolder(const std::string& folderName) {
     folders.push_back(folderName);
 }
 
+EgtbFile* EgtbDb::createEgtbFile() const {
+    return new EgtbFile();
+}
+
 EgtbFile* EgtbDb::getEgtbFile(const std::string& name) {
     return nameMap[name];
 }
@@ -82,7 +86,7 @@ void EgtbDb::preload(EgtbMemMode egtbMemMode, EgtbLoadMode loadMode) {
         for (auto && path : vec) {
             auto p = EgtbFile::getExtensionType(path);
             if (p.first == EgtbType::dtm || p.first == EgtbType::newdtm) {
-                EgtbFile *egtbFile = new EgtbFile();
+                EgtbFile *egtbFile = createEgtbFile(); //new EgtbFile();
                 if (egtbFile->preload(path, egtbMemMode, loadMode)) {
                     auto pos = map.find(egtbFile->materialsignWB);
                     if (pos == map.end()) {
@@ -146,12 +150,12 @@ int EgtbDb::getScore(const int* pieceList, Side side, AcceptScore accept) {
         return EGTB_SCORE_MISSING;
     }
 
-    pEgtbFile->checkToLoadHeaderAndTable(side);
+    pEgtbFile->checkToLoadHeaderAndTable(Side::none); // load all sides
     auto r = pEgtbFile->getKey(pieceList);
-    auto querySide = r.second ? getXSide(side) : side;
+    auto querySide = r.flipSide ? getXSide(side) : side;
 
     if (pEgtbFile->header->isSide(querySide)) {
-        auto score = pEgtbFile->getScore(r.first, querySide);
+        auto score = pEgtbFile->getScore(r.key, querySide);
         if ((score == EGTB_SCORE_WINNING && accept == AcceptScore::real) || score == EGTB_SCORE_UNKNOWN) {
             score = pEgtbFile->lookup((const int *)pieceList, querySide);
         }
@@ -194,6 +198,10 @@ int EgtbDb::getScore(const int* pieceList, Side side, AcceptScore accept) {
 
 int EgtbDb::getScore(const EgtbBoard& board, AcceptScore accept) {
     return getScore((const int*)board.pieceList, board.side, accept);
+}
+
+int EgtbDb::getScore(const EgtbBoard& board, Side side, AcceptScore accept) {
+    return getScore((const int*)board.pieceList, side, accept);
 }
 
 int EgtbDb::getScore(const char* fenString, AcceptScore accept) {

@@ -168,11 +168,14 @@ namespace egtb {
             }
             return stringStream.str();
         }
+        bool isEmpty() const {
+            return end == 0;
+        }
     };
 
 
     class EgtbBoard {
-    private:
+    protected:
         Piece pieces[90];
 
     public:
@@ -231,7 +234,7 @@ namespace egtb {
             return pieceList_isThereAttacker((const int *)pieceList);
         }
 
-    private:
+    protected:
         std::string toString() const;
 
         void gen_addMove(MoveList& moveList, int from, int dest, bool capOnly) const;

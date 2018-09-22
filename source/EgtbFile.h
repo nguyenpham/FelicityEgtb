@@ -39,6 +39,9 @@ namespace egtb {
     const int EGTB_HEADER_SIZE      = 128;
     const int EGTB_ID_MAIN          = 556682;
     const int EGTB_PROP_COMPRESSED  = (1 << 2);
+    const int EGTB_PROP_LARGE_COMPRESSTABLE_B = (1 << 4);
+    const int EGTB_PROP_LARGE_COMPRESSTABLE_W = (1 << 5);
+
     const int EGTB_PROP_NEW         = (1 << 9);
 
     const int EGTB_SIZE_COMPRESS_BLOCK  = 4 * 1024;
@@ -82,6 +85,16 @@ namespace egtb {
         EGTB_IDX_HPP,
         EGTB_IDX_PPP,
 
+        EGTB_IDX_PPP0,
+        EGTB_IDX_PPP1,
+        EGTB_IDX_PPP2,
+        EGTB_IDX_PPP3,
+        EGTB_IDX_PPP4,
+        EGTB_IDX_PPP5,
+        EGTB_IDX_PPP6,
+
+        EGTB_IDX_LAST = EGTB_IDX_PPP6,
+
         EGTB_IDX_NONE = 254
     };
 
@@ -105,13 +118,13 @@ namespace egtb {
             memset(this, 0, EGTB_HEADER_SIZE);
         };
 
-        bool isValid() const {
-            return signature == EGTB_ID_MAIN;
-        }
-
-        bool readFile(std::ifstream& file) {
-            return file.read((char*)&signature, EGTB_HEADER_SIZE) && isValid();
-        }
+//        bool isValid() const {
+//            return signature == EGTB_ID_MAIN;
+//        }
+//
+//        bool readFile(std::ifstream& file) {
+//            return file.read((char*)&signature, EGTB_HEADER_SIZE) ? true : false;
+//        }
 
         bool isSide(Side side) const {
             return property & (1 << static_cast<int>(side));
@@ -142,8 +155,9 @@ namespace egtb {
         u32         materialsignWB, materialsignBW;
         static u64 pieceListToMaterialSign(const int* pieceList);
         EgtbLoadStatus  loadStatus;
+        int         subPawnRank;
 
-    private:
+    protected:
         i64         startpos[2], endpos[2];
         std::mutex  mtx, sdmtx[2];
 
@@ -154,7 +168,7 @@ namespace egtb {
         static std::pair<EgtbType, bool> getExtensionType(const std::string& path);
 
         void    removeBuffers();
-
+        
         i64     getSize() const { return size; }
 
         int getCompresseBlockCount() const {
@@ -177,7 +191,12 @@ namespace egtb {
 
         EgtbType getEgtbType() const { return egtbType; }
 
-        void    checkToLoadHeaderAndTable(Side side);
+        virtual void checkToLoadHeaderAndTable(Side side);
+        virtual bool forceLoadHeaderAndTable(Side side);
+        virtual bool merge(EgtbFile* otherEgtbFile);
+
+        static const char* egtbFileExtensions[];
+        static const char* egtbCompressFileExtensions[];
 
     public:
         int     getScore(i64 idx, Side side, bool useLock = true);
@@ -191,14 +210,17 @@ namespace egtb {
         void    merge(EgtbFile& otherEgtbFile);
         bool    addLookup(EgtbLookup* lookup);
 
-        static int cellToScore(char cell);
+        virtual int cellToScore(char cell);
+        static int _cellToScore(char cell);
 
-        std::pair<i64, bool> getKey(const int* pieceList) const;
+//        std::pair<i64, bool> getKey(const int* pieceList) const;
+        virtual EgtbKeyRec getKey(const int* pieceList) const;
+        virtual EgtbKeyRec getKey(const EgtbBoard& board) const;
 
-    private:
+    protected:
         u32         pieceCount[2][7];
         char*       pBuf[2];
-        u32*        compressBlockTables[2];
+        u8*         compressBlockTables[2];
         char*       pCompressBuf;
         EgtbLookup *lookups[2];
         std::string path[2];
@@ -209,9 +231,20 @@ namespace egtb {
         std::string egtbName;
         EgtbType    egtbType;
 
-        std::pair<i64, bool> getKey(const EgtbBoard& board) const;
+//        std::pair<i64, bool> getKey(const EgtbBoard& board) const;
         void    reset();
 
+        virtual bool readHeader(std::ifstream& file) {
+            if (header && file.read((char*) & header->signature, EGTB_HEADER_SIZE)) {
+                return header->signature == EGTB_ID_MAIN;
+            }
+            return false;
+        }
+
+//        virtual bool isValidHeader() const {
+//            return header && header->signature == EGTB_ID_MAIN;
+//        }
+        
         bool    readBuf(i64 startpos, int sd);
         bool    isDataReady(i64 pos, int sd) const { return pos >= startpos[sd] && pos < endpos[sd] && pBuf[sd]; }
 
@@ -230,6 +263,52 @@ namespace egtb {
 
         bool    loadAllData(std::ifstream& file, Side side);
         bool    readCompressedBlock(std::ifstream& file, i64 idx, int sd, char* pDest);
+    };
+
+
+    class EgtbPawnFiles : public EgtbFile {
+    public:
+        EgtbFile* subFiles[7];
+
+        EgtbPawnFiles(EgtbFile *egtbFile);
+//        : EgtbFile();
+//        {
+//            memset(subFiles, 0, sizeof(subFiles));
+//
+//            auto s1 = egtbFile->getName();
+//
+//            char s2[256];
+//            std::copy_if(s1.begin(), s1.end() + 1, s2, [](char c){ return c < '0' || c > '9'; });
+//
+//            egtbName = s2;
+//
+//            header = new EgtbFileHeader();
+//            header->reset();
+//
+//            egtbType = egtbFile->getEgtbType();
+////            if (egtbType == EgtbType::newdtm) {
+////                addProperty(EGTB_PROP_NEW);
+////            }
+//
+//            setSize(setupIdxComputing(egtbName, order, header->getVersion()););
+//            merge(egtbFile);
+//
+//            loadStatus = EgtbLoadStatus::loaded;
+//            subPawnRank = egtbFile->subPawnRank;
+//        }
+
+        bool merge(EgtbFile* otherEgtbFile);
+        void checkToLoadHeaderAndTable(Side side);
+        std::pair<i64, int> getSubPawnKey(i64 idx) const;
+
+        void removeBuffers();
+
+        EgtbKeyRec getKey(const int* pieceList) const;
+
+        int getScore(i64 idx, Side side, bool useLock = true);
+        int getScore(const int* pieceList, Side side, bool useLock = true);
+
+        static int getSubRank(const int* pieceList);
     };
 
 } // namespace egtb

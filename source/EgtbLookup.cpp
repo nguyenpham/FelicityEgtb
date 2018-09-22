@@ -30,11 +30,11 @@
 
 using namespace egtb;
 
-static const int luGroupSizes[2] = { 7, 22 };
 
 ///////////////////////////////////////////////////////////////////////////////
 // Constructors/Destructors
 ///////////////////////////////////////////////////////////////////////////////
+const int EgtbLookup::luGroupSizes[2] = { 7, 22 };
 
 EgtbLookup::EgtbLookup() {
     reset();
@@ -267,7 +267,7 @@ int EgtbLookup::getCell(int groupIdx, int itemidx, int subIdx) {
             seekpos += compTableSz;
 
             if (memMode == EgtbMemMode::all) {
-                int compressSz0 = blockTable[blockCnt[0] - 1] & ~EGTB_UNCOMPRESS_BIT;
+                int compressSz0 = blockCnt[0] > 0 ? blockTable[blockCnt[0] - 1] & ~EGTB_UNCOMPRESS_BIT : 0;
                 int compressSz = groupIdx == 0 ? compressSz0 : (blockTable[blockCnt[0] + blockCnt[1] - 1] & ~EGTB_UNCOMPRESS_BIT);
 
                 pCompressBuf = (char*)malloc(compressSz + 64);
@@ -279,7 +279,7 @@ int EgtbLookup::getCell(int groupIdx, int itemidx, int subIdx) {
                 if (file.read(pCompressBuf, compressSz)) {
                     int addBCnt = groupIdx == 0 ? 0 : blockCnt[0];
 
-                    auto originSz = decompressAllBlocks(EGTBLU_COMPRESS_BLOCK_SIZE, blockCnt[groupIdx], blockTable + addBCnt, (char*)data[groupIdx], sz[groupIdx], pCompressBuf, compressSz);
+                    auto originSz = decompressAllBlocks(EGTBLU_COMPRESS_BLOCK_SIZE, blockCnt[groupIdx], (u8*)(blockTable + addBCnt), (char*)data[groupIdx], sz[groupIdx], pCompressBuf, compressSz);
                     if (originSz > 0) {
                         startpos[groupIdx] = 0;
                         endpos[groupIdx] = itemCnt[groupIdx];
@@ -292,7 +292,7 @@ int EgtbLookup::getCell(int groupIdx, int itemidx, int subIdx) {
                 int addBCnt = 0;
                 if (groupIdx == 1) {
                     addBCnt = blockCnt[0];
-                    int compressSz0 = blockTable[blockCnt[0] - 1] & ~EGTB_UNCOMPRESS_BIT;
+                    int compressSz0 = blockCnt[0] > 0 ? blockTable[blockCnt[0] - 1] & ~EGTB_UNCOMPRESS_BIT : 0;
                     seekpos += compressSz0;
                 }
 
@@ -340,7 +340,7 @@ int EgtbLookup::getCell(int groupIdx, int itemidx, int subIdx) {
 
     int score = (int)pScore[idx];
     if (isVersion2()) {
-        score = EgtbFile::cellToScore(score);
+        score = EgtbFile::_cellToScore(score);
     } else if (score != 0) {
         score += score > 0 ? EGTB_SCORE_BASE : -EGTB_SCORE_BASE;
     }

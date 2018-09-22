@@ -83,6 +83,9 @@ namespace egtb {
     const int W                         = 1;
 
     const int EGTB_UNCOMPRESS_BIT       = 1 << 31;
+    const int64_t EGTB_SMALL_COMPRESS_SIZE  = (1LL << 31) - 1;
+    const int64_t EGTB_UNCOMPRESS_BIT_FOR_LARGE_COMPRESSTABLE = (1LL << 39);
+    const int64_t EGTB_LARGE_COMPRESS_SIZE  = (EGTB_UNCOMPRESS_BIT_FOR_LARGE_COMPRESSTABLE - 1); // 7fffffffff
 
     enum EgtbMemMode {
         tiny,           // load minimum data into memory
@@ -121,7 +124,7 @@ namespace egtb {
     };
 
     enum class EgtbType {
-        dtm, newdtm, lookup, none
+        dtm, newdtm, lookup, tmp, none
     };
 
     enum EgtbLoadStatus {
@@ -141,20 +144,22 @@ namespace egtb {
     std::vector<std::string> listdir(std::string dirname);
 
     int decompress(char *dst, int uncompresslen, const char *src, int slen);
-    i64 decompressAllBlocks(int blocksize, int blocknum, u32* blocktable, char *dest, i64 uncompressedlen, const char *src, i64 slen);
+//    i64 decompressAllBlocks(int blocksize, int blocknum, u32* blocktable, char *dest, i64 uncompressedlen, const char *src, i64 slen);
+    i64 decompressAllBlocks(int blocksize, int blocknum, u8* blocktable, char *dest, i64 uncompressedlen, const char *src, i64 slen);
 
     extern const int egtbPieceListStartIdxByType[7];
     extern const PieceType egtbPieceListIdxToType[16];
 
     // set it to true if you want to print out more messages
     extern bool egtbVerbose;
+    extern int availableAttackerTotal;
 
     class Piece;
     class Move;
     class MoveList;
     class EgtbFile;
     class EgtbLookup;
-    class EgtbDb;
+    class _EgtbDb;
     class EgtbBoard;
     class EgtbKeyRec;
     class EgtbKey;

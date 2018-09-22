@@ -34,13 +34,25 @@ namespace egtb {
 
     class EgtbKeyRec {
     public:
-        i64 key;
-        bool flipSide;
+        EgtbKeyRec() {}
+        ~EgtbKeyRec() {}
 
-        // for loop-up
+        i64 key;
+        bool flipSide;  // if strong side is black, we need to flip query side
+
+        // for loopup
         int subKey;
         int groupIdx;
+
+        // for subpawn
+        int subpawnFileIdx;
     };
+
+    class SubPawnKey {
+    public:
+        int rank, subIdx;
+    };
+
 
     class EgtbKey {
     public:
@@ -68,6 +80,9 @@ namespace egtb {
         std::map<int, int> pppPos2KeyMap;
         int pppKeyToPos[EGTB_SIZE_PPP_HALF];
 
+    public:
+        std::map<int, int>subpppRankToSubIdx;
+        SubPawnKey pppKeyToSubKey[EGTB_SIZE_PPP_HALF + 1];
     };
 
     extern EgtbKey egtbKey;

@@ -4,5 +4,7 @@
 *.zip
 .vs
 x64
-FelicityEgtb.xcodeproj/project.xcworkspace/xcshareddata
-FelicityEgtb.xcodeproj/project.xcworkspace/xcuserdata/
+Debug
+FelicityEgtb.xcodeproj/project.xcworkspace/xcshareddata/*
+FelicityEgtb.xcodeproj/project.xcworkspace/xcuserdata/*
+FelicityEgtb.xcodeproj/project.xcworkspace/xcuserdata

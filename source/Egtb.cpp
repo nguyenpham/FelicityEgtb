@@ -51,6 +51,7 @@
 
 namespace egtb {
     bool egtbVerbose = false;
+    int  availableAttackerTotal = 0;
 
     void toLower(std::string& str) {
         for(int i = 0; i < str.size(); ++i) {
@@ -171,22 +172,54 @@ namespace egtb {
         return res == SZ_OK ? (int)dstLen : -1;
     }
 
-    i64 decompressAllBlocks(int blocksize, int blocknum, u32* blocktable, char *dest, i64 uncompressedlen, const char *src, i64 slen) {
+    i64 decompressAllBlocks(int blocksize, int blocknum, u8* blocktable, char *dest, i64 uncompressedlen, const char *src, i64 slen) {
         auto *s = src;
         auto p = dest;
 
+//        for(int i = 0; i < blocknum; i++) {
+//            int blocksz = (blocktable[i] & ~EGTB_UNCOMPRESS_BIT) - (i == 0 ? 0 : (blocktable[i - 1] & ~EGTB_UNCOMPRESS_BIT));
+//            int uncompressed = blocktable[i] & EGTB_UNCOMPRESS_BIT;
+//
+//            if (uncompressed) {
+//                memcpy(p, s, blocksz);
+//                p += blocksz;
+//            } else {
+//                auto left = uncompressedlen - (i64)(p - dest);
+//                auto curBlockSize = (int)MIN(left, (i64)blocksize);
+//
+//                auto originSz = decompress((char*)p, curBlockSize, s, blocksz);
+//                p += originSz;
+//            }
+//            s += blocksz;
+//        }
+
+        int blockTableItemSize = slen > EGTB_SMALL_COMPRESS_SIZE ? 5 : 4;
         for(int i = 0; i < blocknum; i++) {
-            int blocksz = (blocktable[i] & ~EGTB_UNCOMPRESS_BIT) - (i == 0 ? 0 : (blocktable[i - 1] & ~EGTB_UNCOMPRESS_BIT));
-            int uncompressed = blocktable[i] & EGTB_UNCOMPRESS_BIT;
+            bool uncompressed = false;
+            int blocksz;
+            if (blockTableItemSize == 4) {
+                const u32* p = (u32*)blocktable;
+                blocksz = (p[i] & EGTB_SMALL_COMPRESS_SIZE) - (i == 0 ? 0 : (p[i - 1] & EGTB_SMALL_COMPRESS_SIZE));
+                uncompressed = (p[i] & EGTB_UNCOMPRESS_BIT) != 0;
+            } else {
+                const u8* p = blocktable + i * blockTableItemSize;
+                i64 sz1 = *((i64*)p) & EGTB_LARGE_COMPRESS_SIZE;
+                i64 sz0 = i == 0 ? 0 : (*((i64*)(p - blockTableItemSize)) & EGTB_LARGE_COMPRESS_SIZE);
+                blocksz = (int)(sz1 - sz0);
+                uncompressed = (*((i64*)p) & EGTB_UNCOMPRESS_BIT_FOR_LARGE_COMPRESSTABLE) != 0;
+            }
 
             if (uncompressed) {
+                assert(i + 1 == blocknum || blocksz == blocksize);
                 memcpy(p, s, blocksz);
                 p += blocksz;
             } else {
-                auto left = uncompressedlen - (i64)(p - dest);
+                // Size of uncompressed data (dest, not src)
+                auto left = uncompressedlen - (i64)(p - dest); assert(left > 0);
                 auto curBlockSize = (int)MIN(left, (i64)blocksize);
 
                 auto originSz = decompress((char*)p, curBlockSize, s, blocksz);
+                assert(originSz == curBlockSize || (i + 1 == blocknum && originSz > 0));
                 p += originSz;
             }
             s += blocksz;

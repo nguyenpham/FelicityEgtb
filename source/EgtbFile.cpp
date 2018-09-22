@@ -26,12 +26,22 @@
 #include <fstream>
 #include <iomanip>
 #include <ctime>
+#include <assert.h>
 
 #include "Egtb.h"
 #include "EgtbKey.h"
 
 
 using namespace egtb;
+
+
+const char* EgtbFile::egtbFileExtensions[] = {
+    ".xtb", ".ntb", ".ltb", nullptr
+};
+
+const char* EgtbFile::egtbCompressFileExtensions[] = {
+    ".ztb", ".znb", ".zlt", nullptr
+};
 
 
 //////////////////////////////////////////////////////////////////////
@@ -82,14 +92,6 @@ static const int m_pieceSign[7][6] = {
 };
 
 //////////////////////////////////////////////////////////////////////
-static const char* egtbFileExtensions[] = {
-    ".xtb", ".ntb", ".ltb", nullptr
-};
-
-static const char* egtbCompressFileExtensions[] = {
-    ".ztb", ".znb", ".zlt", nullptr
-};
-
 std::pair<EgtbType, bool> EgtbFile::getExtensionType(const std::string& path) {
     std::pair<EgtbType, bool> p;
     p.first = EgtbType::none; p.second = false;
@@ -135,6 +137,7 @@ void EgtbFile::reset() {
 
     path[0] = path[1]= "";
     startpos[0] = 0; endpos[0] = 0; startpos[1] = 0; endpos[1] = 0;
+    subPawnRank = -1;
 };
 
 void EgtbFile::removeBuffers() {
@@ -241,11 +244,13 @@ bool EgtbFile::preload(const std::string& path, EgtbMemMode _memMode, EgtbLoadMo
 
     memMode = _memMode;
     loadMode = _loadMode;
+    subPawnRank = -1;
 
     loadStatus = EgtbLoadStatus::none;
     if (loadMode == EgtbLoadMode::onrequest) {
         auto theName = getFileName(path);
         if (theName.length() < 4) {
+            assert(false);
             return false;
         }
         toLower(theName);
@@ -265,90 +270,118 @@ bool EgtbFile::preload(const std::string& path, EgtbMemMode _memMode, EgtbLoadMo
     return r;
 }
 
-// Load all data too if requested
+// Load all data if requested
 bool EgtbFile::loadHeaderAndTable(const std::string& path) {
-
+    assert(path.size() > 6);
     std::ifstream file(path, std::ios::binary);
 
-    // if there are files for both sides, header has been created already
-    auto oldSide = Side::none;
-    if (header == nullptr) {
-        header = new EgtbFileHeader();
-    } else {
-        oldSide = header->isSide(Side::black) ? Side::black : Side::white;
-    }
-    auto loadingSide = Side::none;
-
     bool r = false;
-    if (file && header->readFile(file) && header->isValid()) {
-        loadingSide = header->isSide(Side::white) ? Side::white : Side::black;
-        toLower(header->name);
-        egtbName = header->name;
-        egtbType = (header->property & EGTB_PROP_NEW) ? EgtbType::newdtm : EgtbType::dtm;
+    if (file.is_open()) {
+        
+        // if there are files for both sides, header has been created already
+        auto oldSide = Side::none;
+        u32 oldProperty = 0;
+        if (header == nullptr) {
+            header = new EgtbFileHeader();
+        } else {
+            oldSide = header->isSide(Side::black) ? Side::black : Side::white;
+            oldProperty = header->property;
+        }
+        auto loadingSide = Side::none;
+        
+        if (readHeader(file)) {
+            header->property |= oldProperty;
+            loadingSide = path.find("w.") != std::string::npos ? Side::white : Side::black;
+            toLower(header->name);
+            egtbName = header->name;
+            egtbType = (header->property & EGTB_PROP_NEW) ? EgtbType::newdtm : EgtbType::dtm;
 
-        setPath(path, static_cast<int>(loadingSide));
-        header->setOnlySide(loadingSide);
-        r = loadingSide != Side::none;
+            setPath(path, static_cast<int>(loadingSide));
+            header->setOnlySide(loadingSide);
+            assert(loadingSide == (path.find("w.") != std::string::npos ? Side::white : Side::black));
+            r = loadingSide != Side::none;
 
-        if (r) {
-            setupIdxComputing(getName(), header->order);
-            if (oldSide != Side::none) {
-                header->addSide(oldSide);
+            if (r) {
+                setupIdxComputing(getName(), header->order);
+
+                if (oldSide != Side::none) {
+                    header->addSide(oldSide);
+                }
+
+                auto sd = static_cast<int>(loadingSide);
+                startpos[sd] = endpos[sd] = 0;
             }
         }
-    }
 
-    auto sd = static_cast<int>(loadingSide);
-    startpos[sd] = endpos[sd] = 0;
+        if (r && isCompressed()) {
+            auto sd = static_cast<int>(loadingSide);
+            // Create & read compress block table
+            auto blockCnt = getCompresseBlockCount();
 
-    if (r && isCompressed()) {
-        // Create & read compress block table
-        auto blockCnt = getCompresseBlockCount();
-        int blockTableSz = blockCnt * sizeof(u32);
+            int blockTableItemSize = (header->property & (EGTB_PROP_LARGE_COMPRESSTABLE_B << sd)) != 0 ? 5 : 4;
 
-        compressBlockTables[sd] = (u32*) malloc(blockTableSz + 64);
+            int blockTableSz = blockCnt * blockTableItemSize; //sizeof(u32);
 
-        if (!file.read((char *)compressBlockTables[sd], blockTableSz)) {
-            if (egtbVerbose) {
-                std::cerr << "Error: cannot read " << path << std::endl;
+            compressBlockTables[sd] = (u8*)malloc(blockTableSz + 64);
+
+            if (!file.read((char *)compressBlockTables[sd], blockTableSz)) {
+                if (egtbVerbose) {
+                    std::cerr << "Error: cannot read " << path << std::endl;
+                }
+                file.close();
+                free(compressBlockTables[sd]);
+                compressBlockTables[sd] = nullptr;
+                return false;
             }
-            file.close();
-            free(compressBlockTables[sd]);
-            compressBlockTables[sd] = nullptr;
-            return false;
+
         }
+
+        if (r && memMode == EgtbMemMode::all) {
+            r = loadAllData(file, loadingSide);
+
+        }
+        file.close();
     }
 
-    if (r && memMode == EgtbMemMode::all) {
-        r = loadAllData(file, loadingSide);
-    }
-    file.close();
-
-    if (!r && egtbVerbose) {
+    if (egtbVerbose && !r) {
         std::cerr << "Error: cannot read " << path << std::endl;
     }
 
     return r;
 }
 
-bool EgtbFile::loadAllData(std::ifstream& file, Side side)
-{
+bool EgtbFile::loadAllData(std::ifstream& file, Side side) {
+
+    assert(file.is_open());
     auto sd = static_cast<int>(side);
+
     startpos[sd] = endpos[sd] = 0;
 
     if (isCompressed()) {
         auto blockCnt = getCompresseBlockCount();
-        int blockTableSz = blockCnt * sizeof(u32);
+        int blockTableItemSize = (header->property & (EGTB_PROP_LARGE_COMPRESSTABLE_B << sd)) != 0 ? 5 : 4;
+        int blockTableSz = blockCnt * blockTableItemSize;
 
         i64 seekpos = EGTB_HEADER_SIZE + blockTableSz;
         file.seekg(seekpos, std::ios::beg);
 
-        createBuf(getSize(), sd);
+        createBuf(getSize(), sd); assert(pBuf[sd]);
 
-        auto compDataSz = compressBlockTables[sd][blockCnt - 1] & ~EGTB_UNCOMPRESS_BIT;
+        i64 compDataSz;
+
+        u8 *p = compressBlockTables[sd] + blockTableItemSize * (blockCnt - 1);
+        if (blockTableItemSize == 4) {
+            compDataSz = *(u32*)p & EGTB_SMALL_COMPRESS_SIZE;
+        } else {
+            compDataSz = *(i64*)p & EGTB_LARGE_COMPRESS_SIZE;
+        }
+        assert(compDataSz > 0 && compDataSz <= getSize());
+
         char* tempBuf = (char*) malloc(compDataSz + 64);
         if (file.read(tempBuf, compDataSz)) {
             auto originSz = decompressAllBlocks(EGTB_SIZE_COMPRESS_BLOCK, blockCnt, compressBlockTables[sd], (char*)pBuf[sd], getSize(), tempBuf, compDataSz);
+            assert(originSz == getSize());
+
             endpos[sd] = originSz;
         }
 
@@ -369,25 +402,43 @@ bool EgtbFile::loadAllData(std::ifstream& file, Side side)
     return startpos[sd] < endpos[sd];
 }
 
+
 void EgtbFile::checkToLoadHeaderAndTable(Side side) {
-    if (loadStatus != EgtbLoadStatus::none) {
+    auto sd = static_cast<int>(side);
+
+    if (loadStatus != EgtbLoadStatus::none || (sd < 2 && path[sd].empty())) {
         return;
     }
 
     std::lock_guard<std::mutex> thelock(mtx);
-    if (loadStatus != EgtbLoadStatus::none) {
+    
+    if (loadStatus != EgtbLoadStatus::none || (sd < 2 && path[sd].empty())) {
         return;
     }
 
-    bool r = false;
-    if (!path[0].empty() && !path[1].empty()) {
-        r = loadHeaderAndTable(path[0]) && loadHeaderAndTable(path[1]);
+    bool r = true;
+    if (sd < 2) {
+        assert(!path[sd].empty());
+        r = loadHeaderAndTable(path[sd]);
     } else {
-        auto thepath = path[0].empty() ? path[1] : path[0];
-        r = loadHeaderAndTable(thepath);
+        if (!path[0].empty()) {
+            r = loadHeaderAndTable(path[0]);
+        }
+        if (r && !path[1].empty()) {
+            r = loadHeaderAndTable(path[1]);
+        }
     }
 
     loadStatus = r ? EgtbLoadStatus::loaded : EgtbLoadStatus::error;
+}
+
+bool EgtbFile::forceLoadHeaderAndTable(Side side) {
+    std::lock_guard<std::mutex> thelock(mtx);
+
+    int sd = static_cast<int>(side);
+    bool r = !path[sd].empty() && loadHeaderAndTable(path[sd]);
+    loadStatus = r ? EgtbLoadStatus::loaded : EgtbLoadStatus::error;
+    return r;
 }
 
 bool EgtbFile::readBuf(i64 idx, int sd)
@@ -480,6 +531,10 @@ bool EgtbFile::readCompressedBlock(std::ifstream& file, i64 idx, int sd, char* p
 #define EGTB_START_LOSING       130
 
 int EgtbFile::cellToScore(char cell) {
+    return _cellToScore(cell);
+}
+
+int EgtbFile::_cellToScore(char cell) {
     u8 s = (u8)cell;
     if (s >= TB_DRAW) {
         if (s == TB_DRAW) return EGTB_SCORE_DRAW;
@@ -530,7 +585,7 @@ char EgtbFile::getCell(i64 idx, Side side)
 }
 
 char EgtbFile::getCell(const int* pieceList, Side side) {
-    i64 key = getKey(pieceList).first;
+    auto key = getKey(pieceList).key;
     return getCell(key, side);
 }
 
@@ -545,10 +600,10 @@ int EgtbFile::getScoreNoLock(const EgtbBoard& board, Side side) {
 
 int EgtbFile::getScoreNoLock(const int* pieceList, Side side) {
     auto r = getKey(pieceList);
-    if (r.second) {
+    if (r.flipSide) {
         side = getXSide(side);
     }
-    return getScoreNoLock(r.first, side);
+    return getScoreNoLock(r.key, side);
 }
 
 int EgtbFile::getScoreNoLock(i64 idx, Side side)
@@ -559,7 +614,10 @@ int EgtbFile::getScoreNoLock(i64 idx, Side side)
 
 int EgtbFile::getScore(i64 idx, Side side, bool useLock)
 {
-    checkToLoadHeaderAndTable(side);
+    checkToLoadHeaderAndTable(Side::none); // load all sides
+    if (loadStatus == EgtbLoadStatus::error) {
+        return EGTB_SCORE_MISSING;
+    }
     if (useLock && (memMode != EgtbMemMode::all || !isDataReady(idx, static_cast<int>(side)))) {
         std::lock_guard<std::mutex> thelock(sdmtx[static_cast<int>(side)]);
         return getScoreNoLock(idx, side);
@@ -569,10 +627,10 @@ int EgtbFile::getScore(i64 idx, Side side, bool useLock)
 
 int EgtbFile::getScore(const int* pieceList, Side side, bool useLock) {
     auto r = getKey(pieceList);
-    if (r.second) {
+    if (r.flipSide) {
         side = getXSide(side);
     }
-    return getScore(r.first, side, useLock);
+    return getScore(r.key, side, useLock);
 }
 
 int EgtbFile::lookup(const int *pieceList, Side side) {
@@ -1045,16 +1103,206 @@ u64 EgtbFile::pieceListToMaterialSign(const int* pieceList)
 }
 
 /////////////////////////////////////////////////////////////////////////
-std::pair<i64, bool> EgtbFile::getKey(const EgtbBoard& board) const {
+EgtbKeyRec EgtbFile::getKey(const EgtbBoard& board) const {
     return getKey((const int*)board.pieceList);
 }
 
-std::pair<i64, bool> EgtbFile::getKey(const int* pieceList) const {
+EgtbKeyRec EgtbFile::getKey(const int* pieceList) const {
     EgtbKeyRec rec;
     EgtbKey::getKey(rec, pieceList, getEgtbType(), false, idxArr, idxMult, header->order);
+    return rec;
+}
 
-    std::pair<i64, bool> r;
-    r.first = rec.key;
-    r.second = rec.flipSide;
+
+//std::pair<i64, bool> EgtbFile::getKey(const EgtbBoard& board) const {
+//    return getKey((const int*)board.pieceList);
+//}
+//
+//std::pair<i64, bool> EgtbFile::getKey(const int* pieceList) const {
+//    EgtbKeyRec rec;
+//    EgtbKey::getKey(rec, pieceList, getEgtbType(), false, idxArr, idxMult, header->order);
+//
+//    std::pair<i64, bool> r;
+//    r.first = rec.key;
+//    r.second = rec.flipSide;
+//    return r;
+//}
+
+bool EgtbFile::merge(EgtbFile* otherEgtbFile)
+{
+    for(int sd = 0; sd < 2; sd++) {
+        Side side = static_cast<Side>(sd);
+        if (header == nullptr) {
+            auto path = otherEgtbFile->getPath(sd);
+            if (!path.empty()) {
+                setPath(path, sd);
+            }
+            continue;
+        }
+
+        if (otherEgtbFile->header->isSide(side)) {
+
+            assert(getName() == otherEgtbFile->getName());
+            assert(!header->isSide(side));
+            header->addSide(side);
+            setPath(otherEgtbFile->getPath(sd), sd);
+
+            if (compressBlockTables[sd]) {
+                free(compressBlockTables[sd]);
+            }
+            compressBlockTables[sd] = otherEgtbFile->compressBlockTables[sd];
+
+            if (pBuf[sd] == nullptr && otherEgtbFile->pBuf[sd] != nullptr) {
+                pBuf[sd] = otherEgtbFile->pBuf[sd];
+                startpos[sd] = otherEgtbFile->startpos[sd];
+                endpos[sd] = otherEgtbFile->endpos[sd];
+
+                otherEgtbFile->pBuf[sd] = nullptr;
+                otherEgtbFile->startpos[sd] = 0;
+                otherEgtbFile->endpos[sd] = 0;
+                otherEgtbFile->compressBlockTables[sd] = nullptr;
+            }
+        }
+    }
+
+    assert(header == nullptr || (header->isSide(Side::white) && header->isSide(Side::black)));
+
+    return true;
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+EgtbPawnFiles::EgtbPawnFiles(EgtbFile *egtbFile)
+: EgtbFile()
+{
+    memset(subFiles, 0, sizeof(subFiles));
+
+    auto s1 = egtbFile->getName();
+
+    char s2[256];
+    std::copy_if(s1.begin(), s1.end() + 1, s2, [](char c){ return c < '0' || c > '9'; });
+
+    egtbName = s2;
+
+    header = new EgtbFileHeader();
+    header->reset();
+
+    egtbType = egtbFile->getEgtbType();
+    //            if (egtbType == EgtbType::newdtm) {
+    //                addProperty(EGTB_PROP_NEW);
+    //            }
+
+    size = setupIdxComputing(egtbName, 0);
+    merge(egtbFile);
+
+    loadStatus = EgtbLoadStatus::loaded;
+    subPawnRank = egtbFile->subPawnRank;
+}
+
+bool EgtbPawnFiles::merge(EgtbFile* otherEgtbFile) {
+    assert(otherEgtbFile->subPawnRank >= 0 && otherEgtbFile->subPawnRank < 7);
+
+    std::cout << "EgtbPawnFiles merge, name: " << getName() << ", other " << otherEgtbFile->getName() << ", subPawnRank " << otherEgtbFile->subPawnRank << std::endl;
+
+    bool r = true;
+    if (subFiles[otherEgtbFile->subPawnRank]) {
+        std::cout << " merge with existed: " << subFiles[otherEgtbFile->subPawnRank]->getName() << std::endl;
+        subFiles[otherEgtbFile->subPawnRank]->merge(otherEgtbFile);
+    } else {
+        subFiles[otherEgtbFile->subPawnRank] = (EgtbFile *)otherEgtbFile;
+        r = false; // keep but don't delete otherEgtbFile
+    }
+
+    assert(!subFiles[otherEgtbFile->subPawnRank]->getName().empty());
     return r;
+}
+
+void EgtbPawnFiles::checkToLoadHeaderAndTable(Side side)
+{
+    for(int i = 0; i < 7; i++) {
+        if (subFiles[i]) {
+            subFiles[i]->checkToLoadHeaderAndTable(side);
+        }
+    }
+}
+
+std::pair<i64, int> EgtbPawnFiles::getSubPawnKey(i64 idx) const
+{
+    i64 subIdx = 1;
+    int rank = -1;
+
+    i64 rest = idx;
+
+    for(int i = 0; ; i++) {
+        auto arr = idxArr[i];
+        if (arr == EGTB_IDX_NONE) {
+            break;
+        }
+        auto key = (int)(rest / idxMult[i]);
+        rest = rest % idxMult[i];
+
+        if (arr == EGTB_IDX_PPP) {
+            auto sub = egtbKey.pppKeyToSubKey[key];
+            subIdx *= sub.subIdx;
+            rank = sub.rank;
+        } else {
+            subIdx *= key;
+        }
+    }
+
+    assert(subIdx >= 0 && rank >= 0 && rank < 7);
+    std::pair<i64, int> p;
+    p.first = subIdx;
+    p.second = rank;
+    return p;
+}
+
+void EgtbPawnFiles::removeBuffers()
+{
+    for(int i = 0; i < 7; i++) {
+        if (subFiles[i]) {
+            subFiles[i]->removeBuffers();
+        }
+    }
+}
+
+
+int EgtbPawnFiles::getSubRank(const int* pieceList)
+{
+    int pawnPos[10], x = 0;
+    auto t = egtbPieceListStartIdxByType[static_cast<int>(PieceType::pawn)];
+    for (int i = 0; i < 5; i++) {
+        int k = t + i;
+        if (pieceList[k] >= 0) {
+            pawnPos[x++] = EgtbBoard::flip(pieceList[k], FlipMode::vertical);
+        }
+        if (pieceList[k + 16] >= 0) {
+            pawnPos[x++] = pieceList[k + 16];
+        }
+    }
+
+    assert(x == 3);
+
+    int p0 = MIN(MIN(pawnPos[0], pawnPos[1]), pawnPos[2]);
+    int p1 = pawnPos[0] == p0 ? MIN(pawnPos[1], pawnPos[2]) : pawnPos[1] == p0 ? MIN(pawnPos[0], pawnPos[2]) : MIN(pawnPos[0], pawnPos[1]);
+
+    auto rr = getRow(p0) << 8 | getRow(p1);
+    auto subRank = egtbKey.subpppRankToSubIdx[rr];
+    assert(subRank >= 0 && subRank < 7);
+
+    return subRank;
+}
+
+int EgtbPawnFiles::getScore(const int* pieceList, Side side, bool useLock)
+{
+    auto subRank = getSubRank(pieceList);
+    return subFiles[subRank]->getScore(pieceList, side, useLock);
+}
+
+EgtbKeyRec EgtbPawnFiles::getKey(const int* pieceList) const
+{
+    auto subRank = getSubRank(pieceList);
+    auto rec = subFiles[subRank]->getKey(pieceList);
+    rec.subpawnFileIdx = subRank;
+    return rec;
 }
