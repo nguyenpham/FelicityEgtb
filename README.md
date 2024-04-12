@@ -19,6 +19,12 @@ Research
 --------
 This is a long journey, to find good code, algorithmns.
 
+Info
+--------
+All info will be updated in this github and in forum:
+
+https://banksiagui.com/forums/viewforum.php?f=20
+
 
 History
 --------
