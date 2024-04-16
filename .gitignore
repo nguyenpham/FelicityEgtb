@@ -24,6 +24,8 @@ commit.sh
 *.pro.user*
 *.zip
 
+./exect/
+./exect/*
 
 x64
 Debug
