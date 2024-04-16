@@ -28,7 +28,7 @@
 /* Begin PBXFileReference section */
 		749AF5BF1FB548440024B589 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		749E8AD31FB5193200A2F578 /* FelicityEgtb */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FelicityEgtb; sourceTree = BUILT_PRODUCTS_DIR; };
-		B16AE0AE2BCC0D8400B75FC0 /* Perft.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Perft.txt; sourceTree = "<group>"; };
+		B16AE0AE2BCC0D8400B75FC0 /* Perft.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Perft.md; sourceTree = "<group>"; };
 		B16CABA62BCA7DA90001D9B1 /* chess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chess.h; sourceTree = "<group>"; };
 		B16CABA72BCA7DA90001D9B1 /* chess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chess.cpp; sourceTree = "<group>"; };
 		B16CABAA2BCA7DA90001D9B1 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -104,7 +104,7 @@
 		B18154592BCEA4F400EF7716 /* docs */ = {
 			isa = PBXGroup;
 			children = (
-				B16AE0AE2BCC0D8400B75FC0 /* Perft.txt */,
+				B16AE0AE2BCC0D8400B75FC0 /* Perft.md */,
 			);
 			path = docs;
 			sourceTree = "<group>";
