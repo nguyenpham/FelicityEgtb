@@ -1,0 +1,36 @@
+Perft
+=====
+
+The speed when generating EGTB depends much on the speed of some very basic functions:
+- Move generator
+- Check InCheck
+- Make move, takeback
+
+Perft is a perfect one to check the correctnese and speed of those functions. In this task we attemps on making those functions be fast enough.
+
+Board representation
+--------------------
+
+Board of Felicity EGTB uses mailbox techniquire to. We start by taking the board from our OCGDB code project (another our opensource project), add Perft code. To know how fast our perft, we compare with Stockfish 16.1. Stockfish is compiled for standard x86-64 (make -j profile-build ARCH=x86-64) without using any special struct such as BMI, AVX). All run on my old computer iMac 3.6 GHz Quad-Core Intel Core i7 (7 year-old)
+
+Stockish run for pertf 5 with starting position and took 24 ms
+
+Bellow attemps are elapsed time for perft 5 too. All node count are correct.
+
+Attemp 1
+--------
+Origin board took from OCGDB project: 734 ms
+
+The board of Felicity EGTB is 734/24 = 31 times as slow as Stockfish.
+
+Attemp 2
+--------
+
+We removed all "redundant" functions/features such as move comments, hash key, mutex locks... It took 579 ms = 579/24 = 21 times slower than Stockfish
+
+Attemp 3
+--------
+We used piece list technique to speed up. It took 374 ms = 374/24 = 16 times slower than Stockfish
+
+It is an amazing Stockfish is so fast even it is much more complicated than our current code. The speed of our code is so disappointed.
+

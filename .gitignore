@@ -17,6 +17,7 @@
 *.DS_Store
 *.user
 *.filters
+commit.sh
 
 *.pro.user
 *.pro.user.*
