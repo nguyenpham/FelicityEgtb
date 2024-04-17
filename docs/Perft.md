@@ -11,7 +11,7 @@ Perft is a perfect one to check the correctness and speed of those functions. In
 Board representation
 --------------------
 
-The board of Felicity EGTB uses the mailbox technique. We start by taking the board from our OCGDB code project (another of our open-source projects), add Perft code. To know how fast our perft is, we compare it with Stockfish 16.1. Stockfish is compiled for standard x86-64 (make -j profile-build ARCH=x86-64) without using any special struct such as BMI, or AVX). All run on my old computer iMac 3.6 GHz Quad-Core Intel Core i7 (7-year-old)
+The board of Felicity EGTB uses the mailbox technique. We love that representation because of being simple and easily support multi chess variants. We start by taking the board from our OCGDB code project (another of our open-source projects), add Perft code. To know how fast our perft is, we compare it with Stockfish 16.1. Stockfish is compiled for standard x86-64 (make -j profile-build ARCH=x86-64) without using any special struct such as BMI, or AVX). All run on my old computer iMac 3.6 GHz Quad-Core Intel Core i7 (7-year-old)
 
 Stockish run for pertf 5 with starting position and took 24 ms
 
@@ -33,3 +33,14 @@ Attempt 3
 We used the piece list technique to speed up. It took 374 ms = 374/24 = 16 times slower than Stockfish
 
 It is amazing Stockfish is so fast even it is much more complicated than our current code. The speed of our code is so disappointing.
+
+
+Attempt 4
+---------
+We run perft with Xiangqi (Chinese chess) board with the same techniques (mailbox representation + piece list). We used Pikafish (a Xiangqi chess engine developed from Stockfish) to compare. Pikafish was compiled for standard x86-64. All perft depths are 5 and for start position.
+Pikafish took 1498 ms.
+Our code took 6260 ms = 6260/1498 = 4 times slower than Pikafish
+The gap between two programs for Xiangqi is much smaller than ones for Chess but it is still so large.
+
+
+

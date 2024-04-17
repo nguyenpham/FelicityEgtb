@@ -207,7 +207,6 @@ namespace bslib {
 
         virtual int flip(int pos, FlipMode flipMode) const = 0;
         virtual void flip(FlipMode flipMode);
-
         virtual void flipPieceColors();
 
         virtual void createFullMoves(std::vector<MoveFull>& moveList, MoveFull m) const = 0;
@@ -229,7 +228,7 @@ namespace bslib {
 
     public:
         virtual void setFen(const std::string& fen) = 0;
-        virtual bool isFenValid(const std::string& fen) const = 0;
+//        virtual bool isFenValid(const std::string& fen) const = 0;
 
         virtual std::string getFen(bool enpassantLegal = false) const;
         virtual std::string getFen(bool enpassantLegal, int halfCount, int fullMoveCount) const = 0;

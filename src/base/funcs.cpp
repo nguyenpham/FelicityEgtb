@@ -26,7 +26,8 @@
 
 using namespace bslib;
 
-const char* pieceTypeName = ".kqrbnp";
+const char* pieceTypeName   = ".kqrbnp";
+const char* xqPieceTypeName = ".kaercnp";
 
 const char* sideStrings[] = {
     "black", "white", "none", nullptr
@@ -116,6 +117,35 @@ int Funcs::chessCharactorToPieceType(char ch)
     const char* p = strchr(pieceTypeName, ch);
     if (p != nullptr) {
         int k = (int)(p - pieceTypeName);
+        return k;
+    }
+
+    return EMPTY;
+}
+
+char Funcs::xqPieceType2Char(int pieceType)
+{
+    return xqPieceTypeName[pieceType];
+}
+
+
+std::string Funcs::xqPosToCoordinateString(int pos)
+{
+    int row = pos / 9, col = pos % 9;
+    std::ostringstream stringStream;
+    stringStream << char('a' + col) << 9 - row;
+    return stringStream.str();
+}
+
+
+int Funcs::xqCharactorToPieceType(char ch)
+{
+    if (ch >= 'A' && ch <= 'Z') {
+        ch += 'a' - 'A';
+    }
+    const char* p = strchr(xqPieceTypeName, ch);
+    if (p != nullptr) {
+        int k = (int)(p - xqPieceTypeName);
         return k;
     }
 
@@ -334,7 +364,9 @@ size_t Funcs::getFileSize(const std::string& fileName)
 
 BoardCore* Funcs::createBoard(ChessVariant variant)
 {
-    return variant == ChessVariant::standard ? new ChessBoard() : nullptr;
+    assert(false);
+    return nullptr;
+//    return variant == ChessVariant::standard ? new ChessBoard() : nullptr;
 }
 
 

@@ -35,6 +35,11 @@ public:
     static int chessCoordinateStringToPos(const std::string& str);
     static std::string chessPosToCoordinateString(int pos);
     static int chessCharactorToPieceType(char ch);
+    
+    static char xqPieceType2Char(int pieceType);
+
+    static std::string xqPosToCoordinateString(int pos);
+    static int xqCharactorToPieceType(char ch);
 
     static ChessVariant string2ChessVariant(std::string s);
 

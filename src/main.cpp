@@ -24,18 +24,31 @@
  */
 
 #include <iostream>
+#ifdef _FELICITY_CHESS_
 #include "chess/chess.h"
-
+#else
+#include "xq/xq.h"
+#endif
 
 int main(int argc, const char * argv[])
 {
-    std::cout << "Welcome to Felicity Xiangqi Endgame databases - version: 0.00001" << std::endl;
+    std::cout << "Welcome to Felicity Endgame databases - version: 0.00001" << std::endl;
+
+#ifdef _FELICITY_CHESS_
 
     bslib::ChessBoard board;
     
     board.newGame();
     board.perft(5);
+#endif
 
+#ifdef _FELICITY_XQ_
+
+    bslib::XqBoard board;
+    
+    board.newGame();
+    board.perft(5);
+#endif
 
     return 0;
 }

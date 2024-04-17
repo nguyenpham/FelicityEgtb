@@ -15,6 +15,7 @@
 #include "chess.h"
 #include "../base/funcs.h"
 
+#ifdef _FELICITY_CHESS_
 
 using namespace bslib;
 
@@ -241,7 +242,7 @@ void ChessBoard::setFen(const std::string& fen)
             continue;
         }
         
-        Side side = Side::black;
+        auto side = Side::black;
         if (ch >= 'A' && ch < 'Z') {
             side = Side::white;
             ch += 'a' - 'A';
@@ -1240,3 +1241,6 @@ bool ChessBoard::pieceList_takeback(const Hist& hist) {
     
     return false;
 }
+
+
+#endif // #ifdef _FELICITY_CHESS_

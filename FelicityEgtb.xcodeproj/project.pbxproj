@@ -11,10 +11,23 @@
 		B16CABB32BCA7DA90001D9B1 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B16CABAA2BCA7DA90001D9B1 /* main.cpp */; };
 		B16CABB42BCA7DA90001D9B1 /* base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B16CABAD2BCA7DA90001D9B1 /* base.cpp */; };
 		B16CABB52BCA7DA90001D9B1 /* funcs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B16CABAE2BCA7DA90001D9B1 /* funcs.cpp */; };
+		B18154612BCEB38D00EF7716 /* xq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B181545D2BCEB26700EF7716 /* xq.cpp */; };
+		B18154622BCEB38D00EF7716 /* base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B16CABAD2BCA7DA90001D9B1 /* base.cpp */; };
+		B18154642BCEB38D00EF7716 /* funcs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B16CABAE2BCA7DA90001D9B1 /* funcs.cpp */; };
+		B18154652BCEB38D00EF7716 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B16CABAA2BCA7DA90001D9B1 /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		749E8AD11FB5193200A2F578 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		B18154672BCEB38D00EF7716 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -38,10 +51,21 @@
 		B16CABAF2BCA7DA90001D9B1 /* funcs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = funcs.h; sourceTree = "<group>"; };
 		B16CABB02BCA7DA90001D9B1 /* base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base.h; sourceTree = "<group>"; };
 		B16CABB72BCAC55B0001D9B1 /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
+		B181545A2BCEB25400EF7716 /* buildxq.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = buildxq.sh; sourceTree = "<group>"; };
+		B181545C2BCEB26700EF7716 /* xq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xq.h; sourceTree = "<group>"; };
+		B181545D2BCEB26700EF7716 /* xq.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xq.cpp; sourceTree = "<group>"; };
+		B181546B2BCEB38D00EF7716 /* FelicityEgtb-xq */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "FelicityEgtb-xq"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		749E8AD01FB5193200A2F578 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B18154662BCEB38D00EF7716 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -54,6 +78,7 @@
 		749E8ACA1FB5193200A2F578 = {
 			isa = PBXGroup;
 			children = (
+				B181545A2BCEB25400EF7716 /* buildxq.sh */,
 				749AF5BF1FB548440024B589 /* README.md */,
 				B16CABB72BCAC55B0001D9B1 /* build.sh */,
 				B18154592BCEA4F400EF7716 /* docs */,
@@ -66,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				749E8AD31FB5193200A2F578 /* FelicityEgtb */,
+				B181546B2BCEB38D00EF7716 /* FelicityEgtb-xq */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -73,6 +99,7 @@
 		B16CABA42BCA7DA90001D9B1 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				B181545B2BCEB26700EF7716 /* xq */,
 				B16CABAA2BCA7DA90001D9B1 /* main.cpp */,
 				B16CABA52BCA7DA90001D9B1 /* chess */,
 				B16CABAB2BCA7DA90001D9B1 /* base */,
@@ -109,6 +136,15 @@
 			path = docs;
 			sourceTree = "<group>";
 		};
+		B181545B2BCEB26700EF7716 /* xq */ = {
+			isa = PBXGroup;
+			children = (
+				B181545C2BCEB26700EF7716 /* xq.h */,
+				B181545D2BCEB26700EF7716 /* xq.cpp */,
+			);
+			path = xq;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -129,6 +165,23 @@
 			productReference = 749E8AD31FB5193200A2F578 /* FelicityEgtb */;
 			productType = "com.apple.product-type.tool";
 		};
+		B181545F2BCEB38D00EF7716 /* FelicityEgtb-xq */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B18154682BCEB38D00EF7716 /* Build configuration list for PBXNativeTarget "FelicityEgtb-xq" */;
+			buildPhases = (
+				B18154602BCEB38D00EF7716 /* Sources */,
+				B18154662BCEB38D00EF7716 /* Frameworks */,
+				B18154672BCEB38D00EF7716 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "FelicityEgtb-xq";
+			productName = FelicityEgtb;
+			productReference = B181546B2BCEB38D00EF7716 /* FelicityEgtb-xq */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -140,6 +193,9 @@
 				TargetAttributes = {
 					749E8AD21FB5193200A2F578 = {
 						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+					B181545F2BCEB38D00EF7716 = {
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -157,6 +213,7 @@
 			projectRoot = "";
 			targets = (
 				749E8AD21FB5193200A2F578 /* FelicityEgtb */,
+				B181545F2BCEB38D00EF7716 /* FelicityEgtb-xq */,
 			);
 		};
 /* End PBXProject section */
@@ -170,6 +227,17 @@
 				B16CABB12BCA7DA90001D9B1 /* chess.cpp in Sources */,
 				B16CABB52BCA7DA90001D9B1 /* funcs.cpp in Sources */,
 				B16CABB32BCA7DA90001D9B1 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B18154602BCEB38D00EF7716 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B18154612BCEB38D00EF7716 /* xq.cpp in Sources */,
+				B18154622BCEB38D00EF7716 /* base.cpp in Sources */,
+				B18154642BCEB38D00EF7716 /* funcs.cpp in Sources */,
+				B18154652BCEB38D00EF7716 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,6 +370,29 @@
 			};
 			name = Release;
 		};
+		B18154692BCEB38D00EF7716 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3FHDXJ5CB2;
+				GCC_C_LANGUAGE_STANDARD = c17;
+				OTHER_CFLAGS = "-D_FELICITY_XQ_";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B181546A2BCEB38D00EF7716 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3FHDXJ5CB2;
+				GCC_C_LANGUAGE_STANDARD = c17;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				OTHER_CFLAGS = "-D_FELICITY_XQ_";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -319,6 +410,15 @@
 			buildConfigurations = (
 				749E8ADB1FB5193200A2F578 /* Debug */,
 				749E8ADC1FB5193200A2F578 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B18154682BCEB38D00EF7716 /* Build configuration list for PBXNativeTarget "FelicityEgtb-xq" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B18154692BCEB38D00EF7716 /* Debug */,
+				B181546A2BCEB38D00EF7716 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
