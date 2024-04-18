@@ -37,10 +37,11 @@ It is amazing Stockfish is so fast even it is much more complicated than our cur
 
 Attempt 4
 ---------
-We run perft with Xiangqi (Chinese chess) board with the same techniques (mailbox representation + piece list). We used Pikafish (a Xiangqi chess engine developed from Stockfish) to compare. Pikafish was compiled for standard x86-64. All perft depths are 5 and for start position.
-Pikafish took 1498 ms.
+We run perft with Xiangqi (Chinese chess) board with the same techniques (mailbox representation + piece list). We used Pikafish (a Xiangqi chess engine developed from Stockfish) to compare.Pikafish was compiled for standard x86-64. All perft depths are 5 and for the start position. 
+Pikafish took 1498 ms
 Our code took 6260 ms = 6260/1498 = 4 times slower than Pikafish
-The gap between two programs for Xiangqi is much smaller than ones for Chess but it is still so large.
+
+The gap between the two programs for Xiangqi is much smaller than the ones for Chess but it is still so large.
 
 
 

@@ -11,6 +11,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <unordered_map>
 
 #include "xq.h"
 #include "../base/funcs.h"
@@ -37,6 +38,15 @@ const PieceType pieceListIdxToType[16] = {
 
 static const std::string originalFen_xq = "rneakaenr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNEAKAENR w - - 0 1";
 
+/// pos to index
+std::unordered_map<int, int> kingIdxMap;
+
+const int incheckarea_bit_vh = 1;
+const int incheckarea_bit_horse = 2;
+const int incheckarea_bit_block = 4;
+
+int incheckarea[9][90];
+
 XqBoard::XqBoard(ChessVariant _variant)
 {
     variant = _variant;
@@ -46,6 +56,8 @@ XqBoard::XqBoard(ChessVariant _variant)
     for(int i = 0; i < 90; i++) {
         pieces.push_back(Piece::emptyPiece);
     }
+    
+    staticInit();
 }
 
 XqBoard::XqBoard(const XqBoard& other)
@@ -55,6 +67,96 @@ XqBoard::XqBoard(const XqBoard& other)
 
 XqBoard::~XqBoard()
 {
+}
+
+void XqBoard::staticInit()
+{
+    static bool inited = false;
+    if (inited) {
+        return;
+    }
+    inited = true;
+    
+    memset(incheckarea, 0, sizeof(incheckarea));
+    
+    int bkingPos[] = { 3, 4, 5, 12, 13, 14, 21, 22, 23 };
+    
+    
+    
+    for (auto i = 0; i < 9; i++) {
+        auto pos = bkingPos[i];
+        kingIdxMap[pos] = i;
+        
+        auto col = pos % 9;
+        for (auto y = pos - 1; y >= pos - col; y--) { /* go left */
+            incheckarea[i][y] |= incheckarea_bit_vh;
+        }
+
+        for (auto y = pos + 1; y < pos - col + 9; y++) { /* go right */
+            incheckarea[i][y] |= incheckarea_bit_vh;
+        }
+
+        for (auto y = pos - 9; y >= 0; y -= 9) { /* go up */
+            incheckarea[i][y] |= incheckarea_bit_vh;
+        }
+
+        for (auto y = pos + 9; y < 90; y += 9) { /* go down */
+            incheckarea[i][y] |= incheckarea_bit_vh;
+        }
+        
+        
+        /// horse
+        auto y = pos - 11;
+        auto z = pos - 1;
+        if (y >= 0 && col > 1) {
+            incheckarea[i][y] |= incheckarea_bit_horse;
+            incheckarea[i][z] |= incheckarea_bit_block;
+        }
+        y = pos - 19;
+        z = pos - 9;
+        if (y >= 0 && col > 0) {
+            incheckarea[i][y] |= incheckarea_bit_horse;
+            incheckarea[i][z] |= incheckarea_bit_block;
+        }
+        y = pos - 17;
+        z = pos - 9;
+        if (y >= 0 && col < 8) {
+            incheckarea[i][y] |= incheckarea_bit_horse;
+            incheckarea[i][z] |= incheckarea_bit_block;
+        }
+        y = pos - 7;
+        z = pos + 1;
+        if (y >= 0 && col < 7) {
+            incheckarea[i][y] |= incheckarea_bit_horse;
+            incheckarea[i][z] |= incheckarea_bit_block;
+        }
+
+        y = pos + 7;
+        z = pos - 1;
+        if (y < 90 && col > 1) {
+            incheckarea[i][y] |= incheckarea_bit_horse;
+            incheckarea[i][z] |= incheckarea_bit_block;
+        }
+        y = pos + 17;
+        z = pos + 9;
+        if (y < 90 && col > 0) {
+            incheckarea[i][y] |= incheckarea_bit_horse;
+            incheckarea[i][z] |= incheckarea_bit_block;
+        }
+        y = pos + 19;
+        z = pos + 9;
+        if (y < 90 && col < 8) {
+            incheckarea[i][y] |= incheckarea_bit_horse;
+            incheckarea[i][z] |= incheckarea_bit_block;
+        }
+        y = pos + 11;
+        z = pos + 1;
+        if (y < 90 && col < 7) {
+            incheckarea[i][y] |= incheckarea_bit_horse;
+            incheckarea[i][z] |= incheckarea_bit_block;
+        }
+
+    }
 }
 
 int XqBoard::columnCount() const
@@ -266,19 +368,53 @@ std::string XqBoard::getFen(bool enpassantLegal, int halfCount, int fullMoveCoun
 
 void XqBoard::gen_addMove(std::vector<MoveFull>& moveList, int from, int dest) const
 {
-    auto toSide = getPiece(dest).side;
-    auto movingPiece = getPiece(from);
-    auto fromSide = movingPiece.side;
+    auto movingPiece = pieces[from];
     
-    if (fromSide != toSide) {
+    if (movingPiece.side != pieces[dest].side) {
         moveList.push_back(MoveFull(movingPiece, from, dest));
     }
 }
 
+bool XqBoard::isIncheck(Side beingAttackedSide, bool inchecked, const MoveFull& move) const
+{
+    auto kingPos = findKing(beingAttackedSide);
+
+    auto king = kingPos, from = move.from, dest = move.dest;
+    if (beingAttackedSide == Side::white) {
+        king = 89 - king;
+        from = 89 - from;
+        dest = 89 - dest;
+    }
+    auto kingIdx = kingIdxMap[king];
+    
+    bool hit = incheckarea[kingIdx][from] | incheckarea[kingIdx][dest];
+    
+    if (inchecked && !hit) {
+        return true;
+    }
+    
+    if (hit) {
+        return isIncheck(kingPos, beingAttackedSide);
+    }
+    return false;
+    
+//    return hit && isIncheck(kingPos, beingAttackedSide);
+}
+
 bool XqBoard::isIncheck(Side beingAttackedSide) const {
     auto kingPos = findKing(beingAttackedSide);
-    auto attackerSide = xSide(beingAttackedSide);
     
+    return isIncheck(kingPos, beingAttackedSide);
+}
+
+int isIncheckCnt = 0;
+
+bool XqBoard::isIncheck(int kingPos, Side beingAttackedSide) const
+{
+    isIncheckCnt ++;
+    
+    auto attackerSide = xSide(beingAttackedSide);
+
     /*
      * Check horizontal and vertical lines for attacking of Rook, Cannon and
      * King face

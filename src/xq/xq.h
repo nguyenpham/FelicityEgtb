@@ -41,6 +41,10 @@ namespace bslib {
         virtual void gen(std::vector<MoveFull>& moveList, Side attackerSide) const override;
         virtual bool isIncheck(Side beingAttackedSide) const override;
 
+        bool isIncheck(int kingPos, Side beingAttackedSide) const;
+
+        virtual bool isIncheck(Side beingAttackedSide, bool inchecked, const MoveFull&) const override;
+
         using BoardCore::make;
         using BoardCore::takeBack;
 

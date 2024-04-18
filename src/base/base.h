@@ -249,7 +249,10 @@ namespace bslib {
 
         void genLegalOnly(std::vector<MoveFull>& moveList, Side attackerSide);
         void genLegal(std::vector<MoveFull>& moves, Side side, int from = -1, int dest = -1, int promotion = EMPTY);
+        
         virtual bool isIncheck(Side beingAttackedSide) const = 0;
+        virtual bool isIncheck(Side beingAttackedSide, bool inchecked, const MoveFull&) const = 0;
+
         virtual void gen(std::vector<MoveFull>& moveList, Side attackerSide) const = 0;
 
         virtual char pieceType2Char(int pieceType) const = 0;

@@ -327,6 +327,7 @@ bool BoardCore::sameContent(BoardCore* board) const
     return same;
 }
 
+extern int isIncheckCnt;
 
 uint64_t BoardCore::perft(int depth, int ply)
 {
@@ -345,9 +346,10 @@ uint64_t BoardCore::perft(int depth, int ply)
 
     Hist hist;
     auto theSide = side;
+    auto inchecked = isIncheck(theSide);
     for (auto && move : moveList) {
         make(move);
-        if (!isIncheck(theSide)) {
+        if (!isIncheck(theSide, inchecked, move)) {
             auto n = perft(depth - 1, ply + 1);
             nodes += n;
 
@@ -364,6 +366,7 @@ uint64_t BoardCore::perft(int depth, int ply)
                   << "\nNodes         : " << nodes
                   << "\nElapsed (ms)  : " << elapsed
                   << "\nNodes/second  : " << nodes * 1000 / (elapsed + 1)
+                  << "\nisIncheckCnt  : " << isIncheckCnt
                   << std::endl;
     }
     return nodes;
