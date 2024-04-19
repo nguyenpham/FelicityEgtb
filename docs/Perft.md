@@ -43,5 +43,11 @@ Our code took 6260 ms = 6260/1498 = 4 times slower than Pikafish
 
 The gap between the two programs for Xiangqi is much smaller than the ones for Chess but it is still so large.
 
+Attempt 5
+---------
+We tried to reduce the number of calling the function incheck for the Xiangqi board. Typically that function is called whenever making a move to check if that move is valid or invalid. The new code calls that function considering if it may affect the status of being incheck: the positions of the move are the same rank or column with the king or on checkable, blockable positions of the horse. It used some simple tables to check the status.
+The number of calling incheck function is reduced significantly to about half.
+The new code took 6536 ms, a bit larger than Attempt 5. It is an amazing and upset result.
+All code has been pushed into a new branch "incheck".
 
 

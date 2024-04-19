@@ -176,8 +176,6 @@ int XqBoard::getRank(int pos) const
 
 std::string XqBoard::posToCoordinateString(int pos) const
 {
-//    return Funcs::chessPosToCoordinateString(pos);
-    
     int row = pos / 9, col = pos % 9;
     std::ostringstream stringStream;
     stringStream << char('a' + col) << 9 - row;
@@ -197,11 +195,6 @@ bool XqBoard::isValid() const
         }
         
         pieceCout[static_cast<int>(piece.side)][static_cast<int>(piece.type)] += 1;
-//        if (piece.type == static_cast<int>(PieceType::pawn)) {
-//            if (i < 8 || i >= 56) {
-//                return false;
-//            }
-//        }
     }
     
     bool b =
@@ -393,15 +386,11 @@ bool XqBoard::isIncheck(Side beingAttackedSide, bool inchecked, const MoveFull& 
         return true;
     }
     
-    if (hit) {
-        return isIncheck(kingPos, beingAttackedSide);
-    }
-    return false;
-    
-//    return hit && isIncheck(kingPos, beingAttackedSide);
+    return hit && isIncheck(kingPos, beingAttackedSide);
 }
 
 bool XqBoard::isIncheck(Side beingAttackedSide) const {
+    
     auto kingPos = findKing(beingAttackedSide);
     
     return isIncheck(kingPos, beingAttackedSide);
@@ -451,7 +440,7 @@ bool XqBoard::isIncheck(int kingPos, Side beingAttackedSide) const
 
     /* go left */
     y = kingPos - 1;
-    int f = 0;
+    auto f = 0;
 
     auto p = pieces[y];
     if (!p.isEmpty()) {
@@ -461,9 +450,9 @@ bool XqBoard::isIncheck(int kingPos, Side beingAttackedSide) const
         }
     }
 
-    int col = kingPos % 9;
+    auto col = kingPos % 9;
 
-    for (int yy = y-1; yy >= kingPos - col; yy--) {
+    for (int yy = y - 1; yy >= kingPos - col; yy--) {
         auto p = pieces[yy];
         if (p.isEmpty()) {
             continue;
@@ -490,7 +479,7 @@ bool XqBoard::isIncheck(int kingPos, Side beingAttackedSide) const
         }
     }
 
-    for (int yy = y+1; yy < kingPos - col + 9; yy++) {
+    for (int yy = y + 1; yy < kingPos - col + 9; yy++) {
         auto p = pieces[yy];
         if (p.isEmpty()) {
             continue;
