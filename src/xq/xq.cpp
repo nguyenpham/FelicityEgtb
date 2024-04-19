@@ -275,10 +275,12 @@ void XqBoard::gen_addMove(std::vector<MoveFull>& moveList, int from, int dest) c
     }
 }
 
+int incheckCnt = 0;
 bool XqBoard::isIncheck(Side beingAttackedSide) const {
     auto kingPos = findKing(beingAttackedSide);
     auto attackerSide = xSide(beingAttackedSide);
     
+    incheckCnt ++;
     /*
      * Check horizontal and vertical lines for attacking of Rook, Cannon and
      * King face

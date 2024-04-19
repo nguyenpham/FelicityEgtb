@@ -327,6 +327,7 @@ bool BoardCore::sameContent(BoardCore* board) const
     return same;
 }
 
+extern int incheckCnt;
 
 uint64_t BoardCore::perft(int depth, int ply)
 {
@@ -364,6 +365,7 @@ uint64_t BoardCore::perft(int depth, int ply)
                   << "\nNodes         : " << nodes
                   << "\nElapsed (ms)  : " << elapsed
                   << "\nNodes/second  : " << nodes * 1000 / (elapsed + 1)
+                  << "\nincheckCnt    : " << incheckCnt
                   << std::endl;
     }
     return nodes;
