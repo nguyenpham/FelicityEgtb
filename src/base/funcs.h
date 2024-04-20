@@ -25,23 +25,23 @@ class Funcs
 {
 public:
     static bool isChessFamily(ChessVariant variant);
-    static std::string getOriginFen(ChessVariant variant);
+//    static std::string getOriginFen(ChessVariant variant);
 
     static std::string side2String(Side side, bool shortFrom);
     static Side string2Side(std::string s);
 
     static std::string chessVariant2String(ChessVariant variant);
-    static char chessPieceType2Char(int pieceType);
-    static int chessCoordinateStringToPos(const std::string& str);
-    static std::string chessPosToCoordinateString(int pos);
-    static int chessCharactorToPieceType(char ch);
-    
-    static char xqPieceType2Char(int pieceType);
-
-    static std::string xqPosToCoordinateString(int pos);
-    static int xqCharactorToPieceType(char ch);
-
     static ChessVariant string2ChessVariant(std::string s);
+
+//    static char chessPieceType2Char(int pieceType);
+//    static int chessCoordinateStringToPos(const std::string& str);
+//    static std::string chessPosToCoordinateString(int pos);
+//    static PieceType chessCharactorToPieceType(char ch);
+//    
+//    static char xqPieceType2Char(int pieceType);
+//    static std::string xqPosToCoordinateString(int pos);
+//    static PieceType xqCharactorToPieceType(char ch);
+
 
     static void toLower(std::string& str);
     static void toLower(char* str);

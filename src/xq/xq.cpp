@@ -1,11 +1,18 @@
 /**
- * This file is part of Open Chess Game Database Standard.
- *
- * Copyright (c) 2021-2022 Nguyen Pham (github@nguyenpham)
- * Copyright (c) 2021-2022 developers
- *
- * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
- * or copy at http://opensource.org/licenses/MIT)
+ This file is part of Felicity Egtb, distributed under MIT license.
+
+ * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 developers
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
  */
 
 #include <fstream>
@@ -34,6 +41,8 @@ const PieceType pieceListIdxToType[16] = {
     PieceType::pawn, PieceType::pawn, PieceType::pawn, PieceType::pawn,
     PieceType::pawn
 };
+
+static const char* xqPieceTypeName = ".kaercnp";
 
 static const std::string originalFen_xq = "rneakaenr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNEAKAENR w - - 0 1";
 
@@ -72,11 +81,22 @@ int XqBoard::getRank(int pos) const
     return pos / 9;
 }
 
+int XqBoard::coordinateStringToPos(const std::string& str) const
+{
+    auto colChr = str[0], rowChr = str[1];
+    if (colChr >= 'a' && colChr <= 'j' && rowChr >= '0' && rowChr <= '9') {
+        int col = colChr - 'a';
+        int row = rowChr - '0';
+
+        return (9 - row) * 9 + col;
+    }
+
+    return -1;
+}
+
 std::string XqBoard::posToCoordinateString(int pos) const
 {
-//    return Funcs::chessPosToCoordinateString(pos);
-    
-    int row = pos / 9, col = pos % 9;
+    auto row = pos / 9, col = pos % 9;
     std::ostringstream stringStream;
     stringStream << char('a' + col) << 9 - row;
     return stringStream.str();
@@ -95,11 +115,6 @@ bool XqBoard::isValid() const
         }
         
         pieceCout[static_cast<int>(piece.side)][static_cast<int>(piece.type)] += 1;
-//        if (piece.type == static_cast<int>(PieceType::pawn)) {
-//            if (i < 8 || i >= 56) {
-//                return false;
-//            }
-//        }
     }
     
     bool b =
@@ -203,29 +218,14 @@ void XqBoard::setFen(const std::string& fen)
             ch += 'a' - 'A';
         }
 
-//        auto pieceType = PieceType::empty;
-//        const char* p = strchr(pieceTypeName, ch);
-//        if (p==NULL) {
-//            if (ch=='n') {
-//                pieceType = PieceType::horse;
-//            } else if (ch=='b') {
-//                pieceType = PieceType::elephant;
-//            }
-//        } else {
-//            int k = (int)(p - pieceTypeName);
-//            pieceType = static_cast<PieceType>(k);
-//
-//        }
-        
         auto pieceType = charactorToPieceType(ch);
 
-        if (pieceType != EMPTY) {
+        if (pieceType != PieceType::empty) {
             setPiece(int(pos), Piece(pieceType, side));
         }
         pos ++;
     }
 
-    setupPieceIndexes();
     assert(pieceList_isValid());
 }
 
@@ -293,7 +293,7 @@ bool XqBoard::isIncheck(Side beingAttackedSide) const {
         auto p = pieces[y];
         if (!p.isEmpty()) {
             f = 1;
-            if (p.side == attackerSide && (p.type == ROOK || (p.type == PAWN && attackerSide == Side::white))) {
+            if (p.side == attackerSide && (p.type ==PieceType::rook || (p.type ==PieceType::pawn && attackerSide == Side::white))) {
                 return true;
             }
         }
@@ -305,7 +305,7 @@ bool XqBoard::isIncheck(Side beingAttackedSide) const {
             }
             f++;
             if (p.side == attackerSide) {
-                if ((f == 1 && (p.type == ROOK || p.type == KING)) || (f == 2 && p.type == CANNON)) {
+                if ((f == 1 && (p.type ==PieceType::rook || p.type ==PieceType::king)) || (f == 2 && p.type ==PieceType::cannon)) {
                     return true;
                 }
             }
@@ -322,7 +322,7 @@ bool XqBoard::isIncheck(Side beingAttackedSide) const {
     auto p = pieces[y];
     if (!p.isEmpty()) {
         f = 1;
-        if (p.side == attackerSide && (p.type == ROOK || p.type == PAWN)) {
+        if (p.side == attackerSide && (p.type ==PieceType::rook || p.type ==PieceType::pawn)) {
             return true;
         }
     }
@@ -336,7 +336,7 @@ bool XqBoard::isIncheck(Side beingAttackedSide) const {
         }
         f++;
         if (p.side == attackerSide) {
-            if ((f == 1 && p.type == ROOK) || (f == 2 && p.type == CANNON)) {
+            if ((f == 1 && p.type ==PieceType::rook) || (f == 2 && p.type ==PieceType::cannon)) {
                 return true;
             }
         }
@@ -351,7 +351,7 @@ bool XqBoard::isIncheck(Side beingAttackedSide) const {
     p = pieces[y];
     if (!p.isEmpty()) {
         f = 1;
-        if (p.side == attackerSide && (p.type == ROOK || p.type == PAWN)) {
+        if (p.side == attackerSide && (p.type ==PieceType::rook || p.type ==PieceType::pawn)) {
             return true;
         }
     }
@@ -363,7 +363,7 @@ bool XqBoard::isIncheck(Side beingAttackedSide) const {
         }
         f++;
         if (p.side == attackerSide) {
-            if ((f == 1 && p.type == ROOK) || (f == 2 && p.type == CANNON)) {
+            if ((f == 1 && p.type ==PieceType::rook) || (f == 2 && p.type ==PieceType::cannon)) {
                 return true;
             }
         }
@@ -379,7 +379,7 @@ bool XqBoard::isIncheck(Side beingAttackedSide) const {
         p = pieces[y];
         if (!p.isEmpty()) {
             f = 1;
-            if (p.side == attackerSide && (p.type == ROOK || (p.type == PAWN && attackerSide == Side::black))) {
+            if (p.side == attackerSide && (p.type ==PieceType::rook || (p.type ==PieceType::pawn && attackerSide == Side::black))) {
                 return true;
             }
         }
@@ -391,7 +391,7 @@ bool XqBoard::isIncheck(Side beingAttackedSide) const {
             }
             f++;
             if (p.side == attackerSide) {
-                if ((f == 1 && (p.type == ROOK || p.type == KING)) || (f == 2 && p.type == CANNON)) {
+                if ((f == 1 && (p.type ==PieceType::rook || p.type ==PieceType::king)) || (f == 2 && p.type ==PieceType::cannon)) {
                     return true;
                 }
             }
@@ -402,28 +402,28 @@ bool XqBoard::isIncheck(Side beingAttackedSide) const {
     }
 
     /* Check attacking of Knight */
-    if (kingPos > 9 && isPiece(kingPos - 11, HORSE, attackerSide) && isEmpty(kingPos - 10)) {
+    if (kingPos > 9 && isPiece(kingPos - 11, PieceType::horse, attackerSide) && isEmpty(kingPos - 10)) {
         return true;
     }
-    if (kingPos > 18 && isPiece(kingPos - 19, HORSE, attackerSide) && isEmpty(kingPos - 10)) {
+    if (kingPos > 18 && isPiece(kingPos - 19, PieceType::horse, attackerSide) && isEmpty(kingPos - 10)) {
         return true;
     }
-    if (kingPos > 18 && isPiece(kingPos - 17, HORSE, attackerSide) && isEmpty(kingPos - 8)) {
+    if (kingPos > 18 && isPiece(kingPos - 17, PieceType::horse, attackerSide) && isEmpty(kingPos - 8)) {
         return true;
     }
-    if (kingPos > 9 && isPiece(kingPos - 7, HORSE, attackerSide) && isEmpty(kingPos - 8)) {
+    if (kingPos > 9 && isPiece(kingPos - 7, PieceType::horse, attackerSide) && isEmpty(kingPos - 8)) {
         return true;
     }
-    if (kingPos < 81 && isPiece(kingPos + 7, HORSE, attackerSide) && isEmpty(kingPos + 8)) {
+    if (kingPos < 81 && isPiece(kingPos + 7, PieceType::horse, attackerSide) && isEmpty(kingPos + 8)) {
         return true;
     }
-    if (kingPos < 72 && isPiece(kingPos + 17, HORSE, attackerSide) && isEmpty(kingPos + 8)) {
+    if (kingPos < 72 && isPiece(kingPos + 17, PieceType::horse, attackerSide) && isEmpty(kingPos + 8)) {
         return true;
     }
-    if (kingPos < 72 && isPiece(kingPos + 19, HORSE, attackerSide) && isEmpty(kingPos + 10)) {
+    if (kingPos < 72 && isPiece(kingPos + 19, PieceType::horse, attackerSide) && isEmpty(kingPos + 10)) {
         return true;
     }
-    if (kingPos < 81 && isPiece(kingPos + 11, HORSE, attackerSide) && isEmpty(kingPos + 10)) {
+    if (kingPos < 81 && isPiece(kingPos + 11, PieceType::horse, attackerSide) && isEmpty(kingPos + 10)) {
         return true;
     }
 
@@ -714,36 +714,32 @@ void XqBoard::takeBack(const Hist& hist)
 }
 
 
-std::string XqBoard::chessPiece2String(const Piece& piece, bool alwayLowerCase)
+std::string XqBoard::piece2String(const Piece& piece, bool alwayLowerCase) const
 {
-    char ch = Funcs::xqPieceType2Char(piece.type);
+    char ch = xqPieceTypeName[static_cast<int>(piece.type)];
     if (!alwayLowerCase && piece.side == Side::white) {
         ch += 'A' - 'a';
     }
     return std::string(1, ch);
 }
 
-std::string XqBoard::piece2String(const Piece& piece, bool alwayLowerCase)
-{
-    return chessPiece2String(piece, alwayLowerCase);
-}
-
 char XqBoard::pieceType2Char(int pieceType) const
 {
-    return Funcs::chessPieceType2Char(pieceType);
+    return xqPieceTypeName[pieceType];
 }
 
 std::string XqBoard::toString(const Piece& piece) const
 {
-    return chessPiece2String(piece, false);
+    return piece2String(piece, false);
 }
 
-std::string XqBoard::moveString_coordinate(const Move& move)
+
+std::string XqBoard::moveString_coordinate(const Move& move) const
 {
     std::ostringstream stringStream;
-    stringStream << Funcs::xqPosToCoordinateString(move.from) << Funcs::xqPosToCoordinateString(move.dest);
+    stringStream << posToCoordinateString(move.from) << posToCoordinateString(move.dest);
     if (move.promotion > KING) {
-        stringStream << chessPiece2String(Piece(move.promotion, Side::white), true);
+        stringStream << piece2String(Piece(static_cast<PieceType>(move.promotion), Side::white), true);
     }
     return stringStream.str();
 }
@@ -758,24 +754,20 @@ std::string XqBoard::toString(const MoveFull& move) const
     return toString(Move(move));
 }
 
-std::string XqBoard::hist2String(const HistBasic& hist)
+
+PieceType XqBoard::charactorToPieceType(char ch) const
 {
-    return moveString_coordinate(Move(hist.move));
+    if (ch >= 'A' && ch <= 'Z') {
+        ch += 'a' - 'A';
+    }
+    const char* p = strchr(xqPieceTypeName, ch);
+    if (p != nullptr) {
+        auto k = (int)(p - xqPieceTypeName);
+        return static_cast<PieceType>(k);
+    }
+
+    return PieceType::empty;
 }
-
-
-int XqBoard::charactorToPieceType(char ch) const
-{
-    return Funcs::xqCharactorToPieceType(ch);
-}
-
-void XqBoard::clone(const BoardCore* oboard)
-{
-    BoardCore::clone(oboard);
-    assert(!Funcs::isChessFamily(oboard->variant));
-    auto ob = static_cast<const XqBoard*>(oboard);
-}
-
 
 int XqBoard::toPieceCount(int* pieceCnt) const
 {
@@ -802,10 +794,10 @@ void XqBoard::createFullMoves(std::vector<MoveFull>& moveList, MoveFull m) const
     moveList.push_back(m);
 }
 
-bool XqBoard::pieceList_setPiece(int *pieceList, int pos, int type, Side side) {
+bool XqBoard::pieceList_setPiece(int *pieceList, int pos, PieceType type, Side side) {
     auto d = side == Side::white ? 16 : 0;
     
-    auto k = type == KING ? 1 : type == PAWN ? 5 : 2;
+    auto k = type == PieceType::king ? 1 : type == PieceType::pawn ? 5 : 2;
     for (auto t = pieceListStartIdxByType[static_cast<int>(type)]; k > 0; t++, k--) {
         assert (t >= 0 && t < 16);
         if (pieceList[d + t] < 0 || pieceList[d + t] == pos) {
@@ -833,7 +825,7 @@ bool XqBoard::pieceList_isValid() const {
                 return false;
             }
             
-            auto tp = static_cast<int>(pieceListIdxToType[i]);
+            auto tp = pieceListIdxToType[i];
             
             if (piece.type != tp) {
                 return false;
@@ -849,8 +841,8 @@ bool XqBoard::pieceList_isValid() const {
     return cnt == 0;
 }
 
-bool XqBoard::pieceList_setEmpty(int *pieceList, int pos, int type, Side side) {
-    auto k = type == KING ? 1 : type == PAWN ? 5 : 2;
+bool XqBoard::pieceList_setEmpty(int *pieceList, int pos, PieceType type, Side side) {
+    auto k = type == PieceType::king ? 1 : type == PieceType::pawn ? 5 : 2;
     int d = side == Side::white ? 16 : 0;
     for (auto t = pieceListStartIdxByType[static_cast<int>(type)]; k > 0; t++, k--) {
         assert (t >= 0 && t < 16);

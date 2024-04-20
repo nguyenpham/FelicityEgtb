@@ -1,11 +1,26 @@
-/**
- * This file is part of Open Chess Game Database Standard.
- *
- * Copyright (c) 2021-2022 Nguyen Pham (github@nguyenpham)
- * Copyright (c) 2021-2022 developers
- *
- * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
- * or copy at http://opensource.org/licenses/MIT)
+/*
+ This file is part of Felicity Egtb, distributed under MIT license.
+
+ * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 developers
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
  */
 
 #include <chrono>
@@ -20,7 +35,7 @@
 using namespace bslib;
 
 
-Piece Piece::emptyPiece(0, Side::none);
+Piece Piece::emptyPiece(PieceType::empty, Side::none);
 Move Move::illegalMove(-1, -1);
 MoveFull MoveFull::illegalMove(-1, -1);
 
@@ -51,26 +66,6 @@ MoveFull BoardCore::createFullMove(int from, int dest, int promotion) const
     return move;
 }
 
-std::string BoardCore::getUciPositionString(const Move& pondermove) const
-{
-    std::string str = "position " + (fromOriginPosition() ? "startpos" : ("fen " + getStartingFen()));
-
-    if (!histList.empty()) {
-        str += " moves";
-        for(auto && hist : histList) {
-            str += " " + toString_coordinate(hist.move);
-        }
-    }
-
-    if (pondermove.isValid()) {
-        if (histList.empty()) {
-            str += " moves";
-        }
-        str += " " + toString(pondermove);
-    }
-    return str;
-}
-
 void BoardCore::newGame(std::string fen)
 {
     histList.clear();
@@ -84,39 +79,11 @@ void BoardCore::clear()
     }
 }
 
-void BoardCore::setupPieceIndexes()
-{
-    int idxs[] = { 0, 0};
-    for(auto && piece : pieces) {
-        if (piece.isEmpty()) continue;
-        piece.idx = idxs[static_cast<int>(piece.side)]++;
-    }
-}
-
-bool BoardCore::equalMoveLists(const BoardCore* oBoard, bool embeded) const
-{
-    assert(oBoard && startFen == oBoard->startFen);
-
-    auto n0 = histList.size(), n1 = oBoard->histList.size();
-    if (n0 != n1 && !embeded) {
-        return false;
-    }
-
-    auto n = std::min(n0, n1);
-    for(size_t i = 0; i < n; ++i) {
-        if (histList.at(i).move != oBoard->histList.at(i).move) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
 int BoardCore::attackerCnt() const
 {
     auto cnt = 0;
     for(auto && piece : pieces) {
-        if (!piece.isEmpty() && piece.type != KING) cnt++;
+        if (!piece.isEmpty() && piece.type != PieceType::king) cnt++;
     }
     return cnt;
 }
@@ -127,7 +94,7 @@ bool BoardCore::isLegalMove(int from, int dest, int promotion)
 
     if (piece.isEmpty()
         || piece.side != side
-        || (piece.side == cap.side && (variant != ChessVariant::chess960 || piece.type != KING || cap.type != static_cast<int>(PieceType::rook)))
+        || (piece.side == cap.side && (variant != ChessVariant::chess960 || piece.type != PieceType::king || cap.type != PieceType::rook))
         || (promotion > KING && !Move::isValidPromotion(promotion))) {
         return false;
     }
@@ -183,7 +150,7 @@ int BoardCore::findKing(Side side) const
 {
     auto sd = static_cast<int>(side);
     auto kingpos = pieceList[sd][0];
-    assert(kingpos >= 0 && kingpos < pieces.size() && pieces[kingpos] == Piece(KING, side));
+    assert(kingpos >= 0 && kingpos < pieces.size() && pieces[kingpos] == Piece(PieceType::king, side));
     return kingpos;
 }
 
@@ -327,7 +294,6 @@ bool BoardCore::sameContent(BoardCore* board) const
     return same;
 }
 
-extern int incheckCnt;
 
 uint64_t BoardCore::perft(int depth, int ply)
 {

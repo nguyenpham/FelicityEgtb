@@ -1,4 +1,4 @@
-/*
+/**
  This file is part of Felicity Egtb, distributed under MIT license.
 
  * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
@@ -13,14 +13,6 @@
 
  The above copyright notice and this permission notice shall be included in all
  copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
  */
 
 
@@ -110,7 +102,7 @@ namespace bslib {
 
         bool isEmpty(int pos) const {
             assert(isPositionValid(pos));
-            return pieces[size_t(pos)].type == EMPTY;
+            return pieces[size_t(pos)].type == PieceType::empty;
         }
         bool isEmpty() const {
             for(auto && piece : pieces) {
@@ -119,7 +111,7 @@ namespace bslib {
             return true;
         }
 
-        bool isPiece(int pos, int type, Side side) const {
+        bool isPiece(int pos, PieceType type, Side side) const {
             assert(isPositionValid(pos));
             auto p = pieces[size_t(pos)];
             return p.type == type && p.side == side;
@@ -228,23 +220,19 @@ namespace bslib {
 
     public:
         virtual void setFen(const std::string& fen) = 0;
-//        virtual bool isFenValid(const std::string& fen) const = 0;
 
         virtual std::string getFen(bool enpassantLegal = false) const;
         virtual std::string getFen(bool enpassantLegal, int halfCount, int fullMoveCount) const = 0;
-
-        bool equalMoveLists(const BoardCore*, bool embeded) const;
         
     public:
         bool fromOriginPosition() const;
         virtual std::string getStartingFen() const;
-        std::string getUciPositionString(const Move& pondermove = Move::illegalMove) const;
         
         void newGame(std::string fen = "");
         void clear();
 
         MoveFull createFullMove(int from, int dest, int promote) const;
-        virtual int charactorToPieceType(char ch) const = 0;
+        virtual PieceType charactorToPieceType(char ch) const = 0;
         virtual bool isLegalMove(int from, int dest, int promotion = EMPTY);
 
         void genLegalOnly(std::vector<MoveFull>& moveList, Side attackerSide);
@@ -253,6 +241,8 @@ namespace bslib {
         virtual void gen(std::vector<MoveFull>& moveList, Side attackerSide) const = 0;
 
         virtual char pieceType2Char(int pieceType) const = 0;
+        virtual int coordinateStringToPos(const std::string& str) const = 0;
+
         virtual std::string posToCoordinateString(int pos) const = 0;
 
         virtual void make(const MoveFull& move);
@@ -264,8 +254,8 @@ namespace bslib {
         virtual int findKing(Side side) const;
 
     protected:
-        void setupPieceIndexes();
-        
+        mutable int incheckCnt = 0;
+
     public:
         static void pieceList_reset(int *pieceList);
 
@@ -278,8 +268,8 @@ namespace bslib {
         virtual bool pieceList_make(const Hist& hist) = 0;
         virtual bool pieceList_takeback(const Hist& hist) = 0;
 
-        virtual bool pieceList_setEmpty(int *pieceList, int pos, int type, Side side) = 0;
-        virtual bool pieceList_setPiece(int *pieceList, int pos, int type, Side side) = 0;
+        virtual bool pieceList_setEmpty(int *pieceList, int pos, PieceType type, Side side) = 0;
+        virtual bool pieceList_setPiece(int *pieceList, int pos, PieceType type, Side side) = 0;
         virtual bool pieceList_isValid() const = 0;
 
     };

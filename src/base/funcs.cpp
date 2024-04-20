@@ -1,11 +1,18 @@
 /**
- * This file is part of Open Chess Game Database Standard.
- *
- * Copyright (c) 2021-2022 Nguyen Pham (github@nguyenpham)
- * Copyright (c) 2021-2022 developers
- *
- * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
- * or copy at http://opensource.org/licenses/MIT)
+ This file is part of Felicity Egtb, distributed under MIT license.
+
+ * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 developers
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
  */
 
 #include <sstream>
@@ -26,9 +33,6 @@
 
 using namespace bslib;
 
-const char* pieceTypeName   = ".kqrbnp";
-const char* xqPieceTypeName = ".kaercnp";
-
 const char* sideStrings[] = {
     "black", "white", "none", nullptr
 };
@@ -40,21 +44,15 @@ const char* variantStrings[] = {
     "standard", "chess960", nullptr
 };
 
-static std::string originFens[] = {
-    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq",
-//    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq",
-};
-
-
 bool Funcs::isChessFamily(ChessVariant variant)
 {
     return variant == ChessVariant::standard || variant == ChessVariant::chess960;
 }
 
-std::string Funcs::getOriginFen(ChessVariant variant)
-{
-    return originFens[static_cast<int>(variant)];
-}
+//std::string Funcs::getOriginFen(ChessVariant variant)
+//{
+//    return originFens[static_cast<int>(variant)];
+//}
 
 std::string Funcs::side2String(Side side, bool shortFrom)
 {
@@ -82,75 +80,6 @@ std::string Funcs::chessVariant2String(ChessVariant variant)
     return variantStrings[t];
 }
 
-
-char Funcs::chessPieceType2Char(int pieceType)
-{
-    return pieceTypeName[pieceType];
-}
-
-int Funcs::chessCoordinateStringToPos(const std::string& str)
-{
-    auto colChr = str[0], rowChr = str[1];
-    if (colChr >= 'a' && colChr <= 'h' && rowChr >= '1' && rowChr <= '8') {
-        int col = colChr - 'a';
-        int row = rowChr - '1';
-
-        return (7 - row) * 8 + col;
-    }
-    return -1;
-}
-
-std::string Funcs::chessPosToCoordinateString(int pos)
-{
-    int row = pos / 8, col = pos % 8;
-    std::ostringstream stringStream;
-    stringStream << char('a' + col) << 8 - row;
-    return stringStream.str();
-}
-
-
-int Funcs::chessCharactorToPieceType(char ch)
-{
-    if (ch >= 'A' && ch <= 'Z') {
-        ch += 'a' - 'A';
-    }
-    const char* p = strchr(pieceTypeName, ch);
-    if (p != nullptr) {
-        int k = (int)(p - pieceTypeName);
-        return k;
-    }
-
-    return EMPTY;
-}
-
-char Funcs::xqPieceType2Char(int pieceType)
-{
-    return xqPieceTypeName[pieceType];
-}
-
-
-std::string Funcs::xqPosToCoordinateString(int pos)
-{
-    int row = pos / 9, col = pos % 9;
-    std::ostringstream stringStream;
-    stringStream << char('a' + col) << 9 - row;
-    return stringStream.str();
-}
-
-
-int Funcs::xqCharactorToPieceType(char ch)
-{
-    if (ch >= 'A' && ch <= 'Z') {
-        ch += 'a' - 'A';
-    }
-    const char* p = strchr(xqPieceTypeName, ch);
-    if (p != nullptr) {
-        int k = (int)(p - xqPieceTypeName);
-        return k;
-    }
-
-    return EMPTY;
-}
 
 ChessVariant Funcs::string2ChessVariant(std::string s)
 {

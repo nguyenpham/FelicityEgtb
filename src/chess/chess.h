@@ -1,11 +1,18 @@
 /**
- * This file is part of Open Chess Game Database Standard.
- *
- * Copyright (c) 2021-2022 Nguyen Pham (github@nguyenpham)
- * Copyright (c) 2021-2022 developers
- *
- * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
- * or copy at http://opensource.org/licenses/MIT)
+ This file is part of Felicity Egtb, distributed under MIT license.
+
+ * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 developers
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
  */
 
 #ifndef bs_chess_h
@@ -55,20 +62,20 @@ namespace bslib {
         virtual void make(const MoveFull& move, Hist& hist) override;
         virtual void takeBack(const Hist& hist) override;
 
-        virtual int charactorToPieceType(char ch) const override;
+        virtual PieceType charactorToPieceType(char ch) const override;
         
         using BoardCore::toString;
         
         virtual char pieceType2Char(int pieceType) const override;
-        virtual std::string piece2String(const Piece& piece, bool alwayLowerCase);
+        virtual std::string piece2String(const Piece& piece, bool alwayLowerCase) const;
 
-        static std::string chessPiece2String(const Piece& piece, bool alwayLowerCase);
         virtual std::string toString(const Piece&) const override;
         virtual std::string toString(const Move&) const override;
         virtual std::string toString(const MoveFull&) const override;
                 
-        static std::string moveString_coordinate(const Move& move);
-        static std::string hist2String(const HistBasic&);
+        std::string moveString_coordinate(const Move& move) const;
+
+        virtual int coordinateStringToPos(const std::string& str) const override;
 
         virtual std::string posToCoordinateString(int pos) const override;
 
@@ -100,8 +107,6 @@ namespace bslib {
 
         virtual Move moveFromString_castling(const std::string& str, Side side) const;
 
-        static bool isChessFenValid(const std::string& fen);
-        static void staticInit();
 
     protected:
         bool canRivalCaptureEnpassant() const;
@@ -109,8 +114,6 @@ namespace bslib {
         virtual bool isValidPromotion(int promotion, Side) const override {
             return promotion > KING && promotion < static_cast<int>(PieceType::pawn);
         }
-
-        virtual bool isFenValid(const std::string& fen) const override;
 
         virtual bool beAttacked(int pos, Side attackerSide) const;
 
@@ -134,8 +137,8 @@ namespace bslib {
         virtual bool pieceList_make(const Hist& hist) override;
         virtual bool pieceList_takeback(const Hist& hist) override;
 
-        virtual bool pieceList_setEmpty(int *pieceList, int pos, int type, Side side) override;
-        virtual bool pieceList_setPiece(int *pieceList, int pos, int type, Side side) override;
+        virtual bool pieceList_setEmpty(int *pieceList, int pos, PieceType type, Side side) override;
+        virtual bool pieceList_setPiece(int *pieceList, int pos, PieceType type, Side side) override;
         virtual bool pieceList_isValid() const override;
 
     private:
