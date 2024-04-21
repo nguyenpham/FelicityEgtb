@@ -22,25 +22,75 @@
 #include "xq/xq.h"
 #endif
 
+#include "base/funcs.h"
+#include <random>
+#include <cmath>
+
 int main(int argc, const char * argv[])
 {
     std::cout << "Welcome to Felicity Endgame databases - version: 0.00001" << std::endl;
 
-#ifdef _FELICITY_CHESS_
+    std::random_device rd;
+    std::mt19937_64 e2(rd());
+    std::uniform_int_distribution<long long int> dist(std::llround(std::pow(2,61)), std::llround(std::pow(2,62)));
 
-    bslib::ChessBoard board;
     
-    board.newGame();
-    board.perft(5);
-#endif
+    const int64_t sz = 1024UL * 1024 * 1024 * 7;
+    const int64_t n = 1024UL * 1024 * 1024;
 
-#ifdef _FELICITY_XQ_
-
-    bslib::XqBoard board;
+    {
+        char* p = (char *) malloc(sz);
+        assert(p);
+        
+        auto start = bslib::Funcs::now();
+        
+        
+        for (auto i = n; i > 0; i--) {
+            
+            int64_t k = dist(e2) % sz;
+            p[k] = rand() & 0xff;
+        }
+        
+        auto elapsed = bslib::Funcs::now() - start;
+        std::cout << "Test 1, malloc, elapsed (ms)  : " << elapsed
+        << std::endl;
+        
+        free(p);
+    }
     
-    board.newGame();
-    board.perft(5);
-#endif
+    {
+        std::vector<char> p;
+        p.reserve(sz);
+                
+        auto start = bslib::Funcs::now();
+                
+        for (auto i = n; i > 0; i--) {
+
+            int64_t k = dist(e2) % sz;
+            p[k] = rand() & 0xff;
+        }
+        
+        
+        auto elapsed = bslib::Funcs::now() - start;
+        std::cout << "Test 2, vector, elapsed (ms)  : " << elapsed
+        << std::endl;
+    }
+
+    {
+        std::array<char, sz> p;
+        
+        auto start = bslib::Funcs::now();
+                
+        for (auto i = n; i > 0; i--) {
+            int64_t k = dist(e2) % sz;
+            p[k] = rand() & 0xff;
+        }
+        
+        
+        auto elapsed = bslib::Funcs::now() - start;
+        std::cout << "Test 3, array, elapsed (ms)  : " << elapsed
+        << std::endl;
+    }
 
     return 0;
 }
