@@ -59,15 +59,14 @@ int main(int argc, const char * argv[])
     }
     
     {
-        std::vector<char> p;
-        p.reserve(sz);
+        std::vector<uint8_t> p(sz, 0);
+//        p.resize(sz, 0);
                 
         auto start = bslib::Funcs::now();
                 
         for (auto i = n; i > 0; i--) {
-
             int64_t k = dist(e2) % sz;
-            p[k] = rand() & 0xff;
+            p[k] = (uint8_t)(rand() & 0xff);
         }
         
         
@@ -77,7 +76,7 @@ int main(int argc, const char * argv[])
     }
 
     {
-        std::array<char, sz> p;
+        std::array<int8_t, sz> p;
         
         auto start = bslib::Funcs::now();
                 
