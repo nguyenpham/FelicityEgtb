@@ -26,8 +26,21 @@ All info will be updated in this github and in forum:
 https://banksiagui.com/forums/viewforum.php?f=20
 
 
-History
+Attempts
 --------
+Attempts 1-7: test speeds of some basic functions move generator, make, takaback, incheck and compare with Stockfish family.
+
+Concluded for current mailbox board representation:
+- simple: all code is short, clear, easy to understand and maintenance
+- easy to support different chess variants, from small to huge boards
+- fast (for basic functions such as in/out, move generators, make, takeback, incheck...) enough for chess, be faster than ones with bitboards for huge board
+
+Attempt 8:
+We compare the access speeds of some arrays in memory:
+- created some huge arrays in memory (about 7 GB) using 3 ways: malloc, std::vector and std::array
+- create random values and set them to random locations in those arrays
+- measure time
+Conclusion: their speeds are quite similar. We can use any of them.
 
 
 Terms of use
