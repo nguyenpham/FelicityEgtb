@@ -43,11 +43,12 @@ namespace bslib {
         
         std::string startFen;
 
+        int pieceList[2][16];
+
     protected:
         std::vector<Piece> pieces;
         std::vector<Hist> histList;
 
-        int pieceList[2][16];
 
     public:
 

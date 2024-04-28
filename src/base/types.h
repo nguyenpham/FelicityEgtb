@@ -216,6 +216,44 @@ public:
 };
 
 
+#define getXSide(side) ((side)==bslib::Side::white ? bslib::Side::black : bslib::Side::white)
+
+#define sider(side) (static_cast<int>(side))
+
+
+#ifdef _FELICITY_CHESS_
+enum Squares {
+    A8, B8, C8, D8, E8, F8, G8, H8,
+    A7, B7, C7, D7, E7, F7, G7, H7,
+    A6, B6, C6, D6, E6, F6, G6, H6,
+    A5, B5, C5, D5, E5, F5, G5, H5,
+    A4, B4, C4, D4, E4, F4, G4, H4,
+    A3, B3, C3, D3, E3, F3, G3, H3,
+    A2, B2, C2, D2, E2, F2, G2, H2,
+    A1, B1, C1, D1, E1, F1, G1, H1,
+    NoSquare
+};
+
+#define COL(pos) ((pos)&7)
+#define ROW(pos) ((pos)>>3)
+
+#endif
+
+#ifdef _FELICITY_XQ_
+enum Squares {
+    a9, b9, c9, d9, e9, f9, g9, h9, i9,
+    a8, b8, c8, d8, e8, f8, g8, h8, i8,
+    a7, b7, c7, d7, e7, f7, g7, h7, i7,
+    a6, b6, c6, d6, e6, f6, g6, h6, i6,
+    a5, b5, c5, d5, e5, f5, g5, h5, i5,
+    a4, b4, c4, d4, e4, f4, g4, h4, i4,
+    a3, b3, c3, d3, e3, f3, g3, h3, i3,
+    a2, b2, c2, d2, e2, f2, g2, h2, i2,
+    a1, b1, c1, d1, e1, f1, g1, h1, i1,
+    a0, b0, c0, d0, e0, f0, g0, h0, i0
+};
+#endif
+
 } // namespace bslib
 
 #endif // bs_type_h

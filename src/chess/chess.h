@@ -37,6 +37,8 @@ namespace bslib {
         int castleRights_column_king = 4, castleRights_column_rook_left = 0, castleRights_column_rook_right = 7;
 
     public:
+        static const std::string pieceTypeName; // = ".kqrbnp";
+        
         ChessBoard(ChessVariant _variant = ChessVariant::standard);
         ChessBoard(const ChessBoard&);
         virtual ~ChessBoard() override;

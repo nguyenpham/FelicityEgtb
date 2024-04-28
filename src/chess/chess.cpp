@@ -24,6 +24,7 @@
 
 #ifdef _FELICITY_CHESS_
 
+
 using namespace bslib;
 
 extern const int pieceListStartIdxByType[7];
@@ -41,7 +42,10 @@ const PieceType pieceListIdxToType[16] = {
     PieceType::pawn, PieceType::pawn, PieceType::pawn, PieceType::pawn
 };
 
-static const char* pieceTypeName   = ".kqrbnp";
+//extern const std::string pieceTypeName;
+
+const std::string ChessBoard::pieceTypeName = ".kqrbnp";
+
 static const std::string originFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq";
 
 
@@ -1001,10 +1005,10 @@ PieceType ChessBoard::charactorToPieceType(char ch) const
     if (ch >= 'A' && ch <= 'Z') {
         ch += 'a' - 'A';
     }
-    const char* p = strchr(pieceTypeName, ch);
-    if (p != nullptr) {
-        int k = (int)(p - pieceTypeName);
-        return static_cast<PieceType>(k);
+    auto p = pieceTypeName.find(ch);
+    if (p != std::string::npos) {
+//        auto k = (int)(p);
+        return static_cast<PieceType>(p);
     }
 
     return PieceType::empty;
