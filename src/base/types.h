@@ -120,15 +120,19 @@ public:
 
 class Move {
 public:
+    int from, dest;
+    PieceType promotion;
+    
+public:
     Move() {}
-    Move(int from, int dest, int promotion = EMPTY)
+    Move(int from, int dest, PieceType promotion = PieceType::empty)
     : from(from), dest(dest), promotion(promotion)
     {}
 
     static Move illegalMove;
 
-    static bool isValidPromotion(int promotion) {
-        return promotion == EMPTY || promotion > KING;
+    static bool isValidPromotion(PieceType promotion) {
+        return promotion > PieceType::king;
     }
 
     bool isValid() const {
@@ -149,9 +153,6 @@ public:
 
     std::string toCoordinateString(ChessVariant chessVariant) const;
 
-public:
-    int from, dest;
-    int promotion;
 };
 
 class MoveFull : public Move {
@@ -161,22 +162,22 @@ public:
 
 public:
     MoveFull() {}
-    MoveFull(Piece piece, int from, int dest, int promotion = EMPTY)
+    MoveFull(Piece piece, int from, int dest, PieceType promotion = PieceType::empty)
     : Move(from, dest, promotion), piece(piece)
     {}
-    MoveFull(int from, int dest, int promotion = EMPTY)
+    MoveFull(int from, int dest, PieceType promotion = PieceType::empty)
     : Move(from, dest, promotion)
     {}
 
 
-    void set(Piece _piece, int _from, int _dest, int _promote = EMPTY) {
+    void set(Piece _piece, int _from, int _dest, PieceType _promote = PieceType::empty) {
         piece = _piece;
         from = _from;
         dest = _dest;
         promotion = _promote;
     }
 
-    void set(int _from, int _dest, int _promote) {
+    void set(int _from, int _dest, PieceType _promote) {
         from = _from;
         dest = _dest;
         promotion = _promote;
@@ -192,6 +193,41 @@ public:
         return from == other.from && dest == other.dest && promotion == other.promotion;
     }
 };
+
+//class MoveList {
+//    const static int MaxMoveNumber = 300;
+//
+//public:
+//    Move list[MaxMoveNumber];
+//    int end;
+//
+//public:
+//    MoveList() { reset(); }
+//
+//    void reset() { end = 0; }
+//
+//    void add(const Move& move) { list[end] = move; end++; }
+//
+//    void add(PieceType type, Side side, int from, int dest) {
+//        list[end].set(type, side, from, dest); end++;
+//    }
+//
+//    std::string toString() const {
+//        std::ostringstream stringStream;
+//        for (int i = 0; i < end; i++) {
+//            if (i % 2 == 0) {
+//                stringStream << i / 2 + 1 << ") ";
+//            }
+//            stringStream << list[i].toString() << " ";
+//        }
+//        return stringStream.str();
+//    }
+//
+//    bool isEmpty() const {
+//        return end == 0;
+//    }
+//};
+
 
 class Hist {
 public:

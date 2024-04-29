@@ -57,7 +57,7 @@ std::string BoardCore::getFen(bool enpassantLegal) const
 }
 
 
-MoveFull BoardCore::createFullMove(int from, int dest, int promotion) const
+MoveFull BoardCore::createFullMove(int from, int dest, PieceType promotion) const
 {
     MoveFull move(from, dest, promotion);
     if (isPositionValid(from)) {
@@ -88,14 +88,14 @@ int BoardCore::attackerCnt() const
     return cnt;
 }
 
-bool BoardCore::isLegalMove(int from, int dest, int promotion)
+bool BoardCore::isLegalMove(int from, int dest, PieceType promotion)
 {
     auto piece = getPiece(from), cap = getPiece(dest);
 
     if (piece.isEmpty()
         || piece.side != side
         || (piece.side == cap.side && (variant != ChessVariant::chess960 || piece.type != PieceType::king || cap.type != PieceType::rook))
-        || (promotion > KING && !Move::isValidPromotion(promotion))) {
+        || (promotion > PieceType::king && !Move::isValidPromotion(promotion))) {
         return false;
     }
     
@@ -120,7 +120,7 @@ void BoardCore::genLegalOnly(std::vector<MoveFull>& moveList, Side attackerSide)
     moveList = moves;
 }
 
-void BoardCore::genLegal(std::vector<MoveFull>& moves, Side side, int from, int dest, int promotion)
+void BoardCore::genLegal(std::vector<MoveFull>& moves, Side side, int from, int dest, PieceType promotion)
 {
     std::vector<MoveFull> moveList;
     gen(moveList, side);
@@ -133,7 +133,7 @@ void BoardCore::genLegal(std::vector<MoveFull>& moves, Side side, int from, int 
         
         if ((from >= 0 && move.from != from)
             || (dest >= 0 && move.dest != dest)
-            || (isChess && promotion > KING && promotion != move.promotion)
+            || (isChess && promotion > PieceType::king && promotion != move.promotion)
             ) {
             continue;
         }

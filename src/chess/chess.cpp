@@ -434,10 +434,10 @@ void ChessBoard::gen_addPawnMove(std::vector<MoveFull>& moveList, int from, int 
         if (dest >= 8 && dest < 56) {
             moveList.push_back(MoveFull(movingPiece, from, dest));
         } else {
-            moveList.push_back(MoveFull(movingPiece, from, dest, static_cast<int>(PieceType::queen)));
-            moveList.push_back(MoveFull(movingPiece, from, dest, static_cast<int>(PieceType::rook)));
-            moveList.push_back(MoveFull(movingPiece, from, dest, BISHOP));
-            moveList.push_back(MoveFull(movingPiece, from, dest, static_cast<int>(PieceType::knight)));
+            moveList.push_back(MoveFull(movingPiece, from, dest, PieceType::queen));
+            moveList.push_back(MoveFull(movingPiece, from, dest, PieceType::rook));
+            moveList.push_back(MoveFull(movingPiece, from, dest, PieceType::bishop));
+            moveList.push_back(MoveFull(movingPiece, from, dest, PieceType::knight));
         }
     }
 }
@@ -884,7 +884,7 @@ void ChessBoard::make(const MoveFull& move, Hist& hist)
                 
                 pieces[ep].setEmpty();
             } else {
-                if (move.promotion != EMPTY) {
+                if (move.promotion != PieceType::empty) {
                     pieces[move.dest].type = static_cast<PieceType>(move.promotion);
                 }
             }
@@ -943,7 +943,7 @@ void ChessBoard::takeBack(const Hist& hist)
         }
     }
     
-    if (hist.move.promotion != EMPTY) {
+    if (hist.move.promotion != PieceType::empty) {
         pieces[hist.move.from].type = PieceType::pawn;
     }
     
@@ -980,7 +980,7 @@ std::string ChessBoard::moveString_coordinate(const Move& move) const
 {
     std::ostringstream stringStream;
     stringStream << posToCoordinateString(move.from) << posToCoordinateString(move.dest);
-    if (move.promotion > KING && move.promotion < PAWN) {
+    if (move.promotion > PieceType::king && move.promotion < PieceType::pawn) {
         stringStream << piece2String(Piece(static_cast<PieceType>(move.promotion), Side::white), true);
     }
     return stringStream.str();
@@ -1016,7 +1016,7 @@ Move ChessBoard::moveFromString_castling(const std::string& str, Side side) cons
 
     auto from = side == Side::black ? 4 : 60;
     auto dest = from + (str.length() < 5 ? 2 : -2);
-    return Move(from, dest, EMPTY);
+    return Move(from, dest, PieceType::empty);
 }
 
 

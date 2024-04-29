@@ -231,12 +231,12 @@ namespace bslib {
         void newGame(std::string fen = "");
         void clear();
 
-        MoveFull createFullMove(int from, int dest, int promote) const;
+        MoveFull createFullMove(int from, int dest, PieceType promote) const;
         virtual PieceType charactorToPieceType(char ch) const = 0;
-        virtual bool isLegalMove(int from, int dest, int promotion = EMPTY);
+        virtual bool isLegalMove(int from, int dest, PieceType promotion = PieceType::empty);
 
         void genLegalOnly(std::vector<MoveFull>& moveList, Side attackerSide);
-        void genLegal(std::vector<MoveFull>& moves, Side side, int from = -1, int dest = -1, int promotion = EMPTY);
+        void genLegal(std::vector<MoveFull>& moves, Side side, int from = -1, int dest = -1, PieceType promotion = PieceType::empty);
         virtual bool isIncheck(Side beingAttackedSide) const = 0;
         virtual void gen(std::vector<MoveFull>& moveList, Side attackerSide) const = 0;
 
