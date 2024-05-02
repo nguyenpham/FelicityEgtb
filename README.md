@@ -42,6 +42,8 @@ We compare the access speeds of some arrays in memory:
 - measure time
 Conclusion: their speeds are quite similar. We can use any of them.
 
+Attempt 9:
+Position indexes work for both Chess and Xiangqi/Jeiqi
 
 Terms of use
 ---------------
