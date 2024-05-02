@@ -43,6 +43,8 @@ const int QUEEN = static_cast<int>(PieceType::queen);
 const int BISHOP = static_cast<int>(PieceType::bishop);
 const int KNIGHT = static_cast<int>(PieceType::knight);
 
+#define EgtbBoard bslib::ChessBoard
+
 #else
 enum class PieceType {
     empty, king, advisor, elephant, rook, cannon, horse, pawn
@@ -52,6 +54,8 @@ const int ADVISOR = static_cast<int>(PieceType::advisor);
 const int ELEPHANT = static_cast<int>(PieceType::elephant);
 const int CANNON = static_cast<int>(PieceType::cannon);
 const int HORSE = static_cast<int>(PieceType::horse);
+
+#define EgtbBoard bslib::XqBoard
 
 #endif
 
@@ -68,6 +72,13 @@ const int W = 1;
 
 enum class Side {
     black = 0, white = 1, none = 2
+};
+
+enum class GameResultType { // Based on white side
+    win,    // white wins
+    loss,   // white loses
+    draw,
+    unknown
 };
 
 enum class FlipMode {
@@ -106,7 +117,8 @@ public:
     }
 
     bool isValid() const {
-        return (side == Side::none && type == PieceType::empty) || (side != Side::none && type != PieceType::empty);
+        return (side == Side::none && type == PieceType::empty) 
+        || ((side == Side::white || side == Side::black) && type != PieceType::empty);
     }
 
     bool operator == (const Piece & o) const {
@@ -193,40 +205,6 @@ public:
         return from == other.from && dest == other.dest && promotion == other.promotion;
     }
 };
-
-//class MoveList {
-//    const static int MaxMoveNumber = 300;
-//
-//public:
-//    Move list[MaxMoveNumber];
-//    int end;
-//
-//public:
-//    MoveList() { reset(); }
-//
-//    void reset() { end = 0; }
-//
-//    void add(const Move& move) { list[end] = move; end++; }
-//
-//    void add(PieceType type, Side side, int from, int dest) {
-//        list[end].set(type, side, from, dest); end++;
-//    }
-//
-//    std::string toString() const {
-//        std::ostringstream stringStream;
-//        for (int i = 0; i < end; i++) {
-//            if (i % 2 == 0) {
-//                stringStream << i / 2 + 1 << ") ";
-//            }
-//            stringStream << list[i].toString() << " ";
-//        }
-//        return stringStream.str();
-//    }
-//
-//    bool isEmpty() const {
-//        return end == 0;
-//    }
-//};
 
 
 class Hist {

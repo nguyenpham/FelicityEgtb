@@ -22,26 +22,59 @@
 #include "xq/xq.h"
 #endif
 
+#include "egtb/egtb.h"
+
+using namespace fegtb;
+using namespace bslib;
+
 int main(int argc, const char * argv[])
 {
-    std::cout << "Welcome to Felicity Endgame databases - version: 0.00001" << std::endl;
-
+    std::cout << "Welcome to Felicity Endgame databases for " << EGTB_MAJOR_VARIANT << " - version: " << EGTB_VERSION_STRING << std::endl;
+    
 #ifdef _FELICITY_CHESS_
-
-    bslib::ChessBoard board;
     
-    board.newGame();
-    board.perft(5);
+    std::string names[] = {
+        "kqk", "krk", "kpk",
+        "kqbk", "kbbk", "krpk", "kbpk",
+        "kqrnk", "kqrpk", "kqqpk", "knnnk", "kpppk", "krppk", "kbppk",
+    };
+    
+    for (auto && name : names) {
+        EgtbFile egtbFile(name);
+        if (!egtbFile.verifyKeys()) {
+            std::cout << "Error: " << egtbFile.getName() << std::endl;
+        }
+    }
+    
+    std::cout << "All DONE!" << std::endl;
+    
 #endif
-
+    
 #ifdef _FELICITY_XQ_
-
-    bslib::XqBoard board;
     
-    board.newGame();
-    board.perft(5);
-#endif
+    std::string names[] = {
+        "krk", "kck", "knk", "kpk",
+        "kaabbk", "kaabbrk",
+        "krkaabb", "kckaabb", "kckaabb", "kpkaabb",
+        "kabrkabb", "kaabbrkaabb",
+        "karpkaabb",
+        "karckaabb",
+        "kaabbrnkaabb"
+    };
+    
+    for (auto && name : names) {
+        std::cout << "Name: " << name << ", size: " << EgtbFile::computeSize(name) << std::endl;
 
+        EgtbFile egtbFile(name);
+        if (!egtbFile.verifyKeys(true)) {
+            std::cout << "Error: " << egtbFile.getName() << std::endl;
+        }
+    }
+    
+    std::cout << "All DONE!" << std::endl;
+    
+#endif
+    
     return 0;
 }
 

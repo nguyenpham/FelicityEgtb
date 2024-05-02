@@ -31,13 +31,14 @@ namespace bslib {
 
 
     class ChessBoard : public BoardCore {
-    protected:
+    public:
         int enpassant = 0;
         int8_t castleRights[2];
+
+    protected:
         int castleRights_column_king = 4, castleRights_column_rook_left = 0, castleRights_column_rook_right = 7;
 
     public:
-        static const std::string pieceTypeName; // = ".kqrbnp";
         
         ChessBoard(ChessVariant _variant = ChessVariant::standard);
         ChessBoard(const ChessBoard&);
@@ -47,9 +48,16 @@ namespace bslib {
         virtual bool isValid() const override;
 
         virtual int columnCount() const override;
+        virtual int rankCount() const override;
         virtual int getColumn(int pos) const override;
         virtual int getRank(int pos) const override;
 
+        virtual void reset() override {
+            BoardCore::reset();
+            enpassant = 0;
+            castleRights[0] = castleRights[1] = 0;
+        }
+        
         virtual void setFen(const std::string& fen) override;
 
         using BoardCore::getFen;
@@ -64,8 +72,6 @@ namespace bslib {
         virtual void make(const MoveFull& move, Hist& hist) override;
         virtual void takeBack(const Hist& hist) override;
 
-        virtual PieceType charactorToPieceType(char ch) const override;
-        
         using BoardCore::toString;
         
         virtual char pieceType2Char(int pieceType) const override;
@@ -81,11 +87,11 @@ namespace bslib {
 
         virtual std::string posToCoordinateString(int pos) const override;
 
-        using BoardCore::flip;
-        virtual int flip(int, FlipMode) const override {
-            assert(0);
-            return 0;
-        }
+//        using BoardCore::flip;
+//        virtual int flip(int, FlipMode) const override {
+//            assert(0);
+//            return 0;
+//        }
 
         virtual void createFullMoves(std::vector<MoveFull>& moveList, MoveFull m) const override;
         
@@ -142,6 +148,11 @@ namespace bslib {
         virtual bool pieceList_setEmpty(int *pieceList, int pos, PieceType type, Side side) override;
         virtual bool pieceList_setPiece(int *pieceList, int pos, PieceType type, Side side) override;
         virtual bool pieceList_isValid() const override;
+
+    public:
+        using BoardCore::pieceList_isDraw;
+        
+        virtual bool pieceList_isDraw(const int *pieceList) const override;
 
     private:
         void checkEnpassant();

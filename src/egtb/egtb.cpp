@@ -1,7 +1,8 @@
-/*
- This file is part of NhatMinh Egtb, distributed under MIT license.
+/**
+ This file is part of Felicity Egtb, distributed under MIT license.
 
- Copyright (c) 2018 Nguyen Hong Pham
+ * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -12,23 +13,15 @@
 
  The above copyright notice and this permission notice shall be included in all
  copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
  */
-
-#include "Egtb.h"
 
 #include <string>
 #include <vector>
 #include <algorithm>
 
-// for scaning files from a given path
+#include "egtb.h"
+
+//f for scaning files from a given path
 #ifdef _WIN32
 
 #include <windows.h>
@@ -42,37 +35,18 @@
 
 #endif
 
-// for compression
-#include "lzma/7zTypes.h"
-#include "lzma/LzmaDec.h"
+/// for compression
+#include "../lzma/7zTypes.h"
+#include "../lzma/LzmaDec.h"
 
 
 /*
  * Library functions
  */
 
-namespace egtb {
+namespace fegtb {
 
     bool egtbVerbose = false;
-
-    void toLower(std::string& str) {
-        for(int i = 0; i < str.size(); ++i) {
-            str[i] = tolower(str[i]);
-        }
-    }
-
-    void toLower(char* str) {
-        for(int i = 0; str[i]; ++i) {
-            str[i] = tolower(str[i]);
-        }
-    }
-
-    std::string posToCoordinateString(int pos) {
-        int row = pos / 9, col = pos % 9;
-        std::ostringstream stringStream;
-        stringStream << char('a' + col) << 9 - row;
-        return stringStream.str();
-    }
 
     std::string getFileName(const std::string& path) {
         auto pos = path.find_last_of("/\\");

@@ -42,9 +42,8 @@ const PieceType pieceListIdxToType[16] = {
     PieceType::pawn
 };
 
-static const char* xqPieceTypeName = ".kaercnp";
 
-static const std::string originalFen_xq = "rneakaenr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNEAKAENR w - - 0 1";
+static const std::string originalFen_xq = "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1";
 
 XqBoard::XqBoard(ChessVariant _variant)
 {
@@ -70,6 +69,12 @@ int XqBoard::columnCount() const
 {
     return 9;
 }
+
+int XqBoard::rankCount() const
+{
+    return 10;
+}
+
 
 int XqBoard::getColumn(int pos) const
 {
@@ -218,7 +223,7 @@ void XqBoard::setFen(const std::string& fen)
             ch += 'a' - 'A';
         }
 
-        auto pieceType = charactorToPieceType(ch);
+        auto pieceType = Funcs::charactorToPieceType(ch);
 
         if (pieceType != PieceType::empty) {
             setPiece(int(pos), Piece(pieceType, side));
@@ -716,7 +721,7 @@ void XqBoard::takeBack(const Hist& hist)
 
 std::string XqBoard::piece2String(const Piece& piece, bool alwayLowerCase) const
 {
-    char ch = xqPieceTypeName[static_cast<int>(piece.type)];
+    char ch = Funcs::pieceTypeName[static_cast<int>(piece.type)];
     if (!alwayLowerCase && piece.side == Side::white) {
         ch += 'A' - 'a';
     }
@@ -725,7 +730,7 @@ std::string XqBoard::piece2String(const Piece& piece, bool alwayLowerCase) const
 
 char XqBoard::pieceType2Char(int pieceType) const
 {
-    return xqPieceTypeName[pieceType];
+    return Funcs::pieceTypeName[pieceType];
 }
 
 std::string XqBoard::toString(const Piece& piece) const
@@ -738,7 +743,7 @@ std::string XqBoard::moveString_coordinate(const Move& move) const
 {
     std::ostringstream stringStream;
     stringStream << posToCoordinateString(move.from) << posToCoordinateString(move.dest);
-    if (move.promotion > KING) {
+    if (move.promotion > PieceType::king) {
         stringStream << piece2String(Piece(static_cast<PieceType>(move.promotion), Side::white), true);
     }
     return stringStream.str();
@@ -754,20 +759,6 @@ std::string XqBoard::toString(const MoveFull& move) const
     return toString(Move(move));
 }
 
-
-PieceType XqBoard::charactorToPieceType(char ch) const
-{
-    if (ch >= 'A' && ch <= 'Z') {
-        ch += 'a' - 'A';
-    }
-    const char* p = strchr(xqPieceTypeName, ch);
-    if (p != nullptr) {
-        auto k = (int)(p - xqPieceTypeName);
-        return static_cast<PieceType>(k);
-    }
-
-    return PieceType::empty;
-}
 
 int XqBoard::toPieceCount(int* pieceCnt) const
 {
@@ -897,5 +888,14 @@ bool XqBoard::pieceList_takeback(const Hist& hist) {
     return false;
 }
 
+bool XqBoard::pieceList_isDraw(const int *pieceList) const {
+    for(auto t = ROOK; t <= PAWN; t++) {
+        if (pieceList[t] >= 0 || pieceList[t + 16] >= 0) {
+            return false;
+        }
+    }
+    
+    return true;
+}
 
 #endif // _FELICITY_XQ_

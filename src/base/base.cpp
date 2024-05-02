@@ -1,4 +1,4 @@
-/*
+/**
  This file is part of Felicity Egtb, distributed under MIT license.
 
  * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
@@ -13,14 +13,6 @@
 
  The above copyright notice and this permission notice shall be included in all
  copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
  */
 
 #include <chrono>
@@ -70,13 +62,6 @@ void BoardCore::newGame(std::string fen)
 {
     histList.clear();
     setFen(fen);
-}
-
-void BoardCore::clear()
-{
-    for(auto && piece : pieces) {
-        piece.setEmpty();
-    }
 }
 
 int BoardCore::attackerCnt() const
@@ -208,6 +193,14 @@ FlipMode BoardCore::flip(FlipMode oMode, FlipMode flipMode)
     return oMode;
 }
 
+void BoardCore::printOut(const std::string& msg) const
+{
+    if (!msg.empty()) {
+        std::cout << msg << std::endl;
+    }
+    std::cout << toString() << std::endl;
+}
+
 std::string BoardCore::toString(const Hist& hist) const
 {
     return toString_coordinate(hist.move);
@@ -257,6 +250,11 @@ void BoardCore::flip(FlipMode flipMode)
             return;
         }
     }
+}
+
+int BoardCore::flip(int pos, FlipMode flipMode) const
+{
+    return Funcs::flip(pos, flipMode);
 }
 
 
@@ -372,5 +370,8 @@ bool BoardCore::pieceList_isThereAttacker(const int *pieceList) {
     return false;
 }
 
-    
+bool BoardCore::pieceList_isDraw() const
+{
+    return pieceList_isDraw((const int*) pieceList);
+}
     

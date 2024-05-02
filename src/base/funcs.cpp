@@ -44,15 +44,20 @@ const char* variantStrings[] = {
     "standard", "chess960", nullptr
 };
 
+#ifdef _FELICITY_CHESS_
+const std::string Funcs::pieceTypeName = ".kqrbnp";
+#endif
+
+#ifdef _FELICITY_XQ_
+/// Use symbol compatible to UCCI standard
+/// Rank from 0 to 9, B: elephant, N: horse/knight
+const std::string Funcs::pieceTypeName = ".kabrcnp";
+#endif
+
 bool Funcs::isChessFamily(ChessVariant variant)
 {
     return variant == ChessVariant::standard || variant == ChessVariant::chess960;
 }
-
-//std::string Funcs::getOriginFen(ChessVariant variant)
-//{
-//    return originFens[static_cast<int>(variant)];
-//}
 
 std::string Funcs::side2String(Side side, bool shortFrom)
 {
@@ -98,6 +103,19 @@ ChessVariant Funcs::string2ChessVariant(std::string s)
     return s == "orthodox" ? ChessVariant::standard : ChessVariant::none;
 }
 
+PieceType Funcs::charactorToPieceType(char ch)
+{
+    if (ch >= 'A' && ch <= 'Z') {
+        ch += 'a' - 'A';
+    }
+
+    auto p = pieceTypeName.find(ch);
+    if (p != std::string::npos) {
+        return static_cast<PieceType>(p);
+    }
+
+    return PieceType::empty;
+}
 
 void Funcs::toLower(std::string& str)
 {
@@ -122,14 +140,14 @@ std::string& ltrim(std::string& s)
     return s;
 }
 
-// trim from right
+/// trim from right
 std::string& Funcs::rtrim(std::string& s)
 {
     s.erase(s.find_last_not_of(trimChars) + 1);
     return s;
 }
 
-// trim from left & right
+/// trim from left & right
 std::string& Funcs::trim(std::string& s)
 {
     return ltrim(rtrim(s));
@@ -316,3 +334,83 @@ std::chrono::milliseconds::rep Funcs::now()
 }
 
 
+int Funcs::bSearch(const int* array, int sz, int key)
+{
+    auto i = 0, j = sz - 1;
+
+    while (i <= j) {
+        int idx = (i + j) / 2;
+        if (key == array[idx]) {
+            return idx;
+        }
+        if (key < array[idx]) j = idx - 1;
+        else i = idx + 1;
+    }
+
+    return -1;
+}
+
+void Funcs::sort_tbkeys(int* tbkeys, int sz)
+{
+    std::qsort(tbkeys, sz, sizeof(int), [](const void* a, const void* b) {
+        const int* x = static_cast<const int*>(a);
+        const int* y = static_cast<const int*>(b);
+        return (int)(*x - *y);
+    });
+}
+
+
+int Funcs::flip(int pos, FlipMode flipMode)
+{
+#ifdef _FELICITY_CHESS_
+    auto boardSz = 64;
+    auto rankCount = 8;
+    auto columnCount = 8;
+#else
+    auto boardSz = 90;
+    auto rankCount = 10;
+    auto columnCount = 9;
+#endif
+    
+    switch (flipMode) {
+        case FlipMode::none:
+            return pos;
+        case FlipMode::horizontal: {
+            auto k = pos / columnCount;
+            return pos - 2 * k + columnCount;
+        }
+            
+        case FlipMode::vertical: {
+            auto r = pos / columnCount, c = pos % columnCount;
+            return (rankCount - r - 1) * columnCount + c;
+        }
+        case FlipMode::rotate: {
+            return boardSz - pos - 1;
+        }
+            
+        default:
+            return pos;
+    }
+    
+    return pos;
+}
+
+static const FlipMode flipflip_h[] = { FlipMode::horizontal, FlipMode::none, FlipMode::rotate, FlipMode::vertical };
+static const FlipMode flipflip_v[] = { FlipMode::vertical, FlipMode::rotate, FlipMode::none, FlipMode::horizontal };
+static const FlipMode flipflip_r[] = { FlipMode::rotate, FlipMode::vertical, FlipMode::horizontal, FlipMode::none };
+
+FlipMode Funcs::flip(FlipMode oMode, FlipMode flipMode)
+{
+    switch (flipMode) {
+        case FlipMode::none:
+            break;
+        case FlipMode::horizontal:
+            return flipflip_h[static_cast<int>(oMode)];
+
+        case FlipMode::vertical:
+            return flipflip_v[static_cast<int>(oMode)];
+        case FlipMode::rotate:
+            return flipflip_r[static_cast<int>(oMode)];
+    }
+    return oMode;
+}

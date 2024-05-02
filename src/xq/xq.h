@@ -37,6 +37,8 @@ namespace bslib {
         virtual bool isValid() const override;
 
         virtual int columnCount() const override;
+        virtual int rankCount() const override;
+
         virtual int getColumn(int pos) const override;
         virtual int getRank(int pos) const override;
 
@@ -53,8 +55,6 @@ namespace bslib {
 
         virtual void make(const MoveFull& move, Hist& hist) override;
         virtual void takeBack(const Hist& hist) override;
-
-        virtual PieceType charactorToPieceType(char ch) const override;
         
         using BoardCore::toString;
         
@@ -70,14 +70,10 @@ namespace bslib {
         virtual int coordinateStringToPos(const std::string& str) const override;
         virtual std::string posToCoordinateString(int pos) const override;
 
-        using BoardCore::flip;
-        virtual int flip(int, FlipMode) const override {
-            assert(0);
-            return 0;
-        }
-
         virtual void createFullMoves(std::vector<MoveFull>& moveList, MoveFull m) const override;
         
+        using BoardCore::pieceList_isDraw;
+        virtual bool pieceList_isDraw(const int *pieceList) const override;
 
     protected:
         virtual bool isValidPromotion(int promotion, Side) const override {
@@ -95,6 +91,7 @@ namespace bslib {
         virtual bool pieceList_setPiece(int *pieceList, int pos, PieceType type, Side side) override;
         virtual bool pieceList_isValid() const override;
 
+
     private:
         int toPieceCount(int* pieceCnt) const;
         
@@ -104,6 +101,6 @@ namespace bslib {
 
 #endif // _FELICITY_XQ_
 
-#endif /* bs_chess_h */
+#endif
 
 

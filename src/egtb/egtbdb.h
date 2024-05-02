@@ -1,7 +1,8 @@
-/*
- This file is part of NhatMinh Egtb, distributed under MIT license.
+/**
+ This file is part of Felicity Egtb, distributed under MIT license.
 
- Copyright (c) 2018 Nguyen Hong Pham
+ * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -12,14 +13,6 @@
 
  The above copyright notice and this permission notice shall be included in all
  copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
  */
 
 #ifndef EgtbDb_h
@@ -29,11 +22,12 @@
 #include <map>
 #include <string>
 
-#include "Egtb.h"
-#include "EgtbFile.h"
-//#include "EgtbBoard.h"
+#include "egtb.h"
+#include "egtbfile.h"
 
-namespace egtb {
+namespace fegtb {
+
+    class EgtbFile;
 
     class EgtbDb {
     protected:
@@ -62,14 +56,14 @@ namespace egtb {
         void preload(const std::string& folder, EgtbMemMode egtbMemMode, EgtbLoadMode loadMode = EgtbLoadMode::onrequest);
 
         /// Scores
-        int getScore(bslib::BoardCore& board, bslib::Side side);
-        int getScore(bslib::BoardCore& board);
-        int getScore(const std::vector<bslib::Piece> pieceVec, bslib::Side side);
+        int getScore(EgtbBoard& board, bslib::Side side);
+        int getScore(EgtbBoard& board);
+//        int getScore(const std::vector<bslib::Piece> pieceVec, bslib::Side side);
 
         /// Probe (for getting the line of moves to win
-        int probe(bslib::BoardCore& board, MoveList& moveList);
-        int probe(const std::vector<bslib::Piece> pieceVec, bslib::Side side, MoveList& moveList);
-        int probe(const char* fenString, MoveList& moveList);
+        int probe(EgtbBoard& board, std::vector<bslib::MoveFull>& moveList);
+//        int probe(const std::vector<bslib::Piece> pieceVec, bslib::Side side, std::vector<bslib::MoveFull>& moveList);
+        int probe(const char* fenString, std::vector<bslib::MoveFull>& moveList);
 
     public:
         EgtbFile* getEgtbFile(const std::string& name);
@@ -80,11 +74,11 @@ namespace egtb {
     private:
         void addEgtbFile(EgtbFile *egtbFile);
 
-        int getScoreOnePly(bslib::BoardCore& board, bslib::Side side);
+        int getScoreOnePly(EgtbBoard& board, bslib::Side side);
 
     };
 
-} //namespace egtb
+} //namespace fegtb
 
-#endif /* EgtbFileMng_hpp */
+#endif
 

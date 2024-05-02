@@ -142,28 +142,32 @@ namespace bslib {
         BoardCore() {}
         virtual ~BoardCore() {}
 
-        void reset() {
+        virtual void reset() {
             for (auto && p : pieces) {
                 p.setEmpty();
             }
 
             histList.clear();
             quietCnt = 0;
+            pieceList_reset((int *)pieceList);
         }
 
-        virtual std::string toString() const {
-            return "";
-        }
+        
+        virtual std::string toString() const = 0;
+        void printOut(const std::string& = "") const;
 
         bool isValid(const Move& move) const {
             return move.isValid() && isPositionValid(move.from) && isPositionValid(move.dest);
         }
+
         bool isValid(const MoveFull& move) const {
             Move m = move;
             return isValid(m);
         }
 
         virtual int columnCount() const = 0;
+        virtual int rankCount() const = 0;
+
         virtual int getColumn(int pos) const = 0;
         virtual int getRank(int pos) const = 0;
 
@@ -171,18 +175,25 @@ namespace bslib {
             return false;
         }
 
+        void setPiece_(int pos, Piece piece) {
+            assert(isPositionValid(pos));
+            pieces[size_t(pos)] = piece;
+        }
+
         void setPiece(int pos, Piece piece) {
             assert(isPositionValid(pos));
             pieces[size_t(pos)] = piece;
             pieceList_setPiece((int *)pieceList, pos, piece.type, piece.side);
-
         }
 
-        void setEmpty(int pos) {
+        void setEmpty_(int pos) {
             assert(isPositionValid(pos));
             pieces[size_t(pos)].setEmpty();
         }
-        
+        void setEmpty(int pos) {
+            setPiece(pos, Piece::emptyPiece);
+        }
+
         static Side xSide(Side side) {
             return side == Side::white ? Side::black : Side::white;
         }
@@ -198,7 +209,7 @@ namespace bslib {
         MoveFull flip(const MoveFull& move, FlipMode flipMode) const;
         static FlipMode flip(FlipMode oMode, FlipMode flipMode);
 
-        virtual int flip(int pos, FlipMode flipMode) const = 0;
+        virtual int flip(int pos, FlipMode flipMode) const;
         virtual void flip(FlipMode flipMode);
         virtual void flipPieceColors();
 
@@ -230,10 +241,8 @@ namespace bslib {
         virtual std::string getStartingFen() const;
         
         void newGame(std::string fen = "");
-        void clear();
 
         MoveFull createFullMove(int from, int dest, PieceType promote) const;
-        virtual PieceType charactorToPieceType(char ch) const = 0;
         virtual bool isLegalMove(int from, int dest, PieceType promotion = PieceType::empty);
 
         void genLegalOnly(std::vector<MoveFull>& moveList, Side attackerSide);
@@ -259,6 +268,7 @@ namespace bslib {
 
     public:
         static void pieceList_reset(int *pieceList);
+        virtual bool pieceList_isDraw() const;
 
     protected:
             
@@ -272,6 +282,7 @@ namespace bslib {
         virtual bool pieceList_setEmpty(int *pieceList, int pos, PieceType type, Side side) = 0;
         virtual bool pieceList_setPiece(int *pieceList, int pos, PieceType type, Side side) = 0;
         virtual bool pieceList_isValid() const = 0;
+        virtual bool pieceList_isDraw(const int *pieceList) const = 0;
 
     };
     

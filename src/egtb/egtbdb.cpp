@@ -1,7 +1,8 @@
-/*
- This file is part of NhatMinh Egtb, distributed under MIT license.
+/**
+ This file is part of Felicity Egtb, distributed under MIT license.
 
- Copyright (c) 2018 Nguyen Hong Pham
+ * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -12,21 +13,14 @@
 
  The above copyright notice and this permission notice shall be included in all
  copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
  */
 
-#include "Egtb.h"
-#include "EgtbDb.h"
-#include "EgtbKey.h"
+#include "egtb.h"
+#include "egtbdb.h"
+#include "egtbkey.h"
 
-using namespace egtb;
+using namespace fegtb;
+using namespace bslib;
 
 EgtbDb::EgtbDb() {
 }
@@ -69,26 +63,26 @@ void EgtbDb::preload(const std::string& folder, EgtbMemMode egtbMemMode, EgtbLoa
 }
 
 void EgtbDb::preload(EgtbMemMode egtbMemMode, EgtbLoadMode loadMode) {
-    for (auto && folderName : folders) {
-        auto vec = listdir(folderName);
-
-        for (auto && path : vec) {
-            if (EgtbFile::knownExtension(path)) {
-                EgtbFile *egtbFile = new EgtbFile();
-                if (egtbFile->preload(path, egtbMemMode, loadMode)) {
-                    auto pos = nameMap.find(egtbFile->getName());
-                    if (pos == nameMap.end()) {
-                        addEgtbFile(egtbFile);
-                        continue;
-                    }
-                    pos->second->merge(*egtbFile);
-                } else {
-                    std::cout << "Error: not loaded: " << path << std::endl;
-                }
-                free(egtbFile);
-            }
-        }
-    }
+//    for (auto && folderName : folders) {
+//        auto vec = listdir(folderName);
+//
+//        for (auto && path : vec) {
+//            if (EgtbFile::knownExtension(path)) {
+//                EgtbFile *egtbFile = new EgtbFile();
+//                if (egtbFile->preload(path, egtbMemMode, loadMode)) {
+//                    auto pos = nameMap.find(egtbFile->getName());
+//                    if (pos == nameMap.end()) {
+//                        addEgtbFile(egtbFile);
+//                        continue;
+//                    }
+//                    pos->second->merge(*egtbFile);
+//                } else {
+//                    std::cout << "Error: not loaded: " << path << std::endl;
+//                }
+//                free(egtbFile);
+//            }
+//        }
+//    }
 }
 
 void EgtbDb::addEgtbFile(EgtbFile *egtbFile) {
@@ -104,31 +98,28 @@ void EgtbDb::addEgtbFile(EgtbFile *egtbFile) {
 }
 
 ////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
 
-int EgtbDb::getScore(const std::vector<bslib::Piece> pieceVec, bslib::Side side) {
-    EgtbBoard board;
-    board.setup(pieceVec, side);
+int EgtbDb::getScore(EgtbBoard& board) {
     return getScore(board, board.side);
 }
 
-int EgtbDb::getScore(bslib::BoardCore& board) {
-    return getScore(board, board.side);
-}
-
-int EgtbDb::getScore(bslib::BoardCore& board, bslib::Side side) {
-    assert(side == bslib::Side::white || side == bslib::Side::black);
+int EgtbDb::getScore(EgtbBoard& board, Side side) {
+    assert(side == Side::white || side == Side::black);
 
     EgtbFile* pEgtbFile = getEgtbFile(board);
-    if (pEgtbFile == nullptr || pEgtbFile->loadStatus == EgtbLoadStatus::error) {
+    if (pEgtbFile == nullptr || pEgtbFile->getLoadStatus() == EgtbLoadStatus::error) {
         return EGTB_SCORE_MISSING;
     }
 
-    pEgtbFile->checkToLoadHeaderAndTable();
+    pEgtbFile->checkToLoadHeaderAndTable(side);
     auto r = pEgtbFile->getKey(board);
     auto querySide = r.flipSide ? getXSide(side) : side;
 
-    if (pEgtbFile->header->isSide(querySide) && board.enpassant <= 0) {
+    if (pEgtbFile->getHeader()->isSide(querySide) 
+#ifdef _FELICITY_CHESS_
+        && board.enpassant <= 0
+#endif
+        ) {
         int score = pEgtbFile->getScore(r.key, querySide);
         return score;
     }
@@ -136,17 +127,17 @@ int EgtbDb::getScore(bslib::BoardCore& board, bslib::Side side) {
     return getScoreOnePly(board, side);
 }
 
-int EgtbDb::getScoreOnePly(bslib::BoardCore& board, bslib::Side side) {
+int EgtbDb::getScoreOnePly(EgtbBoard& board, Side side) {
 
     auto xside = getXSide(side);
 
-    bslib::MoveList moveList;
-    bslib::Hist hist;
-    board.gen(moveList, side, false);
+    std::vector<MoveFull> moveList;
+    Hist hist;
+    board.gen(moveList, side);
     int bestscore = -EGTB_SCORE_MATE, legalCnt = 0;
 
-    for(int i = 0; i < moveList.end; i++) {
-        auto move = moveList.list[i];
+    for(auto i = 0; i < moveList.size(); i++) {
+        auto move = moveList[i];
         board.make(move, hist);
 
         if (!board.isIncheck(side)) {
@@ -174,42 +165,54 @@ int EgtbDb::getScoreOnePly(bslib::BoardCore& board, bslib::Side side) {
     return board.isIncheck(side) ? -EGTB_SCORE_MATE : EGTB_SCORE_DRAW;
 }
 
-EgtbFile* EgtbDb::getEgtbFile(const bslib::BoardCore& board) const {
-    auto name = EgtbFile::pieceListToName((const bslib::Piece* )board.pieceList);
-    return nameMap.find(name) != nameMap.end() ? nameMap.at(name) : nullptr;
+EgtbFile* EgtbDb::getEgtbFile(const BoardCore& board) const {
+    assert(false);
+    return nullptr;
+//    auto name = EgtbFile::pieceListToName((const Piece* )board.pieceList);
+//    return nameMap.find(name) != nameMap.end() ? nameMap.at(name) : nullptr;
+    
+//    auto mat = EgtbFile::pieceListToMaterialSign(pieceList);
+//    auto dtmMat = (int)mat;
+//    auto pos = map.find(dtmMat);
+//    if (pos == map.end()) {
+//        int newDtmMat = (int)(mat >> 32);
+//        pos = map.find(newDtmMat);
+//    }
+//    return pos != map.end() ? pos->second : nullptr;
+
 }
 
-int EgtbDb::probe(const std::vector<bslib::Piece> pieceVec, bslib::Side side, MoveList& moveList) {
-    EgtbBoard board;
-    board.setup(pieceVec, side);
-    return probe(board, moveList);
-}
+//int EgtbDb::probe(const std::vector<Piece> pieceVec, Side side, std::vector<MoveFull>& moveList) {
+//    ChessBoard board;
+//    board.setup(pieceVec, side);
+//    return probe(board, moveList);
+//}
 
-int EgtbDb::probe(const char* fenString, MoveList& moveList) {
+int EgtbDb::probe(const char* fenString, std::vector<MoveFull>& moveList) {
     EgtbBoard board;
     board.setFen(fenString);
     return probe(board, moveList);
 }
 
-int EgtbDb::probe(bslib::BoardCore& board, MoveList& moveList) {
+int EgtbDb::probe(EgtbBoard& board, std::vector<MoveFull>& moveList) {
     auto side = board.side;
     auto xside = getXSide(board.side);
-    int bestScore = -EGTB_SCORE_MATE, legalMoveCnt = 0;
-    bool cont = true;
-    bslib::Move bestMove(bslib::Side::none, -1, -1);
+    auto bestScore = -EGTB_SCORE_MATE, legalMoveCnt = 0;
+    auto cont = true;
+    auto bestMove = MoveFull::illegalMove;
 
-    bslib::MoveList mList;
-    board.gen(mList, side, false);
+    std::vector<MoveFull> mList;
+    board.gen(mList, side);
 
-    for(int i = 0; i < mList.end && cont; i++) {
-        auto move = mList.list[i];
-        bslib::Hist hist;
+    for(size_t i = 0; i < mList.size() && cont; i++) {
+        auto move = mList[i];
+        Hist hist;
         board.make(move, hist);
         board.side = xside;
 
         if (!board.isIncheck(side)) {
 
-            int score = getScore(board);
+            auto score = getScore(board);
 
             if (score == EGTB_SCORE_MISSING) {
                 if (!hist.cap.isEmpty() && board.pieceList_isDraw()) {
@@ -217,7 +220,7 @@ int EgtbDb::probe(bslib::BoardCore& board, MoveList& moveList) {
                 } else {
                     if (egtbVerbose) {
                         std::cerr << "Error: missing or broken data when probing:" << std::endl;
-                        board.show();
+                        board.printOut();
                     }
                     return EGTB_SCORE_MISSING;
                 }
@@ -250,7 +253,7 @@ int EgtbDb::probe(bslib::BoardCore& board, MoveList& moveList) {
     }
 
     if (bestMove.isValid()) {
-        moveList.add(bestMove);
+        moveList.push_back(bestMove);
 
         if (abs(bestScore) != EGTB_SCORE_MATE && bestScore != EGTB_SCORE_DRAW) {
             Hist hist;

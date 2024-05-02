@@ -42,9 +42,6 @@ const PieceType pieceListIdxToType[16] = {
     PieceType::pawn, PieceType::pawn, PieceType::pawn, PieceType::pawn
 };
 
-//extern const std::string pieceTypeName;
-
-const std::string ChessBoard::pieceTypeName = ".kqrbnp";
 
 static const std::string originFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq";
 
@@ -55,7 +52,7 @@ ChessBoard::ChessBoard(ChessVariant _variant)
     assert(Funcs::isChessFamily(variant));
 
     pieces.clear();
-    for(int i = 0; i < 64; i++) {
+    for(auto i = 0; i < 64; i++) {
         pieces.push_back(Piece::emptyPiece);
     }
 }
@@ -70,6 +67,11 @@ ChessBoard::~ChessBoard()
 }
 
 int ChessBoard::columnCount() const
+{
+    return 8;
+}
+
+int ChessBoard::rankCount() const
 {
     return 8;
 }
@@ -134,12 +136,15 @@ bool ChessBoard::isValid() const
 {
     int pieceCout[2][7] = { { 0, 0, 0, 0, 0, 0, 0}, { 0, 0, 0, 0, 0, 0, 0} };
     
-    for (int i = 0; i < 64; i++) {
+    auto cnt = 0;
+    for (auto i = 0; i < pieces.size(); i++) {
         auto piece = getPiece(i);
+        assert(piece.isValid());
         if (piece.isEmpty()) {
             continue;
         }
         
+        cnt ++;
         pieceCout[static_cast<int>(piece.side)][static_cast<int>(piece.type)] += 1;
         if (piece.type == PieceType::pawn) {
             if (i < 8 || i >= 56) {
@@ -148,7 +153,8 @@ bool ChessBoard::isValid() const
         }
     }
     
-    if (castleRights[0] + castleRights[1] && !isValidCastleRights()) {
+    if (cnt < 2 ||
+        (castleRights[0] + castleRights[1] && !isValidCastleRights())) {
         return false;
     }
     
@@ -173,7 +179,23 @@ bool ChessBoard::isValid() const
     pieceCout[0][2]+pieceCout[0][3]+pieceCout[0][4]+pieceCout[0][5] + pieceCout[0][6] <= 15 &&
     pieceCout[1][2]+pieceCout[1][3]+pieceCout[1][4]+pieceCout[1][5] + pieceCout[1][6] <= 15;
 
-    return b;
+    if (!b) {
+        return false;
+    }
+    
+    for (auto sd = 0; sd < 2; sd++) {
+        for(auto i = 0; i < 16; i++) {
+            auto pos = pieceList[sd][i];
+            if (pos < 0 || pos >= 64) {
+                continue;
+            }
+            cnt--;
+            if (sd != static_cast<int>(pieces[pos].side)) {
+                return false;
+            }
+        }
+    }
+    return cnt == 0;
 }
 
 std::string ChessBoard::toString() const
@@ -182,7 +204,7 @@ std::string ChessBoard::toString() const
     
     stringStream << getFen() << std::endl;
     
-    for (int i = 0; i<64; i++) {
+    for (auto i = 0; i < 64; i++) {
         auto piece = getPiece(i);
         
         stringStream << toString(Piece(piece.type, piece.side)) << " ";
@@ -194,7 +216,6 @@ std::string ChessBoard::toString() const
     }
     
     stringStream << "a b c d e f g h  " << Funcs::side2String(side, false) << std::endl;
-//    stringStream << "key: " << key() << std::endl;
     
     return stringStream.str();
 }
@@ -237,7 +258,6 @@ void ChessBoard::setFenCastleRights(const std::string& str) {
 void ChessBoard::setFen(const std::string& fen)
 {
     reset();
-    pieceList_reset((int *)pieceList);
     
     std::string str = fen;
     startFen = fen;
@@ -278,7 +298,7 @@ void ChessBoard::setFen(const std::string& fen)
             ch += 'a' - 'A';
         }
         
-        auto pieceType = charactorToPieceType(ch);
+        auto pieceType = Funcs::charactorToPieceType(ch);
         
         if (pieceType != PieceType::empty) {
             setPiece(int(pos), Piece(pieceType, side));
@@ -376,8 +396,8 @@ std::string ChessBoard::getFen(bool enpassantLegal, int halfCount, int fullMoveC
 {
     std::ostringstream stringStream;
     
-    int e = 0;
-    for (int i = 0; i < 64; i++) {
+    auto e = 0;
+    for (auto i = 0; i < 64; i++) {
         auto piece = getPiece(i);
         if (piece.isEmpty()) {
             e += 1;
@@ -566,28 +586,28 @@ void ChessBoard::genKnight(std::vector<MoveFull>& moves, Side, int pos) const
 void ChessBoard::genRook(std::vector<MoveFull>& moves, Side, int pos, bool oneStep) const
 {
     auto col = getColumn(pos);
-    for (int y = pos - 1; y >= pos - col; y--) { /* go left */
+    for (auto y = pos - 1; y >= pos - col; y--) { /* go left */
         gen_addMove(moves, pos, y);
         if (oneStep || !isEmpty(y)) {
             break;
         }
     }
 
-    for (int y = pos + 1; y < pos - col + 8; y++) { /* go right */
+    for (auto y = pos + 1; y < pos - col + 8; y++) { /* go right */
         gen_addMove(moves, pos, y);
         if (oneStep || !isEmpty(y)) {
             break;
         }
     }
 
-    for (int y = pos - 8; y >= 0; y -= 8) { /* go up */
+    for (auto y = pos - 8; y >= 0; y -= 8) { /* go up */
         gen_addMove(moves, pos, y);
         if (oneStep || !isEmpty(y)) {
             break;
         }
     }
 
-    for (int y = pos + 8; y < 64; y += 8) { /* go down */
+    for (auto y = pos + 8; y < 64; y += 8) { /* go down */
         gen_addMove(moves, pos, y);
         if (oneStep || !isEmpty(y)) {
             break;
@@ -597,25 +617,25 @@ void ChessBoard::genRook(std::vector<MoveFull>& moves, Side, int pos, bool oneSt
 
 void ChessBoard::genBishop(std::vector<MoveFull>& moves, Side, int pos, bool oneStep) const
 {
-    for (int y = pos - 9; y >= 0 && getColumn(y) != 7; y -= 9) {        /* go left up */
+    for (auto y = pos - 9; y >= 0 && getColumn(y) != 7; y -= 9) {        /* go left up */
         gen_addMove(moves, pos, y);
         if (oneStep || !isEmpty(y)) {
             break;
         }
     }
-    for (int y = pos - 7; y >= 0 && getColumn(y) != 0; y -= 7) {        /* go right up */
+    for (auto y = pos - 7; y >= 0 && getColumn(y) != 0; y -= 7) {        /* go right up */
         gen_addMove(moves, pos, y);
         if (oneStep || !isEmpty(y)) {
             break;
         }
     }
-    for (int y = pos + 9; y < 64 && getColumn(y) != 0; y += 9) {        /* go right down */
+    for (auto y = pos + 9; y < 64 && getColumn(y) != 0; y += 9) {        /* go right down */
         gen_addMove(moves, pos, y);
         if (oneStep || !isEmpty(y)) {
             break;
         }
     }
-    for (int y = pos + 7; y < 64 && getColumn(y) != 7; y += 7) {        /* go right down */
+    for (auto y = pos + 7; y < 64 && getColumn(y) != 7; y += 7) {        /* go right down */
         gen_addMove(moves, pos, y);
         if (oneStep || !isEmpty(y)) {
             break;
@@ -714,7 +734,7 @@ bool ChessBoard::beAttacked(int pos, Side attackerSide) const
     
     /* Check horizontal and vertical lines for attacking of Queen, Rook, King */
     /* go down */
-    for (int y = pos + 8; y < 64; y += 8) {
+    for (auto y = pos + 8; y < 64; y += 8) {
         auto piece = getPiece(y);
         if (!piece.isEmpty()) {
             if (piece.side == attackerSide) {
@@ -728,7 +748,7 @@ bool ChessBoard::beAttacked(int pos, Side attackerSide) const
     }
     
     /* go up */
-    for (int y = pos - 8; y >= 0; y -= 8) {
+    for (auto y = pos - 8; y >= 0; y -= 8) {
         auto piece = getPiece(y);
         if (!piece.isEmpty()) {
             if (piece.side == attackerSide) {
@@ -742,7 +762,7 @@ bool ChessBoard::beAttacked(int pos, Side attackerSide) const
     }
     
     /* go left */
-    for (int y = pos - 1; y >= pos - col; y--) {
+    for (auto y = pos - 1; y >= pos - col; y--) {
         auto piece = getPiece(y);
         if (!piece.isEmpty()) {
             if (piece.side == attackerSide) {
@@ -756,7 +776,7 @@ bool ChessBoard::beAttacked(int pos, Side attackerSide) const
     }
     
     /* go right */
-    for (int y = pos + 1; y < pos - col + 8; y++) {
+    for (auto y = pos + 1; y < pos - col + 8; y++) {
         auto piece = getPiece(y);
         if (!piece.isEmpty()) {
             if (piece.side == attackerSide) {
@@ -771,7 +791,7 @@ bool ChessBoard::beAttacked(int pos, Side attackerSide) const
     
     /* Check diagonal lines for attacking of Queen, Bishop, King, Pawn */
     /* go right down */
-    for (int y = pos + 9; y < 64 && getColumn(y) != 0; y += 9) {
+    for (auto y = pos + 9; y < 64 && getColumn(y) != 0; y += 9) {
         auto piece = getPiece(y);
         if (!piece.isEmpty()) {
             if (piece.side == attackerSide) {
@@ -785,7 +805,7 @@ bool ChessBoard::beAttacked(int pos, Side attackerSide) const
     }
     
     /* go left down */
-    for (int y = pos + 7; y < 64 && getColumn(y) != 7; y += 7) {
+    for (auto y = pos + 7; y < 64 && getColumn(y) != 7; y += 7) {
         auto piece = getPiece(y);
         if (!piece.isEmpty()) {
             if (piece.side == attackerSide) {
@@ -799,7 +819,7 @@ bool ChessBoard::beAttacked(int pos, Side attackerSide) const
     }
     
     /* go left up */
-    for (int y = pos - 9; y >= 0 && getColumn(y) != 7; y -= 9) {
+    for (auto y = pos - 9; y >= 0 && getColumn(y) != 7; y -= 9) {
         auto piece = getPiece(y);
         if (!piece.isEmpty()) {
             if (piece.side == attackerSide) {
@@ -813,7 +833,7 @@ bool ChessBoard::beAttacked(int pos, Side attackerSide) const
     }
     
     /* go right up */
-    for (int y = pos - 7; y >= 0 && getColumn(y) != 0; y -= 7) {
+    for (auto y = pos - 7; y >= 0 && getColumn(y) != 0; y -= 7) {
         auto piece = getPiece(y);
         if (!piece.isEmpty()) {
             if (piece.side == attackerSide) {
@@ -927,11 +947,11 @@ void ChessBoard::takeBack(const Hist& hist)
     auto movep = pieces[hist.move.dest];
     pieces[hist.move.from] = movep;
 
-    int capPos = hist.move.dest;
+    auto capPos = hist.move.dest;
 
     if (movep.type == PieceType::pawn && hist.enpassant == hist.move.dest) {
         capPos = hist.move.dest + (movep.side == Side::white ? +8 : -8);
-        setEmpty(hist.move.dest);
+        pieces[hist.move.dest].setEmpty();
     }
     pieces[capPos] = hist.cap;
 
@@ -943,7 +963,7 @@ void ChessBoard::takeBack(const Hist& hist)
 
             int newRookPos = (hist.move.from + hist.move.dest) / 2;
             pieces[rookPos] = pieces[newRookPos];
-            setEmpty(newRookPos);
+            pieces[newRookPos].setEmpty();
         }
     }
     
@@ -972,7 +992,7 @@ std::string ChessBoard::piece2String(const Piece& piece, bool alwayLowerCase) co
 
 char ChessBoard::pieceType2Char(int pieceType) const
 {
-    return pieceTypeName[pieceType];
+    return Funcs::pieceTypeName[pieceType];
 }
 
 std::string ChessBoard::toString(const Piece& piece) const
@@ -1000,19 +1020,6 @@ std::string ChessBoard::toString(const MoveFull& move) const
     return toString(Move(move));
 }
 
-PieceType ChessBoard::charactorToPieceType(char ch) const
-{
-    if (ch >= 'A' && ch <= 'Z') {
-        ch += 'a' - 'A';
-    }
-    auto p = pieceTypeName.find(ch);
-    if (p != std::string::npos) {
-//        auto k = (int)(p);
-        return static_cast<PieceType>(p);
-    }
-
-    return PieceType::empty;
-}
 
 Move ChessBoard::moveFromString_castling(const std::string& str, Side side) const
 {
@@ -1202,6 +1209,7 @@ bool ChessBoard::pieceList_takeback(const Hist& hist) {
             return true;
         }
     }
+
     for (auto t = pieceListStartIdxByType[PAWN], sd = static_cast<int>(hist.cap.side); ; t++) {
         assert (t >= 0 && t < 16);
 
@@ -1212,6 +1220,15 @@ bool ChessBoard::pieceList_takeback(const Hist& hist) {
     }
     
     return false;
+}
+
+bool ChessBoard::pieceList_isDraw(const int *pieceList) const {
+    for(auto i = 1; i < 16; i ++) {
+        if (pieceList[i] >= 0) {
+            return false;
+        }
+    }
+    return true;
 }
 
 
