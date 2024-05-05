@@ -69,7 +69,7 @@ std::string Funcs::side2String(Side side, bool shortFrom)
 Side Funcs::string2Side(std::string s)
 {
     toLower(s);
-    for(int i = 0; sideStrings[i]; i++) {
+    for(auto i = 0; sideStrings[i]; i++) {
         if (sideStrings[i] == s || shortSideStrings[i] == s) {
             return static_cast<Side>(i);
         }
@@ -91,7 +91,7 @@ ChessVariant Funcs::string2ChessVariant(std::string s)
     if (s.empty()) return ChessVariant::standard;
 
     toLower(s);
-    for(int i = 0; variantStrings[i]; i++) {
+    for(auto i = 0; variantStrings[i]; i++) {
         if (variantStrings[i] == s) {
             return static_cast<ChessVariant>(i);
         }

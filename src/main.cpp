@@ -27,7 +27,7 @@
 using namespace fegtb;
 using namespace bslib;
 
-int main(int argc, const char * argv[])
+int __main(int argc, const char * argv[])
 {
     std::cout << "Welcome to Felicity Endgame databases for " << EGTB_MAJOR_VARIANT << " - version: " << EGTB_VERSION_STRING << std::endl;
     

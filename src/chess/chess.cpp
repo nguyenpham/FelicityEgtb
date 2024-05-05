@@ -198,6 +198,35 @@ bool ChessBoard::isValid() const
     return cnt == 0;
 }
 
+/// Two Kings should not next to each other
+bool ChessBoard::isLegal() const
+{
+    auto bK = pieceList[0][0]; assert(isPositionValid(bK));
+    auto wK = pieceList[1][0]; assert(isPositionValid(wK));
+    
+    auto d = std::abs(bK - wK); assert(d > 0 && d < 63);
+    if (d > 9) {
+        return true;
+    }
+    
+    auto f = bK % 8, r = bK / 8;
+    
+    switch (d) {
+        case 1:
+            return r == wK / 8;
+        case 8:
+            return f == wK % 8;
+        case 7:
+        case 9:
+            return std::abs(f - wK % 8) == 1 && std::abs(r - wK / 8) == 1;
+
+        default:
+            return true;
+    }
+        
+    return true;
+}
+
 std::string ChessBoard::toString() const
 {
     std::ostringstream stringStream;
@@ -1052,7 +1081,7 @@ int ChessBoard::toPieceCount(int* pieceCnt) const
         memset(pieceCnt, 0, 14 * sizeof(int));
     }
     auto totalCnt = 0;;
-    for(int i = 0; i < 64; i++) {
+    for(auto i = 0; i < 64; i++) {
         auto piece = getPiece(i);
         if (piece.isEmpty()) continue;
         totalCnt++;

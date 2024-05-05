@@ -46,6 +46,7 @@ namespace bslib {
 
         virtual std::string toString() const override;
         virtual bool isValid() const override;
+        virtual bool isLegal() const override;
 
         virtual int columnCount() const override;
         virtual int rankCount() const override;

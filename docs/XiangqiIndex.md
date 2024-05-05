@@ -1,0 +1,817 @@
+Xiangqi Index
+==========
+
+
+All intesting sub endgames for 2 attackers (order - name - index size):
+  1)              kpk            2'511
+  2)             kpkb           17'298
+  3)             kpka           11'160
+  4)            kpkbb           51'057
+  5)            kpkab           76'725
+  6)            kpkaa           19'530
+  7)           kpkabb          225'990
+  8)           kpkaab          133'920
+  9)          kpkaabb          393'390
+ 10)             kpbk           17'298
+ 11)            kpbkb          119'164
+ 12)            kpbka           76'880
+ 13)           kpbkbb          351'726
+ 14)           kpbkab          528'550
+ 15)           kpbkaa          134'540
+ 16)          kpbkabb        1'556'820
+ 17)          kpbkaab          922'560
+ 18)         kpbkaabb        2'710'020
+ 19)             kpak           11'160
+ 20)            kpakb           76'880
+ 21)            kpaka           49'600
+ 22)           kpakbb          226'920
+ 23)           kpakab          341'000
+ 24)           kpakaa           86'800
+ 25)          kpakabb        1'004'400
+ 26)          kpakaab          595'200
+ 27)         kpakaabb        1'748'400
+ 28)            kpbbk           51'057
+ 29)           kpbbkb          351'726
+ 30)           kpbbka          226'920
+ 31)          kpbbkbb        1'038'159
+ 32)          kpbbkab        1'560'075
+ 33)          kpbbkaa          397'110
+ 34)         kpbbkabb        4'595'130
+ 35)         kpbbkaab        2'723'040
+ 36)        kpbbkaabb        7'998'930
+ 37)            kpabk           76'725
+ 38)           kpabkb          528'550
+ 39)           kpabka          341'000
+ 40)          kpabkbb        1'560'075
+ 41)          kpabkab        2'344'375
+ 42)          kpabkaa          596'750
+ 43)         kpabkabb        6'905'250
+ 44)         kpabkaab        4'092'000
+ 45)        kpabkaabb       12'020'250
+ 46)            kpaak           19'530
+ 47)           kpaakb          134'540
+ 48)           kpaaka           86'800
+ 49)          kpaakbb          397'110
+ 50)          kpaakab          596'750
+ 51)          kpaakaa          151'900
+ 52)         kpaakabb        1'757'700
+ 53)         kpaakaab        1'041'600
+ 54)        kpaakaabb        3'059'700
+ 55)           kpabbk          225'990
+ 56)          kpabbkb        1'556'820
+ 57)          kpabbka        1'004'400
+ 58)         kpabbkbb        4'595'130
+ 59)         kpabbkab        6'905'250
+ 60)         kpabbkaa        1'757'700
+ 61)        kpabbkabb       20'339'100
+ 62)        kpabbkaab       12'052'800
+ 63)       kpabbkaabb       35'405'100
+ 64)           kpaabk          133'920
+ 65)          kpaabkb          922'560
+ 66)          kpaabka          595'200
+ 67)         kpaabkbb        2'723'040
+ 68)         kpaabkab        4'092'000
+ 69)         kpaabkaa        1'041'600
+ 70)        kpaabkabb       12'052'800
+ 71)        kpaabkaab        7'142'400
+ 72)       kpaabkaabb       20'980'800
+ 73)          kpaabbk          393'390
+ 74)         kpaabbkb        2'710'020
+ 75)         kpaabbka        1'748'400
+ 76)        kpaabbkbb        7'998'930
+ 77)        kpaabbkab       12'020'250
+ 78)        kpaabbkaa        3'059'700
+ 79)       kpaabbkabb       35'405'100
+ 80)       kpaabbkaab       20'980'800
+ 81)      kpaabbkaabb       61'631'100
+ 82)              knk            4'050
+ 83)             knkb           27'900
+ 84)             knka           18'000
+ 85)            knkbb           82'350
+ 86)            knkab          123'750
+ 87)            knkaa           31'500
+ 88)           knkabb          364'500
+ 89)           knkaab          216'000
+ 90)          knkaabb          634'500
+ 91)             knbk           27'900
+ 92)            knbkb          192'200
+ 93)            knbka          124'000
+ 94)           knbkbb          567'300
+ 95)           knbkab          852'500
+ 96)           knbkaa          217'000
+ 97)          knbkabb        2'511'000
+ 98)          knbkaab        1'488'000
+ 99)         knbkaabb        4'371'000
+100)             knak           18'000
+101)            knakb          124'000
+102)            knaka           80'000
+103)           knakbb          366'000
+104)           knakab          550'000
+105)           knakaa          140'000
+106)          knakabb        1'620'000
+107)          knakaab          960'000
+108)         knakaabb        2'820'000
+109)            knbbk           82'350
+110)           knbbkb          567'300
+111)           knbbka          366'000
+112)          knbbkbb        1'674'450
+113)          knbbkab        2'516'250
+114)          knbbkaa          640'500
+115)         knbbkabb        7'411'500
+116)         knbbkaab        4'392'000
+117)        knbbkaabb       12'901'500
+118)            knabk          123'750
+119)           knabkb          852'500
+120)           knabka          550'000
+121)          knabkbb        2'516'250
+122)          knabkab        3'781'250
+123)          knabkaa          962'500
+124)         knabkabb       11'137'500
+125)         knabkaab        6'600'000
+126)        knabkaabb       19'387'500
+127)            knaak           31'500
+128)           knaakb          217'000
+129)           knaaka          140'000
+130)          knaakbb          640'500
+131)          knaakab          962'500
+132)          knaakaa          245'000
+133)         knaakabb        2'835'000
+134)         knaakaab        1'680'000
+135)        knaakaabb        4'935'000
+136)           knabbk          364'500
+137)          knabbkb        2'511'000
+138)          knabbka        1'620'000
+139)         knabbkbb        7'411'500
+140)         knabbkab       11'137'500
+141)         knabbkaa        2'835'000
+142)        knabbkabb       32'805'000
+143)        knabbkaab       19'440'000
+144)       knabbkaabb       57'105'000
+145)           knaabk          216'000
+146)          knaabkb        1'488'000
+147)          knaabka          960'000
+148)         knaabkbb        4'392'000
+149)         knaabkab        6'600'000
+150)         knaabkaa        1'680'000
+151)        knaabkabb       19'440'000
+152)        knaabkaab       11'520'000
+153)       knaabkaabb       33'840'000
+154)          knaabbk          634'500
+155)         knaabbkb        4'371'000
+156)         knaabbka        2'820'000
+157)        knaabbkbb       12'901'500
+158)        knaabbkab       19'387'500
+159)        knaabbkaa        4'935'000
+160)       knaabbkabb       57'105'000
+161)       knaabbkaab       33'840'000
+162)      knaabbkaabb       99'405'000
+163)              kck            4'050
+164)             kckb           27'900
+165)             kcka           18'000
+166)            kckbb           82'350
+167)            kckab          123'750
+168)            kckaa           31'500
+169)           kckabb          364'500
+170)           kckaab          216'000
+171)          kckaabb          634'500
+172)             kcbk           27'900
+173)            kcbkb          192'200
+174)            kcbka          124'000
+175)           kcbkbb          567'300
+176)           kcbkab          852'500
+177)           kcbkaa          217'000
+178)          kcbkabb        2'511'000
+179)          kcbkaab        1'488'000
+180)         kcbkaabb        4'371'000
+181)             kcak           18'000
+182)            kcakb          124'000
+183)            kcaka           80'000
+184)           kcakbb          366'000
+185)           kcakab          550'000
+186)           kcakaa          140'000
+187)          kcakabb        1'620'000
+188)          kcakaab          960'000
+189)         kcakaabb        2'820'000
+190)            kcbbk           82'350
+191)           kcbbkb          567'300
+192)           kcbbka          366'000
+193)          kcbbkbb        1'674'450
+194)          kcbbkab        2'516'250
+195)          kcbbkaa          640'500
+196)         kcbbkabb        7'411'500
+197)         kcbbkaab        4'392'000
+198)        kcbbkaabb       12'901'500
+199)            kcabk          123'750
+200)           kcabkb          852'500
+201)           kcabka          550'000
+202)          kcabkbb        2'516'250
+203)          kcabkab        3'781'250
+204)          kcabkaa          962'500
+205)         kcabkabb       11'137'500
+206)         kcabkaab        6'600'000
+207)        kcabkaabb       19'387'500
+208)            kcaak           31'500
+209)           kcaakb          217'000
+210)           kcaaka          140'000
+211)          kcaakbb          640'500
+212)          kcaakab          962'500
+213)          kcaakaa          245'000
+214)         kcaakabb        2'835'000
+215)         kcaakaab        1'680'000
+216)        kcaakaabb        4'935'000
+217)           kcabbk          364'500
+218)          kcabbkb        2'511'000
+219)          kcabbka        1'620'000
+220)         kcabbkbb        7'411'500
+221)         kcabbkab       11'137'500
+222)         kcabbkaa        2'835'000
+223)        kcabbkabb       32'805'000
+224)        kcabbkaab       19'440'000
+225)       kcabbkaabb       57'105'000
+226)           kcaabk          216'000
+227)          kcaabkb        1'488'000
+228)          kcaabka          960'000
+229)         kcaabkbb        4'392'000
+230)         kcaabkab        6'600'000
+231)         kcaabkaa        1'680'000
+232)        kcaabkabb       19'440'000
+233)        kcaabkaab       11'520'000
+234)       kcaabkaabb       33'840'000
+235)          kcaabbk          634'500
+236)         kcaabbkb        4'371'000
+237)         kcaabbka        2'820'000
+238)        kcaabbkbb       12'901'500
+239)        kcaabbkab       19'387'500
+240)        kcaabbkaa        4'935'000
+241)       kcaabbkabb       57'105'000
+242)       kcaabbkaab       33'840'000
+243)      kcaabbkaabb       99'405'000
+244)              krk            4'050
+245)             krkb           27'900
+246)             krka           18'000
+247)            krkbb           82'350
+248)            krkab          123'750
+249)            krkaa           31'500
+250)           krkabb          364'500
+251)           krkaab          216'000
+252)          krkaabb          634'500
+253)             krbk           27'900
+254)            krbkb          192'200
+255)            krbka          124'000
+256)           krbkbb          567'300
+257)           krbkab          852'500
+258)           krbkaa          217'000
+259)          krbkabb        2'511'000
+260)          krbkaab        1'488'000
+261)         krbkaabb        4'371'000
+262)             krak           18'000
+263)            krakb          124'000
+264)            kraka           80'000
+265)           krakbb          366'000
+266)           krakab          550'000
+267)           krakaa          140'000
+268)          krakabb        1'620'000
+269)          krakaab          960'000
+270)         krakaabb        2'820'000
+271)            krbbk           82'350
+272)           krbbkb          567'300
+273)           krbbka          366'000
+274)          krbbkbb        1'674'450
+275)          krbbkab        2'516'250
+276)          krbbkaa          640'500
+277)         krbbkabb        7'411'500
+278)         krbbkaab        4'392'000
+279)        krbbkaabb       12'901'500
+280)            krabk          123'750
+281)           krabkb          852'500
+282)           krabka          550'000
+283)          krabkbb        2'516'250
+284)          krabkab        3'781'250
+285)          krabkaa          962'500
+286)         krabkabb       11'137'500
+287)         krabkaab        6'600'000
+288)        krabkaabb       19'387'500
+289)            kraak           31'500
+290)           kraakb          217'000
+291)           kraaka          140'000
+292)          kraakbb          640'500
+293)          kraakab          962'500
+294)          kraakaa          245'000
+295)         kraakabb        2'835'000
+296)         kraakaab        1'680'000
+297)        kraakaabb        4'935'000
+298)           krabbk          364'500
+299)          krabbkb        2'511'000
+300)          krabbka        1'620'000
+301)         krabbkbb        7'411'500
+302)         krabbkab       11'137'500
+303)         krabbkaa        2'835'000
+304)        krabbkabb       32'805'000
+305)        krabbkaab       19'440'000
+306)       krabbkaabb       57'105'000
+307)           kraabk          216'000
+308)          kraabkb        1'488'000
+309)          kraabka          960'000
+310)         kraabkbb        4'392'000
+311)         kraabkab        6'600'000
+312)         kraabkaa        1'680'000
+313)        kraabkabb       19'440'000
+314)        kraabkaab       11'520'000
+315)       kraabkaabb       33'840'000
+316)          kraabbk          634'500
+317)         kraabbkb        4'371'000
+318)         kraabbka        2'820'000
+319)        kraabbkbb       12'901'500
+320)        kraabbkab       19'387'500
+321)        kraabbkaa        4'935'000
+322)       kraabbkabb       57'105'000
+323)       kraabbkaab       33'840'000
+324)      kraabbkaabb       99'405'000
+325)             kppk           61'965
+326)            kppkb          426'870
+327)            kppka          275'400
+328)           kppkbb        1'259'955
+329)           kppkab        1'893'375
+330)           kppkaa          481'950
+331)          kppkabb        5'576'850
+332)          kppkaab        3'304'800
+333)         kppkaabb        9'707'850
+334)            kppbk          426'870
+335)           kppbkb        2'940'660
+336)           kppbka        1'897'200
+337)          kppbkbb        8'679'690
+338)          kppbkab       13'043'250
+339)          kppbkaa        3'320'100
+340)         kppbkabb       38'418'300
+341)         kppbkaab       22'766'400
+342)        kppbkaabb       66'876'300
+343)            kppak          275'400
+344)           kppakb        1'897'200
+345)           kppaka        1'224'000
+346)          kppakbb        5'599'800
+347)          kppakab        8'415'000
+348)          kppakaa        2'142'000
+349)         kppakabb       24'786'000
+350)         kppakaab       14'688'000
+351)        kppakaabb       43'146'000
+352)           kppbbk        1'259'955
+353)          kppbbkb        8'679'690
+354)          kppbbka        5'599'800
+355)         kppbbkbb       25'619'085
+356)         kppbbkab       38'498'625
+357)         kppbbkaa        9'799'650
+358)        kppbbkabb      113'395'950
+359)        kppbbkaab       67'197'600
+360)       kppbbkaabb      197'392'950
+361)           kppabk        1'893'375
+362)          kppabkb       13'043'250
+363)          kppabka        8'415'000
+364)         kppabkbb       38'498'625
+365)         kppabkab       57'853'125
+366)         kppabkaa       14'726'250
+367)        kppabkabb      170'403'750
+368)        kppabkaab      100'980'000
+369)       kppabkaabb      296'628'750
+370)           kppaak          481'950
+371)          kppaakb        3'320'100
+372)          kppaaka        2'142'000
+373)         kppaakbb        9'799'650
+374)         kppaakab       14'726'250
+375)         kppaakaa        3'748'500
+376)        kppaakabb       43'375'500
+377)        kppaakaab       25'704'000
+378)       kppaakaabb       75'505'500
+379)          kppabbk        5'576'850
+380)         kppabbkb       38'418'300
+381)         kppabbka       24'786'000
+382)        kppabbkbb      113'395'950
+383)        kppabbkab      170'403'750
+384)        kppabbkaa       43'375'500
+385)       kppabbkabb      501'916'500
+386)       kppabbkaab      297'432'000
+387)      kppabbkaabb      873'706'500
+388)          kppaabk        3'304'800
+389)         kppaabkb       22'766'400
+390)         kppaabka       14'688'000
+391)        kppaabkbb       67'197'600
+392)        kppaabkab      100'980'000
+393)        kppaabkaa       25'704'000
+394)       kppaabkabb      297'432'000
+395)       kppaabkaab      176'256'000
+396)      kppaabkaabb      517'752'000
+397)         kppaabbk        9'707'850
+398)        kppaabbkb       66'876'300
+399)        kppaabbka       43'146'000
+400)       kppaabbkbb      197'392'950
+401)       kppaabbkab      296'628'750
+402)       kppaabbkaa       75'505'500
+403)      kppaabbkabb      873'706'500
+404)      kppaabbkaab      517'752'000
+405)     kppaabbkaabb    1'520'896'500
+406)             knpk          222'750
+407)            knpkb        1'534'500
+408)            knpka          990'000
+409)           knpkbb        4'529'250
+410)           knpkab        6'806'250
+411)           knpkaa        1'732'500
+412)          knpkabb       20'047'500
+413)          knpkaab       11'880'000
+414)         knpkaabb       34'897'500
+415)            knpbk        1'534'500
+416)           knpbkb       10'571'000
+417)           knpbka        6'820'000
+418)          knpbkbb       31'201'500
+419)          knpbkab       46'887'500
+420)          knpbkaa       11'935'000
+421)         knpbkabb      138'105'000
+422)         knpbkaab       81'840'000
+423)        knpbkaabb      240'405'000
+424)            knpak          990'000
+425)           knpakb        6'820'000
+426)           knpaka        4'400'000
+427)          knpakbb       20'130'000
+428)          knpakab       30'250'000
+429)          knpakaa        7'700'000
+430)         knpakabb       89'100'000
+431)         knpakaab       52'800'000
+432)        knpakaabb      155'100'000
+433)           knpbbk        4'529'250
+434)          knpbbkb       31'201'500
+435)          knpbbka       20'130'000
+436)         knpbbkbb       92'094'750
+437)         knpbbkab      138'393'750
+438)         knpbbkaa       35'227'500
+439)        knpbbkabb      407'632'500
+440)        knpbbkaab      241'560'000
+441)       knpbbkaabb      709'582'500
+442)           knpabk        6'806'250
+443)          knpabkb       46'887'500
+444)          knpabka       30'250'000
+445)         knpabkbb      138'393'750
+446)         knpabkab      207'968'750
+447)         knpabkaa       52'937'500
+448)        knpabkabb      612'562'500
+449)        knpabkaab      363'000'000
+450)       knpabkaabb    1'066'312'500
+451)           knpaak        1'732'500
+452)          knpaakb       11'935'000
+453)          knpaaka        7'700'000
+454)         knpaakbb       35'227'500
+455)         knpaakab       52'937'500
+456)         knpaakaa       13'475'000
+457)        knpaakabb      155'925'000
+458)        knpaakaab       92'400'000
+459)       knpaakaabb      271'425'000
+460)          knpabbk       20'047'500
+461)         knpabbkb      138'105'000
+462)         knpabbka       89'100'000
+463)        knpabbkbb      407'632'500
+464)        knpabbkab      612'562'500
+465)        knpabbkaa      155'925'000
+466)       knpabbkabb    1'804'275'000
+467)       knpabbkaab    1'069'200'000
+468)      knpabbkaabb    3'140'775'000
+469)          knpaabk       11'880'000
+470)         knpaabkb       81'840'000
+471)         knpaabka       52'800'000
+472)        knpaabkbb      241'560'000
+473)        knpaabkab      363'000'000
+474)        knpaabkaa       92'400'000
+475)       knpaabkabb    1'069'200'000
+476)       knpaabkaab      633'600'000
+477)      knpaabkaabb    1'861'200'000
+478)         knpaabbk       34'897'500
+479)        knpaabbkb      240'405'000
+480)        knpaabbka      155'100'000
+481)       knpaabbkbb      709'582'500
+482)       knpaabbkab    1'066'312'500
+483)       knpaabbkaa      271'425'000
+484)      knpaabbkabb    3'140'775'000
+485)      knpaabbkaab    1'861'200'000
+486)     knpaabbkaabb    5'467'275'000
+487)             knnk          165'645
+488)             kcpk          222'750
+489)            knnkb        1'141'110
+490)            kcpkb        1'534'500
+491)            kcpka          990'000
+492)            knnka          736'200
+493)           kcpkbb        4'529'250
+494)           knnkbb        3'368'115
+495)           knnkab        5'061'375
+496)           kcpkab        6'806'250
+497)           kcpkaa        1'732'500
+498)           knnkaa        1'288'350
+499)          knnkabb       14'908'050
+500)          kcpkabb       20'047'500
+501)          kcpkaab       11'880'000
+502)          knnkaab        8'834'400
+503)         knnkaabb       25'951'050
+504)         kcpkaabb       34'897'500
+505)            knnbk        1'141'110
+506)            kcpbk        1'534'500
+507)           kcpbkb       10'571'000
+508)           knnbkb        7'860'980
+509)           knnbka        5'071'600
+510)           kcpbka        6'820'000
+511)          knnbkbb       23'202'570
+512)          kcpbkbb       31'201'500
+513)          knnbkab       34'867'250
+514)          kcpbkab       46'887'500
+515)          knnbkaa        8'875'300
+516)          kcpbkaa       11'935'000
+517)         kcpbkabb      138'105'000
+518)         knnbkabb      102'699'900
+519)         kcpbkaab       81'840'000
+520)         knnbkaab       60'859'200
+521)        knnbkaabb      178'773'900
+522)        kcpbkaabb      240'405'000
+523)            kcpak          990'000
+524)            knnak          736'200
+525)           knnakb        5'071'600
+526)           kcpakb        6'820'000
+527)           kcpaka        4'400'000
+528)           knnaka        3'272'000
+529)          knnakbb       14'969'400
+530)          kcpakbb       20'130'000
+531)          knnakab       22'495'000
+532)          kcpakab       30'250'000
+533)          kcpakaa        7'700'000
+534)          knnakaa        5'726'000
+535)         knnakabb       66'258'000
+536)         kcpakabb       89'100'000
+537)         kcpakaab       52'800'000
+538)         knnakaab       39'264'000
+539)        kcpakaabb      155'100'000
+540)        knnakaabb      115'338'000
+541)           kcpbbk        4'529'250
+542)           knnbbk        3'368'115
+543)          kcpbbkb       31'201'500
+544)          knnbbkb       23'202'570
+545)          kcpbbka       20'130'000
+546)          knnbbka       14'969'400
+547)         knnbbkbb       68'485'005
+548)         kcpbbkbb       92'094'750
+549)         knnbbkab      102'914'625
+550)         kcpbbkab      138'393'750
+551)         kcpbbkaa       35'227'500
+552)         knnbbkaa       26'196'450
+553)        kcpbbkabb      407'632'500
+554)        knnbbkabb      303'130'350
+555)        kcpbbkaab      241'560'000
+556)        knnbbkaab      179'632'800
+557)       kcpbbkaabb      709'582'500
+558)       knnbbkaabb      527'671'350
+559)           knnabk        5'061'375
+560)           kcpabk        6'806'250
+561)          knnabkb       34'867'250
+562)          kcpabkb       46'887'500
+563)          knnabka       22'495'000
+564)          kcpabka       30'250'000
+565)         knnabkbb      102'914'625
+566)         kcpabkbb      138'393'750
+567)         kcpabkab      207'968'750
+568)         knnabkab      154'653'125
+569)         knnabkaa       39'366'250
+570)         kcpabkaa       52'937'500
+571)        kcpabkabb      612'562'500
+572)        knnabkabb      455'523'750
+573)        kcpabkaab      363'000'000
+574)        knnabkaab      269'940'000
+575)       knnabkaabb      792'948'750
+576)       kcpabkaabb    1'066'312'500
+577)           kcpaak        1'732'500
+578)           knnaak        1'288'350
+579)          knnaakb        8'875'300
+580)          kcpaakb       11'935'000
+581)          kcpaaka        7'700'000
+582)          knnaaka        5'726'000
+583)         knnaakbb       26'196'450
+584)         kcpaakbb       35'227'500
+585)         kcpaakab       52'937'500
+586)         knnaakab       39'366'250
+587)         knnaakaa       10'020'500
+588)         kcpaakaa       13'475'000
+589)        knnaakabb      115'951'500
+590)        kcpaakabb      155'925'000
+591)        knnaakaab       68'712'000
+592)        kcpaakaab       92'400'000
+593)       kcpaakaabb      271'425'000
+594)       knnaakaabb      201'841'500
+595)          kcpabbk       20'047'500
+596)          knnabbk       14'908'050
+597)         kcpabbkb      138'105'000
+598)         knnabbkb      102'699'900
+599)         kcpabbka       89'100'000
+600)         knnabbka       66'258'000
+601)        kcpabbkbb      407'632'500
+602)        knnabbkbb      303'130'350
+603)        knnabbkab      455'523'750
+604)        kcpabbkab      612'562'500
+605)        knnabbkaa      115'951'500
+606)        kcpabbkaa      155'925'000
+607)       knnabbkabb    1'341'724'500
+608)       kcpabbkabb    1'804'275'000
+609)       kcpabbkaab    1'069'200'000
+610)       knnabbkaab      795'096'000
+611)      kcpabbkaabb    3'140'775'000
+612)      knnabbkaabb    2'335'594'500
+613)          knnaabk        8'834'400
+614)          kcpaabk       11'880'000
+615)         knnaabkb       60'859'200
+616)         kcpaabkb       81'840'000
+617)         knnaabka       39'264'000
+618)         kcpaabka       52'800'000
+619)        kcpaabkbb      241'560'000
+620)        knnaabkbb      179'632'800
+621)        knnaabkab      269'940'000
+622)        kcpaabkab      363'000'000
+623)        knnaabkaa       68'712'000
+624)        kcpaabkaa       92'400'000
+625)       knnaabkabb      795'096'000
+626)       kcpaabkabb    1'069'200'000
+627)       kcpaabkaab      633'600'000
+628)       knnaabkaab      471'168'000
+629)      kcpaabkaabb    1'861'200'000
+630)      knnaabkaabb    1'384'056'000
+631)         knnaabbk       25'951'050
+632)         kcpaabbk       34'897'500
+633)        knnaabbkb      178'773'900
+634)        kcpaabbkb      240'405'000
+635)        knnaabbka      115'338'000
+636)        kcpaabbka      155'100'000
+637)       knnaabbkbb      527'671'350
+638)       kcpaabbkbb      709'582'500
+639)       knnaabbkab      792'948'750
+640)       kcpaabbkab    1'066'312'500
+641)       knnaabbkaa      201'841'500
+642)       kcpaabbkaa      271'425'000
+643)      kcpaabbkabb    3'140'775'000
+644)      knnaabbkabb    2'335'594'500
+645)      knnaabbkaab    1'384'056'000
+646)      kcpaabbkaab    1'861'200'000
+647)     kcpaabbkaabb    5'467'275'000
+648)     knnaabbkaabb    4'065'664'500
+649)             kcnk          364'500
+650)            kcnkb        2'511'000
+651)            kcnka        1'620'000
+652)           kcnkbb        7'411'500
+653)           kcnkab       11'137'500
+654)           kcnkaa        2'835'000
+655)          kcnkabb       32'805'000
+656)          kcnkaab       19'440'000
+657)         kcnkaabb       57'105'000
+658)            kcnbk        2'511'000
+659)           kcnbkb       17'298'000
+660)           kcnbka       11'160'000
+661)          kcnbkbb       51'057'000
+662)          kcnbkab       76'725'000
+663)          kcnbkaa       19'530'000
+664)         kcnbkabb      225'990'000
+665)         kcnbkaab      133'920'000
+666)        kcnbkaabb      393'390'000
+667)            kcnak        1'620'000
+668)           kcnakb       11'160'000
+669)           kcnaka        7'200'000
+670)          kcnakbb       32'940'000
+671)          kcnakab       49'500'000
+672)          kcnakaa       12'600'000
+673)         kcnakabb      145'800'000
+674)         kcnakaab       86'400'000
+675)        kcnakaabb      253'800'000
+676)           kcnbbk        7'411'500
+677)          kcnbbkb       51'057'000
+678)          kcnbbka       32'940'000
+679)         kcnbbkbb      150'700'500
+680)         kcnbbkab      226'462'500
+681)         kcnbbkaa       57'645'000
+682)        kcnbbkabb      667'035'000
+683)        kcnbbkaab      395'280'000
+684)       kcnbbkaabb    1'161'135'000
+685)           kcnabk       11'137'500
+686)          kcnabkb       76'725'000
+687)          kcnabka       49'500'000
+688)         kcnabkbb      226'462'500
+689)         kcnabkab      340'312'500
+690)         kcnabkaa       86'625'000
+691)        kcnabkabb    1'002'375'000
+692)        kcnabkaab      594'000'000
+693)       kcnabkaabb    1'744'875'000
+694)           kcnaak        2'835'000
+695)          kcnaakb       19'530'000
+696)          kcnaaka       12'600'000
+697)         kcnaakbb       57'645'000
+698)         kcnaakab       86'625'000
+699)         kcnaakaa       22'050'000
+700)        kcnaakabb      255'150'000
+701)        kcnaakaab      151'200'000
+702)       kcnaakaabb      444'150'000
+703)          kcnabbk       32'805'000
+704)         kcnabbkb      225'990'000
+705)         kcnabbka      145'800'000
+706)        kcnabbkbb      667'035'000
+707)        kcnabbkab    1'002'375'000
+708)        kcnabbkaa      255'150'000
+709)       kcnabbkabb    2'952'450'000
+710)       kcnabbkaab    1'749'600'000
+711)      kcnabbkaabb    5'139'450'000
+712)          kcnaabk       19'440'000
+713)         kcnaabkb      133'920'000
+714)         kcnaabka       86'400'000
+715)        kcnaabkbb      395'280'000
+716)        kcnaabkab      594'000'000
+717)        kcnaabkaa      151'200'000
+718)       kcnaabkabb    1'749'600'000
+719)       kcnaabkaab    1'036'800'000
+720)      kcnaabkaabb    3'045'600'000
+721)         kcnaabbk       57'105'000
+722)        kcnaabbkb      393'390'000
+723)        kcnaabbka      253'800'000
+724)       kcnaabbkbb    1'161'135'000
+725)       kcnaabbkab    1'744'875'000
+726)       kcnaabbkaa      444'150'000
+727)      kcnaabbkabb    5'139'450'000
+728)      kcnaabbkaab    3'045'600'000
+729)     kcnaabbkaabb    8'946'450'000
+730)             kcck          165'645
+731)            kcckb        1'141'110
+732)            kccka          736'200
+733)           kcckbb        3'368'115
+734)           kcckab        5'061'375
+735)           kcckaa        1'288'350
+736)          kcckabb       14'908'050
+737)          kcckaab        8'834'400
+738)         kcckaabb       25'951'050
+739)            kccbk        1'141'110
+740)           kccbkb        7'860'980
+741)           kccbka        5'071'600
+742)          kccbkbb       23'202'570
+743)          kccbkab       34'867'250
+744)          kccbkaa        8'875'300
+745)         kccbkabb      102'699'900
+746)         kccbkaab       60'859'200
+747)        kccbkaabb      178'773'900
+748)            kccak          736'200
+749)           kccakb        5'071'600
+750)           kccaka        3'272'000
+751)          kccakbb       14'969'400
+752)          kccakab       22'495'000
+753)          kccakaa        5'726'000
+754)         kccakabb       66'258'000
+755)         kccakaab       39'264'000
+756)        kccakaabb      115'338'000
+757)           kccbbk        3'368'115
+758)          kccbbkb       23'202'570
+759)          kccbbka       14'969'400
+760)         kccbbkbb       68'485'005
+761)         kccbbkab      102'914'625
+762)         kccbbkaa       26'196'450
+763)        kccbbkabb      303'130'350
+764)        kccbbkaab      179'632'800
+765)       kccbbkaabb      527'671'350
+766)           kccabk        5'061'375
+767)          kccabkb       34'867'250
+768)          kccabka       22'495'000
+769)         kccabkbb      102'914'625
+770)         kccabkab      154'653'125
+771)         kccabkaa       39'366'250
+772)        kccabkabb      455'523'750
+773)        kccabkaab      269'940'000
+774)       kccabkaabb      792'948'750
+775)           kccaak        1'288'350
+776)          kccaakb        8'875'300
+777)          kccaaka        5'726'000
+778)         kccaakbb       26'196'450
+779)         kccaakab       39'366'250
+780)         kccaakaa       10'020'500
+781)        kccaakabb      115'951'500
+782)        kccaakaab       68'712'000
+783)       kccaakaabb      201'841'500
+784)          kccabbk       14'908'050
+785)         kccabbkb      102'699'900
+786)         kccabbka       66'258'000
+787)        kccabbkbb      303'130'350
+788)        kccabbkab      455'523'750
+789)        kccabbkaa      115'951'500
+790)       kccabbkabb    1'341'724'500
+791)       kccabbkaab      795'096'000
+792)      kccabbkaabb    2'335'594'500
+793)          kccaabk        8'834'400
+794)         kccaabkb       60'859'200
+795)         kccaabka       39'264'000
+796)        kccaabkbb      179'632'800
+797)        kccaabkab      269'940'000
+798)        kccaabkaa       68'712'000
+799)       kccaabkabb      795'096'000
+800)       kccaabkaab      471'168'000
+801)      kccaabkaabb    1'384'056'000
+802)         kccaabbk       25'951'050
+803)        kccaabbkb      178'773'900
+804)        kccaabbka      115'338'000
+805)       kccaabbkbb      527'671'350
+806)       kccaabbkab      792'948'750
+807)       kccaabbkaa      201'841'500
+808)      kccaabbkabb    2'335'594'500
+809)      kccaabbkaab    1'384'056'000
+810)     kccaabbkaabb    4'065'664'500
+
+Total files: 810, total size: 167'635'176'156

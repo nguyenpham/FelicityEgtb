@@ -19,13 +19,11 @@
 *.filters
 commit.sh
 
-*.pro.user
-*.pro.user.*
-*.pro.user*
 *.zip
 
 ./exect/
 ./exect/*
+fegtb
 
 x64
 Debug

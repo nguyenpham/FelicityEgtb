@@ -45,6 +45,10 @@ Conclusion: their speeds are quite similar. We can use any of them.
 Attempt 9:
 Position indexes work for both Chess and Xiangqi/Jeiqi
 
+Attempt 10:
+Calculate position indexes for Xiangqi/Jeiqi
+
+
 Terms of use
 ---------------
 

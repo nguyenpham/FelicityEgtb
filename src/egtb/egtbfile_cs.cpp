@@ -20,8 +20,8 @@
 #include <ctime>
 
 #include "egtb.h"
-#include "egtbFile.h"
-#include "egtbKey.h"
+#include "egtbfile.h"
+#include "egtbkey.h"
 
 #include "../base/funcs.h"
 
@@ -38,9 +38,8 @@ extern int *kk_2, *kk_8;
 i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, int* pieceCount, u16 order)
 {
     if (pieceCount) {
-        memset(pieceCount, 0, 2 * 7 * sizeof(int));
-        pieceCount[KING] = 1;
-        pieceCount[6 + KING] = 1;
+        memset(pieceCount, 0, 2 * 10 * sizeof(int));
+        pieceCount[KING] = pieceCount[KING + 10] = 1;
     }
     
     static const int sizeArrX[] = { EGTB_SIZE_X, EGTB_SIZE_XX, EGTB_SIZE_XXX, EGTB_SIZE_XXXX, EGTB_SIZE_XXXXX, 0, 0 };
@@ -49,7 +48,7 @@ i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
     i64 sz = 1;
     auto side = Side::white;
     auto k = 0;
-    for (auto i = 0, sd = W, atkCnt = 0, d = 6; i < (int)name.size(); i++) {
+    for (auto i = 0, sd = W, atkCnt = 0, d = 10; i < (int)name.size(); i++) {
         auto ch = name[i];
         auto type = Funcs::charactorToPieceType(ch);
         assert(type != PieceType::empty);

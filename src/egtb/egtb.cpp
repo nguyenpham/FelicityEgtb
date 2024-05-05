@@ -152,9 +152,9 @@ namespace fegtb {
         auto *s = src;
         auto p = dest;
 
-        for(int i = 0; i < blocknum; i++) {
-            int blocksz = (blocktable[i] & ~EGTB_UNCOMPRESS_BIT) - (i == 0 ? 0 : (blocktable[i - 1] & ~EGTB_UNCOMPRESS_BIT));
-            int uncompressed = blocktable[i] & EGTB_UNCOMPRESS_BIT;
+        for(auto i = 0; i < blocknum; i++) {
+            auto blocksz = (blocktable[i] & ~EGTB_UNCOMPRESS_BIT) - (i == 0 ? 0 : (blocktable[i - 1] & ~EGTB_UNCOMPRESS_BIT));
+            auto uncompressed = blocktable[i] & EGTB_UNCOMPRESS_BIT;
 
             if (uncompressed) {
                 memcpy(p, s, blocksz);

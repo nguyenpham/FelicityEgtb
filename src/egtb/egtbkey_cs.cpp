@@ -25,8 +25,9 @@ using namespace bslib;
 
 #ifdef _FELICITY_CHESS_
 
+//extern const int exchangePieceValue[8];
 
-static const int exchangePieceValue[7] = { -1, 10000, 1100, 500, 300, 250, 100 };
+static const int exchangePieceValue[8] = { -1, 10000, 1100, 500, 300, 250, 100, 0 };
 
 extern const int tb_kIdxToPos[10];
 extern int *kk_2, *kk_8;

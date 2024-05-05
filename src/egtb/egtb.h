@@ -96,6 +96,56 @@ const int64_t   EGTB_LARGE_COMPRESS_SIZE  = (EGTB_UNCOMPRESS_BIT_FOR_LARGE_COMPR
 const static int COPYRIGHT_BUFSZ = 64;
 
 
+//////////////////////////////////////////////////////////////////////
+
+#define TB_ILLEGAL              0
+#define TB_UNSET                1
+#define TB_MISSING              2
+#define TB_WINING               3
+#define TB_UNKNOWN              4
+#define TB_DRAW                 5
+
+#define TB_START_MATING         (TB_DRAW + 1)
+#define TB_START_LOSING         130
+
+//#define TB_SPECIAL_DRAW         0
+//#define TB_SPECIAL_START_MATING (TB_SPECIAL_DRAW + 1)
+//#define TB_SPECIAL_START_LOSING 128
+
+
+#define TB_PERPETUAL_CHECKED                127
+#define TB_PERPETUAL_CHECKED_EVASION        128
+#define TB_PERPETUAL_EVASION                129
+
+//////////////////////////////////////////////////////////////////////
+
+#define EGTB_START_MATING                   (TB_DRAW + 1)
+#define EGTB_START_LOSING                   130
+
+
+#define EGTB_SCORE_DRAW                         0
+#define EGTB_SCORE_MATE                         1000
+#define EGTB_SCORE_WINNING                      1003
+
+#define EGTB_SCORE_ILLEGAL                      1004
+#define EGTB_SCORE_UNKNOWN                      1005
+#define EGTB_SCORE_MISSING                      1006
+
+#define EGTB_SCORE_PERPETUAL_CHECKED            1010
+#define EGTB_SCORE_PERPETUAL_CHECKED_EVASION    1011
+#define EGTB_SCORE_PERPETUAL_EVASION            1012
+
+//#define EGTB_SCORE_START_CHECKING               EGTB_SCORE_PERPETUAL_EVASION
+//#define EGTB_SCORE_START_EVASION                EGTB_SCORE_PERPETUAL_CHECKED
+
+#define EGTB_SCORE_PERPETUAL_MATE               2000
+#define EGTB_SCORE_PERPETUAL_BEGIN              1100
+
+//////////////////////////////////////////////////////////////////////
+
+
+
+
     /*
      * The rank and file are actually not full file & rank but only internal bits 9-2=7 & 10-2=8
      */
@@ -207,13 +257,13 @@ enum EgtbIdx {
 #define getRow(pos)                         ((pos)/9)
 #define getCol(pos)                         ((pos)%9)
 
-const int TB_PERPETUAL_CHECKED          = 127;
-const int TB_PERPETUAL_CHECKED_EVASION  = 128;
-const int TB_PERPETUAL_EVASION          = 129;
-
-const int EGTB_SCORE_PERPETUAL_CHECKED            = 1010;
-const int EGTB_SCORE_PERPETUAL_CHECKED_EVASION    = 1011;
-const int EGTB_SCORE_PERPETUAL_EVASION            = 1012;
+//const int TB_PERPETUAL_CHECKED          = 127;
+//const int TB_PERPETUAL_CHECKED_EVASION  = 128;
+//const int TB_PERPETUAL_EVASION          = 129;
+//
+//const int EGTB_SCORE_PERPETUAL_CHECKED            = 1010;
+//const int EGTB_SCORE_PERPETUAL_CHECKED_EVASION    = 1011;
+//const int EGTB_SCORE_PERPETUAL_EVASION            = 1012;
 
 const int EGTB_SIZE_X_HALF              = 50;
 const int EGTB_SIZE_X                   = 90;

@@ -29,23 +29,6 @@ using namespace fegtb;
 using namespace bslib;
 
 
-//////////////////////////////////////////////////////////////////////
-
-#define TB_ILLEGAL              0
-#define TB_UNSET                1
-#define TB_MISSING              2
-#define TB_WINING               3
-#define TB_UNKNOWN              4
-#define TB_DRAW                 5
-
-#define TB_START_MATING         (TB_DRAW + 1)
-#define TB_START_LOSING         130
-
-#define TB_SPECIAL_DRAW         0
-#define TB_SPECIAL_START_MATING (TB_SPECIAL_DRAW + 1)
-#define TB_SPECIAL_START_LOSING 128
-
-//////////////////////////////////////////////////////////////////////
 
 const char* EgtbFile::egtbFileExtensions[] = {
     ".xtb", ".ntb", ".ltb", ".tmt", nullptr
@@ -132,7 +115,7 @@ void EgtbFile::removeBuffers() {
 
 void EgtbFile::merge(EgtbFile& otherEgtbFile)
 {
-    for(int sd = 0; sd < 2; sd++) {
+    for(auto sd = 0; sd < 2; sd++) {
         Side side = static_cast<Side>(sd);
 
         if (header == nullptr) {
@@ -208,7 +191,7 @@ bool EgtbFile::preload(const std::string& path, EgtbMemMode _memMode, EgtbLoadMo
             return false;
         }
         Funcs::toLower(theName);
-        int loadingSd = theName.find("w") != std::string::npos ? W : B;
+        auto loadingSd = theName.find("w") != std::string::npos ? W : B;
         setPath(path, loadingSd);
 
         theName = theName.substr(0, theName.length() - 1); // remove W / B
@@ -219,7 +202,7 @@ bool EgtbFile::preload(const std::string& path, EgtbMemMode _memMode, EgtbLoadMo
         return true;
     }
 
-    bool r = loadHeaderAndTable(path);
+    auto r = loadHeaderAndTable(path);
     loadStatus = r ? EgtbLoadStatus::loaded : EgtbLoadStatus::error;
     return r;
 }
@@ -229,7 +212,7 @@ bool EgtbFile::loadHeaderAndTable(const std::string& path) {
     assert(path.size() > 6);
     std::ifstream file(path, std::ios::binary);
 
-    bool r = false;
+    auto r = false;
     if (file.is_open()) {
 
         // if there are files for both sides, header has been created already
@@ -294,10 +277,6 @@ bool EgtbFile::loadHeaderAndTable(const std::string& path) {
 bool EgtbFile::readCompressTable(std::ifstream& file, Side loadingSide) {
     auto sd = static_cast<int>(loadingSide);
     assert(compressBlockTables[sd] == nullptr);
-    // Create & read compress block table
-//    auto blockCnt = getCompresseBlockCount();
-//    int blockTableItemSize = (header->getProperty() & (EGTB_PROP_LARGE_COMPRESSTABLE_B << sd)) != 0 ? 5 : 4;
-//    int blockTableSz = blockCnt * blockTableItemSize; //sizeof(u32);
     
     auto blockTableSz = getBlockTableSize(sd);
     compressBlockTables[sd] = (u8*)malloc(blockTableSz + 64);
@@ -389,7 +368,7 @@ void EgtbFile::checkToLoadHeaderAndTable(Side side) {
         return;
     }
 
-    bool r = true;
+    auto r = true;
     if (sd < 2) {
         assert(!path[sd].empty());
         r = loadHeaderAndTable(path[sd]);
@@ -408,7 +387,7 @@ void EgtbFile::checkToLoadHeaderAndTable(Side side) {
 bool EgtbFile::forceLoadHeaderAndTable(Side side) {
     std::lock_guard<std::mutex> thelock(mtx);
 
-    int sd = static_cast<int>(side);
+    auto sd = static_cast<int>(side);
     bool r = !path[sd].empty() && loadHeaderAndTable(path[sd]);
     loadStatus = r ? EgtbLoadStatus::loaded : EgtbLoadStatus::error;
     return r;
@@ -421,7 +400,7 @@ bool EgtbFile::readBuf(i64 idx, int sd)
         createBuf(bufSz, sd);
     }
 
-    bool r = false;
+    auto r = false;
     std::ifstream file(getPath(sd), std::ios::binary);
     if (file) {
         if (memMode == EgtbMemMode::all) {
@@ -599,7 +578,7 @@ i64 EgtbFile::setupIdxComputing(const std::string& name, int order)
     size = parseAttr(name, egtbIdxArray, (int*)pieceCount, order);
 
     attackerCount = 0;
-    for(int t = 3; t < 7; t++) {
+    for(auto t = 3; t < 7; t++) {
         attackerCount += pieceCount[0][t] + pieceCount[1][t];
     }
     return size;
@@ -669,6 +648,22 @@ std::vector<int> EgtbFile::order2Vec(int order)
 
     return vec;
 }
+
+bool EgtbFile::verifyAKey(EgtbBoard& board, i64 idx) const
+{
+    /// OK if it cann't setup the board
+    if (!setupBoard(board, idx, FlipMode::none, Side::white)) {
+        return true;
+    }
+    
+    if (!board.isValid()) {
+        return false;
+    }
+    
+    return getKey(board).key == idx;
+}
+
+
 bool EgtbFile::verifyKeys(bool printRandom) const
 {
     EgtbBoard board;
@@ -681,29 +676,21 @@ bool EgtbFile::verifyKeys(bool printRandom) const
     int64_t cnt = 0;
     
     for (int64_t idx = 0; idx < sz; ++idx) {
-        if (!setupBoard(board, idx, flip, firstsider)) {
-            continue;
+        auto ok = verifyAKey(board, idx);
+
+        if (ok) {
+            cnt++;
         }
         
-        cnt++;
-        auto valid = board.isValid();
-        
-        auto prt = !valid || (printRandom && arc4random() % 500000 == 0);
+        auto prt = !ok || (printRandom && arc4random() % 500000 == 0);
         if (prt) {
             auto msg = std::string("idx: ") + std::to_string(idx);
             board.printOut(msg);
         }
-        if (!valid) {
-            std::cout << "The board is invalid, idx = " << idx << std::endl;
+        if (!ok) {
+            std::cout << "The board is invalid or not matched keys, idx = " << idx << std::endl;
             return false;
         }
-        
-        auto rec = getKey(board);
-        if (rec.key != idx) {
-            std::cout << "Indexes are not matched, idx = " << idx << std::endl;
-            return false;
-        }
-        
     }
     
     std::cout << " passed. Valid keys: " << cnt << std::endl;

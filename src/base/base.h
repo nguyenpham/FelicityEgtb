@@ -216,6 +216,7 @@ namespace bslib {
         virtual void createFullMoves(std::vector<MoveFull>& moveList, MoveFull m) const = 0;
 
         virtual int attackerCnt() const;
+        virtual bool hasAttackers() const;
         virtual void setupPieceCount() {}
 
         virtual bool isValidPromotion(int promotion, Side side) const = 0;
@@ -244,6 +245,8 @@ namespace bslib {
 
         MoveFull createFullMove(int from, int dest, PieceType promote) const;
         virtual bool isLegalMove(int from, int dest, PieceType promotion = PieceType::empty);
+        
+        virtual bool isLegal() const = 0;
 
         void genLegalOnly(std::vector<MoveFull>& moveList, Side attackerSide);
         void genLegal(std::vector<MoveFull>& moves, Side side, int from = -1, int dest = -1, PieceType promotion = PieceType::empty);

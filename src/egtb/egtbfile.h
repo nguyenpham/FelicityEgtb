@@ -144,6 +144,16 @@ public:
     int getDtm_max() const { return dtm_max; }
     void setDtm_max(int m) { dtm_max = m; }
 
+    void setName(const std::string& s)
+    {
+        memset(name, 0, sizeof(name));
+    #ifdef _WIN32
+        strncpy_s(name, sizeof(name), s.c_str(), s.length());
+    #else
+        strncpy(name, s.c_str(), s.length());
+    #endif
+    }
+
 };
 
 
@@ -225,8 +235,10 @@ public:
     }
 
     static std::vector<int> order2Vec(int order);
+
     bool verifyKeys(bool printRandom = false) const;
-    
+    bool verifyAKey(EgtbBoard& board, i64 idx) const;
+
 protected:
     EgtbFileHeader  *header = nullptr;
     bool            bothArmed;
@@ -234,7 +246,7 @@ protected:
     i64             size;
     i64             startpos[2], endpos[2];
     std::mutex      mtx, sdmtx[2];
-    u32             pieceCount[2][7];
+    u32             pieceCount[2][10];
     int             attackerCount;
     char*           pBuf[2];
     u8*             compressBlockTables[2];

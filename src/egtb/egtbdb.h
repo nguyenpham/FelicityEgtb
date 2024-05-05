@@ -71,7 +71,7 @@ namespace fegtb {
 
         void closeAll();
 
-    private:
+    protected:
         void addEgtbFile(EgtbFile *egtbFile);
 
         int getScoreOnePly(EgtbBoard& board, bslib::Side side);

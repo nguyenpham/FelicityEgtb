@@ -44,7 +44,7 @@ std::string BoardCore::getStartingFen() const
 
 std::string BoardCore::getFen(bool enpassantLegal) const
 {
-    auto k = std::max<int>(fullMoveCnt, (histList.size() + 1) / 2);
+    auto k = std::max<int>(fullMoveCnt, (int)(histList.size() + 1) / 2);
     return getFen(enpassantLegal, quietCnt / 2, k);
 }
 
@@ -67,11 +67,35 @@ void BoardCore::newGame(std::string fen)
 int BoardCore::attackerCnt() const
 {
     auto cnt = 0;
+    
+#ifdef _FELICItY_CHESS
+    auto fromPiece = PieceType::queen;
+#else
+    auto fromPiece = PieceType::rook;
+#endif
+    
     for(auto && piece : pieces) {
-        if (!piece.isEmpty() && piece.type != PieceType::king) cnt++;
+        if (piece.type >= PieceType::king) cnt++;
     }
     return cnt;
 }
+
+bool BoardCore::hasAttackers() const
+{
+#ifdef _FELICItY_CHESS
+    auto i = 1; /// Queen - ignored King
+#else
+    auto i = 5; /// Rook, ignored King, 2 Avisors, 2 Elephants
+#endif
+
+    for (; i < 16; ++i) {
+        if (pieceList[0][i] >= 0 || pieceList[0][i] >= 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 bool BoardCore::isLegalMove(int from, int dest, PieceType promotion)
 {
@@ -221,9 +245,9 @@ void BoardCore::flip(FlipMode flipMode)
         case FlipMode::horizontal: {
             auto mr = size() / columnCount();
             auto halfc = columnCount() / 2;
-            for(int r = 0; r < mr; r++) {
+            for(auto r = 0; r < mr; r++) {
                 auto pos = r * columnCount();
-                for(int f = 0; f < halfc; f++) {
+                for(auto f = 0; f < halfc; f++) {
                     std::swap(pieces[pos + f], pieces[pos + columnCount() - 1 - f]);
                 }
             }
@@ -234,7 +258,7 @@ void BoardCore::flip(FlipMode flipMode)
         case FlipMode::rotate: {
             auto halfsz = size() / 2;
             auto mr = size() / columnCount();
-            for(int r0 = 0; r0 < halfsz; r0++) {
+            for(auto r0 = 0; r0 < halfsz; r0++) {
                 auto r1 = flipMode == FlipMode::vertical ? (mr - 1 - r0 / columnCount()) * columnCount() + r0 % columnCount() : size() - 1 - r0;
                 std::swap(pieces[r0], pieces[r1]);
                 if (!pieces[r0].isEmpty()) {
@@ -337,13 +361,13 @@ uint64_t BoardCore::perft(int depth, int ply)
 
 
 void BoardCore::pieceList_reset(int *pieceList) {
-    for(int i = 0; i < 16; i++) {
+    for(auto i = 0; i < 16; i++) {
         pieceList[i] = pieceList[16 + i] = -1;
     }
 }
 
 bool BoardCore::pieceList_setEmpty(int *pieceList, int pos) {
-    for (int sd = 0; sd < 2; sd ++) {
+    for (auto sd = 0; sd < 2; sd ++) {
         if (pieceList_setEmpty(pieceList, pos, sd)) {
             return true;
         }
@@ -353,7 +377,7 @@ bool BoardCore::pieceList_setEmpty(int *pieceList, int pos) {
 
 bool BoardCore::pieceList_setEmpty(int *pieceList, int pos, int sd) {
     int d = sd == 0 ? 0 : 16;
-    for(int i = 0; i < 16; i++) {
+    for(auto i = 0; i < 16; i++) {
         if (pieceList[i + d] == pos) {
             pieceList[i + d] = -1;
             return true;
@@ -364,7 +388,13 @@ bool BoardCore::pieceList_setEmpty(int *pieceList, int pos, int sd) {
 }
 
 bool BoardCore::pieceList_isThereAttacker(const int *pieceList) {
-    for(int i = 5; i < 16; i ++) {
+#ifdef _FELICITY_CHESS
+    auto from = 1;   /// ignored King
+#else
+    auto from = 5;   /// ignored King, Advisors, Elephants
+#endif
+    
+    for(auto i = from; i < 16; i ++) {
         if (pieceList[i] >= 0 || pieceList[i + 16] >= 0) return true;
     }
     return false;

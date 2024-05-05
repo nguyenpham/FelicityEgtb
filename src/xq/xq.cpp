@@ -51,7 +51,7 @@ XqBoard::XqBoard(ChessVariant _variant)
     assert(!Funcs::isChessFamily(variant));
 
     pieces.clear();
-    for(int i = 0; i < 90; i++) {
+    for(auto i = 0; i < 90; i++) {
         pieces.push_back(Piece::emptyPiece);
     }
 }
@@ -134,13 +134,34 @@ bool XqBoard::isValid() const
     return b;
 }
 
+/// Two Kings should not face to each other
+bool XqBoard::isLegal() const
+{
+    auto bK = pieceList[0][0]; assert(isPositionValid(bK));
+    auto wK = pieceList[1][0]; assert(isPositionValid(wK));
+    
+    auto f = bK % 9;
+    if (f != wK % 9) {
+        return false;
+    }
+    
+    for(auto x = bK + 9; x < wK; x += 9) {
+        if (!isEmpty(x)) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+
 std::string XqBoard::toString() const
 {
     std::ostringstream stringStream;
 
     stringStream << getFen() << std::endl;
 
-    for (int i = 0; i < 90; i++) {
+    for (auto i = 0; i < 90; i++) {
         auto piece = getPiece(i);
         stringStream << toString(Piece(piece.type, piece.side)) << " ";
 
@@ -763,10 +784,10 @@ std::string XqBoard::toString(const MoveFull& move) const
 int XqBoard::toPieceCount(int* pieceCnt) const
 {
     if (pieceCnt) {
-        memset(pieceCnt, 0, 14 * sizeof(int));
+        memset(pieceCnt, 0, 2 * 10 * sizeof(int));
     }
     auto totalCnt = 0;;
-    for(int i = 0; i < 64; i++) {
+    for(auto i = 0; i < 64; i++) {
         auto piece = getPiece(i);
         if (piece.isEmpty()) continue;
         totalCnt++;

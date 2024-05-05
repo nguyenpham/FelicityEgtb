@@ -155,9 +155,8 @@ i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
     
     /// pieceCount, size
     if (pieceCount) {
-        memset(pieceCount, 0, 2 * 7 * sizeof(int));
-        pieceCount[static_cast<int>(PieceType::king)] = 1;
-        pieceCount[7 + static_cast<int>(PieceType::king)] = 1;
+        memset(pieceCount, 0, sizeof(int) * 2 * 10);
+        pieceCount[KING] = pieceCount[KING + 10] = 1;
     }
 
     i64 sz = 1;
@@ -165,7 +164,7 @@ i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
         auto a = egtbIdxArray[i].idx;
         assert(a != EGTB_IDX_NONE);
         
-        auto pieceCountSd = egtbIdxArray[i].side == Side::white ? 7 : 0;
+        auto pieceCountSd = egtbIdxArray[i].side == Side::white ? 10 : 0;
         auto pieceType = PieceType::empty;
 
         auto cnt = 1, h = 0;
@@ -198,7 +197,7 @@ i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
                 h = EGTB_SIZE_KAE;
                 pieceType = PieceType::advisor;
                 if (pieceCount) {
-                    pieceCount[pieceCountSd + static_cast<int>(PieceType::elephant)] = 1;
+                    pieceCount[pieceCountSd + ELEPHANT] = 1;
                 }
                 break;
 
@@ -206,7 +205,7 @@ i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
                 h = EGTB_SIZE_KAEE;
                 pieceType = PieceType::advisor;
                 if (pieceCount) {
-                    pieceCount[pieceCountSd + static_cast<int>(PieceType::elephant)] = 2;
+                    pieceCount[pieceCountSd + ELEPHANT] = 2;
                 }
                 break;
 
@@ -214,7 +213,7 @@ i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
                 h = EGTB_SIZE_KAAE;
                 pieceType = PieceType::advisor; cnt = 2;
                 if (pieceCount) {
-                    pieceCount[pieceCountSd + static_cast<int>(PieceType::elephant)] = 1;
+                    pieceCount[pieceCountSd + ELEPHANT] = 1;
                 }
                 break;
 
@@ -222,7 +221,7 @@ i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
                 h = EGTB_SIZE_KAAEE;
                 pieceType = PieceType::advisor; cnt = 2;
                 if (pieceCount) {
-                    pieceCount[pieceCountSd + static_cast<int>(PieceType::elephant)] = 2;
+                    pieceCount[pieceCountSd + ELEPHANT] = 2;
                 }
                 break;
 
@@ -275,30 +274,6 @@ i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
                 h = EGTB_SIZE_XX;
                 pieceType = PieceType::rook; cnt = 2;
                 break;
-
-//            case EGTB_IDX_RC:
-//                h = EGTB_SIZE_XY_HALF;
-//                pieceType = PieceType::rook;
-//                if (pieceCount) {
-//                    pieceCount[pieceCountSd + static_cast<int>(PieceType::cannon)] = 1;
-//                }
-//                break;
-//
-//            case EGTB_IDX_RH:
-//                h = EGTB_SIZE_XY_HALF;
-//                pieceType = PieceType::rook;
-//                if (pieceCount) {
-//                    pieceCount[pieceCountSd + static_cast<int>(PieceType::horse)] = 1;
-//                }
-//                break;
-//
-//            case EGTB_IDX_RP:
-//                h = EGTB_SIZE_XP_HALF;
-//                pieceType = PieceType::rook;
-//                if (pieceCount) {
-//                    pieceCount[pieceCountSd + static_cast<int>(PieceType::pawn)] = 1;
-//                }
-//                break;
 
             case EGTB_IDX_CC_HALF:
                 h = EGTB_SIZE_XX_HALF;

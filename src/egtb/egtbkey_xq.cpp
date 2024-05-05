@@ -45,10 +45,11 @@ extern const PieceType egtbPieceListIdxToType[16];
 
 const int egtbPieceListStartIdxByType[8] = { -1, 0, 1, 3, 5, 7, 9, 11 };
 
-static const int exchangePieceValue[9] = { -1, 10000, 200, 200, 1000, 500, 500, 200 };
 
 } // namespace
 
+//extern const int exchangePieceValue[8];
+static const int exchangePieceValue[8] = { -1, 10000, 200, 200, 1000, 500, 500, 200 };
 
 
 extern const PieceType egtbPieceListIdxToType[16];
