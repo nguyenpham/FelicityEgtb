@@ -1,6 +1,13 @@
-Xiangqi Index
+Xiangqi Index for 2 attackers
 ==========
 
+If we ignore all two attackers with Rooks, then all attackers 2-vs-0 should be generating are: CC, CN, NN, CP, NP, PP. The below table shows all 729 endgames with those attackers + all configurations of defenders.
+
+The largest index space is kcnaabbkaabb, almost 9 G. Supposedly we need 1 byte for each side to store one index information so we need 9 GB or 18 GB for both sides. When generating we need to store those information in the memory, including some extra information and some sub-table information (say, kcaabbkaabb, kcnaabbkaab…) thus a computer with 32 GB of memory will be fine.
+
+All those endgames have about 167 G indexes, or 167 x 2 sides x 1 byte = 334 GB for both sides. Suppose we compress them with the ratio about 4 times 0.25) then we need 334/4 = 83.5 GB (about 84 GB) hard disk to store.
+
+We need some good computers with 32 GB memory to generate them. They are not very cheap but affordable for the majority of chess lovers. 84 GB is not a problem to store nowadays. However, that size is still a challenge to share/download online.
 
 All intesting sub endgames for 2 attackers (order - name - index size):
   1)              kpk            2'511
