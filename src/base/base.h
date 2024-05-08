@@ -207,7 +207,6 @@ namespace bslib {
 
         Move flip(const Move& move, FlipMode flipMode) const;
         MoveFull flip(const MoveFull& move, FlipMode flipMode) const;
-        static FlipMode flip(FlipMode oMode, FlipMode flipMode);
 
         virtual int flip(int pos, FlipMode flipMode) const;
         virtual void flip(FlipMode flipMode);
@@ -249,9 +248,22 @@ namespace bslib {
         virtual bool isLegal() const = 0;
 
         void genLegalOnly(std::vector<MoveFull>& moveList, Side attackerSide);
+        std::vector<MoveFull> genLegalOnly(Side attackerSide) {
+            std::vector<MoveFull> moveList;
+            genLegalOnly(moveList, attackerSide);
+            return moveList;
+        }
+
+        
         void genLegal(std::vector<MoveFull>& moves, Side side, int from = -1, int dest = -1, PieceType promotion = PieceType::empty);
         virtual bool isIncheck(Side beingAttackedSide) const = 0;
         virtual void gen(std::vector<MoveFull>& moveList, Side attackerSide) const = 0;
+
+        std::vector<MoveFull> gen(Side attackerSide) const {
+            std::vector<MoveFull> moveList;
+            gen(moveList, attackerSide);
+            return moveList;
+        }
 
         virtual char pieceType2Char(int pieceType) const = 0;
         virtual int coordinateStringToPos(const std::string& str) const = 0;

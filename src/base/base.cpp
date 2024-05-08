@@ -83,13 +83,13 @@ int BoardCore::attackerCnt() const
 bool BoardCore::hasAttackers() const
 {
 #ifdef _FELICItY_CHESS
-    auto i = 1; /// Queen - ignored King
+    auto i = 1; /// from Queen - ignored King
 #else
-    auto i = 5; /// Rook, ignored King, 2 Avisors, 2 Elephants
+    auto i = 5; /// from Rook, ignored King, 2 Avisors, 2 Elephants
 #endif
 
     for (; i < 16; ++i) {
-        if (pieceList[0][i] >= 0 || pieceList[0][i] >= 0) {
+        if (pieceList[0][i] >= 0 || pieceList[1][i] >= 0) {
             return true;
         }
     }
@@ -115,30 +115,23 @@ bool BoardCore::isLegalMove(int from, int dest, PieceType promotion)
 
 void BoardCore::genLegalOnly(std::vector<MoveFull>& moveList, Side attackerSide)
 {
-    gen(moveList, attackerSide);
-    
-    std::vector<MoveFull> moves;
     Hist hist;
-    for (auto && move : moveList) {
+    for (auto && move : gen(attackerSide)) {
         make(move, hist);
         if (!isIncheck(attackerSide)) {
-            moves.push_back(move);
+            moveList.push_back(move);
         }
         takeBack(hist);
     }
-    moveList = moves;
 }
 
 void BoardCore::genLegal(std::vector<MoveFull>& moves, Side side, int from, int dest, PieceType promotion)
 {
-    std::vector<MoveFull> moveList;
-    gen(moveList, side);
-    
     Hist hist;
 
     auto isChess = Funcs::isChessFamily(variant);
 
-    for (auto && move : moveList) {
+    for (auto && move : gen(side)) {
         
         if ((from >= 0 && move.from != from)
             || (dest >= 0 && move.dest != dest)
@@ -197,25 +190,25 @@ MoveFull BoardCore::flip(const MoveFull& move, FlipMode flipMode) const
     return m;
 }
 
-static const FlipMode flipflip_h[] = { FlipMode::horizontal, FlipMode::none, FlipMode::rotate, FlipMode::vertical };
-static const FlipMode flipflip_v[] = { FlipMode::vertical, FlipMode::rotate, FlipMode::none, FlipMode::horizontal };
-static const FlipMode flipflip_r[] = { FlipMode::rotate, FlipMode::vertical, FlipMode::horizontal, FlipMode::none };
-
-FlipMode BoardCore::flip(FlipMode oMode, FlipMode flipMode)
-{
-    switch (flipMode) {
-        case FlipMode::none:
-            break;
-        case FlipMode::horizontal:
-            return flipflip_h[static_cast<int>(oMode)];
-            
-        case FlipMode::vertical:
-            return flipflip_v[static_cast<int>(oMode)];
-        case FlipMode::rotate:
-            return flipflip_r[static_cast<int>(oMode)];
-    }
-    return oMode;
-}
+//static const FlipMode flipflip_h[] = { FlipMode::horizontal, FlipMode::none, FlipMode::rotate, FlipMode::vertical };
+//static const FlipMode flipflip_v[] = { FlipMode::vertical, FlipMode::rotate, FlipMode::none, FlipMode::horizontal };
+//static const FlipMode flipflip_r[] = { FlipMode::rotate, FlipMode::vertical, FlipMode::horizontal, FlipMode::none };
+//
+//FlipMode BoardCore::flip(FlipMode oMode, FlipMode flipMode)
+//{
+//    switch (flipMode) {
+//        case FlipMode::none:
+//            break;
+//        case FlipMode::horizontal:
+//            return flipflip_h[static_cast<int>(oMode)];
+//            
+//        case FlipMode::vertical:
+//            return flipflip_v[static_cast<int>(oMode)];
+//        case FlipMode::rotate:
+//            return flipflip_r[static_cast<int>(oMode)];
+//    }
+//    return oMode;
+//}
 
 void BoardCore::printOut(const std::string& msg) const
 {
@@ -238,7 +231,6 @@ std::string BoardCore::toString_coordinate(const MoveFull& move) const
 
 void BoardCore::flip(FlipMode flipMode)
 {
-    
     switch (flipMode) {
         case FlipMode::none:
             return;
@@ -273,6 +265,8 @@ void BoardCore::flip(FlipMode flipMode)
             setupPieceCount();
             return;
         }
+        default:
+            assert(false);
     }
 }
 
@@ -329,12 +323,9 @@ uint64_t BoardCore::perft(int depth, int ply)
         start = Funcs::now();
     }
 
-    std::vector<MoveFull> moveList;
-    gen(moveList, side);
-
     Hist hist;
     auto theSide = side;
-    for (auto && move : moveList) {
+    for(auto move : gen(side)) {
         make(move);
         if (!isIncheck(theSide)) {
             auto n = perft(depth - 1, ply + 1);

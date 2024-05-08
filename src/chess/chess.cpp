@@ -204,7 +204,7 @@ bool ChessBoard::isLegal() const
     auto bK = pieceList[0][0]; assert(isPositionValid(bK));
     auto wK = pieceList[1][0]; assert(isPositionValid(wK));
     
-    auto d = std::abs(bK - wK); assert(d > 0 && d < 63);
+    auto d = std::abs(bK - wK); assert(d > 0 && d < 64);
     if (d > 9) {
         return true;
     }
@@ -880,16 +880,19 @@ bool ChessBoard::beAttacked(int pos, Side attackerSide) const
 
 void ChessBoard::make(const MoveFull& move, Hist& hist)
 {
+    assert(pieceList_isValid());
+    assert(!move.piece.isEmpty() && move.isValid());
     hist.enpassant = enpassant;
     hist.status = status;
     hist.castleRights[0] = castleRights[0];
     hist.castleRights[1] = castleRights[1];
     hist.castled = 0;
     hist.move = move;
-    hist.cap = pieces[move.dest];
+    hist.cap = pieces[move.dest]; assert(hist.cap.isValid() && hist.cap.type != PieceType::king);
     hist.quietCnt = quietCnt;
     
     auto p = pieces[move.from];
+    assert(p.isValid() && !p.isEmpty() && p == move.piece);
     pieces[move.dest] = p;
     pieces[move.from].setEmpty();
     hist.move.piece = p;
@@ -934,11 +937,13 @@ void ChessBoard::make(const MoveFull& move, Hist& hist)
             } else if (move.dest == hist.enpassant) {
                 int ep = move.dest + (p.side == Side::white ? +8 : -8);
                 hist.cap = pieces[ep];
-                
+                assert(hist.cap.isValid() && hist.cap.type != PieceType::pawn);
+
                 pieces[ep].setEmpty();
             } else {
                 if (move.promotion != PieceType::empty) {
                     pieces[move.dest].type = static_cast<PieceType>(move.promotion);
+                    assert(pieces[move.dest].isValid());
                 }
             }
             break;
@@ -969,11 +974,13 @@ void ChessBoard::make(const MoveFull& move, Hist& hist)
     }
     
     pieceList_make(hist);
+    assert(pieceList_isValid());
 }
 
 void ChessBoard::takeBack(const Hist& hist)
 {
-    auto movep = pieces[hist.move.dest];
+    assert(pieceList_isValid());
+    auto movep = pieces[hist.move.dest]; assert(movep.isValid());
     pieces[hist.move.from] = movep;
 
     auto capPos = hist.move.dest;
@@ -997,7 +1004,8 @@ void ChessBoard::takeBack(const Hist& hist)
     }
     
     if (hist.move.promotion != PieceType::empty) {
-        pieces[hist.move.from].type = PieceType::pawn;
+        pieces[hist.move.from] = Piece(PieceType::pawn, movep.side);
+        assert(pieces[hist.move.from].isValid() && pieces[hist.move.from].type == PieceType::pawn);
     }
     
     status = hist.status;
@@ -1007,6 +1015,7 @@ void ChessBoard::takeBack(const Hist& hist)
     quietCnt = hist.quietCnt;
     
     pieceList_takeback(hist);
+    assert(pieceList_isValid());
 }
 
 
@@ -1125,7 +1134,8 @@ bool ChessBoard::pieceList_setPiece(int *pieceList, int pos, PieceType type, Sid
     return false;
 }
 
-bool ChessBoard::pieceList_isValid() const {
+bool ChessBoard::pieceList_isValid() const
+{
     auto cnt = 0;
     for(auto sd = 0; sd < 2; sd++) {
         for(auto i = 0; i < 16; i++) {
@@ -1181,7 +1191,8 @@ bool ChessBoard::pieceList_setEmpty(int *pieceList, int pos, PieceType type, Sid
 }
 
 
-bool ChessBoard::pieceList_make(const Hist& hist) {
+bool ChessBoard::pieceList_make(const Hist& hist)
+{
     if (!hist.cap.isEmpty()) {
         auto dest = hist.move.dest;
         if (hist.cap.type == PieceType::pawn && dest == hist.enpassant) {
@@ -1196,7 +1207,8 @@ bool ChessBoard::pieceList_make(const Hist& hist) {
         }
     }
 
-    for (auto t = pieceListStartIdxByType[static_cast<int>(hist.move.piece.type)], sd = static_cast<int>(hist.move.piece.side); ; t++) {
+    auto type = hist.move.promotion != PieceType::empty ? hist.move.promotion : hist.move.piece.type;
+    for (auto t = pieceListStartIdxByType[static_cast<int>(type)], sd = static_cast<int>(hist.move.piece.side); ; t++) {
         assert (t >= 0 && t < 16);
 
         if (pieceList[sd][t] == hist.move.from) {
@@ -1209,11 +1221,23 @@ bool ChessBoard::pieceList_make(const Hist& hist) {
 }
 
 bool ChessBoard::pieceList_takeback(const Hist& hist) {
-    for (auto t = pieceListStartIdxByType[static_cast<int>(hist.move.piece.type)], sd = static_cast<int>(hist.move.piece.side); ; t++) {
+    auto type = hist.move.promotion != PieceType::empty ? hist.move.promotion : hist.move.piece.type;
+    for (auto t = pieceListStartIdxByType[static_cast<int>(type)], sd = static_cast<int>(hist.move.piece.side); ; t++) {
         assert (t >= 0 && t < 16);
 
         if (pieceList[sd][t] == hist.move.dest) {
-            pieceList[sd][t] = hist.move.from;
+            if (hist.move.promotion == PieceType::empty) {
+                pieceList[sd][t] = hist.move.from;
+            } else {
+                pieceList[sd][t] = -1;
+                for (auto t2 = pieceListStartIdxByType[PAWN]; ; t2++) {
+                    assert(t2 < 16);
+                    if (pieceList[sd][t2] < 0) {
+                        pieceList[sd][t2] = hist.move.from;
+                        break;
+                    }
+                }
+            }
             break;
         }
     }

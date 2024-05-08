@@ -81,9 +81,21 @@ enum class GameResultType { // Based on white side
     unknown
 };
 
+#ifdef _FELICITY_CHESS_
+enum class FlipMode {
+    none, horizontal, vertical,
+    flipVH, flipHV,     /// for chess only
+    rotate90,           /// for chess only
+    rotate,             /// 180
+    rotate270           /// for chess only
+};
+#else
 enum class FlipMode {
     none, horizontal, vertical, rotate
 };
+#endif
+
+
 
 class Piece {
 public:
@@ -118,7 +130,7 @@ public:
 
     bool isValid() const {
         return (side == Side::none && type == PieceType::empty) 
-        || ((side == Side::white || side == Side::black) && type != PieceType::empty);
+        || ((side == Side::white || side == Side::black) && type > PieceType::empty);
     }
 
     bool operator == (const Piece & o) const {

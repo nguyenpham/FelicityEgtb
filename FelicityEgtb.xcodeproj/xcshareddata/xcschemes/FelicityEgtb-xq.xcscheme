@@ -57,11 +57,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n cn"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n rp"
-            isEnabled = "NO">
+            argument = "-n 2"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-subinfo"

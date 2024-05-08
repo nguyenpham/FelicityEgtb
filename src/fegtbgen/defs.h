@@ -19,7 +19,7 @@
 #define Defs_h
 
 #define EGTB_SCORE_MAX                      245
-#define EGTB_SCORE_UNSET                    1007 //(127 + EGTB_SCORE_BASE)
+//#define EGTB_SCORE_UNSET                    1007 //(127 + EGTB_SCORE_BASE)
 
 
 enum class GameResultType { // Based on white side

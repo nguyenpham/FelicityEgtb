@@ -48,8 +48,6 @@ void createSubName(const std::string& aName, std::map<std::string, NameRecord>& 
     ss[0] = aName.substr(0, k);
     ss[1] = aName.substr(k);
     
-//    auto isNewdtm = aName.find("m") != std::string::npos;
-    
     for(auto sd = 0; sd < 2; sd++) {
         auto s = ss[sd];
         auto xs = ss[1 - sd];
@@ -60,17 +58,48 @@ void createSubName(const std::string& aName, std::map<std::string, NameRecord>& 
 
             createSubName(ss + xs, allNameMap);
             createSubName(xs + ss, allNameMap);
-
-//            if (!isNewdtm || ss.find("m") != std::string::npos)
-//                createSubName(ss + xs, allNameMap);
-//            if (!isNewdtm || xs.find("m") != std::string::npos)
-//                createSubName(xs + ss, allNameMap);
         }
     }
 }
 
+void addName(std::vector<std::string>& names, int n, std::string l, std::string r)
+{
+    auto l0 = l.size(), l1 = r.size();
+    if (l0 + l1 >= n) {
+        if (l0 + l1 == n) {
+#ifdef _FELICITY_CHESS_
+            names.push_back("k" + l + "k" + r);
+#else
+            names.push_back("k" + l + "aabbk" + r + "aabb");
+#endif
+        }
+        return;
+    }
+
+#ifdef _FELICITY_CHESS_
+    auto from = QUEEN;
+#else
+    auto from = ROOK;
+#endif
+
+    for(auto t = from; t <= PAWN; t++) {
+        auto c = Funcs::pieceTypeName[t];
+        addName(names, n, l + c, r);
+        addName(names, n, l, r + c);
+        addName(names, n, l + c, r + c);
+    }
+}
+
+/// from a given names, get all sub-endgames
 std::vector<std::string> EgtbGenFileMng::parseName(const std::string& name, bool includeSubs)
 {
+    if (Funcs::is_integer(name)) {
+        auto n = std::stoi(name);
+        std::vector<std::string> names;
+        addName(names, n, "", "");
+        return parseNames(names);
+    }
+
     if (includeSubs) {
         std::vector<std::string> names = { name };
         return parseNames(names);
@@ -82,35 +111,6 @@ std::vector<std::string> EgtbGenFileMng::parseName(const std::string& name, bool
         resultVec.push_back(name);
     }
     return resultVec;
-
-//    if (includeSubs) {
-//        std::map<std::string, NameRecord> allNameMap;
-//        createSubName(name, allNameMap);
-//        
-//        std::vector<NameRecord> recordVec;
-//        
-//        for(auto && x : allNameMap) {
-//            recordVec.push_back(x.second);
-//        }
-//
-//        sort(recordVec.begin(), recordVec.end(), [ ]( const NameRecord& left, const NameRecord& right) {
-//            return left.isMeSmaller(right);
-//        });
-//        
-//        for(auto && x : recordVec) {
-//            resultVec.push_back(x.name);
-//        }
-//        
-//    } else {
-//        
-//        NameRecord record(name);
-//        if (record.isValid()) {
-//            resultVec.push_back(name);
-//        }
-//    }
-//    
-//    
-//    return resultVec;
 }
 
 std::vector<std::string> EgtbGenFileMng::parseNames(const std::vector<std::string>& names)
@@ -169,8 +169,30 @@ void EgtbGenFileMng::showIntestingSubTables(EgtbType egtbType)
 {
     std::cout << "All intesting sub endgames (order - name - index size)" << std::endl;
     
+#ifdef _FELICITY_CHESS_
+    /// 5 men (3 attackers)
+    std::vector<std::string> names;
+    
+    for(auto t0 = QUEEN; t0 <= PAWN; t0++) {
+        auto c0 = Funcs::pieceTypeName[t0];
+        for(auto t1 = t0; t1 <= PAWN; t1++) {
+            auto c1 = Funcs::pieceTypeName[t1];
+
+            for(auto t2 = QUEEN; t2 <= PAWN; t2++) {
+                auto c2 = Funcs::pieceTypeName[t2];
+
+                std::string name = std::string("k") + c0 + c1 + c2 + "k";
+                names.push_back(name);
+
+                name = std::string("k") + c0 + c1 + "k" + c2;
+                names.push_back(name);
+            }
+        }
+    }
+#else
     std::vector<std::string> names = {
         "kraabbkaabb", /// 1 attackers
+        ///
         /// 2 attackers
         "kccaabbkaabb",
         "knnaabbkaabb",
@@ -179,6 +201,7 @@ void EgtbGenFileMng::showIntestingSubTables(EgtbType egtbType)
         "knpaabbkaabb",
         "kppaabbkaabb",
     };
+#endif
     
     auto egNames = parseNames(names);
     showSubTables(egNames, egtbType);
@@ -243,44 +266,49 @@ bool EgtbGenFileMng::compress(std::string folder, const std::string& endgameName
     
     int count = 0, succ = 0;
     if (includingSubEndgames) {
-        SubfolderParser parser0(endgameName);
-        auto attackingCnt = parser0.attackingCnt;
         
-        for(auto && aName : vec) {
-            SubfolderParser parser(aName);
-            if (attackingCnt != parser.attackingCnt) {
-                continue;
-            }
-            
-            count++;
-            
-            if (nameMap.find(aName) == nameMap.end()) {
-                continue;
-            }
-            
-            auto egtbFile = (EgtbFileWriter*) nameMap[aName];
-            
-            parser.createAllSubfolders(writtenfolder);
-            std::string wFolder = writtenfolder + parser.subfolder;
-            
-            if (compressEndgame(egtbFile, writtenfolder, compressMode)) {
-                succ++;
-            }
-            
-        }
+        assert(false);
+        /// WARNING
+//        SubfolderParser parser0(endgameName);
+//        auto attackingCnt = parser0.attackingCnt;
+//        
+//        for(auto && aName : vec) {
+//            SubfolderParser parser(aName);
+//            if (attackingCnt != parser.attackingCnt) {
+//                continue;
+//            }
+//            
+//            count++;
+//            
+//            if (nameMap.find(aName) == nameMap.end()) {
+//                continue;
+//            }
+//            
+//            auto egtbFile = (EgtbGenFile*) nameMap[aName];
+//            
+//            parser.createAllSubfolders(writtenfolder);
+//            std::string wFolder = writtenfolder + parser.subfolder;
+//            
+//            if (compressEndgame(egtbFile, writtenfolder, compressMode)) {
+//                succ++;
+//            }
+//            
+//        }
     } else {
         count++;
         
         if (nameMap.find(endgameName) != nameMap.end()) {
-            auto egtbFile = (EgtbFileWriter*) nameMap[endgameName];
+            auto egtbFile = (EgtbGenFile*) nameMap[endgameName];
             
-            SubfolderParser parser(endgameName);
-            parser.createAllSubfolders(writtenfolder);
-            std::string wFolder = writtenfolder + parser.subfolder;
-            
-            if (compressEndgame(egtbFile, writtenfolder, compressMode)) {
-                succ++;
-            }
+            assert(false);
+            /// WARNING
+//            SubfolderParser parser(endgameName);
+//            parser.createAllSubfolders(writtenfolder);
+//            std::string wFolder = writtenfolder + parser.subfolder;
+//            
+//            if (compressEndgame(egtbFile, writtenfolder, compressMode)) {
+//                succ++;
+//            }
         }
     }
     
@@ -289,84 +317,49 @@ bool EgtbGenFileMng::compress(std::string folder, const std::string& endgameName
 }
 
 
-
-bool EgtbGenFileMng::compressEndgame(EgtbFileWriter* egtbFile, std::string writtenfolder, CompressMode compressMode) {
+bool EgtbGenFileMng::compressEndgame(EgtbGenFile* egtbFile, std::string writtenfolder, CompressMode compressMode) {
     auto aName = egtbFile->getName();
     std::cout  << "\t" << aName << std::endl;
     
-    
-    SubfolderParser parser(aName);
-    parser.createAllSubfolders(writtenfolder);
-    std::string wFolder = writtenfolder + parser.subfolder;
-    
-    if (!EgtbFileWriter::existFileName(wFolder, aName, egtbFile->getEgtbType(), Side::none, compressMode != CompressMode::compress_none)) {
-        
-        for(auto sd = 0; sd < 2; ++sd) {
-            auto side = static_cast<Side>(sd);
-            if (egtbFile->forceLoadHeaderAndTable(side)) {
-                egtbFile->saveFile(wFolder, sd, compressMode);
-                egtbFile->removeBuffers();
-                if (egtbVerbose) {
-                    std::cout << "\t\tSuccessfully save " << egtbFile->getPath(sd) << std::endl;
-                }
-            } else {
-                std::cerr << "\n******Error: Cannot read " << egtbFile->getPath(sd) << std::endl << std::endl << std::endl;
-                return false;
-            }
-        }
-        
-    }
+    assert(false);
+    /// WARNING
+
+//    SubfolderParser parser(aName);
+//    parser.createAllSubfolders(writtenfolder);
+//    std::string wFolder = writtenfolder + parser.subfolder;
+//    
+//    if (!EgtbGenFile::existFileName(wFolder, aName, egtbFile->getEgtbType(), Side::none, compressMode != CompressMode::compress_none)) {
+//        
+//        for(auto sd = 0; sd < 2; ++sd) {
+//            auto side = static_cast<Side>(sd);
+//            if (egtbFile->forceLoadHeaderAndTable(side)) {
+//                egtbFile->saveFile(wFolder, side, compressMode);
+//                egtbFile->removeBuffers();
+//                if (egtbVerbose) {
+//                    std::cout << "\t\tSuccessfully save " << egtbFile->getPath(side) << std::endl;
+//                }
+//            } else {
+//                std::cerr << "\n******Error: Cannot read " << egtbFile->getPath(side) << std::endl << std::endl << std::endl;
+//                return false;
+//            }
+//        }
+//        
+//    }
     return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-void EgtbGenFileMng::verifyData(const std::string& endgameName, bool includingSubEndgames) {
+void EgtbGenFileMng::verifyData(const std::vector<std::string>& nameVec)
+{
     std::cout << "Found total endgames: " << egtbFileVec.size() << std::endl;
-    std::vector<std::string> vec = parseName(endgameName);
     
-    std::cout << "\nVerify " << endgameName;
-    
-    if (includingSubEndgames) {
-        std::cout << " and all sub-endgames, #" << vec.size();
-    }
-    
-    std::cout << std::endl << std::endl;
     
     auto count = 0, succ = 0, missing = 0;
-    if (includingSubEndgames) {
-        SubfolderParser parser(endgameName);
-        auto attackingCnt = parser.attackingCnt;
 
-        for(auto && aName : vec) {
-            SubfolderParser parser(aName);
-            if (attackingCnt != parser.attackingCnt) {
-                continue;
-            }
-            
-            auto egtbFile = nameMap[aName];
-            if (!egtbFile) {
-                std::cerr << "Error: missing " << aName << std::endl;
-                missing++;
-            }
-        }
+    for(auto && endgameName : nameVec) {
+        std::cout << "\nVerify " << endgameName << std::endl;
 
-        for(auto && aName : vec) {
-            SubfolderParser parser(aName);
-            if (attackingCnt != parser.attackingCnt) {
-                continue;
-            }
-            
-            auto egtbFile = (EgtbFileWriter*)nameMap[aName];
-            if (egtbFile) {
-                count++;
-                if (verifyData(egtbFile)) {
-                    succ++;
-                }
-                removeAllBuffers();
-            }
-        }
-    } else {
-        auto egtbFile = (EgtbFileWriter*)nameMap[endgameName];
+        auto egtbFile = (EgtbGenFile*)nameMap[endgameName];
         if (egtbFile) {
             count++;
             if (verifyData(egtbFile)) {
@@ -381,7 +374,6 @@ void EgtbGenFileMng::verifyData(const std::string& endgameName, bool includingSu
     std::cout << "Verify COMPLETED. total: " << count << ", passed: " << succ << ", missing: " << missing << std::endl;
 }
 
-static bool verifyDataOK = true;
 
 bool EgtbGenFileMng::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
     assert(pEgtbFile);
@@ -392,11 +384,11 @@ bool EgtbGenFileMng::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
         std::cout << "\tverify " << pEgtbFile->getName() << ", started by thread " << threadIdx << ") range: " << rcd.fromIdx << " -> " << rcd.toIdx << std::endl;
     }
 
-    std::vector<MoveFull> moveList;
     EgtbBoard board;
-    bool scoreRangeOK = true;
 
-    for (i64 idx = rcd.fromIdx; idx < rcd.toIdx && verifyDataOK && scoreRangeOK; idx ++) {
+    assert(rcd.fromIdx < rcd.toIdx);
+    
+    for (auto idx = rcd.fromIdx; idx < rcd.toIdx && verifyDataOK; idx ++) {
         int curScore[] = {
             pEgtbFile->getScore(idx, Side::black, false),
             pEgtbFile->getScore(idx, Side::white, false)
@@ -412,7 +404,7 @@ bool EgtbGenFileMng::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
             }
         }
 
-        auto b = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white);
+        auto b = pEgtbFile->setupBoard(board, idx, FlipMode::none, Side::white);
 
         if (!b) {
             if (curScore[0] != EGTB_SCORE_ILLEGAL || curScore[1] != EGTB_SCORE_ILLEGAL) {
@@ -427,131 +419,93 @@ bool EgtbGenFileMng::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
         }
         
         for (auto sd = 0; sd < 2; sd ++) {
-            int noLossCnt = 0, permanentCheckCnt = 0, permanentEvacuateCnt = 0, numerisePerpetualWinCnt = 0, numerisePerpetualLostCnt = 0;
-            Side side = static_cast<Side>(sd), xside = getXSide(side);
-            auto bestScore = EGTB_SCORE_UNSET, bestPerpetualScore = -EGTB_SCORE_PERPETUAL_MATE;
+            auto side = static_cast<Side>(sd), xside = getXSide(side);
+            auto bestScore = EGTB_SCORE_UNSET;
             
             if (board.isIncheck(xside)) {
                 bestScore = EGTB_SCORE_ILLEGAL;
             } else {
-                if ((curScore[sd] > EGTB_SCORE_MATE && curScore[sd] != EGTB_SCORE_ILLEGAL && curScore[sd] < EGTB_SCORE_PERPETUAL_CHECKED) ||
-                    (curScore[sd] <= EGTB_SCORE_MATE && ((curScore[sd] > 0 && (curScore[sd] & 1) == 0) || (curScore[sd] < 0 && (-curScore[sd] & 1) != 0)))) {
+                if ((curScore[sd] <= EGTB_SCORE_MATE && ((curScore[sd] > 0 && (curScore[sd] & 1) == 0) || (curScore[sd] < 0 && (-curScore[sd] & 1) != 0)))) {
                     verifyDataOK = false;
-                    scoreRangeOK = false;
                     std::lock_guard<std::mutex> thelock(printMutex);
                     printf("Error: score incorrect odd/even rules, idx=%lld, sd=%d, curScore[sd]=%d\n", idx, sd, curScore[sd]);
                     board.printOut();
-                    //                    exit(-1);
                     return false;
                 }
 
                 bestScore = -EGTB_SCORE_MATE;
-                board.gen(moveList, side);
-                int legalCount = 0;
+                auto legalCount = 0;
 
-                for (auto i = 0; i < moveList.size(); i++) {
-                    auto move = moveList[i];
+//                if (idx == 74 && sd == 1) {
+//                    board.printOut();
+//                    sd = 1;
+//                }
+                
+                for (auto && move : board.gen(side)) {
                     Hist hist;
                     board.make(move, hist);
 
                     if (!board.isIncheck(side)) {
                         legalCount++;
+                        
+                        /// If the move is a capture or a promotion, it should probe from sub-endgames
+                        auto internal = hist.cap.isEmpty() && move.promotion == PieceType::empty;
+
                         int score;
                         
-                        i64 sIdx = -1;
-                        if (hist.cap.isEmpty()) {
-                            sIdx = pEgtbFile->getKey(board).key;
-                            score = pEgtbFile->getScore(sIdx, xside, false);
+                        if (internal) {     /// score from current working buffers
+                            auto idx2 = pEgtbFile->getKey(board).key;
+                            score = pEgtbFile->getScore(idx2, xside, false);
+//                            if (idx == 74 && sd == 1) {
+//                                board.printOut();
+//                                sd = 1;
+//                            }
+
                         } else if (!board.hasAttackers()) {
                             score = EGTB_SCORE_DRAW;
-                        } else {
+                        } else {            /// probe from a sub-endgame
                             score = getScore(board, xside);
                         }
                         
-                        if (abs(score) >= EGTB_SCORE_PERPETUAL_BEGIN) {
-                            bestPerpetualScore = std::max(bestPerpetualScore, score);
-                            if (score > 0) numerisePerpetualWinCnt++;
-                            else numerisePerpetualLostCnt++;
-                        } else  if (score <= EGTB_SCORE_MATE) {
+                        if (score <= EGTB_SCORE_MATE) {
                             score = -score;
                             if (score > bestScore) {
                                 bestScore = score;
-                            }
-
-                            if (score >= EGTB_SCORE_DRAW) {
-                                noLossCnt++;
-                            }
-                        } else if (score >= EGTB_SCORE_PERPETUAL_CHECKED) {
-                            if (score == EGTB_SCORE_PERPETUAL_CHECKED_EVASION) {
-                                permanentCheckCnt++;
-                                permanentEvacuateCnt++;
-                            } else if (score == EGTB_SCORE_PERPETUAL_CHECKED) {
-                                permanentCheckCnt++;
-                            } else {
-                                permanentEvacuateCnt++;
                             }
                         }
                     }
                     board.takeBack(hist);
                 }
 
-                if (legalCount == 0) bestScore = -EGTB_SCORE_MATE;
-                else {
+                if (legalCount == 0) {
+#ifdef _FELICITY_CHESS_
+                    bestScore = board.isIncheck(side) ? -EGTB_SCORE_MATE : EGTB_SCORE_DRAW;
+#else
+                    bestScore = -EGTB_SCORE_MATE;
+#endif
+                } else {
                     if (abs(bestScore) <= EGTB_SCORE_MATE && bestScore != EGTB_SCORE_DRAW) {
                         if (bestScore > 0) bestScore--;
                         else bestScore++;
-                        
-                        if (bestScore == EGTB_SCORE_DRAW || abs(bestScore) >= EGTB_SCORE_MATE) {
-                            scoreRangeOK = false;
-                        }
-                    }
-                    
-                    if (scoreRangeOK && bestScore != EGTB_SCORE_DRAW) {
-                        if (bestScore > EGTB_SCORE_MATE && bestScore != EGTB_SCORE_ILLEGAL) {
-                            scoreRangeOK = false;
-                        }
                     }
                 }
             }
             
             if (verifyDataOK) {
-                bool ok;
-                if (abs(curScore[sd]) >= EGTB_SCORE_PERPETUAL_BEGIN) {
-                    ok = true; //numerisePerpetualWinCnt + numerisePerpetualLostCnt > 0 || ;
-                } else if (curScore[sd] < EGTB_SCORE_PERPETUAL_CHECKED) {
-                    ok = scoreRangeOK && (curScore[sd] == bestScore || (bestScore > EGTB_SCORE_MATE && curScore[sd] > EGTB_SCORE_MATE));
-                    
-                    if (!ok) {
-                        if (permanentCheckCnt > 0) {
-                            ok = curScore[sd] >= EGTB_SCORE_DRAW;
-                        } else {
-                            ok = permanentEvacuateCnt > 0;
-                        }
-                    }
-                } else {
-                    if (curScore[sd] == EGTB_SCORE_PERPETUAL_CHECKED_EVASION) {
-                        ok = permanentCheckCnt > 0 || permanentEvacuateCnt > 0;
-                    } else if (curScore[sd] == EGTB_SCORE_PERPETUAL_EVASION) {
-                        ok = permanentCheckCnt > 0;
-                    } else if (curScore[sd] == EGTB_SCORE_PERPETUAL_CHECKED) {
-                        ok = permanentEvacuateCnt > 0;
-                    } else {
-                        ok = noLossCnt == 0 && permanentCheckCnt > 0;
-                    }
-                }
+                bool ok = (curScore[sd] == bestScore || (bestScore > EGTB_SCORE_MATE && curScore[sd] > EGTB_SCORE_MATE));
 
                 if (!ok) {
                     verifyDataOK = false;
 
                     std::lock_guard<std::mutex> thelock(printMutex);
-                    std::cerr << "Error: verify FAILED " << threadIdx << ") " << pEgtbFile->getName() << ", idx: " << idx << ", sd: " << sd
-                    << ", data score: " << curScore[sd] << ", calc score: " << bestScore << ", scoreRange: " << scoreRangeOK
-                    << ", permanentCheckCnt: " << permanentCheckCnt << ", permanentEvacuateCnt: " << permanentEvacuateCnt << std::endl;
+                    std::cerr << "Verify FAILED " << threadIdx << ") " << pEgtbFile->getName() << ", idx: " << idx << ", sd: " << sd
+                    << ", data score: " << curScore[sd] << ", calc score: " << bestScore 
+                    << std::endl;
                     if (b) {
                         board.printOut();
                     }
                     
-                    exit(-1);
+                    exit(1);
                     return false;
                 }
             }
@@ -565,24 +519,27 @@ bool EgtbGenFileMng::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
     return true;
 }
 
-bool EgtbGenFileMng::verifyData(EgtbFile* egtbFile) {
+bool EgtbGenFileMng::verifyData(EgtbFile* egtbFile)
+{
     assert(egtbFile);
     
-    std::cout << "verify " << egtbFile->getName() << " sz: " << GenLib::formatString(egtbFile->getSize()) << " at: " << GenLib::currentTimeDate() << std::endl;
-    
     begin = std::chrono::steady_clock::now();
+
+    egtbFile->getScore(0LL, Side::black, false);
+    if (egtbFile->getLoadStatus() == EgtbLoadStatus::error) {
+        return false;
+    }
+
+    std::cout << " verifying " << egtbFile->getName() << " sz: " << GenLib::formatString(egtbFile->getSize()) << " at: " << GenLib::currentTimeDate() << std::endl;
+    
     
     verifyDataOK = true;
     
     setupThreadRecords(egtbFile->getSize());
     {
-        egtbFile->getScore(0LL, Side::black, false);
-        if (egtbFile->getLoadStatus() == EgtbLoadStatus::error) {
-            return false;
-        }
 
         std::vector<std::thread> threadVec;
-        for (int i = 1; i < threadRecordVec.size(); ++i) {
+        for (auto i = 1; i < threadRecordVec.size(); ++i) {
             threadVec.push_back(std::thread(&EgtbGenFileMng::verifyData_chunk, this, i, egtbFile));
         }
 
@@ -603,52 +560,28 @@ bool EgtbGenFileMng::verifyData(EgtbFile* egtbFile) {
 bool EgtbGenFileMng::verifyKeys(const std::string& name, EgtbType egtbType) const {
     std::cout << "TbKey::verify STARTED for " << name << std::endl;
     
-    EgtbFileWriter egtbFile;
+    EgtbGenFile egtbFile;
     egtbFile.create(name, egtbType);
     return egtbFile.verifyKeys();
 }
 
+void EgtbGenFileMng::verifyKeys(const std::vector<std::string>& endgameNames) const
+{
+    std::cout << "\nVerify keys for " << endgameNames.size() << " endgames\n" << std::endl;
 
-void EgtbGenFileMng::verifyKeys(const std::string& endgameName, bool includingSubEndgames) const {
-    std::vector<std::string> vec = parseName(endgameName, includingSubEndgames);
-    
-    std::cout << "\nVerify keys " << endgameName;
-    
     EgtbType egtbType = EgtbType::dtm;
-    
-    if (includingSubEndgames) {
-        std::cout << " and all sub-endgames, #" << vec.size();
-    }
-    
-    std::cout << std::endl << std::endl;
-    
     auto count = 0, succ = 0, missing = 0;
-    if (includingSubEndgames) {
-        SubfolderParser parser(endgameName);
-        auto attackingCnt = parser.attackingCnt;
-        
-        for(auto && aName : vec) {
-            SubfolderParser parser(aName);
-            if (attackingCnt != parser.attackingCnt) {
-                continue;
-            }
-            
-            count++;
-            EgtbFileWriter egtbFile;
-            egtbFile.create(aName, egtbType);
-            assert(egtbFile.getSize() > 0);
-            if (egtbFile.verifyKeys()) {
-                succ++;
-            }
-        }
-    } else {
+
+    for(auto && aName : endgameNames) {
+        std::cout << "\nVerify keys: " << aName << std::endl;
         count++;
-        EgtbFileWriter egtbFile;
-        egtbFile.create(endgameName, egtbType);
+        EgtbGenFile egtbFile;
+        egtbFile.create(aName, egtbType);
         if (egtbFile.verifyKeys()) {
             succ++;
         }
     }
+
     std::cout << "Verify keys COMPLETED. total: " << count << ", passed: " << succ << ", missing: " << missing << std::endl;
 }
 
@@ -709,31 +642,35 @@ void EgtbGenFileMng::compare(EgtbGenFileMng& otherEgtbGenFileMng, std::string en
     
     auto count = 0, succ = 0, err = 0;
     if (includingSubEndgames) {
-        SubfolderParser parser(endgameName);
-        auto attackingCnt = parser.attackingCnt;
-        
-        for(auto && aName : vec) {
-            SubfolderParser parser(aName);
-            if (attackingCnt != parser.attackingCnt) {
-                continue;
-            }
-            
-            auto egtbFile0 = nameMap[aName];
-            auto egtbFile1 = otherEgtbGenFileMng.nameMap[aName];
-            
-            if (!egtbFile0 || !egtbFile1) {
-                std::cerr << "Error: missing one or both " << aName << std::endl;
-                continue;
-            }
+        assert(false);
+        /// WARNING
 
-            count++;
-            if (compare(egtbFile0, egtbFile1)) {
-                succ++;
-            } else {
-                std::cerr << "Error: failed " << endgameName << std::endl;
-                err++;
-            }
-        }
+//
+//        SubfolderParser parser(endgameName);
+//        auto attackingCnt = parser.attackingCnt;
+//        
+//        for(auto && aName : vec) {
+//            SubfolderParser parser(aName);
+//            if (attackingCnt != parser.attackingCnt) {
+//                continue;
+//            }
+//            
+//            auto egtbFile0 = nameMap[aName];
+//            auto egtbFile1 = otherEgtbGenFileMng.nameMap[aName];
+//            
+//            if (!egtbFile0 || !egtbFile1) {
+//                std::cerr << "Error: missing one or both " << aName << std::endl;
+//                continue;
+//            }
+//
+//            count++;
+//            if (compare(egtbFile0, egtbFile1)) {
+//                succ++;
+//            } else {
+//                std::cerr << "Error: failed " << endgameName << std::endl;
+//                err++;
+//            }
+//        }
     } else {
         auto egtbFile0 = nameMap[endgameName];
         auto egtbFile1 = otherEgtbGenFileMng.nameMap[endgameName];

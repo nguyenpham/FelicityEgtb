@@ -359,25 +359,68 @@ void Funcs::sort_tbkeys(int* tbkeys, int sz)
     });
 }
 
+#ifdef _FELICITY_CHESS_
+
+/// for chess only
+static const int flip_r90[64] = {
+    7,15,23,31,39,47,55,63,
+    6,14,22,30,38,46,54,62,
+    5,13,21,29,37,45,53,61,
+    4,12,20,28,36,44,52,60,
+    3,11,19,27,35,43,51,59,
+    2,10,18,26,34,42,50,58,
+    1, 9,17,25,33,41,49,57,
+    0, 8,16,24,32,40,48,56
+};
+
+static const int flip_r270[64] = {
+    56,48,40,32,24,16, 8, 0,
+    57,49,41,33,25,17, 9, 1,
+    58,50,42,34,26,18,10, 2,
+    59,51,43,35,27,19,11, 3,
+    60,52,44,36,28,20,12, 4,
+    61,53,45,37,29,21,13, 5,
+    62,54,46,38,30,22,14, 6,
+    63,55,47,39,31,23,15, 7
+};
+
+static const int flip_vh[64] = { // a8-h1
+    0, 8,16,24,32,40,48,56,
+    1, 9,17,25,33,41,49,57,
+    2,10,18,26,34,42,50,58,
+    3,11,19,27,35,43,51,59,
+    4,12,20,28,36,44,52,60,
+    5,13,21,29,37,45,53,61,
+    6,14,22,30,38,46,54,62,
+    7,15,23,31,39,47,55,63
+};
+
+static const int flip_hv[64] = { // a1-h8
+    63,55,47,39,31,23,15, 7,
+    62,54,46,38,30,22,14, 6,
+    61,53,45,37,29,21,13, 5,
+    60,52,44,36,28,20,12, 4,
+    59,51,43,35,27,19,11, 3,
+    58,50,42,34,26,18,10, 2,
+    57,49,41,33,25,17, 9, 1,
+    56,48,40,32,24,16, 8, 0
+};
+#endif
+
+#ifdef _FELICITY_CHESS_
+static auto rankCount = 8;
+static auto columnCount = 8;
+static auto boardSz = 64;
 
 int Funcs::flip(int pos, FlipMode flipMode)
 {
-#ifdef _FELICITY_CHESS_
-    auto boardSz = 64;
-    auto rankCount = 8;
-    auto columnCount = 8;
-#else
-    auto boardSz = 90;
-    auto rankCount = 10;
-    auto columnCount = 9;
-#endif
     
     switch (flipMode) {
         case FlipMode::none:
             return pos;
         case FlipMode::horizontal: {
-            auto k = pos / columnCount;
-            return pos - 2 * k + columnCount;
+            auto f = pos % columnCount;
+            return pos - 2 * f + columnCount - 1;
         }
             
         case FlipMode::vertical: {
@@ -387,12 +430,90 @@ int Funcs::flip(int pos, FlipMode flipMode)
         case FlipMode::rotate: {
             return boardSz - pos - 1;
         }
-            
+
+            /// For chess only since it has a square board
+        case FlipMode::flipVH: return flip_vh[pos];
+        case FlipMode::flipHV: return flip_hv[pos];
+        case FlipMode::rotate90: return flip_r90[pos];
+        case FlipMode::rotate270: return flip_r270[pos];
+
         default:
+            assert(false);
             return pos;
     }
     
-    return pos;
+//    return pos;
+}
+
+static const FlipMode flipflip_h[] = { FlipMode::horizontal, FlipMode::none, FlipMode::rotate, FlipMode::rotate90, FlipMode::rotate270, FlipMode::flipHV, FlipMode::vertical, FlipMode::flipVH };
+static const FlipMode flipflip_v[] = { FlipMode::vertical, FlipMode::rotate, FlipMode::none, FlipMode::rotate90, FlipMode::rotate270, FlipMode::flipVH, FlipMode::horizontal, FlipMode::flipHV };
+static const FlipMode flipflip_vh[] = { FlipMode::flipVH, FlipMode::rotate270, FlipMode::rotate90, FlipMode::none, FlipMode::rotate, FlipMode::vertical, FlipMode::flipHV, FlipMode::horizontal };
+static const FlipMode flipflip_r180[] = { FlipMode::rotate, FlipMode::vertical, FlipMode::horizontal, FlipMode::flipHV, FlipMode::flipVH, FlipMode::rotate270, FlipMode::none, FlipMode::rotate90 };
+
+static const FlipMode flipflip_hv[] = { FlipMode::flipHV, FlipMode::rotate90, FlipMode::rotate270, FlipMode::rotate, FlipMode::none, FlipMode::horizontal, FlipMode::flipVH, FlipMode::vertical};
+static const FlipMode flipflip_r90[] = { FlipMode::rotate90, FlipMode::flipHV, FlipMode::flipVH, FlipMode::horizontal, FlipMode::vertical, FlipMode::rotate, FlipMode::rotate270, FlipMode::none };
+static const FlipMode flipflip_r270[] = { FlipMode::rotate270, FlipMode::flipVH, FlipMode::flipHV, FlipMode::vertical, FlipMode::horizontal, FlipMode::none, FlipMode::rotate90, FlipMode::rotate };
+
+FlipMode Funcs::flip(FlipMode oMode, FlipMode flipMode) {
+    switch (flipMode) {
+        case FlipMode::none:
+            break;
+
+        case FlipMode::horizontal:
+            return flipflip_h[static_cast<int>(oMode)];
+
+        case FlipMode::vertical:
+            return flipflip_v[static_cast<int>(oMode)];
+
+        case FlipMode::rotate:
+            return flipflip_r180[static_cast<int>(oMode)];
+
+        /// for chess only
+        case FlipMode::flipVH:
+            return flipflip_vh[static_cast<int>(oMode)];
+
+        case FlipMode::flipHV:
+            return flipflip_hv[static_cast<int>(oMode)];
+
+        case FlipMode::rotate90:
+            return flipflip_r90[static_cast<int>(oMode)];
+
+        case FlipMode::rotate270:
+            return flipflip_r270[static_cast<int>(oMode)];
+    }
+    return oMode;
+}
+
+#else
+static auto rankCount = 10;
+static auto columnCount = 9;
+static auto boardSz = 90;
+
+int Funcs::flip(int pos, FlipMode flipMode)
+{
+    
+    switch (flipMode) {
+        case FlipMode::none:
+            return pos;
+        case FlipMode::horizontal: {
+            auto f = pos % columnCount;
+            return pos - 2 * f + columnCount - 1;
+        }
+            
+        case FlipMode::vertical: {
+            auto r = pos / columnCount, c = pos % columnCount;
+            return (rankCount - r - 1) * columnCount + c;
+        }
+        case FlipMode::rotate: {
+            return boardSz - pos - 1;
+        }
+
+        default:
+            assert(false);
+            return pos;
+    }
+    
+//    return pos;
 }
 
 static const FlipMode flipflip_h[] = { FlipMode::horizontal, FlipMode::none, FlipMode::rotate, FlipMode::vertical };
@@ -413,4 +534,12 @@ FlipMode Funcs::flip(FlipMode oMode, FlipMode flipMode)
             return flipflip_r[static_cast<int>(oMode)];
     }
     return oMode;
+}
+
+#endif
+
+
+bool Funcs::is_integer(const std::string &str)
+{
+    return !str.empty() && str.find_first_not_of("0123456789") == std::string::npos;
 }

@@ -55,7 +55,7 @@ namespace bslib {
 
         virtual void reset() override {
             BoardCore::reset();
-            enpassant = 0;
+            enpassant = -1;
             castleRights[0] = castleRights[1] = 0;
         }
         
@@ -64,6 +64,7 @@ namespace bslib {
         using BoardCore::getFen;
         virtual std::string getFen(bool enpassantLegal, int halfCount, int fullMoveCount) const override;
 
+        using BoardCore::gen;
         virtual void gen(std::vector<MoveFull>& moveList, Side attackerSide) const override;
         virtual bool isIncheck(Side beingAttackedSide) const override;
 

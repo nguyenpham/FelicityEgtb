@@ -40,6 +40,10 @@ bool NameRecord::parse(const std::string& _name)
 {
     memset(pieceCount, 0, sizeof(pieceCount));
     attackerCount[0] = attackerCount[1] = 0;
+    allCount[0] = allCount[1] = 0;
+    
+    /// For Chess only
+    pawnCount[0] = pawnCount[1] = 0;
     name = _name;
     type = EgtbType::dtm;
     
@@ -76,7 +80,11 @@ bool NameRecord::parse(const std::string& _name)
 #ifdef _FELICITY_CHESS_
         attackerMats[sd] += mat;
         attackerCount[sd]++;
+        if (type == PieceType::pawn) {
+            pawnCount[sd]++;
+        }
 #else
+        allCount[sd]++;
         if (t >= ROOK) {
             attackerMats[sd] += mat;
             attackerCount[sd]++;
@@ -84,15 +92,30 @@ bool NameRecord::parse(const std::string& _name)
 #endif
     }
     
-    return true;
+    return pieceCount[0][KING] == 1 && pieceCount[1][KING] == 1
+    && attackerMats[W] > 0
+    && attackerMats[W] >= attackerMats[B]
+    && !isLimited()
+    ;
+}
+
+bool NameRecord::isLimited() const
+{
+#ifdef _FELICITY_CHESS_
+    /// No limit for chess
+    return false;
+#else
+    /// Don't count endgames:
+    /// - B has attackers
+    /// - W has two attackers with a Rook
+    return attackerCount[B] > 0 ||
+            (attackerCount[W] > 1 && pieceCount[W][ROOK] > 0);
+#endif
 }
 
 bool NameRecord::isValid() const
 {
-    return ok
-    && pieceCount[0][KING] == 1 && pieceCount[1][KING] == 1
-    && attackerMats[W] > 0
-    && attackerMats[W] >= attackerMats[B];
+    return ok;
 }
 
 bool NameRecord::isBothArmed() const
@@ -107,18 +130,55 @@ bool NameRecord::hasAttackers() const
 
 bool NameRecord::isMeSmaller(const NameRecord& other) const
 {
-    return attackerCount[W] < other.attackerCount[W]
-    ||
-(attackerCount[W] == other.attackerCount[W] && attackerMats[W] < other.attackerMats[W])
-    ||
-    (attackerCount[W] == other.attackerCount[W] && attackerMats[W] == other.attackerMats[W] && mats[W] < other.mats[W])
-    ||
-    (attackerCount[W] == other.attackerCount[W] && attackerMats[W] == other.attackerMats[W] && mats[W] == other.mats[W] && mats[B] < other.mats[B])
-    ;
+    auto attackers = attackerCount[W] + attackerCount[B];
+    auto attackers_o = other.attackerCount[W] + other.attackerCount[B];
+    
+    if (attackers != attackers_o) {
+        return attackers < attackers_o;
+    }
+
+#ifdef _FELICITY_CHESS_
+    auto pawns1 = pawnCount[0] + pawnCount[1];
+    auto pawns2 = other.pawnCount[0] + other.pawnCount[1];
+    if (pawns1 < pawns2) {
+        return true;
+    }
+    if (pawns1 > pawns2) {
+        return false;
+    }
+#else
+    auto all = allCount[0] + allCount[1];
+    auto all_o = other.allCount[0] + other.allCount[1];
+
+    if (all != all_o) {
+        return all < all_o;
+    }
+    if (allCount[W] != other.allCount[W]) {
+        return allCount[W] < other.allCount[W];
+    }
+#endif
+    
+    if (attackerCount[W] != other.attackerCount[W]) {
+        return attackerCount[W] < other.attackerCount[W];
+    }
+    
+    if (attackerMats[W] != other.attackerMats[W]) {
+        return attackerMats[W] < other.attackerMats[W];
+    }
+
+    return attackerMats[W] + attackerMats[B] < other.attackerMats[W] + other.attackerMats[B];
+}
+
+std::string NameRecord::getSubfolder() const
+{
+    if (attackerCount[0] == 0 || attackerCount[1] == 0) {
+        return std::to_string(attackerCount[0] + attackerCount[1]);
+    }
+    return std::to_string(attackerCount[W]) + "-" + std::to_string(attackerCount[B]);
 }
 
 ////////////////////////////////////////////
-void EgtbGenFileMng::gen_single_init(int threadIdx) {
+void EgtbGenFileMng::gen_thread_init(int threadIdx) {
     auto& rcd = threadRecordVec.at(threadIdx);
     assert(rcd.fromIdx < rcd.toIdx);
     assert(!rcd.board);
@@ -131,30 +191,28 @@ void EgtbGenFileMng::gen_single_init(int threadIdx) {
             std::cout << "init, threadIdx = " << threadIdx << ", idx = " << idx << ", toIdx = " << rcd.toIdx << ", " << (idx - rcd.fromIdx) * 100 / (rcd.toIdx - rcd.fromIdx) << "%" << std::endl;
         }
         
-        
         if (!egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white)
 #ifdef _FELICITY_XQ_
             || !rcd.board->isLegal() /// don't need to check legal for chess variant
 #endif
             ) {
-            egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, 0);
-            egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, 1);
+            egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, Side::black);
+            egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, Side::white);
             continue;
         }
         
+//        rcd.board->printOut();
         assert(rcd.board->isValid());
-
+        
         bool inchecks[] = { rcd.board->isIncheck(Side::black), rcd.board->isIncheck(Side::white) };
-        int scores[2];
         
         for (auto sd = 0; sd < 2; sd++) {
+            auto s = EGTB_SCORE_UNSET;
             auto xsd = 1 - sd;
             if (inchecks[xsd]) {
-                scores[sd] = EGTB_SCORE_ILLEGAL;
+                s = EGTB_SCORE_ILLEGAL;
             } else {
-                std::vector<MoveFull> moveList;
-                rcd.board->genLegalOnly(moveList, static_cast<Side>(sd));
-                auto s = EGTB_SCORE_UNSET;
+                auto moveList = rcd.board->genLegalOnly(static_cast<Side>(sd));
                 if (moveList.empty()) {
 #ifdef _FELICITY_CHESS_
                     s = inchecks[sd] ? -EGTB_SCORE_MATE : EGTB_SCORE_DRAW;
@@ -162,14 +220,13 @@ void EgtbGenFileMng::gen_single_init(int threadIdx) {
                     s = -EGTB_SCORE_MATE;
 #endif
                 }
-                scores[sd] = s;
             }
+
+            auto side = static_cast<Side>(sd);
+            auto r = egtbFile->setBufScore(idx, s, side); assert(r);
+            assert(s == egtbFile->getScore(idx, side));
         }
         
-        for (auto sd = 0; sd < 2; sd++) {
-            auto r = egtbFile->setBufScore(idx, scores[sd], sd); assert(r);
-            assert(scores[sd] == egtbFile->getScore(idx, static_cast<Side>(sd)));
-        }
     }
     
     if (egtbVerbose) {
@@ -189,23 +246,19 @@ int EgtbGenFileMng::probe_gen(EgtbBoard& board, i64 idx, Side side, int ply, int
     auto xside = getXSide(side);
 
     Hist hist;
-    std::vector<MoveFull> moveList;
-    board.gen(moveList, side); assert(!moveList.empty());
-    
-    for(auto i = 0; i < moveList.size(); i++) {
-        auto m = moveList[i];
+    for(auto move : board.gen(side)) {
 
-        board.make(m, hist);
+        board.make(move, hist);
         if (!board.isIncheck(side)) {
             legalCount++;
             
-            auto internal = hist.cap.isEmpty();
+            /// If the move is a capture or a promotion, it should probe from sub-endgames
+            auto internal = hist.cap.isEmpty() && move.promotion == PieceType::empty;
 
             int score;
             if (internal) {
-                auto idx = egtbFile->getKey(board).key;
-                score = egtbFile->getScore(idx, xside, false);
-
+                auto idx2 = egtbFile->getKey(board).key;
+                score = egtbFile->getScore(idx2, xside, false);
             } else {
                 if (!board.hasAttackers()) {
                     score = EGTB_SCORE_DRAW;
@@ -213,7 +266,7 @@ int EgtbGenFileMng::probe_gen(EgtbBoard& board, i64 idx, Side side, int ply, int
                     score = getScore(board, xside);
 
                     if (score == EGTB_SCORE_MISSING) {
-                        board.printOut("Error: missing sub data for probing the board:");
+                        board.printOut("Error: missing sub endgames for probing the board:");
                         exit(-1);
                     }
                     assert(score != EGTB_SCORE_MISSING);
@@ -234,12 +287,18 @@ int EgtbGenFileMng::probe_gen(EgtbBoard& board, i64 idx, Side side, int ply, int
         }
         board.takeBack(hist);
     }
-
+    
+#ifdef _FELICITY_CHESS_
+    if (legalCount == 0) {
+        return board.isIncheck(side) ? -EGTB_SCORE_MATE : EGTB_SCORE_DRAW;
+    }
+#endif
+    
     assert(legalCount > 0); assert(bestScore != EGTB_SCORE_ILLEGAL);
     return unsetCount == 0 || bestScore > EGTB_SCORE_DRAW || (bestScore == EGTB_SCORE_DRAW && side == Side::black && !egtbFile->isBothArmed()) ? bestScore : EGTB_SCORE_UNSET;
 }
 
-void EgtbGenFileMng::gen_single_thread(int threadIdx, int sd, int ply) {
+void EgtbGenFileMng::gen_thread(int threadIdx, int sd, int ply) {
     auto& rcd = threadRecordVec.at(threadIdx);
 
     if (egtbVerbose) {
@@ -249,7 +308,7 @@ void EgtbGenFileMng::gen_single_thread(int threadIdx, int sd, int ply) {
 
     auto side = static_cast<Side>(sd);
 
-    for (i64 idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
+    for (auto idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
         auto oldScore = egtbFile->getScore(idx, side, false);
         
         if (abs(oldScore) >= EGTB_SCORE_MATE - 1 - ply && oldScore < EGTB_SCORE_UNSET) {
@@ -260,8 +319,7 @@ void EgtbGenFileMng::gen_single_thread(int threadIdx, int sd, int ply) {
         assert(bestScore >= -EGTB_SCORE_MATE);
 
         if (bestScore != oldScore && bestScore <= EGTB_SCORE_MATE) {
-            assert(bestScore != EGTB_SCORE_WINNING && bestScore != EGTB_SCORE_UNKNOWN);
-            auto saveok = egtbFile->setBufScore(idx, bestScore, sd);
+            auto saveok = egtbFile->setBufScore(idx, bestScore, side);
             assert(saveok);
             rcd.changes++;
         }
@@ -273,29 +331,30 @@ void EgtbGenFileMng::gen_single_thread(int threadIdx, int sd, int ply) {
     }
 }
 
-void EgtbGenFileMng::gen_single_forward(const std::string& folder) {
+void EgtbGenFileMng::gen_forward(const std::string& folder) {
     if (egtbVerbose) {
         std::cout << "\tGenerate forwardly!" << std::endl;
     }
 
-    auto ply = 0, sd = W;
+    auto ply = 0;
+    auto side = Side::white;
     
     /// Load temp files
     auto wLoop = 0, bLoop = 0;
     if (useTempFiles) {
-        wLoop = egtbFile->readFromTmpFile(folder, W);
-        bLoop = egtbFile->readFromTmpFile(folder, B);
+        wLoop = egtbFile->readFromTmpFile(folder, Side::white);
+        bLoop = egtbFile->readFromTmpFile(folder, Side::black);
     }
     
     if (wLoop > 0 && bLoop > 0) {
         ply = std::max(wLoop, bLoop);
-        sd = wLoop > bLoop ? W : B;
+        side = wLoop > bLoop ? Side::white : Side::black;
         
         ply++; // next loop
-        sd = 1 - sd;
+        side = getXSide(side);
         
         if (egtbVerbose) {
-            std::cout << "\tLoaded temp file, start from ply: " << ply << ", sd: " << sd << std::endl;
+            std::cout << "\tLoaded temp file, start from ply: " << ply << ", sd: " << Funcs::side2String(side, false) << std::endl;
         }
     }
     
@@ -303,10 +362,10 @@ void EgtbGenFileMng::gen_single_forward(const std::string& folder) {
     if (ply == 0) {
         std::vector<std::thread> threadVec;
         for (auto i = 1; i < threadRecordVec.size(); ++i) {
-            threadVec.push_back(std::thread(&EgtbGenFileMng::gen_single_init, this, i));
+            threadVec.push_back(std::thread(&EgtbGenFileMng::gen_thread_init, this, i));
         }
         
-        gen_single_init(0);
+        gen_thread_init(0);
         
         for (auto && t : threadVec) {
             t.join();
@@ -317,16 +376,17 @@ void EgtbGenFileMng::gen_single_forward(const std::string& folder) {
     /// Main loops
     i64 totalChangeCnt = 0;
     
-    for(auto tryCnt = 2; tryCnt > 0; ply++, sd = 1 - sd) {
+    for(auto tryCnt = 2; tryCnt > 0; ply++, side = getXSide(side)) {
         auto startLoop = time(NULL);
 
         resetAllThreadRecordCounters();
         
         std::vector<std::thread> threadVec;
+        auto sd = static_cast<int>(side);
         for (auto i = 1; i < threadRecordVec.size(); ++i) {
-            threadVec.push_back(std::thread(&EgtbGenFileMng::gen_single_thread, this, i, sd, ply));
+            threadVec.push_back(std::thread(&EgtbGenFileMng::gen_thread, this, i, sd, ply));
         }
-        gen_single_thread(0, sd, ply);
+        gen_thread(0, sd, ply);
         
         for (auto && t : threadVec) {
             t.join();
@@ -342,7 +402,7 @@ void EgtbGenFileMng::gen_single_forward(const std::string& folder) {
         }
         
         if (useTempFiles && ply > 0 && callLoopChangeCnt > 0) {
-            egtbFile->writeTmpFile(folder, sd, ply);
+            egtbFile->writeTmpFile(folder, side, ply);
         }
         
         if (callLoopChangeCnt == 0) {
@@ -353,13 +413,16 @@ void EgtbGenFileMng::gen_single_forward(const std::string& folder) {
     }
 }
 
-bool EgtbGenFileMng::gen_single(const std::string& folder, const std::string& name, EgtbType egtbType, CompressMode compressMode) {
+bool EgtbGenFileMng::gen_single(const std::string& folder, const std::string& name, EgtbType egtbType, CompressMode compressMode)
+{
     
     startTime = time(NULL);
 
     assert(egtbFile == nullptr);
-    egtbFile = new EgtbFileWriter();
+    egtbFile = new EgtbGenFile();
     egtbFile->create(name, egtbType);
+
+//    auto writtingFolder = _folder + egtbFile->getSubfolder();
 
     auto sz = egtbFile->getSize();
     auto bufsz = sz * 2;
@@ -373,10 +436,10 @@ bool EgtbGenFileMng::gen_single(const std::string& folder, const std::string& na
     
     setupThreadRecords(egtbFile->getSize());
 
-    /// WARNING: not useBackward
-    gen_single_forward(folder);
+    /// WARNING: not use backward
+    gen_forward(folder);
 
-    auto r = gen_single_finish(folder, compressMode);
+    auto r = gen_finish(folder, compressMode);
     if (r) {
         std::cout << "Generated successfully " << name << std::endl << std::endl;
     }
@@ -384,9 +447,9 @@ bool EgtbGenFileMng::gen_single(const std::string& folder, const std::string& na
 
 }
 
-bool EgtbGenFileMng::gen_single_finish(const std::string& folder, CompressMode compressMode, bool needVerify)
+bool EgtbGenFileMng::gen_finish(const std::string& folder, CompressMode compressMode, bool needVerify)
 {
-//    perpetuationFix_finish();
+    gen_finish_adjust_scores();
 
     assert(egtbFile->isValidHeader());
     egtbFile->getHeader()->addSide(Side::white);
@@ -403,7 +466,7 @@ bool EgtbGenFileMng::gen_single_finish(const std::string& folder, CompressMode c
     /// Verify
     if (needVerify && !verifyData(egtbFile)) {
         std::cerr << "Error: verify FAILED for " << egtbFile->getName() << std::endl;
-        exit(-1);
+        exit(1);
         return false;
     }
     
@@ -422,7 +485,38 @@ bool EgtbGenFileMng::gen_single_finish(const std::string& folder, CompressMode c
     return false;
 }
 
-bool EgtbGenFileMng::gen_all(std::string folder, const std::string& name, EgtbType egtbType, CompressMode compressMode) {
+void EgtbGenFileMng::gen_finish_adjust_scores()
+{
+    /// Clean and show some results
+    int maxDTM = 0;
+    i64 unset = 0;
+    
+    for (auto sd = 0; sd < 2; sd++) {
+        auto side = static_cast<Side>(sd);
+        for (i64 idx = 0; idx < egtbFile->getSize(); idx++) {
+            auto score = egtbFile->getScore(idx, side);
+            if (score == EGTB_SCORE_UNSET) {
+                unset++;
+                egtbFile->setBufScore(idx, EGTB_SCORE_DRAW, side);
+
+            } else {
+                maxDTM = std::max(maxDTM, EGTB_SCORE_MATE - abs(score));
+            }
+        }
+    }
+
+    if (egtbVerbose) {
+        auto sz = egtbFile->getSize(), sz2 = 2 * sz;
+        std::cout << "Size: " << sz
+        << std::endl;
+        
+        std::cout << "Stats:\n" << egtbFile->createStatsString() << std::endl;
+    }
+    egtbFile->getHeader()->setDtm_max(maxDTM);
+}
+
+bool EgtbGenFileMng::gen_all(std::string folder, const std::string& name, EgtbType egtbType, CompressMode compressMode)
+{
     std::cout << "Missing endgames, they will be generated:\n";
 
     std::vector<std::string> vec = showMissing(name);
@@ -433,22 +527,27 @@ bool EgtbGenFileMng::gen_all(std::string folder, const std::string& name, EgtbTy
     }
 
     for(auto && aName : vec) {
-        if (nameMap.find(aName) != nameMap.end()) {
-//            if (nameMap[aName]->getSubPawnRank() < 0) {
-                continue;
-//            }
+        auto p = nameMap.find(aName);
+        if (p != nameMap.end()) {
+            continue;
         }
 
-        SubfolderParser subfolder(aName);
-        subfolder.createAllSubfolders(folder);
-        auto writtingFolder = folder + subfolder.subfolder;
-        
-        auto sz = EgtbFile::computeSize(aName);
-
+//        SubfolderParser subfolder(aName);
+//        subfolder.createAllSubfolders(folder);
+//        auto writtingFolder = folder + subfolder.subfolder;
+//        
+//        auto sz = EgtbFile::computeSize(aName);
+//
 //        if (maxEndgameSize > 0 && sz > maxEndgameSize) {
 //            std::cout << aName << " is larger than maxsize limit (" << (maxEndgameSize >> 30) << " G). Ignored!" << std::endl;
 //            continue;
 //        }
+        
+        NameRecord nameRecord(aName);
+        
+        auto writtingFolder = folder + nameRecord.getSubfolder();
+        GenLib::createFolder(writtingFolder);
+
 
         if (!gen_single(writtingFolder, aName, egtbType, compressMode)) {
             std::cerr << "ERROR: generating UNSUCCESSFULLY " << aName << std::endl;

@@ -23,7 +23,7 @@
 #include <map>
 
 #include "defs.h"
-#include "../egtb/egtb.h"
+#include "../fegtb/egtb.h"
 
 namespace fegtb {
 

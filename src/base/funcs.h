@@ -78,7 +78,7 @@ public:
 
     static int flip(int pos, FlipMode flipMode);
     static FlipMode flip(FlipMode oMode, FlipMode flipMode);
-
+    static bool is_integer(const std::string &str);
 };
 
 }

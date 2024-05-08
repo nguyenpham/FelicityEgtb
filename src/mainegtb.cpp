@@ -21,12 +21,12 @@
 #include <algorithm>
 #include <iomanip>
 
-#include "egtb/egtbdb.h"
+#include "fegtb/egtbdb.h"
 #include "base/funcs.h"
 
-#include "egtbgen/egtbgenfilemng.h"
+#include "fegtbgen/egtbgenfilemng.h"
 
-#include "egtbgen/compresslib.h"
+#include "fegtbgen/compresslib.h"
 
 using namespace fegtb;
 using namespace bslib;
@@ -42,6 +42,12 @@ void quickTest();
 void doResearch();
 bool probeFen(EgtbDb& egtbDb, const std::string& fenString, bool allmovescores);
 
+#ifdef _FELICITY_CHESS_
+const int maxAttackers = 5;
+#else
+const int maxAttackers = 3;
+#endif
+
 static void show_usage(std::string name)
 {
     /// Basic guides
@@ -51,10 +57,12 @@ static void show_usage(std::string name)
     << "  -core N     Number of cores allowed to use\n"
 //    << "\t-ram N\t\tTell program RAM in GB allowed to use\n"
     << "  -n NAME     The endgame name"
-#ifdef _FELICITY_XQ_
-    << " (k: king, a: advisor, b: bishop/elephant, r: rook, c: cannon, n: knight, p: pawn)"
+#ifdef _FELICITY_CHESS_
+    << " (kqrbnp)"
+#else
+    << " (kabrcnp: for king, advisor, bishop/elephant, rook, cannon, knight, pawn)"
 #endif
-    << "\n"
+    << "; could be a number of attackers\n"
     << "  -i          Show info of all existent endgames\n"
     << "  -subinfo    Show sub endgames\n"
 	<< "  -fen FEN    FEN string to probe\n"
@@ -71,12 +79,13 @@ static void show_usage(std::string name)
     << "  -unzip      Uncompress endgames (create .xtb files)\n"
     << "  -v          Verify endgames (exact name or attack pieces such as ch, r-h)\n"
     << "  -vkey       Verify keys (boards <-> indeces)\n"
-    << "  -speed      Test speed\n"
+//    << "  -speed      Test speed\n"
     << "  -2          2 bytes per item\n"
     << "\n"
     << "Example:\n"
 #ifdef _FELICITY_CHESS_
     << "  " << name << " -n krpkp -subinfo\n"
+    << "  " << name << " -n 2\n"
     << "  " << name << " -d d:\\mainegtb -n kbbkp -g -core 4\n"
 //    << "  " << name << " -fen 3ak4/4a4/9/9/9/9/h8/3AK4/9/3A5 b 0 0\n"
     << "  " << name << " -n kqrkrn -v\n"
@@ -84,6 +93,7 @@ static void show_usage(std::string name)
     << "  " << name << " -n r-h -v\n"
 #else
     << "  " << name << " -n knpaabbkaabb -subinfo\n"
+    << "  " << name << " -n 2\n"
     << "  " << name << " -d d:\\mainegtb -n kraabbkaabb -g -core 4\n"
 //    << "  " << name << " -fen 3ak4/4a4/9/9/9/9/h8/3AK4/9/3A5 b 0 0\n"
     << "  " << name << " -n kraaeekaaee -v\n"
@@ -109,21 +119,12 @@ std::string explainScore(int score) {
             str = "mate";
             break;
             
-        case EGTB_SCORE_WINNING:
-            str = "winning";
-            break;
+//        case EGTB_SCORE_WINNING:
+//            str = "winning";
+//            break;
             
         case EGTB_SCORE_ILLEGAL:
             str = "illegal";
-            break;
-            
-//        case EGTB_SCORE_START_CHECKING:
-        case EGTB_SCORE_PERPETUAL_CHECKED:
-            str = "The active side may be being checked permanently (winning)";
-            break;
-            
-        case EGTB_SCORE_PERPETUAL_EVASION:
-            str = "The active side may be checking permanently (illegal / losing)";
             break;
             
         case EGTB_SCORE_UNKNOWN:
@@ -144,11 +145,12 @@ std::string explainScore(int score) {
     return str;
 }
 
-static void processName(std::string& endgameName, bool& isExactName) {
+static void processName(std::string& endgameName, bool& isExactName)
+{
     if (endgameName.empty()) {
         return;
     }
-
+    
     auto k = std::count(endgameName.begin(), endgameName.end(), 'k');
     if (k != 0 && k != 2) {
         endgameName = "";
@@ -194,6 +196,26 @@ int main(int argc, char* argv[])
 #if defined(_MSC_VER)
 	setvbuf(stdout, 0, _IOLBF, 4096);
 #endif
+    
+    
+//    /// Quick test
+//    {
+//        EgtbFile egtbFile("knkn");
+//        EgtbBoard board;
+//        board.setFen("1Nk5/K1n5/8/8/8/8/8/8 w - - 0 2");
+//        board.printOut();
+//        auto r = egtbFile.getKey(board);
+//        
+//        std::cout << "key: " << r.key << "\n" << std::endl;
+//        
+//        board.reset();
+//        
+//        auto ok = egtbFile.setupBoard(board, r.key, bslib::FlipMode::none, bslib::Side::white);
+//        
+//        board.printOut();
+//        std::cout << "ok = " << ok << std::endl;
+//        return 0;
+//    }
 
     static const auto programName = "egtbgen";
     std::cout << "Felicity EGTB generator for " << EGTB_MAJOR_VARIANT
@@ -264,9 +286,9 @@ int main(int argc, char* argv[])
     
     egtbVerbose = argmap.find("-verbose") != argmap.end();
     
-    if (argmap.find("-genforward") != argmap.end()) {
-        useBackward = false;
-    }
+//    if (argmap.find("-genforward") != argmap.end()) {
+//        useBackward = false;
+//    }
 
     if (argmap.find("-maxsize") != argmap.end()) {
         maxEndgameSize = std::atoi(argmap["-maxsize"].c_str()) * 1024LL * 1024LL * 1024LL;
@@ -324,27 +346,34 @@ int main(int argc, char* argv[])
     
     auto isExactName = true;
     std::string endgameName = orgName;
-    processName(endgameName, isExactName);
+    
+    if (Funcs::is_integer(endgameName)) {
+        isExactName = false;
+        auto n = std::stoi(endgameName);
+        if (n <= 0 && n > maxAttackers) {
+            std::cerr << "Error: the number of attackers in para -n should be > 0 and < " << maxAttackers << std::endl;
+            return 1;
+        }
+    } else {
+        processName(endgameName, isExactName);
+    }
+        
+    auto nameVec = EgtbGenFileMng::parseName(endgameName, !isExactName);
 
-    if (endgameName.empty()) {
+    if (nameVec.empty()) {
         if (!showInfo) {
             std::cerr << "Error: -n must be set by a name" << std::endl;
         }
+        
+        if (isExactName) {
+            NameRecord record(endgameName);
+            if (!record.isValid()) {
+                std::cerr << "Error: name " << endgameName << " is INVALID. Order for left-right sides:\n\t1) attacker numbers (more on left)\n\t2) stronger attacker (stronger on left when attackers are the same)\n\t3) defender number (more on left)\n\t4) advisor > elephant.\nAttackers must be in order r, c, n, p\nE.g: krakr, krbbkra, r-c, r-p, kppkr, pp-r\n" << std::endl;
+            }
+        }
         return 1;
     }
-    
-//    auto minset = argmap.find("-minset") != argmap.end();
-//    if (minset && !isExactName) {
-//        std::cerr << "Error: -minset must work with a specific name only (no '-' in middle) such as -n krcaekrce" << std::endl;
-//        return 1;
-//    }
-
-    NameRecord record(endgameName);
-    if (!record.isValid()) {
-        std::cerr << "Error: name " << endgameName << " is INVALID. Order for left-right sides:\n\t1) attacker numbers (more on left)\n\t2) stronger attacker (stronger on left when attackers are the same)\n\t3) defender number (more on left)\n\t4) advisor > elephant.\nAttackers must be in order r, c, n, p\nE.g: krakr, krbbkra, r-c, r-p, kppkr, pp-r\n" << std::endl;
-        return -1;
-    }
-
+        
     if (argmap.find("-core") != argmap.end()) {
         int core = std::atoi(argmap["-core"].c_str());
         if (core > 0) {
@@ -356,43 +385,38 @@ int main(int argc, char* argv[])
     // Display info
     /////////////////////////////////////////////////
     if (argmap.find("-subinfo") != argmap.end()) {
-//        EgtbGenFileMng::showSubTables(endgameName, EgtbType::dtm);
-        EgtbGenFileMng::showIntestingSubTables(EgtbType::dtm);
+        EgtbGenFileMng::showSubTables(nameVec, EgtbType::dtm);
     }
     
-    return 0;
+    /////////////////////////////////////////////////
+    // Generate & modify data
+    /////////////////////////////////////////////////
+    if (argmap.find("-g") != argmap.end()) {
+        EgtbGenFileMng egtbGenFileMng;
+
+        egtbGenFileMng.preload(egtbFolder, EgtbMemMode::all);
+
+        egtbGenFileMng.gen_all(egtbFolder, endgameName, EgtbType::dtm, CompressMode::compress);
+        return 1;
+    }
+
     
-    /// Below code are not checked
+    if (argmap.find("-c") != argmap.end()) {
+        if (egtbFolder2.empty()) {
+            std::cerr << "Missing second folder -d2" << std::endl;
+            return -1;
+        }
+        
+        EgtbGenFileMng egtbGenFileMng;
+        egtbGenFileMng.preload(egtbFolder, EgtbMemMode::all);
+        
+        EgtbGenFileMng egtbGenFileMng2;
+        egtbGenFileMng2.preload(egtbFolder2, EgtbMemMode::all);
+        
+        egtbGenFileMng.compare(egtbGenFileMng2, endgameName, !isExactName);
+        return 1;
+    }
     
-//    /////////////////////////////////////////////////
-//    // Generate & modify data
-//    /////////////////////////////////////////////////
-//    if (argmap.find("-g") != argmap.end()) {
-//        EgtbGenFileMng egtbGenFileMng;
-//
-//        egtbGenFileMng.preload(egtbFolder, EgtbMemMode::all);
-//
-//        egtbGenFileMng.gen_all(egtbFolder, endgameName, EgtbType::dtm, CompressMode::compress);
-//        return 1;
-//    }
-//
-//    
-//    if (argmap.find("-c") != argmap.end()) {
-//        if (egtbFolder2.empty()) {
-//            std::cerr << "Missing second folder -d2" << std::endl;
-//            return -1;
-//        }
-//        
-//        EgtbGenFileMng egtbGenFileMng;
-//        egtbGenFileMng.preload(egtbFolder, EgtbMemMode::all);
-//        
-//        EgtbGenFileMng egtbGenFileMng2;
-//        egtbGenFileMng2.preload(egtbFolder2, EgtbMemMode::all);
-//        
-//        egtbGenFileMng.compare(egtbGenFileMng2, endgameName, !isExactName);
-//        return 1;
-//    }
-//    
 //    if (argmap.find("-zip") != argmap.end() || argmap.find("-unzip") != argmap.end()) {
 //        
 //        EgtbGenFileMng egtbGenFileMng;
@@ -401,26 +425,26 @@ int main(int argc, char* argv[])
 //        egtbGenFileMng.compress(egtbFolder, endgameName, !isExactName, argmap.find("-zip") != argmap.end());
 //        return 1;
 //    }
-//    
-//    
-//    /////////////////////////////////////////////////
-//    // Verify functions
-//    /////////////////////////////////////////////////
-//
-//    if (argmap.find("-v") != argmap.end()) {
-//        EgtbGenFileMng egtbGenFileMng;
-//        egtbGenFileMng.preload(egtbFolder, EgtbMemMode::all);
-//        egtbGenFileMng.verifyData(endgameName, !isExactName);
-//        return 1;
-//    }
-//    
-//    if (argmap.find("-vkey") != argmap.end()) {
-//        EgtbGenFileMng egtbGenFileMng;
-//        egtbGenFileMng.verifyKeys(endgameName, !isExactName);
-//        return 1;
-//    }
-//    
-//    return 0;
+    
+    
+    /////////////////////////////////////////////////
+    // Verify functions
+    /////////////////////////////////////////////////
+
+    if (argmap.find("-v") != argmap.end()) {
+        EgtbGenFileMng egtbGenFileMng;
+        egtbGenFileMng.preload(egtbFolder, EgtbMemMode::all);
+        egtbGenFileMng.verifyData(nameVec);
+        return 1;
+    }
+    
+    if (argmap.find("-vkey") != argmap.end()) {
+        EgtbGenFileMng egtbGenFileMng;
+        egtbGenFileMng.verifyKeys(nameVec);
+        return 1;
+    }
+    
+    return 0;
 }
 
 bool probeFen(EgtbDb& egtbDb, const std::string& fenString, bool allMoveScores)

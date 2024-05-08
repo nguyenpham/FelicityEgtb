@@ -17,10 +17,10 @@
 
 #include <thread>
 
-#include "../egtb/egtb.h"
+#include "../fegtb/egtb.h"
 #include "../base/funcs.h"
 
-#include "egtbfilewriter.h"
+#include "egtbgenfile.h"
 #include "compresslib.h"
 #include "genlib.h"
 
@@ -46,28 +46,28 @@ struct TmpHeader {
 };
 
 
-EgtbFileWriter::~EgtbFileWriter()
+EgtbGenFile::~EgtbGenFile()
 {
-    removeFlagBuffer();
+//    removeFlagBuffer();
 }
 
-void EgtbFileWriter::removeBuffers()
+void EgtbGenFile::removeBuffers()
 {
     EgtbFile::removeBuffers();
-    removeFlagBuffer();
+//    removeFlagBuffer();
 }
 
-void EgtbFileWriter::setName(const std::string& s)
+void EgtbGenFile::setName(const std::string& s)
 {
     header->setName(s);
 }
 
 
-void EgtbFileWriter::addProperty(uint addprt) {
+void EgtbGenFile::addProperty(uint addprt) {
     header->addProperty(addprt);
 }
 
-void EgtbFileWriter::create(const std::string& name, EgtbType _egtbType, u32 order) {
+void EgtbGenFile::create(const std::string& name, EgtbType _egtbType, u32 order) {
     if (header == nullptr) {
         header = new EgtbFileHeader();
     }
@@ -86,168 +86,89 @@ void EgtbFileWriter::create(const std::string& name, EgtbType _egtbType, u32 ord
 
     setName(name);
 
-    i64 sz = setupIdxComputing(name, order); //, getVersion());
+    auto sz = setupIdxComputing(name, order); //, getVersion());
     setSize(sz); assert(sz);
 }
 
-int EgtbFileWriter::getVersion() const {
-    auto signature = header ? header->getSignature() : 0;
-    switch (signature) {
-        case TB_ID_MAIN_V1:
-            return 0;
-        case EGTB_ID_MAIN_V2:
-            return 1;
-        case EGTB_ID_MAIN_V3:
-            return 2;
-        case EGTB_ID_MAIN:
-            return 3;
-    }
-    assert(false);
-    return -1;
-}
 
-bool EgtbFileWriter::saveHeader(std::ofstream& outfile) const {
+bool EgtbGenFile::saveHeader(std::ofstream& outfile) const {
     //            outfile.seekg(0LL, std::ios::beg);
     outfile.write (header->getData(), header->headerSize());
     return true;
 }
 
-void EgtbFileWriter::fillBufs(int score)
+void EgtbGenFile::fillBufs(int score)
 {
-    char cell = scoreToCell(score, getVersion() > 0);
+    char cell = scoreToCell(score);
     for(auto sd = 0; sd < 2; sd++) {
         if (pBuf[sd])
             std::memset(pBuf[sd], cell, size);
     }
 }
 
-bool EgtbFileWriter::setBufScore(i64 idx, int score, int sd)
+bool EgtbGenFile::setBufScore(i64 idx, int score, Side side)
 {
     if (isTwoBytes()) {
-        return setBuf2Bytes(idx, score, sd);
+        return setBuf2Bytes(idx, score, side);
     }
 
-    char cell = scoreToCell(score, getVersion() > 0);
-    return setBuf(idx, cell, sd);
+    char cell = scoreToCell(score);
+    return setBuf(idx, cell, side);
 }
 
-
-int EgtbFileWriter::cellToScore(char cell) {
-    assert(!isTwoBytes());
-    return cellToScore(cell, getVersion() > 0);
-}
-
-
-char EgtbFileWriter::scoreToCell(int score, bool ver2) {
-    if (ver2) {
-        if (score <= EGTB_SCORE_MATE) {
-            if (score == EGTB_SCORE_DRAW) return TB_DRAW;
-            
-            auto mi = (EGTB_SCORE_MATE - abs(score)) / 2;
-
-            int k = mi + (score > 0 ? EGTB_START_MATING : EGTB_START_LOSING);
-            assert(k >= 0 && k < 255);
-            
-            if (mi > 125 || k < 0 || k >= 255 || (score > 0 && k >= (EGTB_START_LOSING - 2))) {
-                std::lock_guard<std::mutex> thelock(printMutex);
-                std::cerr << "FATAL ERROR: overflown score: " << score << ". Please use 2 bytes per item (param: -2)." << std::endl;
-                exit(-1);
-            }
-
-            return (char)k;
-        }
-
-        switch (score) {
-            case EGTB_SCORE_MISSING:
-                return TB_MISSING;
-
-            case EGTB_SCORE_WINNING:
-                return TB_WINING;
-
-            case EGTB_SCORE_UNKNOWN:
-                return TB_UNKNOWN;
-
-            case EGTB_SCORE_ILLEGAL:
-                return TB_ILLEGAL;
-                
-            case EGTB_SCORE_PERPETUAL_CHECKED:
-                return (char)TB_PERPETUAL_CHECKED;
-            case EGTB_SCORE_PERPETUAL_CHECKED_EVASION:
-                return (char)TB_PERPETUAL_CHECKED_EVASION;
-            case EGTB_SCORE_PERPETUAL_EVASION:
-                return (char)TB_PERPETUAL_EVASION;
-
-            case EGTB_SCORE_UNSET:
-                return TB_UNSET;
-            default:
-                assert(false);
-                return TB_UNSET;
-        }
-    }
-    
-    std::cerr << "Fatal error: using old version endgames." << std::endl;
-    exit(-1);
-
-    assert(false);
-    return 0;
-}
-
-int EgtbFileWriter::cellToScore(char cell, bool ver2) {
-    if (ver2) {
-        u8 s = (u8)cell;
-        if (s >= TB_DRAW) {
-            // Researching
-            switch (s) {
-                case TB_DRAW:
-                    return EGTB_SCORE_DRAW;
-                case TB_PERPETUAL_CHECKED:
-                    return EGTB_SCORE_PERPETUAL_CHECKED;
-                case TB_PERPETUAL_CHECKED_EVASION:
-                    return EGTB_SCORE_PERPETUAL_CHECKED_EVASION;
-                case TB_PERPETUAL_EVASION:
-                    return EGTB_SCORE_PERPETUAL_EVASION;
-
-                default:
-                    break;
-            }
-            
-            if (s < EGTB_START_LOSING) {
-                int mi = (s - EGTB_START_MATING) * 2 + 1;
-                return EGTB_SCORE_MATE - mi;
-            }
-            
-            auto mi = (s - EGTB_START_LOSING) * 2;
-            return -EGTB_SCORE_MATE + mi;
-        }
+char EgtbGenFile::scoreToCell(int score) {
+    if (score <= EGTB_SCORE_MATE) {
+        if (score == EGTB_SCORE_DRAW) return TB_DRAW;
         
-        switch (s) {
-            case TB_MISSING:
-                return EGTB_SCORE_MISSING;
-                
-            case TB_WINING:
-                return EGTB_SCORE_WINNING;
-                
-            case TB_UNKNOWN:
-                return EGTB_SCORE_UNKNOWN;
-                
-            case TB_ILLEGAL:
-                return EGTB_SCORE_ILLEGAL;
-                
-            case TB_UNSET:
-            default:
-                return EGTB_SCORE_UNSET;
+        auto mi = (EGTB_SCORE_MATE - abs(score)) / 2;
+
+        auto k = mi + (score > 0 ? TB_START_MATING : TB_START_LOSING);
+        assert(k >= 0 && k < 255);
+        
+        if (mi > 125 || k < 0 || k >= 255 || (score > 0 && k >= (TB_START_LOSING - 2))) {
+            std::lock_guard<std::mutex> thelock(printMutex);
+            std::cerr << "FATAL ERROR: overflown score: " << score << ". Please use 2 bytes per item (param: -2)." << std::endl;
+            exit(-1);
         }
+
+        return (char)k;
     }
-    
-    std::cerr << "Fatal error: using old version endgames." << std::endl;
-    exit(-1);
+
+    switch (score) {
+        case EGTB_SCORE_MISSING:
+            return TB_MISSING;
+
+//        case EGTB_SCORE_WINNING:
+//            return TB_WINING;
+
+        case EGTB_SCORE_UNKNOWN:
+            return TB_UNKNOWN;
+
+        case EGTB_SCORE_ILLEGAL:
+            return TB_ILLEGAL;
+            
+#ifdef _FELICITY_XQ_
+        case EGTB_SCORE_PERPETUAL_CHECKED:
+            return (char)TB_PERPETUAL_CHECKED;
+        case EGTB_SCORE_PERPETUAL_CHECKED_EVASION:
+            return (char)TB_PERPETUAL_CHECKED_EVASION;
+        case EGTB_SCORE_PERPETUAL_EVASION:
+            return (char)TB_PERPETUAL_EVASION;
+#endif
+            
+        case EGTB_SCORE_UNSET:
+            return TB_UNSET;
+        default:
+            assert(false);
+            return TB_UNSET;
+    }
 
     assert(false);
     return 0;
 }
 
 
-bool EgtbFileWriter::createBuffersForGenerating() {
+bool EgtbGenFile::createBuffersForGenerating() {
     memMode = EgtbMemMode::all;
     auto sz = getSize();
     auto bufSz = sz;
@@ -255,104 +176,105 @@ bool EgtbFileWriter::createBuffersForGenerating() {
         bufSz += bufSz;
     }
 
-    bool r = createBuf(bufSz, 0) && createBuf(bufSz, 1);
+    bool r = createBuf(bufSz, Side::black) && createBuf(bufSz, Side::white);
     startpos[0] = startpos[1] = 0;
     endpos[0] = endpos[1] = sz;
     return r;
 }
 
 
-void EgtbFileWriter::createFlagBuffer() {
-    removeFlagBuffer();
-    auto flagLen = getSize() / 2 + 16;
-    flags = (uint8_t*) malloc(flagLen);
-    memset(flags, 0, flagLen);
-}
+//void EgtbGenFile::createFlagBuffer() {
+//    removeFlagBuffer();
+//    auto flagLen = getSize() / 2 + 16;
+//    flags = (uint8_t*) malloc(flagLen);
+//    memset(flags, 0, flagLen);
+//}
+//
+//
+//void EgtbGenFile::removeFlagBuffer()
+//{
+//    if (flags) {
+//        free(flags);
+//        flags = nullptr;
+//    }
+//}
+//
+//void EgtbGenFile::clearFlagBuffer() {
+//    if (flags) {
+//        auto flagLen = getSize() / 2 + 16;
+//        memset(flags, 0, flagLen);
+//    }
+//}
+//
+//
+//std::string EgtbGenFile::getLogFileName() const
+//{
+//    /// WARNING
+//    std::string fileName = getPath(Side::white);
+//    GenLib::replaceString(fileName, ".w.", ".ini");
+//    return fileName;
+//}
+//
+//int EgtbGenFile::readFromLogFile() const {
+//    auto fileName = getLogFileName();
+//
+//    auto vec = GenLib::readFileToLineArray(fileName);
+//
+//    for (auto && str : vec) {
+//        if (!str.empty()) {
+//            auto n = std::stoi(str);
+//            return n;
+//        }
+//    }
+//
+//    return -1;
+//}
+//
+//void EgtbGenFile::writeLogFile(int completedPly) const {
+//    auto fileName = getLogFileName();
+//    std::ofstream outfile(fileName.c_str());
+//    outfile << completedPly << "\n\n";
+//}
 
-
-void EgtbFileWriter::removeFlagBuffer()
-{
-    if (flags) {
-        free(flags);
-        flags = nullptr;
-    }
-}
-
-void EgtbFileWriter::clearFlagBuffer() {
-    if (flags) {
-        auto flagLen = getSize() / 2 + 16;
-        memset(flags, 0, flagLen);
-    }
-}
-
-
-std::string EgtbFileWriter::getLogFileName() const
-{
-    std::string fileName = getPath(W);
-    GenLib::replaceString(fileName, "w.xtb", ".ini");
-    return fileName;
-}
-
-int EgtbFileWriter::readFromLogFile() const {
-    auto fileName = getLogFileName();
-
-    auto vec = GenLib::readFileToLineArray(fileName);
-
-    for (auto && str : vec) {
-        if (!str.empty()) {
-            auto n = std::stoi(str);
-            return n;
-        }
-    }
-
-    return -1;
-}
-
-void EgtbFileWriter::writeLogFile(int completedPly) const {
-    auto fileName = getLogFileName();
-    std::ofstream outfile(fileName.c_str());
-    outfile << completedPly << "\n\n";
-}
-
-std::string EgtbFileWriter::getTmpFileName(const std::string& folder, int sd) const {
-    Side side = static_cast<Side>(sd);
+std::string EgtbGenFile::getTmpFileName(const std::string& folder, Side side) const {
     return createFileName(folder, getName(), EgtbType::tmp, side, false);
 }
 
-std::string EgtbFileWriter::getFlagTmpFileName(const std::string& folder) const {
-    auto fileName = getTmpFileName(folder, W);
+std::string EgtbGenFile::getFlagTmpFileName(const std::string& folder) const {
+    auto fileName = getTmpFileName(folder, Side::white);
     fileName = fileName.substr(0, fileName.length() - 5) + "f.tmt";
     return fileName;
 }
 
 
-bool EgtbFileWriter::readFromTmpFiles(const std::string& folder, int& ply, int& mPly)
+bool EgtbGenFile::readFromTmpFiles(const std::string& folder, int& ply, int& mPly)
 {
-    ply = readFromTmpFile(folder, 0);
-    mPly = readFromTmpFile(folder, 1);
+    ply = readFromTmpFile(folder, Side::black);
+    mPly = readFromTmpFile(folder, Side::white);
     return ply >= 0 && mPly >= 0 && (flags == nullptr || readFlagTmpFile(folder));
 }
 
-bool EgtbFileWriter::writeTmpFiles(const std::string& folder, int ply, int mPly)
+bool EgtbGenFile::writeTmpFiles(const std::string& folder, int ply, int mPly)
 {
-    return writeTmpFile(folder, 0, ply) && writeTmpFile(folder, 1, mPly) && (flags == nullptr || writeFlagTmpFile(folder));
+    return writeTmpFile(folder, Side::black, ply) && writeTmpFile(folder, Side::white, mPly) && (flags == nullptr || writeFlagTmpFile(folder));
 }
 
-int EgtbFileWriter::readFromTmpFile(const std::string& folder, int sd)
+int EgtbGenFile::readFromTmpFile(const std::string& folder, Side side)
 {
     auto sz = getSize();
     auto bufsz = sz;
     if (isTwoBytes()) bufsz += bufsz;
 
+    auto sd = static_cast<int>(side);
     if (!pBuf[sd]) {
-        createBuf(bufsz, sd);
+        createBuf(bufsz, side);
     }
     assert(pBuf[sd]);
 
-    return readFromTmpFile(folder, sd, 0, sz, pBuf[sd]);
+    return readFromTmpFile(folder, side, 0, sz, pBuf[sd]);
 }
 
-u32 EgtbFileWriter::checksum(void* data, i64 len) const
+u32 EgtbGenFile::checksum(void* data, i64 len) const
 {
     assert(data && len > 0);
     
@@ -373,7 +295,7 @@ u32 EgtbFileWriter::checksum(void* data, i64 len) const
     return checksum;
 }
 
-int EgtbFileWriter::readFromTmpFile(const std::string& folder, int sd, i64 fromIdx, i64 toIdx, char * toBuf)
+int EgtbGenFile::readFromTmpFile(const std::string& folder, Side side, i64 fromIdx, i64 toIdx, char * toBuf)
 {
     assert(toBuf);
     auto fromOfs = fromIdx, toOfs = toIdx;
@@ -386,7 +308,7 @@ int EgtbFileWriter::readFromTmpFile(const std::string& folder, int sd, i64 fromI
         return -1;
     }
 
-    auto fileName = getTmpFileName(folder, sd);
+    auto fileName = getTmpFileName(folder, side);
 
     std::ifstream file(fileName.c_str(), std::ios::binary);
 
@@ -408,12 +330,13 @@ int EgtbFileWriter::readFromTmpFile(const std::string& folder, int sd, i64 fromI
 
     if (!ok) {
         if (egtbVerbose) {
-            std::cerr << "Error: cannot read tmp file: " << fileName << ", sd: " << sd << std::endl;
+            std::cerr << "Error: cannot read tmp file: " << fileName << ", sd: " << Funcs::side2String(side, false) << std::endl;
         }
         file.close();
         return -1;
     }
 
+    auto sd = static_cast<int>(side);
     startpos[sd] = fromIdx;
     endpos[sd] = toIdx;
 
@@ -422,14 +345,14 @@ int EgtbFileWriter::readFromTmpFile(const std::string& folder, int sd, i64 fromI
     if (fromIdx == 0 && toIdx == getSize()) {
         auto sum = checksum(pBuf[sd], bufsz);
         if (tmpHeader.checksum != sum) {
-            std::cerr << "Error: checksum failed for temp file side " << (sd == B ? "Black" : "White") << ". Ignored that file." << std::endl;
+            std::cerr << "Error: checksum failed for temp file side " << Funcs::side2String(side, false) << ". Ignored that file." << std::endl;
             return -1;
         }
     }
     return tmpHeader.loop;
 }
 
-bool EgtbFileWriter::readFlagTmpFile(const std::string& folder)
+bool EgtbGenFile::readFlagTmpFile(const std::string& folder)
 {
     assert(flags);
     
@@ -472,7 +395,7 @@ bool EgtbFileWriter::readFlagTmpFile(const std::string& folder)
     return true;
 }
 
-bool EgtbFileWriter::writeFlagTmpFile(const std::string& folder)
+bool EgtbGenFile::writeFlagTmpFile(const std::string& folder)
 {
     auto bufsz = (getSize() + 1) / 2;
     
@@ -503,14 +426,15 @@ bool EgtbFileWriter::writeFlagTmpFile(const std::string& folder)
 }
 
 
-bool EgtbFileWriter::writeTmpFile(const std::string& folder, int sd, int loop)
+bool EgtbGenFile::writeTmpFile(const std::string& folder, Side side, int loop)
 {
+    auto sd = static_cast<int>(side);
     auto sz = getSize(), bufSz = sz;
     if (isTwoBytes()) bufSz += bufSz;
 
     assert(pBuf[sd]);
 
-    auto fileName = getTmpFileName(folder, sd);
+    auto fileName = getTmpFileName(folder, side);
     std::ofstream outfile(fileName.c_str(), std::ios::binary);
 
     if (egtbVerbose) {
@@ -543,17 +467,17 @@ bool EgtbFileWriter::writeTmpFile(const std::string& folder, int sd, int loop)
     return false;
 }
 
-void EgtbFileWriter::removeTmpFiles(const std::string& folder) const
+void EgtbGenFile::removeTmpFiles(const std::string& folder) const
 {
     for(int sd = 0; sd < 2; sd++) {
-        auto fileName = getTmpFileName(folder, sd);
+        auto fileName = getTmpFileName(folder, static_cast<Side>(sd));
         std::remove(fileName.c_str());
     }
     auto fileName = getFlagTmpFileName(folder);
     std::remove(fileName.c_str());
 }
 
-std::string EgtbFileWriter::createStatsString()
+std::string EgtbGenFile::createStatsString()
 {
     std::ostringstream stringStream;
     stringStream << "Name:\t\t\t" << getName() << std::endl;
@@ -572,10 +496,9 @@ std::string EgtbFileWriter::createStatsString()
             validCnt[sd]++;
             if (score == EGTB_SCORE_DRAW) {
                 wdl[sd][1]++;
-            } else if (score <= EGTB_SCORE_MATE || score >= EGTB_SCORE_PERPETUAL_CHECKED) {
-                if (score > 0 || score == EGTB_SCORE_PERPETUAL_CHECKED || score == EGTB_SCORE_PERPETUAL_CHECKED_EVASION) wdl[sd][0]++;
+            } else if (score <= EGTB_SCORE_MATE) {
+                if (score > 0) wdl[sd][0]++;
                 else wdl[sd][2]++;
-                if (score == EGTB_SCORE_PERPETUAL_CHECKED_EVASION) wdl[sd][2]++;
                 int absScore = abs(score);
                 smallestCell = std::min(smallestCell, absScore);
             }
@@ -612,26 +535,30 @@ std::string EgtbFileWriter::createStatsString()
     return stringStream.str();
 }
 
-void EgtbFileWriter::createStatsFile()
+void EgtbGenFile::createStatsFile()
 {
     std::string str = createStatsString();
-    auto statsFileName = getPath(B);
-    statsFileName = statsFileName.substr(0, statsFileName.length() - 5) + ".txt"; // 5 = "b.xtb"
+    auto statsFileName = getPath(Side::black);
+    auto pos = statsFileName.find_last_of(".");
+    if (pos != std::string::npos) {
+        statsFileName = statsFileName.substr(0, pos);
+    }
+    statsFileName = statsFileName.substr(0, statsFileName.length() - 2) + ".txt"; // 2 = ".b"
 
     std::remove(statsFileName.c_str());
     GenLib::writeTextFile(statsFileName, str);
 }
 
-std::string EgtbFileWriter::createFileName(const std::string& folderName, const std::string& name, EgtbType egtbType, Side side, bool compressed)
+std::string EgtbGenFile::createFileName(const std::string& folderName, const std::string& name, EgtbType egtbType, Side side, bool compressed)
 {
     auto t = static_cast<int>(egtbType);
-    const char* ext = compressed ? EgtbFile::egtbCompressFileExtensions[t] : EgtbFile::egtbFileExtensions[t];
+    const char* ext = EgtbFile::egtbFileExtensions[t];
     auto theName = name;
     Funcs::toLower(theName);
-    return folderName + "/" + theName + (side == Side::black ? "b" : "w") + ext;
+    return folderName + "/" + theName + (side == Side::black ? ".b" : ".w") + ext;
 }
 
-bool EgtbFileWriter::existFileName(const std::string& folderName, const std::string& name, EgtbType egtbType, Side side, bool compressed)
+bool EgtbGenFile::existFileName(const std::string& folderName, const std::string& name, EgtbType egtbType, Side side, bool compressed)
 {
     if (side == Side::none) {
         return GenLib::existFile(createFileName(folderName, name, egtbType, Side::white, compressed).c_str()) &&
@@ -640,15 +567,18 @@ bool EgtbFileWriter::existFileName(const std::string& folderName, const std::str
     return GenLib::existFile(createFileName(folderName, name, egtbType, side, compressed).c_str());
 }
 
-i64 totalSize = 0, illegalCnt = 0, drawCnt = 0, compressedUndeterminedCnt = 0;
+static i64 totalSize = 0, illegalCnt = 0, drawCnt = 0, compressedUndeterminedCnt = 0;
 
-bool EgtbFileWriter::saveFile(const std::string& folder, int sd, CompressMode compressMode) {
+bool EgtbGenFile::saveFile(const std::string& folder, Side side, CompressMode compressMode)
+{
+    assert(compressMode != compress_none);
+    auto sd = static_cast<int>(side);
+
     assert(sd == 0 || sd == 1);
-    auto side = static_cast<Side>(sd);
     auto compress = compressMode != CompressMode::compress_none;
     const std::string thePath = createFileName(folder, getName(), getEgtbType(), side, compress);
 
-    setPath(thePath, sd);
+    setPath(thePath, side);
     std::ofstream outfile (thePath, std::ofstream::binary);
     outfile.seekp(0);
 
@@ -671,13 +601,7 @@ bool EgtbFileWriter::saveFile(const std::string& folder, int sd, CompressMode co
 
     header->setOnlySide(side);
 
-#ifdef _WIN32
-    strncpy_s(header->getCopyright(), COPYRIGHT_BUFSZ, COPYRIGHT, strlen(COPYRIGHT));
-#else
-    strcpy(header->getCopyright(), COPYRIGHT);
-#endif
-
-//    header->setSignature(EGTB_ID_MAIN);
+    header->setCopyright(COPYRIGHT);
     header->resetSignature();
 
     auto r = true;
@@ -689,12 +613,12 @@ bool EgtbFileWriter::saveFile(const std::string& folder, int sd, CompressMode co
 
         if (compress) {
             totalSize += size;
-            // TODO
+            /// TODO
             int blocksize = getCompressBlockSize();
             int blockNum = (int)((bufSz + blocksize - 1) / blocksize);
             assert(blockNum > 0);
 
-            // 5 bytes per item
+            /// 5 bytes per item
             u8* blocktable = (u8*)malloc(blockNum * 5 + 64);
             i64 compBufSz = bufSz + 2 * blockNum + 2 * blocksize;
             char *compBuf = (char *)malloc(compBufSz);
@@ -721,7 +645,7 @@ bool EgtbFileWriter::saveFile(const std::string& folder, int sd, CompressMode co
                             sameLastCell = true;
                             score = lastScore;
                         }
-                        setBufScore(i, score, sd);
+                        setBufScore(i, score, side);
                     } else {
                         sameLastCell = lastScore == score;
                     }
@@ -782,29 +706,30 @@ bool EgtbFileWriter::saveFile(const std::string& folder, int sd, CompressMode co
     return r;
 }
 
-bool EgtbFileWriter::verifyKey(int threadIdx, i64 idx) {
+bool EgtbGenFile::verifyKey(int threadIdx, i64 idx) {
     auto& rcd = threadRecordVec.at(threadIdx);
     assert(rcd.board);
     
-    auto r = verifyAKey(*rcd.board, idx);
-    if (r) {
+    auto bit = verifyAKey(*rcd.board, idx);
+    
+    /// ok if it cannot setup board or the board is valid and key is correct
+    auto ok = bit == 0 || (bit & Verify_bit_valid);
+    if (ok) {
         rcd.cnt++;
-        
-        if (rcd.board->isLegal()) {
-            threadRecordVec.at(threadIdx).changes++;
+        if (bit & Verify_bit_valid) {
+            rcd.changes++;
         }
-
     } else {
         std::lock_guard<std::mutex> thelock(printMutex);
         rcd.board->printOut("FAILED verifyKey, idx: " + std::to_string(idx));
     }
 
-    assert(r);
-    return r;
+    assert(ok);
+    return ok;
 }
 
 
-bool EgtbFileWriter::verifyKeys_loop(int threadIdx) {
+bool EgtbGenFile::verifyKeys_loop(int threadIdx) {
     auto& rcd = threadRecordVec.at(threadIdx);
     if (!rcd.board) {
         rcd.board = new EgtbBoard();
@@ -822,15 +747,14 @@ bool EgtbFileWriter::verifyKeys_loop(int threadIdx) {
 
 i64 totalConflictLocCnt = 0, totalFacingCnt = 0, allSize = 0;
 
-bool EgtbFileWriter::verifyKeys() {
-//    std::cout << "verifyKeys: " << getName() << ", sz: " << GenLib::formatString(getSize()) << std::endl;
-
+bool EgtbGenFile::verifyKeys()
+{
     setupThreadRecords(getSize());
     resetAllThreadRecordCounters();
 
     std::vector<std::thread> threadVec;
     for (auto i = 1; i < threadRecordVec.size(); ++i) {
-        threadVec.push_back(std::thread(&EgtbFileWriter::verifyKeys_loop, this, i));
+        threadVec.push_back(std::thread(&EgtbGenFile::verifyKeys_loop, this, i));
     }
     verifyKeys_loop(0);
     
@@ -838,29 +762,19 @@ bool EgtbFileWriter::verifyKeys() {
         t.join();
     }
     
-    i64 conflictLocCnt = 0, facingCnt = 0;
+    i64 cnt = 0, validCnt = 0;
     for(auto && rcd : threadRecordVec) {
-        conflictLocCnt += rcd.cnt;
-        facingCnt += rcd.changes;
+        cnt += rcd.cnt;
+        validCnt += rcd.changes;
     }
-    totalConflictLocCnt += conflictLocCnt;
-    totalFacingCnt += facingCnt;
-    allSize += getSize();
     
-    std::cout << getName() << "," << getSize()
-        << "," << conflictLocCnt << "," << conflictLocCnt * 100 / getSize()
-        << "," << facingCnt << "," << facingCnt * 100 / getSize()
-        << "," << totalConflictLocCnt << "," << totalFacingCnt
-        << "," << totalConflictLocCnt * 100 / allSize << "," << totalFacingCnt * 100 / allSize
-        << "," << (totalConflictLocCnt + totalFacingCnt) * 100 / allSize
-        << std::endl;
-
     auto r = allThreadOK();
     if (r) {
-//        std::cout << "    passed: " << getName() << std::endl;
+        std::cout << "    passed: " << getName() << ", size: " << getSize() << ", verified " << cnt << ", valid keys: " << validCnt << std::endl;
     } else {
         std::cerr << "    FAILED: " << getName() << std::endl;
     }
+
     return r;
 }
 
