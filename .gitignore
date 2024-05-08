@@ -23,7 +23,7 @@ commit.sh
 
 ./exect/
 ./exect/*
-fegtb
+fegtb.exe
 
 x64
 Debug
