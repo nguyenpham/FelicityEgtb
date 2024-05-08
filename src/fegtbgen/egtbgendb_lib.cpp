@@ -436,11 +436,6 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                 bestScore = -EGTB_SCORE_MATE;
                 auto legalCount = 0;
 
-//                if (idx == 74 && sd == 1) {
-//                    board.printOut();
-//                    sd = 1;
-//                }
-                
                 for (auto && move : board.gen(side)) {
                     Hist hist;
                     board.make(move, hist);
@@ -456,10 +451,6 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                         if (internal) {     /// score from current working buffers
                             auto idx2 = pEgtbFile->getKey(board).key;
                             score = pEgtbFile->getScore(idx2, xside, false);
-//                            if (idx == 74 && sd == 1) {
-//                                board.printOut();
-//                                sd = 1;
-//                            }
 
                         } else if (!board.hasAttackers()) {
                             score = EGTB_SCORE_DRAW;

@@ -48,13 +48,11 @@ struct TmpHeader {
 
 EgtbGenFile::~EgtbGenFile()
 {
-//    removeFlagBuffer();
 }
 
 void EgtbGenFile::removeBuffers()
 {
     EgtbFile::removeBuffers();
-//    removeFlagBuffer();
 }
 
 void EgtbGenFile::setName(const std::string& s)
@@ -138,23 +136,11 @@ char EgtbGenFile::scoreToCell(int score) {
         case EGTB_SCORE_MISSING:
             return TB_MISSING;
 
-//        case EGTB_SCORE_WINNING:
-//            return TB_WINING;
-
         case EGTB_SCORE_UNKNOWN:
             return TB_UNKNOWN;
 
         case EGTB_SCORE_ILLEGAL:
             return TB_ILLEGAL;
-            
-#ifdef _FELICITY_XQ_
-        case EGTB_SCORE_PERPETUAL_CHECKED:
-            return (char)TB_PERPETUAL_CHECKED;
-        case EGTB_SCORE_PERPETUAL_CHECKED_EVASION:
-            return (char)TB_PERPETUAL_CHECKED_EVASION;
-        case EGTB_SCORE_PERPETUAL_EVASION:
-            return (char)TB_PERPETUAL_EVASION;
-#endif
             
         case EGTB_SCORE_UNSET:
             return TB_UNSET;
@@ -489,7 +475,7 @@ void EgtbGenFile::createStatsFile()
     if (pos != std::string::npos) {
         statsFileName = statsFileName.substr(0, pos);
     }
-    statsFileName = statsFileName.substr(0, statsFileName.length() - 2) + ".txt"; // 2 = ".b"
+    statsFileName = statsFileName.substr(0, statsFileName.length() - 2) + ".txt"; /// 2 is the length of ".b"
 
     std::remove(statsFileName.c_str());
     GenLib::writeTextFile(statsFileName, str);

@@ -48,29 +48,6 @@ namespace fegtb {
 
 using namespace fegtb;
 
-//const std::string originalFen = "rneakaenr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNEAKAENR w - - 0 1";
-
-//std::vector<std::string> GenLib::splitString(const std::string& string, const std::string& regexString) {
-//    std::regex re(regexString);
-//    std::sregex_token_iterator first {string.begin(), string.end(), re}, last;
-//    return {first, last};
-//}
-//
-//void GenLib::split(const std::string &s, char delim, std::vector<std::string> &elems) {
-//    std::stringstream ss;
-//    ss.str(s);
-//    std::string item;
-//    while (std::getline(ss, item, delim)) {
-//        elems.push_back(trim(item));
-//    }
-//}
-//
-//std::vector<std::string> GenLib::split(const std::string &s, char delim) {
-//    std::vector<std::string> elems;
-//    split(s, delim, elems);
-//    return elems;
-//}
-
 void GenLib::replaceString(std::string& subject, const std::string& search, const std::string& replace) {
     size_t pos = 0;
     while((pos = subject.find(search, pos)) != std::string::npos) {
@@ -84,64 +61,6 @@ void GenLib::removeSubstrs(std::string& s, const std::string& p) {
         s.erase(i, n);
     }
 }
-
-//void GenLib::toLower(char* str) {
-//    for(int i = 0; str[i]; ++i) {
-//        str[i] = tolower(str[i]);
-//    }
-//}
-//
-//void GenLib::toLower(std::string& str) {
-//    for(int i = 0; i < str.size(); ++i) {
-//        str[i] = tolower(str[i]);
-//    }
-//}
-//
-//void GenLib::toUpper(std::string& str) {
-//    for(int i = 0; i < str.size(); ++i) {
-//        str[i] = toupper(str[i]);
-//    }
-//}
-//
-//
-//static const char* trimChars = " \t\n\r\f\v";
-//
-//// trim from left
-//std::string& GenLib::ltrim(std::string& s)
-//{
-//    s.erase(0, s.find_first_not_of(trimChars));
-//    return s;
-//}
-//
-//// trim from right
-//std::string& GenLib::rtrim(std::string& s)
-//{
-//    s.erase(s.find_last_not_of(trimChars) + 1);
-//    return s;
-//}
-//
-//// trim from left & right
-//std::string& GenLib::trim(std::string& s)
-//{
-//    return ltrim(rtrim(s));
-//}
-//
-//std::string GenLib::posToCoordinateString(int pos) {
-//    int row = pos / 9, col = pos % 9;
-//    std::ostringstream stringStream;
-//    stringStream << char('a' + col) << 9 - row;
-//    return stringStream.str();
-//}
-//
-//int GenLib::coordinateStringToPos(const char* s) {
-//    if (*s >= 'a' && *s <= 'i' && s[1] >= '0' && s[1] <= '9') {
-//        int col = *s - 'a';
-//        int row = s[1] - '0';
-//        return (9 - row) * 9 + col;
-//    }
-//    return -1;
-//}
-
 
 //////////////////////////////////////////////////////////
 int GenLib::existFile(const char * filename)
@@ -163,12 +82,8 @@ std::string GenLib::loadFile(const std::string& fileName) {
 void GenLib::writeTextFile(const std::string& filepath, const std::string& line)
 {
     std::ofstream file;
-    //can't enable exception now because of gcc bug that raises ios_base::failure with useless message
-    //file.exceptions(file.exceptions() | std::ios::failbit);
     file.open(filepath, std::ios::out | std::ios::app);
-    //if (file.fail()) throw std::ios_base::failure(std::strerror(errno));
 
-    //make sure write fails with exception if something is wrong
     file.exceptions(file.exceptions() | std::ios::failbit | std::ifstream::badbit);
 
     file << line;
@@ -185,17 +100,6 @@ std::vector<std::string> GenLib::readFileToLineArray(const std::string& fileName
     }
     return vec;
 }
-
-//std::vector<std::string> GenLib::getAllFileNames(const std::string& pattern) {
-//    glob_t glob_result;
-//    glob(pattern.c_str(),GLOB_TILDE,NULL,&glob_result);
-//    std::vector<std::string> files;
-//    for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
-//        files.push_back(std::string(glob_result.gl_pathv[i]));
-//    }
-//    globfree(&glob_result);
-//    return files;
-//}
 
 
 #ifdef _WIN32
@@ -422,18 +326,6 @@ std::string GenLib::formatPeriod(int seconds) {
 std::string GenLib::number_percent(i64 num, i64 sz) {
     return formatString(num) + " (" + std::to_string(num * 100 / sz) + "%)";
 }
-
-//std::string GenLib::itoa(int n) {
-//    char buf[120];
-//    snprintf(buf, sizeof(buf), "%d", n);
-//    return buf;
-//}
-//
-//std::string GenLib::itoa(i64 n) {
-//    char buf[120];
-//    snprintf(buf, sizeof(buf), "%lld", n);
-//    return buf;
-//}
 
 int GenLib::fitBitSizeToStoreValue(int value) {
     for (int i = 1; i < 64; i++) {
