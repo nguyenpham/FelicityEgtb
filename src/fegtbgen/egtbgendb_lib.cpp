@@ -21,7 +21,7 @@
 #include <thread>
 #include <set>
 
-#include "egtbgenfilemng.h"
+#include "egtbgendb.h"
 
 #include "../base/funcs.h"
 
@@ -91,7 +91,7 @@ void addName(std::vector<std::string>& names, int n, std::string l, std::string 
 }
 
 /// from a given names, get all sub-endgames
-std::vector<std::string> EgtbGenFileMng::parseName(const std::string& name, bool includeSubs)
+std::vector<std::string> EgtbGenDb::parseName(const std::string& name, bool includeSubs)
 {
     if (Funcs::is_integer(name)) {
         auto n = std::stoi(name);
@@ -113,7 +113,7 @@ std::vector<std::string> EgtbGenFileMng::parseName(const std::string& name, bool
     return resultVec;
 }
 
-std::vector<std::string> EgtbGenFileMng::parseNames(const std::vector<std::string>& names)
+std::vector<std::string> EgtbGenDb::parseNames(const std::vector<std::string>& names)
 {
     
     std::map<std::string, NameRecord> allNameMap;
@@ -142,13 +142,13 @@ std::vector<std::string> EgtbGenFileMng::parseNames(const std::vector<std::strin
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void EgtbGenFileMng::showSubTables(const std::string& name, EgtbType egtbType) {
+void EgtbGenDb::showSubTables(const std::string& name, EgtbType egtbType) {
     std::cout << "All sub endgames for " << name << " (order - name - index size)" << std::endl;
     auto egNames = parseName(name);
     showSubTables(egNames, egtbType);
 }
 
-void EgtbGenFileMng::showSubTables(const std::vector<std::string>& egNames, EgtbType)
+void EgtbGenDb::showSubTables(const std::vector<std::string>& egNames, EgtbType)
 {
     i64 total = 0;
     auto cnt = 0;
@@ -165,7 +165,7 @@ void EgtbGenFileMng::showSubTables(const std::vector<std::string>& egNames, Egtb
     std::cout << "Total files: " << cnt << ", total size: " << GenLib::formatString(total) << std::endl;
 }
 
-void EgtbGenFileMng::showIntestingSubTables(EgtbType egtbType)
+void EgtbGenDb::showIntestingSubTables(EgtbType egtbType)
 {
     std::cout << "All intesting sub endgames (order - name - index size)" << std::endl;
     
@@ -207,7 +207,7 @@ void EgtbGenFileMng::showIntestingSubTables(EgtbType egtbType)
     showSubTables(egNames, egtbType);
 }
 
-void EgtbGenFileMng::createStatsFiles()
+void EgtbGenDb::createStatsFiles()
 {
     std::cout << "EgtbGenFileMng::createStatsFiles BEGIN\n";
     
@@ -220,7 +220,7 @@ void EgtbGenFileMng::createStatsFiles()
     std::cout << "EgtbGenFileMng::createStatsFiles END\n";
 }
 
-std::vector<std::string> EgtbGenFileMng::showMissing(const std::string& startName) const {
+std::vector<std::string> EgtbGenDb::showMissing(const std::string& startName) const {
     std::vector<std::string> vec = parseName(startName);
 
     i64 total = 0;
@@ -248,7 +248,7 @@ std::vector<std::string> EgtbGenFileMng::showMissing(const std::string& startNam
 
 /////////////////////////
 
-bool EgtbGenFileMng::compress(std::string folder, const std::string& endgameName, bool includingSubEndgames, bool compress) {
+bool EgtbGenDb::compress(std::string folder, const std::string& endgameName, bool includingSubEndgames, bool compress) {
     std::cout  << "Start " << (compress ? "compressing" : "uncompressing") << " " << endgameName << std::endl;
 
     std::vector<std::string> vec = parseName(endgameName);
@@ -317,7 +317,7 @@ bool EgtbGenFileMng::compress(std::string folder, const std::string& endgameName
 }
 
 
-bool EgtbGenFileMng::compressEndgame(EgtbGenFile* egtbFile, std::string writtenfolder, CompressMode compressMode) {
+bool EgtbGenDb::compressEndgame(EgtbGenFile* egtbFile, std::string writtenfolder, CompressMode compressMode) {
     auto aName = egtbFile->getName();
     std::cout  << "\t" << aName << std::endl;
     
@@ -349,7 +349,7 @@ bool EgtbGenFileMng::compressEndgame(EgtbGenFile* egtbFile, std::string writtenf
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-void EgtbGenFileMng::verifyData(const std::vector<std::string>& nameVec)
+void EgtbGenDb::verifyData(const std::vector<std::string>& nameVec)
 {
     std::cout << "Found total endgames: " << egtbFileVec.size() << std::endl;
     
@@ -375,7 +375,7 @@ void EgtbGenFileMng::verifyData(const std::vector<std::string>& nameVec)
 }
 
 
-bool EgtbGenFileMng::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
+bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
     assert(pEgtbFile);
     auto& rcd = threadRecordVec.at(threadIdx);
 
@@ -519,7 +519,7 @@ bool EgtbGenFileMng::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
     return true;
 }
 
-bool EgtbGenFileMng::verifyData(EgtbFile* egtbFile)
+bool EgtbGenDb::verifyData(EgtbFile* egtbFile)
 {
     assert(egtbFile);
     
@@ -540,7 +540,7 @@ bool EgtbGenFileMng::verifyData(EgtbFile* egtbFile)
 
         std::vector<std::thread> threadVec;
         for (auto i = 1; i < threadRecordVec.size(); ++i) {
-            threadVec.push_back(std::thread(&EgtbGenFileMng::verifyData_chunk, this, i, egtbFile));
+            threadVec.push_back(std::thread(&EgtbGenDb::verifyData_chunk, this, i, egtbFile));
         }
 
         verifyData_chunk(0, egtbFile);
@@ -557,7 +557,7 @@ bool EgtbGenFileMng::verifyData(EgtbFile* egtbFile)
     return true;
 }
 
-bool EgtbGenFileMng::verifyKeys(const std::string& name, EgtbType egtbType) const {
+bool EgtbGenDb::verifyKeys(const std::string& name, EgtbType egtbType) const {
     std::cout << "TbKey::verify STARTED for " << name << std::endl;
     
     EgtbGenFile egtbFile;
@@ -565,7 +565,7 @@ bool EgtbGenFileMng::verifyKeys(const std::string& name, EgtbType egtbType) cons
     return egtbFile.verifyKeys();
 }
 
-void EgtbGenFileMng::verifyKeys(const std::vector<std::string>& endgameNames) const
+void EgtbGenDb::verifyKeys(const std::vector<std::string>& endgameNames) const
 {
     std::cout << "\nVerify keys for " << endgameNames.size() << " endgames\n" << std::endl;
 
@@ -588,7 +588,7 @@ void EgtbGenFileMng::verifyKeys(const std::vector<std::string>& endgameNames) co
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool EgtbGenFileMng::compare(EgtbFile* egtbFile0, EgtbFile* egtbFile1) const {
+bool EgtbGenDb::compare(EgtbFile* egtbFile0, EgtbFile* egtbFile1) const {
     auto r = true;
     auto noMatches = 20;
     i64 cnt = 0;
@@ -628,7 +628,7 @@ bool EgtbGenFileMng::compare(EgtbFile* egtbFile0, EgtbFile* egtbFile1) const {
 }
 
 
-void EgtbGenFileMng::compare(EgtbGenFileMng& otherEgtbGenFileMng, std::string endgameName, bool includingSubEndgames) {
+void EgtbGenDb::compare(EgtbGenDb& otherEgtbGenFileMng, std::string endgameName, bool includingSubEndgames) {
     std::cout << "Found total endgames: " << egtbFileVec.size() << std::endl;
     std::vector<std::string> vec = parseName(endgameName, includingSubEndgames);
     

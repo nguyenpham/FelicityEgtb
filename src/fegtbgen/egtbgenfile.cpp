@@ -182,60 +182,6 @@ bool EgtbGenFile::createBuffersForGenerating() {
     return r;
 }
 
-
-//void EgtbGenFile::createFlagBuffer() {
-//    removeFlagBuffer();
-//    auto flagLen = getSize() / 2 + 16;
-//    flags = (uint8_t*) malloc(flagLen);
-//    memset(flags, 0, flagLen);
-//}
-//
-//
-//void EgtbGenFile::removeFlagBuffer()
-//{
-//    if (flags) {
-//        free(flags);
-//        flags = nullptr;
-//    }
-//}
-//
-//void EgtbGenFile::clearFlagBuffer() {
-//    if (flags) {
-//        auto flagLen = getSize() / 2 + 16;
-//        memset(flags, 0, flagLen);
-//    }
-//}
-//
-//
-//std::string EgtbGenFile::getLogFileName() const
-//{
-//    /// WARNING
-//    std::string fileName = getPath(Side::white);
-//    GenLib::replaceString(fileName, ".w.", ".ini");
-//    return fileName;
-//}
-//
-//int EgtbGenFile::readFromLogFile() const {
-//    auto fileName = getLogFileName();
-//
-//    auto vec = GenLib::readFileToLineArray(fileName);
-//
-//    for (auto && str : vec) {
-//        if (!str.empty()) {
-//            auto n = std::stoi(str);
-//            return n;
-//        }
-//    }
-//
-//    return -1;
-//}
-//
-//void EgtbGenFile::writeLogFile(int completedPly) const {
-//    auto fileName = getLogFileName();
-//    std::ofstream outfile(fileName.c_str());
-//    outfile << completedPly << "\n\n";
-//}
-
 std::string EgtbGenFile::getTmpFileName(const std::string& folder, Side side) const {
     return createFileName(folder, getName(), EgtbType::tmp, side, false);
 }
@@ -487,7 +433,7 @@ std::string EgtbGenFile::createStatsString()
     i64 wdl[2][3] = {{0, 0, 0}, {0, 0, 0}};
 
     for (auto sd = 0; sd < 2; sd++) {
-        Side side = static_cast<Side>(sd);
+        auto side = static_cast<Side>(sd);
         for(i64 idx = 0; idx < getSize(); idx++) {
             auto score = getScore(idx, side);
             if (score == EGTB_SCORE_ILLEGAL) {
@@ -499,7 +445,7 @@ std::string EgtbGenFile::createStatsString()
             } else if (score <= EGTB_SCORE_MATE) {
                 if (score > 0) wdl[sd][0]++;
                 else wdl[sd][2]++;
-                int absScore = abs(score);
+                auto absScore = abs(score);
                 smallestCell = std::min(smallestCell, absScore);
             }
         }
@@ -537,7 +483,7 @@ std::string EgtbGenFile::createStatsString()
 
 void EgtbGenFile::createStatsFile()
 {
-    std::string str = createStatsString();
+    auto str = createStatsString();
     auto statsFileName = getPath(Side::black);
     auto pos = statsFileName.find_last_of(".");
     if (pos != std::string::npos) {

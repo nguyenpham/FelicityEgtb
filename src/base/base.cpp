@@ -68,7 +68,7 @@ int BoardCore::attackerCnt() const
 {
     auto cnt = 0;
     
-#ifdef _FELICItY_CHESS
+#ifdef _FELICITY_CHESS_
     auto fromPiece = PieceType::queen;
 #else
     auto fromPiece = PieceType::rook;
@@ -82,7 +82,7 @@ int BoardCore::attackerCnt() const
 
 bool BoardCore::hasAttackers() const
 {
-#ifdef _FELICItY_CHESS
+#ifdef _FELICITY_CHESS_
     auto i = 1; /// from Queen - ignored King
 #else
     auto i = 5; /// from Rook, ignored King, 2 Avisors, 2 Elephants
@@ -379,7 +379,7 @@ bool BoardCore::pieceList_setEmpty(int *pieceList, int pos, int sd) {
 }
 
 bool BoardCore::pieceList_isThereAttacker(const int *pieceList) {
-#ifdef _FELICITY_CHESS
+#ifdef _FELICITY_CHESS_
     auto from = 1;   /// ignored King
 #else
     auto from = 5;   /// ignored King, Advisors, Elephants

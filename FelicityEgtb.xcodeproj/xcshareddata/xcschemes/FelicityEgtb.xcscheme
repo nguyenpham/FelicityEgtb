@@ -64,7 +64,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n 3"
+            argument = "-n 2"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -81,6 +81,26 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-subinfo"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-verbose"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-allmovescores"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-fen K7/8/7k/8/8/1Rb5/8/8 w - - 0 2"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-fen K7/8/7k/8/8/2R5/8/8 b - - 0 2"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-i"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
