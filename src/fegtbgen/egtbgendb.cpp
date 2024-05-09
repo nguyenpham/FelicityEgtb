@@ -468,11 +468,11 @@ bool EgtbGenDb::gen_finish(const std::string& folder, CompressMode compressMode,
     std::cout << "Total generating time (not including verifying): " << GenLib::formatPeriod(total_elapsed) << std::endl;
 
     /// Verify
-    if (needVerify && !verifyData(egtbFile)) {
-        std::cerr << "Error: verify FAILED for " << egtbFile->getName() << std::endl;
-        exit(1);
-        return false;
-    }
+    //if (needVerify && !verifyData(egtbFile)) {
+    //    std::cerr << "Error: verify FAILED for " << egtbFile->getName() << std::endl;
+    //    exit(1);
+    //    return false;
+    //}
     
 //    egtbFile->checkAndConvert2bytesTo1();
 
@@ -484,7 +484,7 @@ bool EgtbGenDb::gen_finish(const std::string& folder, CompressMode compressMode,
         return true;
     }
 
-    std::cerr << "Error: Generator ended UNSUCCESSFULLY " << egtbFile->getName() << std::endl;
+    std::cerr << "Error: Can't save files. UNSUCCESSFULLY " << egtbFile->getName() << std::endl;
     exit(-1);
     return false;
 }

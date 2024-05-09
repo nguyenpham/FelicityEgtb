@@ -702,7 +702,7 @@ bool EgtbFile::verifyKeys(bool printRandom) const
             cnt++;
         }
         
-        auto prt = !ok || (printRandom && arc4random() % 500000 == 0);
+        auto prt = !ok || (printRandom && rand() % 500000 == 0);
         if (prt) {
             auto msg = std::string("idx: ") + std::to_string(idx);
             board.printOut(msg);

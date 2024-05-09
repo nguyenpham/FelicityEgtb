@@ -69,17 +69,17 @@ namespace fegtb {
     static void findFiles(std::vector<std::string>& names, const std::string& dirname) {
         std::string search_path = dirname + "/*.*";
 
-        WIN32_FIND_DATA file;
-        HANDLE search_handle = FindFirstFile(search_path.c_str(), &file);
+        WIN32_FIND_DATAA file;
+        HANDLE search_handle = FindFirstFileA(search_path.c_str(), &file);
         if (search_handle) {
             do {
-                std::string fullpath = dirname + "/" + file.cFileName;
+                std::string fullpath = dirname + std::string("/") + std::string(file.cFileName);
                 if ((file.dwFileAttributes | FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY && (file.cFileName[0] != '.')) {
                     findFiles(names, fullpath);
                 } else {
                     names.push_back(fullpath);
                 }
-            } while (FindNextFile(search_handle, &file));
+            } while (FindNextFileA(search_handle, &file));
             ::FindClose(search_handle);
         }
     }

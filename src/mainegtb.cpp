@@ -196,26 +196,6 @@ int main(int argc, char* argv[])
 	setvbuf(stdout, 0, _IOLBF, 4096);
 #endif
     
-    
-//    /// Quick test
-//    {
-//        EgtbFile egtbFile("knkn");
-//        EgtbBoard board;
-//        board.setFen("1Nk5/K1n5/8/8/8/8/8/8 w - - 0 2");
-//        board.printOut();
-//        auto r = egtbFile.getKey(board);
-//        
-//        std::cout << "key: " << r.key << "\n" << std::endl;
-//        
-//        board.reset();
-//        
-//        auto ok = egtbFile.setupBoard(board, r.key, bslib::FlipMode::none, bslib::Side::white);
-//        
-//        board.printOut();
-//        std::cout << "ok = " << ok << std::endl;
-//        return 0;
-//    }
-
     static const auto programName = "egtbgen";
     std::cout << "Felicity EGTB generator for " << EGTB_MAJOR_VARIANT
     << ", by Nguyen Pham 2024, version: " << EGTB_VERSION_STRING

@@ -90,8 +90,12 @@ void EgtbGenFile::create(const std::string& name, EgtbType _egtbType, u32 order)
 
 
 bool EgtbGenFile::saveHeader(std::ofstream& outfile) const {
-    //            outfile.seekg(0LL, std::ios::beg);
-    outfile.write (header->getData(), header->headerSize());
+    //outfile.seekg(0LL, std::ios::beg);
+    if (outfile.write(header->getData(), header->headerSize())) {
+        return true;
+    }
+
+    std::cerr << "Error: can't save header" << std::endl;
     return true;
 }
 
@@ -546,8 +550,8 @@ bool EgtbGenFile::saveFile(const std::string& folder, Side side, CompressMode co
         if (compress) {
             totalSize += size;
             /// TODO
-            int blocksize = getCompressBlockSize();
-            int blockNum = (int)((bufSz + blocksize - 1) / blocksize);
+            auto blocksize = getCompressBlockSize();
+            auto blockNum = (int)((bufSz + blocksize - 1) / blocksize);
             assert(blockNum > 0);
 
             /// 5 bytes per item
@@ -561,7 +565,7 @@ bool EgtbGenFile::saveFile(const std::string& folder, Side side, CompressMode co
             if (compressMode == CompressMode::compress_optimizing) {
                 
                 auto sameLastCell = false;
-                int lastScore = 0;
+                auto lastScore = 0;
                 for (i64 i = 0; i < size; i++) {
                     auto score = getScore(i, side);
                     if (score == EGTB_SCORE_ILLEGAL) {
@@ -594,7 +598,7 @@ bool EgtbGenFile::saveFile(const std::string& folder, Side side, CompressMode co
                 exit(-1);
             }
 
-            int bytePerItem = 4;
+            auto bytePerItem = 4;
 
             if (compSz > EGTB_SMALL_COMPRESS_SIZE) {
                 bytePerItem = 5;
@@ -616,8 +620,10 @@ bool EgtbGenFile::saveFile(const std::string& folder, Side side, CompressMode co
                 r = false;
             }
 
+            assert(compBuf);
             if (r && compBuf && !outfile.write((char*)compBuf, compSz)) {
                 r = false;
+                std::cerr << "\nError: cannot save compBuf compSz=" << compSz << std::endl;
             }
 
             if (blocktable) {
@@ -630,6 +636,7 @@ bool EgtbGenFile::saveFile(const std::string& folder, Side side, CompressMode co
         } else
         if (!saveHeader(outfile) || !outfile.write (pBuf[sd], bufSz)) {
             r = false;
+            std::cerr << "\nError: cannot save header or buf for sd=" << sd << std::endl;
         }
     }
 

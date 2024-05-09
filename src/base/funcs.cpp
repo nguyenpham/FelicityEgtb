@@ -170,8 +170,8 @@ std::vector<std::string> Funcs::splitString(const std::string &s, char delim)
 std::vector<std::string> Funcs::splitString(const std::string& s, const std::string& del)
 {
     std::vector<std::string> vec;
-    int start = 0;
-    int end = s.find(del);
+    auto start = 0;
+    auto end = s.find(del);
     while (end != -1) {
         vec.push_back(s.substr(start, end - start));
         start = end + del.size();

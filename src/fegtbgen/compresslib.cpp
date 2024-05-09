@@ -175,7 +175,7 @@ i64 CompressLib::compressAllBlocks(int blockSize, u8* blocktable, char *dest, co
 
     i64 compressedLen = (i64)(p - dest); assert(compressedLen > 0);
 
-    // Can be a small one
+    /// Can be a small one
     if (compressedLen <= EGTB_SMALL_COMPRESS_SIZE) {
         u32* tb = (u32*)blocktable;
         for (auto i = 0; i < blocknum; i++) {

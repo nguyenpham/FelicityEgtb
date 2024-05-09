@@ -104,49 +104,49 @@ std::vector<std::string> GenLib::readFileToLineArray(const std::string& fileName
 
 #ifdef _WIN32
 
-static void findFiles(std::vector<std::string>& names, const std::string& dirname) {
-    std::string search_path = dirname + "/*.*";
-
-    WIN32_FIND_DATA file;
-    HANDLE search_handle = FindFirstFile(search_path.c_str(), &file);
-    if (search_handle) {
-        do {
-            std::string fullpath = dirname + "/" + file.cFileName;
-            if ((file.dwFileAttributes | FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY && (file.cFileName[0] != '.')) {
-                findFiles(names, fullpath);
-            } else {
-                names.push_back(fullpath);
-            }
-        } while (FindNextFile(search_handle, &file));
-        ::FindClose(search_handle);
-    }
-}
-
-std::vector<std::string> GenLib::listdir(std::string dirname) {
-    std::vector<std::string> names;
-    findFiles(names, dirname);
-    return names;
-}
+//static void findFiles(std::vector<std::string>& names, const std::string& dirname) {
+//    std::string search_path = dirname + "/*.*";
+//
+//    WIN32_FIND_DATA file;
+//    HANDLE search_handle = FindFirstFile(search_path.c_str(), &file);
+//    if (search_handle) {
+//        do {
+//            std::string fullpath = dirname + "/" + file.cFileName;
+//            if ((file.dwFileAttributes | FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY && (file.cFileName[0] != '.')) {
+//                findFiles(names, fullpath);
+//            } else {
+//                names.push_back(fullpath);
+//            }
+//        } while (FindNextFile(search_handle, &file));
+//        ::FindClose(search_handle);
+//    }
+//}
+//
+//std::vector<std::string> GenLib::listdir(std::string dirname) {
+//    std::vector<std::string> names;
+//    findFiles(names, dirname);
+//    return names;
+//}
 
 void GenLib::createFolder(std::string dirname) {
-	if (egtb::egtbVerbose)
+	if (fegtb::egtbVerbose)
 		std::cout << "createFolder: " << dirname << std::endl;
-    CreateDirectory(dirname.c_str(),NULL);
+    CreateDirectoryA(dirname.c_str(),NULL);
 }
 
-i64 GenLib::getFileSize(const std::string& fileName)
-{
-	std::ifstream file(fileName.c_str(), std::ifstream::in | std::ifstream::binary);
-
-	if (!file.is_open()) {
-		return 0;
-	}
-	//file.ignore(std::numeric_limits<std::streamsize>::max());
-	std::streamsize length = file.gcount();
-	file.clear();   //  Since ignore will have set eof.
-	file.seekg(0, std::ios_base::beg);
-	return (i64)length;
-}
+//i64 GenLib::getFileSize(const std::string& fileName)
+//{
+//	std::ifstream file(fileName.c_str(), std::ifstream::in | std::ifstream::binary);
+//
+//	if (!file.is_open()) {
+//		return 0;
+//	}
+//	//file.ignore(std::numeric_limits<std::streamsize>::max());
+//	std::streamsize length = file.gcount();
+//	file.clear();   //  Since ignore will have set eof.
+//	file.seekg(0, std::ios_base::beg);
+//	return (i64)length;
+//}
 
 #else
 std::vector<std::string> GenLib::listdir(std::string dirname) {
