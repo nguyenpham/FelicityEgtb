@@ -160,7 +160,7 @@ int EgtbDb::getScoreOnePly(EgtbBoard& board, Side side) {
             }
 
             if (abs(score) <= EGTB_SCORE_MATE) {
-                bestscore = MAX(bestscore, -score);
+                bestscore = std::max(bestscore, -score);
             }
         }
         board.takeBack(hist);

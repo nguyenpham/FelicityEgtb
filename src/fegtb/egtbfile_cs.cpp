@@ -155,26 +155,26 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
         rest = rest % rec.mult;
 
         switch (rec.idx) {
-            case EGTB_IDX_K_2:
-            {
-                assert(key >= 0 && key < 32);
-                int r = key >> 2, f = key & 0x3;
-                auto pos = (r << 3) + f;
-                board.setPiece(pos, Piece(PieceType::king, side));
-                break;
-            }
-
-            case EGTB_IDX_K_8:
-            {
-                auto pos = tb_kIdxToPos[key];
-                board.setPiece(pos, Piece(PieceType::king, side));
-                break;
-            }
-            case EGTB_IDX_K:
-            {
-                board.setPiece(key, Piece(PieceType::king, side));
-                break;
-            }
+//            case EGTB_IDX_K_2:
+//            {
+//                assert(key >= 0 && key < 32);
+//                int r = key >> 2, f = key & 0x3;
+//                auto pos = (r << 3) + f;
+//                board.setPiece(pos, Piece(PieceType::king, side));
+//                break;
+//            }
+//
+//            case EGTB_IDX_K_8:
+//            {
+//                auto pos = tb_kIdxToPos[key];
+//                board.setPiece(pos, Piece(PieceType::king, side));
+//                break;
+//            }
+//            case EGTB_IDX_K:
+//            {
+//                board.setPiece(key, Piece(PieceType::king, side));
+//                break;
+//            }
 
             case EGTB_IDX_KK_2:
             {
@@ -196,10 +196,10 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
             }
 
             case EGTB_IDX_Q:
-            case EGTB_IDX_R_HALF:
+            case EGTB_IDX_R:
             case EGTB_IDX_B:
-            case EGTB_IDX_N_HALF:
-            case EGTB_IDX_P_HALF:
+            case EGTB_IDX_N:
+            case EGTB_IDX_P:
             {
                 auto type = static_cast<PieceType>(rec.idx - EGTB_IDX_Q + QUEEN);
                 if (!egtbKey.setupBoard_x(board, key, type, side)) {
@@ -209,10 +209,10 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
             }
 
             case EGTB_IDX_QQ:
-            case EGTB_IDX_RR_HALF:
+            case EGTB_IDX_RR:
             case EGTB_IDX_BB:
-            case EGTB_IDX_NN_HALF:
-            case EGTB_IDX_PP_HALF:
+            case EGTB_IDX_NN:
+            case EGTB_IDX_PP:
             {
                 auto type = static_cast<PieceType>(rec.idx - EGTB_IDX_QQ + QUEEN);
                 if (!egtbKey.setupBoard_xx(board, key, type, side)) {

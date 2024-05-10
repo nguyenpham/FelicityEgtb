@@ -30,26 +30,24 @@ bool verifyMode = true;
 i64 maxEndgameSize = -1;
 
 #ifdef _FELICITY_CHESS_
-static const int pieceValueForSortingNames[8] = { -1, 10000, 1000, 400, 300, 200, 100, 0 };
+static const std::string pieceSorting = "0987654321";
 #else
 
-/// Pawn before A, B
-static const int pieceValueForSortingNames[8] = { -1, 10000, 150, 100, 1000, 500, 400, 300 };
+static const std::string pieceSorting = "09218765430";
 #endif
 
 ////////////////////////////////////////////
 bool NameRecord::parse(const std::string& _name)
 {
     memset(pieceCount, 0, sizeof(pieceCount));
-    attackerCount[0] = attackerCount[1] = 0;
-    allCount[0] = allCount[1] = 0;
     
-    /// For Chess only
-    pawnCount[0] = pawnCount[1] = 0;
     name = _name;
     type = EgtbType::dtm;
+    pawnCount[0] = pawnCount[1] = 0; /// for Chess only
+    sortingSides[0] = sortingSides[1] = "";
     
-    for(auto i = 0, sd = W, preMat = -1; i < name.size(); i++) {
+    auto prevCh = '9';
+    for(auto i = 0, sd = W; i < name.size(); i++) {
         char ch = name[i];
         auto type = Funcs::charactorToPieceType(ch);
         if (type == PieceType::empty) {
@@ -59,10 +57,10 @@ bool NameRecord::parse(const std::string& _name)
         
         auto t = static_cast<int>(type);
 
-        auto mat = pieceValueForSortingNames[t];
+        auto c = pieceSorting[t];
 
         if (type == PieceType::king) {
-            preMat = mat;
+            prevCh = c;
             if (i > 0) {
                 sd = B;
             }
@@ -71,22 +69,18 @@ bool NameRecord::parse(const std::string& _name)
         }
 
         pieceCount[sd][t]++;
-
-        if (mat > preMat) {
+        
+        if (prevCh < c) {
             return false;
         }
-        preMat = mat;
-
-        mats[sd] += mat;
+        sortingSides[sd] += c;
+        prevCh = c;
 
 #ifdef _FELICITY_CHESS_
-        attackerMats[sd] += mat;
-        attackerCount[sd]++;
         if (type == PieceType::pawn) {
             pawnCount[sd]++;
         }
 #else
-        allCount[sd]++;
         if (t >= ROOK) {
             attackerMats[sd] += mat;
             attackerCount[sd]++;
@@ -95,8 +89,8 @@ bool NameRecord::parse(const std::string& _name)
     }
     
     return pieceCount[0][KING] == 1 && pieceCount[1][KING] == 1
-    && attackerMats[W] > 0
-    && attackerMats[W] >= attackerMats[B]
+    && !sortingSides[W].empty()
+    && sortingSides[W] >= sortingSides[B]
     && !isLimited()
     ;
 }
@@ -122,18 +116,20 @@ bool NameRecord::isValid() const
 
 bool NameRecord::isBothArmed() const
 {
-    return attackerMats[W] > 0 && attackerMats[B] > 0 ;
+    return !sortingSides[W].empty() && !sortingSides[B].empty();
+//    return attackerMats[W] > 0 && attackerMats[B] > 0 ;
 }
 
 bool NameRecord::hasAttackers() const
 {
-    return attackerMats[W] + attackerMats[B] > 0 ;
+    return !sortingSides[W].empty();
+//    return attackerMats[W] + attackerMats[B] > 0 ;
 }
 
 bool NameRecord::isMeSmaller(const NameRecord& other) const
 {
-    auto attackers = attackerCount[W] + attackerCount[B];
-    auto attackers_o = other.attackerCount[W] + other.attackerCount[B];
+    auto attackers = sortingSides[W].size() + sortingSides[B].size();
+    auto attackers_o = other.sortingSides[W].size() + other.sortingSides[B].size();
     
     if (attackers != attackers_o) {
         return attackers < attackers_o;
@@ -160,23 +156,28 @@ bool NameRecord::isMeSmaller(const NameRecord& other) const
     }
 #endif
     
-    if (attackerCount[W] != other.attackerCount[W]) {
-        return attackerCount[W] < other.attackerCount[W];
-    }
-    
-    if (attackerMats[W] != other.attackerMats[W]) {
-        return attackerMats[W] < other.attackerMats[W];
+    if (sortingSides[W].size() != other.sortingSides[W].size()) {
+        return sortingSides[W].size() < other.sortingSides[W].size();
     }
 
-    return attackerMats[W] + attackerMats[B] < other.attackerMats[W] + other.attackerMats[B];
+    if (sortingSides[W] != other.sortingSides[W]) {
+        return sortingSides[W] < other.sortingSides[W];
+    }
+    return sortingSides[B] < other.sortingSides[B];
+
+//    if (attackerMats[W] != other.attackerMats[W]) {
+//        return attackerMats[W] < other.attackerMats[W];
+//    }
+//
+//    return attackerMats[W] + attackerMats[B] < other.attackerMats[W] + other.attackerMats[B];
 }
 
 std::string NameRecord::getSubfolder() const
 {
-    if (attackerCount[0] == 0 || attackerCount[1] == 0) {
-        return std::to_string(attackerCount[0] + attackerCount[1]);
+    if (sortingSides[0].empty() || sortingSides[1].empty()) {
+        return std::to_string(sortingSides[0].size() + sortingSides[1].size());
     }
-    return std::to_string(attackerCount[W]) + "-" + std::to_string(attackerCount[B]);
+    return std::to_string(sortingSides[W].size()) + "-" + std::to_string(sortingSides[B].size());
 }
 
 ////////////////////////////////////////////

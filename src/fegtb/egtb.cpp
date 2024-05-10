@@ -161,7 +161,7 @@ namespace fegtb {
                 p += blocksz;
             } else {
                 auto left = uncompressedlen - (i64)(p - dest);
-                auto curBlockSize = (int)MIN(left, (i64)blocksize);
+                auto curBlockSize = (int)std::min(left, (i64)blocksize);
 
                 auto originSz = decompress((char*)p, curBlockSize, s, blocksz);
                 p += originSz;

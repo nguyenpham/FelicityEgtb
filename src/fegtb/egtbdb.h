@@ -41,14 +41,14 @@ namespace fegtb {
         EgtbDb();
         ~EgtbDb();
 
-        // Call it to release memory
+        /// Call it to release memory
         void removeAllBuffers();
 
         int getSize() const {
             return (int)egtbFileVec.size();
         }
 
-        // Folders and files
+        /// Folders and files
         void setFolders(const std::vector<std::string>& folders);
         void addFolders(const std::string& folderName);
 
@@ -58,13 +58,11 @@ namespace fegtb {
         /// Scores
         int getScore(EgtbBoard& board, bslib::Side side);
         int getScore(EgtbBoard& board);
-//        int getScore(const std::vector<bslib::Piece> pieceVec, bslib::Side side);
         
         i64 getKey(EgtbBoard& board);
 
         /// Probe (for getting the line of moves to win
         int probe(EgtbBoard& board, std::vector<bslib::MoveFull>& moveList);
-//        int probe(const std::vector<bslib::Piece> pieceVec, bslib::Side side, std::vector<bslib::MoveFull>& moveList);
         int probe(const std::string& fenString, std::vector<bslib::MoveFull>& moveList);
 
     public:

@@ -666,7 +666,16 @@ bool EgtbGenFile::verifyKey(int threadIdx, i64 idx) {
         }
     } else {
         std::lock_guard<std::mutex> thelock(printMutex);
-        rcd.board->printOut("FAILED verifyKey, idx: " + std::to_string(idx));
+        rcd.board->printOut("FAILED verifyKey, key: " + std::to_string(idx));
+        
+        auto b0 = setupBoard(*rcd.board, idx, FlipMode::none, Side::white);
+        rcd.board->printOut();
+        
+        if (rcd.board->isValid()) {
+            auto idx2 = getKey(*rcd.board).key;
+            rcd.board->printOut();
+        }
+
     }
 
     assert(ok);

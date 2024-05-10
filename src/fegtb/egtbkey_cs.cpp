@@ -152,8 +152,8 @@ int EgtbKey::getKey_x(int pos0)
 
 int EgtbKey::getKey_xx(int pos0, int pos1)
 {
-    auto p0 = MIN(pos0, pos1);
-    auto p1 = MAX(pos0, pos1);
+    auto p0 = std::min(pos0, pos1);
+    auto p1 = std::max(pos0, pos1);
 
     auto x = p0 << 8 | p1;
 
@@ -187,8 +187,8 @@ int EgtbKey::getKey_p(int pos0)
 
 int EgtbKey::getKey_pp(int pos0, int pos1)
 {
-    auto p0 = MIN(pos0, pos1);
-    auto p1 = MAX(pos0, pos1);
+    auto p0 = std::min(pos0, pos1);
+    auto p1 = std::max(pos0, pos1);
 
     auto x = p0 << 8 | p1;
     return Funcs::bSearch(tb_pp, EGTB_SIZE_PP, x);
@@ -300,30 +300,37 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
 {
     EgtbKeyRec rec;
     
-    /// Check which side for left hand side (stronger side)
-    int mat[] = { 0, 0 };
-    int cnt[] = { 0, 0 };
-    auto pawnCnt = 0;
+    auto sd = W;
+    auto flipMode = FlipMode::none;
 
-    for (auto s = 0, d = 0; s < 2; s++, d = 16) {
-        for(auto i = 1; i < 16; i++) {
-            auto pos = board.pieceList[s][i];
-            if (pos >= 0) {
-                auto piece = board.getPiece(pos);
-                cnt[s]++;
-                mat[s] += exchangePieceValue[static_cast<int>(piece.type)];
-                if (piece.type == PieceType::pawn) {
-                    pawnCnt++;
+    /// Check which side for left hand side (stronger side)
+    {
+        int pieceCnt[2][10];
+        memset(pieceCnt, 0, sizeof(pieceCnt));
+        
+        for (auto sd = 0; sd < 2; sd++) {
+            for(auto i = 1; i < 16; i++) {
+                auto pos = board.pieceList[sd][i];
+                if (pos >= 0) {
+                    auto piece = board.getPiece(pos);
+                    pieceCnt[sd][static_cast<int>(piece.type)]++;
                 }
             }
         }
-    }
-
-    auto sd = W;
-    auto flipMode = FlipMode::none;
-    if (cnt[B] > cnt[W] || (cnt[B] == cnt[W] && mat[B] > mat[W])) {
-        sd = B;
-        flipMode = FlipMode::vertical;
+        
+        for(auto i = FirstAttacker; i < 16; i++) {
+            if (pieceCnt[0][i] != pieceCnt[1][i]) {
+                if (pieceCnt[W][i] < pieceCnt[B][i]) {
+                    sd = B;
+#ifdef _FELICITY_CHESS_
+                    flipMode = FlipMode::vertical;
+#else
+                    flipMode = FlipMode::rotate;
+#endif
+                }
+                break;
+            }
+        }
     }
 
     rec.flipSide = sd == B;
@@ -348,38 +355,6 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
         const auto sd = static_cast<int>(side);
 
         switch (attr) {
-            case EGTB_IDX_K_8:
-            {
-                assert(false);
-                auto pos = board.pieceList[sd][0];
-
-                auto flip = tb_flipMode[pos];
-                flipMode = Funcs::flip(flipMode, static_cast<FlipMode>(flip));
-                pos = board.flip(pos, flipMode);
-
-                auto idx2 = tb_kIdx[pos]; assert(idx2 >= 0 && idx2 < 10);
-                key += i64(idx2) * mul;
-                assert(key >= 0);
-                break;
-            }
-
-            case EGTB_IDX_K_2:
-            {
-                assert(false);
-                auto pos = board.pieceList[sd][0];
-                pos = board.flip(pos, flipMode);
-                auto f = pos & 0x7;
-                if (f > 3) {
-                    flipMode = Funcs::flip(flipMode, FlipMode::horizontal);
-                    f = 7 - f;
-                }
-                auto r = pos >> 3;
-                auto idx = (r << 2) + f;
-                assert(idx >= 0 && idx < 32);
-                key += idx * mul;
-                break;
-            }
-
             case EGTB_IDX_KK_2:
             {
                 auto pos0 = board.flip(board.pieceList[sd][0], flipMode);
@@ -422,20 +397,11 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
                 break;
             }
 
-            case EGTB_IDX_K:
-            {
-                assert(false);
-                auto pos = board.flip(board.pieceList[sd][0], flipMode);
-                key += pos * mul;
-                assert(key >= 0);
-                break;
-            }
-
             case EGTB_IDX_Q:
-            case EGTB_IDX_R_HALF:
+            case EGTB_IDX_R:
             case EGTB_IDX_B:
-            case EGTB_IDX_N_HALF:
-            case EGTB_IDX_P_HALF:
+            case EGTB_IDX_N:
+            case EGTB_IDX_P:
             {
                 auto type = static_cast<PieceType>(attr - EGTB_IDX_Q + QUEEN);
                 for(auto t = 1; t < 16; t++) {
@@ -448,7 +414,7 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
                         auto pos = board.flip(p, flipMode);
                         assert(pos >= 0 && pos < 64);
 
-                        if (attr == EGTB_IDX_P_HALF) {
+                        if (attr == EGTB_IDX_P) {
                             pos = EgtbKey::getKey_p(pos);
                         } else {
                             pos = EgtbKey::getKey_x(pos);
@@ -462,10 +428,10 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
             }
 
             case EGTB_IDX_QQ:
-            case EGTB_IDX_RR_HALF:
+            case EGTB_IDX_RR:
             case EGTB_IDX_BB:
-            case EGTB_IDX_NN_HALF:
-            case EGTB_IDX_PP_HALF:
+            case EGTB_IDX_NN:
+            case EGTB_IDX_PP:
             {
                 auto type = static_cast<PieceType>(attr - EGTB_IDX_QQ + QUEEN);
 

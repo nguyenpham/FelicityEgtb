@@ -35,17 +35,9 @@
 #endif
 
 
-#define MIN(a, b) (((a) <= (b)) ? (a) : (b))
-#define MAX(a, b) (((a) >= (b)) ? (a) : (b))
+//#define MIN(a, b) (((a) <= (b)) ? (a) : (b))
+//#define MAX(a, b) (((a) >= (b)) ? (a) : (b))
 
-#ifdef _WIN32
-#define STRING_PATH_SLASH   "\\"
-#define CHAR_PATH_SLASH     '\\'
-
-#else
-#define STRING_PATH_SLASH   "/"
-#define CHAR_PATH_SLASH     '/'
-#endif
 
 namespace fegtb {
 
@@ -184,23 +176,23 @@ const int EGTB_SIZE_PPPP          = 194580;
 const int EGTB_SIZE_PPPPP         = -1;
 
 enum EgtbIdx {
-    EGTB_IDX_K_8,
-    EGTB_IDX_K_2,
-    EGTB_IDX_K,
+//    EGTB_IDX_K_8,
+//    EGTB_IDX_K_2,
+//    EGTB_IDX_K,
     EGTB_IDX_KK_8,
     EGTB_IDX_KK_2,
 
     EGTB_IDX_Q = 16,
-    EGTB_IDX_R_HALF,
+    EGTB_IDX_R,
     EGTB_IDX_B,
-    EGTB_IDX_N_HALF,
-    EGTB_IDX_P_HALF,
+    EGTB_IDX_N,
+    EGTB_IDX_P,
 
     EGTB_IDX_QQ,
-    EGTB_IDX_RR_HALF,
+    EGTB_IDX_RR,
     EGTB_IDX_BB,
-    EGTB_IDX_NN_HALF,
-    EGTB_IDX_PP_HALF,
+    EGTB_IDX_NN,
+    EGTB_IDX_PP,
 
     EGTB_IDX_QQQ,
     EGTB_IDX_RRR,

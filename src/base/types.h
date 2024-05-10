@@ -27,6 +27,17 @@
 #include <functional>
 #include <cstring>
 
+
+#ifdef _WIN32
+#define STRING_PATH_SLASH   "\\"
+#define CHAR_PATH_SLASH     '\\'
+
+#else
+#define STRING_PATH_SLASH   "/"
+#define CHAR_PATH_SLASH     '/'
+#endif
+
+
 namespace bslib {
 
 enum class ChessVariant {
@@ -42,6 +53,9 @@ enum class PieceType {
 const int QUEEN = static_cast<int>(PieceType::queen);
 const int BISHOP = static_cast<int>(PieceType::bishop);
 const int KNIGHT = static_cast<int>(PieceType::knight);
+const int ROOK = static_cast<int>(PieceType::rook);
+
+const int FirstAttacker = QUEEN;
 
 #define EgtbBoard bslib::ChessBoard
 
@@ -54,8 +68,12 @@ const int ADVISOR = static_cast<int>(PieceType::advisor);
 const int ELEPHANT = static_cast<int>(PieceType::elephant);
 const int CANNON = static_cast<int>(PieceType::cannon);
 const int HORSE = static_cast<int>(PieceType::horse);
+const int ROOK = static_cast<int>(PieceType::rook);
+
+const int FirstAttacker = ROOK;
 
 #define EgtbBoard bslib::XqBoard
+
 
 #endif
 
@@ -65,7 +83,6 @@ const int MaxMoveBranch = 250;
 const int EMPTY = 0;
 const int KING = 1;
 const int PAWN = static_cast<int>(PieceType::pawn);
-const int ROOK = static_cast<int>(PieceType::rook);
 
 const int B = 0;
 const int W = 1;

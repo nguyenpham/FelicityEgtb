@@ -36,7 +36,10 @@ namespace fegtb {
 class NameRecord {
 public:
     std::string name;
-    int pieceCount[2][10], attackerCount[2], allCount[2], pawnCount[2];
+    std::string sortingSides[2];
+    
+    int pieceCount[2][10], pawnCount[2];
+    
     EgtbType type = EgtbType::dtm;
     bool ok = false;
     
@@ -51,6 +54,7 @@ public:
     bool isBothArmed() const;
     bool hasAttackers() const;
 
+    /// for sorting
     bool isMeSmaller(const NameRecord& other) const;
     std::string getSubfolder() const;
     
@@ -58,9 +62,6 @@ public:
     
 private:
     bool parse(const std::string& _name);
-    
-    int mats[2] = { 0, 0 };
-    int attackerMats[2] = { 0, 0 };
 };
 
 
