@@ -113,6 +113,7 @@ int EgtbDb::getScore(EgtbBoard& board, Side side) {
 
     auto pEgtbFile = getEgtbFile(board);
     if (pEgtbFile == nullptr || pEgtbFile->getLoadStatus() == EgtbLoadStatus::error) {
+        board.printOut("Error: cannot probe endgame for this board");
         return EGTB_SCORE_MISSING;
     }
 
@@ -129,6 +130,8 @@ int EgtbDb::getScore(EgtbBoard& board, Side side) {
         ) {
         return pEgtbFile->getScore(r.key, querySide);
     }
+
+    board.printOut("Error: missing endgame for this board");
 
     return getScoreOnePly(board, side);
 }

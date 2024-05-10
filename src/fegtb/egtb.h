@@ -35,6 +35,17 @@
 #endif
 
 
+#define MIN(a, b) (((a) <= (b)) ? (a) : (b))
+#define MAX(a, b) (((a) >= (b)) ? (a) : (b))
+
+#ifdef _WIN32
+#define STRING_PATH_SLASH   "\\"
+#define CHAR_PATH_SLASH     '\\'
+
+#else
+#define STRING_PATH_SLASH   "/"
+#define CHAR_PATH_SLASH     '/'
+#endif
 
 namespace fegtb {
 
@@ -50,8 +61,6 @@ const int EGTB_VERSION = 1;
 
 
 
-#define MIN(a, b) (((a) <= (b)) ? (a) : (b))
-#define MAX(a, b) (((a) >= (b)) ? (a) : (b))
 
 ////////////////////////////////////
 

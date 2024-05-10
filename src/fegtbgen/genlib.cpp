@@ -76,6 +76,7 @@ std::string GenLib::loadFile(const std::string& fileName) {
     std::stringstream strStream;
     strStream << inFile.rdbuf();//read the file
     std::string content = strStream.str();//str holds the content of the file
+    inFile.close();
     return content;
 }
 
@@ -87,6 +88,7 @@ void GenLib::writeTextFile(const std::string& filepath, const std::string& line)
     file.exceptions(file.exceptions() | std::ios::failbit | std::ifstream::badbit);
 
     file << line;
+    file.close();
 }
 
 std::vector<std::string> GenLib::readFileToLineArray(const std::string& fileName){
@@ -98,35 +100,13 @@ std::vector<std::string> GenLib::readFileToLineArray(const std::string& fileName
     while (getline(inFile, line)) {
         vec.push_back(line);
     }
+
+    inFile.close();
     return vec;
 }
 
 
 #ifdef _WIN32
-
-//static void findFiles(std::vector<std::string>& names, const std::string& dirname) {
-//    std::string search_path = dirname + "/*.*";
-//
-//    WIN32_FIND_DATA file;
-//    HANDLE search_handle = FindFirstFile(search_path.c_str(), &file);
-//    if (search_handle) {
-//        do {
-//            std::string fullpath = dirname + "/" + file.cFileName;
-//            if ((file.dwFileAttributes | FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY && (file.cFileName[0] != '.')) {
-//                findFiles(names, fullpath);
-//            } else {
-//                names.push_back(fullpath);
-//            }
-//        } while (FindNextFile(search_handle, &file));
-//        ::FindClose(search_handle);
-//    }
-//}
-//
-//std::vector<std::string> GenLib::listdir(std::string dirname) {
-//    std::vector<std::string> names;
-//    findFiles(names, dirname);
-//    return names;
-//}
 
 void GenLib::createFolder(std::string dirname) {
 	if (fegtb::egtbVerbose)
@@ -134,55 +114,42 @@ void GenLib::createFolder(std::string dirname) {
     CreateDirectoryA(dirname.c_str(),NULL);
 }
 
-//i64 GenLib::getFileSize(const std::string& fileName)
-//{
-//	std::ifstream file(fileName.c_str(), std::ifstream::in | std::ifstream::binary);
-//
-//	if (!file.is_open()) {
-//		return 0;
-//	}
-//	//file.ignore(std::numeric_limits<std::streamsize>::max());
-//	std::streamsize length = file.gcount();
-//	file.clear();   //  Since ignore will have set eof.
-//	file.seekg(0, std::ios_base::beg);
-//	return (i64)length;
-//}
 
 #else
-std::vector<std::string> GenLib::listdir(std::string dirname) {
-    DIR* d_fh;
-    struct dirent* entry;
-
-    std::vector<std::string> vec;
-
-    while( (d_fh = opendir(dirname.c_str())) == NULL) {
-        //        std::cerr << "Couldn't open directory: %s\n", dirname.c_str());
-        return vec;
-    }
-
-    dirname += "/";
-
-    while ((entry=readdir(d_fh)) != NULL) {
-
-        // Don't descend up the tree or include the current directory
-        if(strncmp(entry->d_name, "..", 2) != 0 &&
-           strncmp(entry->d_name, ".", 1) != 0) {
-
-            // If it's a directory print it's name and recurse into it
-            if (entry->d_type == DT_DIR) {
-                auto vec2 = listdir(dirname + entry->d_name);
-                vec.insert(vec.end(), vec2.begin(), vec2.end());
-            }
-            else {
-                auto s = dirname + entry->d_name;
-                vec.push_back(s);
-            }
-        }
-    }
-
-    closedir(d_fh);
-    return vec;
-}
+//std::vector<std::string> GenLib::listdir(std::string dirname) {
+//    DIR* d_fh;
+//    struct dirent* entry;
+//
+//    std::vector<std::string> vec;
+//
+//    while( (d_fh = opendir(dirname.c_str())) == NULL) {
+//        //        std::cerr << "Couldn't open directory: %s\n", dirname.c_str());
+//        return vec;
+//    }
+//
+//    dirname += "/";
+//
+//    while ((entry=readdir(d_fh)) != NULL) {
+//
+//        // Don't descend up the tree or include the current directory
+//        if(strncmp(entry->d_name, "..", 2) != 0 &&
+//           strncmp(entry->d_name, ".", 1) != 0) {
+//
+//            // If it's a directory print it's name and recurse into it
+//            if (entry->d_type == DT_DIR) {
+//                auto vec2 = listdir(dirname + entry->d_name);
+//                vec.insert(vec.end(), vec2.begin(), vec2.end());
+//            }
+//            else {
+//                auto s = dirname + entry->d_name;
+//                vec.push_back(s);
+//            }
+//        }
+//    }
+//
+//    closedir(d_fh);
+//    return vec;
+//}
 
 void GenLib::createFolder(std::string dirname) {
     mkdir(dirname.c_str(), 0777);

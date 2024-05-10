@@ -241,14 +241,14 @@ int main(int argc, char* argv[])
         argmap[arg] = str;
     }
 
-    const auto separator = '/';
+    const auto separator = CHAR_PATH_SLASH;
     std::string egtbFolder, egtbFolder2;
 
     if (argmap.find("-d") != argmap.end()) {
         egtbFolder = argmap["-d"];
     } else {
         std::string base, s = argv[0];
-        std::replace(s.begin(), s.end(), '\\', separator);
+        ///std::replace(s.begin(), s.end(), '\\', separator);
 
         if (s.find(separator) == std::string::npos) {
             base = ".";

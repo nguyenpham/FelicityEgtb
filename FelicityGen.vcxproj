@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\base\base.cpp" />
+    <ClCompile Include="src\base\funcs.cpp" />
+    <ClCompile Include="src\chess\chess.cpp" />
+    <ClCompile Include="src\fegtbgen\compresslib.cpp" />
+    <ClCompile Include="src\fegtbgen\egtbgendb.cpp" />
+    <ClCompile Include="src\fegtbgen\egtbgendb_lib.cpp" />
+    <ClCompile Include="src\fegtbgen\egtbgenfile.cpp" />
+    <ClCompile Include="src\fegtbgen\genlib.cpp" />
+    <ClCompile Include="src\fegtbgen\threadmng.cpp" />
+    <ClCompile Include="src\fegtb\egtb.cpp" />
+    <ClCompile Include="src\fegtb\egtbdb.cpp" />
+    <ClCompile Include="src\fegtb\egtbfile.cpp" />
+    <ClCompile Include="src\fegtb\egtbfile_cs.cpp" />
+    <ClCompile Include="src\fegtb\egtbfile_xq.cpp" />
+    <ClCompile Include="src\fegtb\egtbkey.cpp" />
+    <ClCompile Include="src\fegtb\egtbkey_cs.cpp" />
+    <ClCompile Include="src\fegtb\egtbkey_xq.cpp" />
+    <ClCompile Include="src\lzma\LzFind.c" />
+    <ClCompile Include="src\lzma\LzmaDec.c" />
+    <ClCompile Include="src\lzma\LzmaEnc.c" />
+    <ClCompile Include="src\mainegtb.cpp" />
+    <ClCompile Include="src\xq\xq.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\base\base.h" />
+    <ClInclude Include="src\base\funcs.h" />
+    <ClInclude Include="src\base\types.h" />
+    <ClInclude Include="src\chess\chess.h" />
+    <ClInclude Include="src\fegtbgen\compresslib.h" />
+    <ClInclude Include="src\fegtbgen\defs.h" />
+    <ClInclude Include="src\fegtbgen\egtbgendb.h" />
+    <ClInclude Include="src\fegtbgen\egtbgenfile.h" />
+    <ClInclude Include="src\fegtbgen\genlib.h" />
+    <ClInclude Include="src\fegtbgen\obj.h" />
+    <ClInclude Include="src\fegtbgen\threadmng.h" />
+    <ClInclude Include="src\fegtb\egtb.h" />
+    <ClInclude Include="src\fegtb\egtbdb.h" />
+    <ClInclude Include="src\fegtb\egtbfile.h" />
+    <ClInclude Include="src\fegtb\egtbkey.h" />
+    <ClInclude Include="src\lzma\7zTypes.h" />
+    <ClInclude Include="src\lzma\Compiler.h" />
+    <ClInclude Include="src\lzma\LzFind.h" />
+    <ClInclude Include="src\lzma\LzHash.h" />
+    <ClInclude Include="src\lzma\LzmaDec.h" />
+    <ClInclude Include="src\lzma\LzmaEnc.h" />
+    <ClInclude Include="src\lzma\Precomp.h" />
+    <ClInclude Include="src\xq\xq.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{ff6c47ce-5b8e-4512-afbe-b891bb8a00f4}</ProjectGuid>
+    <RootNamespace>FelicityGen</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>-D_FELICITY_CHESS_ -D_7ZIP_ST %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>-D_FELICITY_CHESS_ -D_7ZIP_ST %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Full</Optimization>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

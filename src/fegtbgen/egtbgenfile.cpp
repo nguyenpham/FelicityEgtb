@@ -491,7 +491,7 @@ std::string EgtbGenFile::createFileName(const std::string& folderName, const std
     const char* ext = EgtbFile::egtbFileExtensions[t];
     auto theName = name;
     Funcs::toLower(theName);
-    return folderName + "/" + theName + (side == Side::black ? ".b" : ".w") + ext;
+    return folderName + STRING_PATH_SLASH + theName + (side == Side::black ? ".b" : ".w") + ext;
 }
 
 bool EgtbGenFile::existFileName(const std::string& folderName, const std::string& name, EgtbType egtbType, Side side, bool compressed)
@@ -512,7 +512,8 @@ bool EgtbGenFile::saveFile(const std::string& folder, Side side, CompressMode co
 
     assert(sd == 0 || sd == 1);
     auto compress = compressMode != CompressMode::compress_none;
-    const std::string thePath = createFileName(folder, getName(), getEgtbType(), side, compress);
+    auto thePath = createFileName(folder, getName(), getEgtbType(), side, compress);
+    std::cout << "Saving " << thePath << std::endl;
 
     setPath(thePath, side);
     std::ofstream outfile (thePath, std::ofstream::binary);
@@ -641,6 +642,11 @@ bool EgtbGenFile::saveFile(const std::string& folder, Side side, CompressMode co
     }
 
     header->setProperty(oldProperty);
+
+    if (outfile) {
+        outfile.close();
+        std::cout << "SAVED " << thePath << std::endl;
+    }
 
     return r;
 }

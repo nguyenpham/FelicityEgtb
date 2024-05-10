@@ -255,12 +255,12 @@ bool EgtbGenDb::compress(std::string folder, const std::string& endgameName, boo
 
     if (!folder.empty()) {
         GenLib::createFolder(folder);
-        folder += "/";
+        folder += STRING_PATH_SLASH;
     }
     
     auto writtenfolder = folder + "tmp";
     GenLib::createFolder(writtenfolder);
-    writtenfolder += "/";
+    writtenfolder += STRING_PATH_SLASH;
 
     auto compressMode = compress ? CompressMode::compress : CompressMode::compress_none;
     
@@ -496,6 +496,37 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                         board.printOut();
                     }
                     
+                    /// Debugging
+                    {
+                        Hist hist;
+                        for (auto&& move : board.gen(side)) {
+                            board.make(move, hist);
+
+                            if (!board.isIncheck(side)) {
+                                /// If the move is a capture or a promotion, it should probe from sub-endgames
+                                auto internal = hist.cap.isEmpty() && move.promotion == PieceType::empty;
+
+                                int score;
+                                i64 idx2 = -1;
+
+                                if (internal) {     /// score from current working buffers
+                                    idx2 = pEgtbFile->getKey(board).key;
+                                    score = pEgtbFile->getScore(idx2, xside, false);
+                                }
+                                else if (!board.hasAttackers()) {
+                                    score = EGTB_SCORE_DRAW;
+                                }
+                                else {            /// probe from a sub-endgame
+                                    score = getScore(board, xside);
+                                }
+
+                                std::string msg = "move: " + board.toString_coordinate(move) + ", score: " + std::to_string(score) + ", idx2: " + std::to_string(idx2);
+                                board.printOut(msg);
+                            }
+                            board.takeBack(hist);
+                        }
+
+                    }
                     exit(1);
                     return false;
                 }

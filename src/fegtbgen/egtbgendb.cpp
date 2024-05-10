@@ -25,6 +25,8 @@ bool twoBytes = false; // per item
 bool useTempFiles = false;
 bool useBackward = false;
 
+bool verifyMode = true;
+
 i64 maxEndgameSize = -1;
 
 #ifdef _FELICITY_CHESS_
@@ -184,12 +186,14 @@ void EgtbGenDb::gen_thread_init(int threadIdx) {
     assert(!rcd.board);
     rcd.board = new EgtbBoard();
     
-    for (i64 idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
+    for (auto idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
         
         if (egtbVerbose && (idx - rcd.fromIdx) % (16 * 1024 * 1024) == 0) {
             std::lock_guard<std::mutex> thelock(printMutex);
             std::cout << "init, threadIdx = " << threadIdx << ", idx = " << idx << ", toIdx = " << rcd.toIdx << ", " << (idx - rcd.fromIdx) * 100 / (rcd.toIdx - rcd.fromIdx) << "%" << std::endl;
         }
+
+        auto de = idx == 50448384 || idx == 44255232;
         
         if (!egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white)
 #ifdef _FELICITY_XQ_
@@ -198,10 +202,16 @@ void EgtbGenDb::gen_thread_init(int threadIdx) {
             ) {
             egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, Side::black);
             egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, Side::white);
+            if (de) {
+                rcd.board->printOut();
+                egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white);
+            }
             continue;
         }
         
-//        rcd.board->printOut();
+        if (de) {
+            rcd.board->printOut();
+        }
         assert(rcd.board->isValid());
         
         bool inchecks[] = { rcd.board->isIncheck(Side::black), rcd.board->isIncheck(Side::white) };
@@ -332,6 +342,7 @@ void EgtbGenDb::gen_thread(int threadIdx, int sd, int ply) {
     }
 }
 
+/// Using forward move-generator
 void EgtbGenDb::gen_forward(const std::string& folder) {
     if (egtbVerbose) {
         std::cout << "\tGenerate forwardly!" << std::endl;
@@ -441,7 +452,7 @@ bool EgtbGenDb::gen_single(const std::string& folder, const std::string& name, E
     /// WARNING: not use backward
     gen_forward(folder);
 
-    auto r = gen_finish(folder, compressMode);
+    auto r = gen_finish(folder, compressMode, verifyMode);
     if (r) {
         std::cout << "Generated successfully " << name << std::endl << std::endl;
     }
@@ -468,11 +479,11 @@ bool EgtbGenDb::gen_finish(const std::string& folder, CompressMode compressMode,
     std::cout << "Total generating time (not including verifying): " << GenLib::formatPeriod(total_elapsed) << std::endl;
 
     /// Verify
-    //if (needVerify && !verifyData(egtbFile)) {
-    //    std::cerr << "Error: verify FAILED for " << egtbFile->getName() << std::endl;
-    //    exit(1);
-    //    return false;
-    //}
+    if (needVerify && !verifyData(egtbFile)) {
+        std::cerr << "Error: verify FAILED for " << egtbFile->getName() << std::endl;
+        exit(1);
+        return false;
+    }
     
 //    egtbFile->checkAndConvert2bytesTo1();
 
@@ -527,7 +538,7 @@ bool EgtbGenDb::gen_all(std::string folder, const std::string& name, EgtbType eg
 
     if (!folder.empty()) {
         GenLib::createFolder(folder);
-        folder += "/";
+        folder += STRING_PATH_SLASH;
     }
 
     for(auto && aName : vec) {
