@@ -428,7 +428,7 @@ bool EgtbFile::readBuf(i64 idx, Side side)
         } else if (isCompressed() && compressBlockTables[sd]) {
             r = readCompressedBlock(file, idx, side, (char*)pBuf[sd]);
         } else {
-            auto bufCnt = std::min(getBufItemCnt(), getSize() - idx);
+            auto bufCnt = std::min<i64>(getBufItemCnt(), getSize() - idx);
 
             auto beginIdx = (idx + bufCnt <= getSize()) ? idx : 0;
             auto x = beginIdx;
@@ -488,7 +488,7 @@ bool EgtbFile::readCompressedBlock(std::ifstream& file, i64 idx, Side side, char
         if (file.read(pCompressBuf, compDataSz)) {
             auto m = getSize() - startpos[sd];
             if (isTwoBytes()) m += m;
-            auto curBlockSize = (int)std::min(m, (i64)compressBlockSz);
+            auto curBlockSize = (int)std::min<i64>(m, (i64)compressBlockSz);
             auto originSz = decompress(pDest, curBlockSize, pCompressBuf, compDataSz);
             endpos[sd] += isTwoBytes() ? originSz / 2 : originSz;
             assert(originSz <= getBufSize());

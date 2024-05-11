@@ -155,27 +155,6 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
         rest = rest % rec.mult;
 
         switch (rec.idx) {
-//            case EGTB_IDX_K_2:
-//            {
-//                assert(key >= 0 && key < 32);
-//                int r = key >> 2, f = key & 0x3;
-//                auto pos = (r << 3) + f;
-//                board.setPiece(pos, Piece(PieceType::king, side));
-//                break;
-//            }
-//
-//            case EGTB_IDX_K_8:
-//            {
-//                auto pos = tb_kIdxToPos[key];
-//                board.setPiece(pos, Piece(PieceType::king, side));
-//                break;
-//            }
-//            case EGTB_IDX_K:
-//            {
-//                board.setPiece(key, Piece(PieceType::king, side));
-//                break;
-//            }
-
             case EGTB_IDX_KK_2:
             {
                 int kk = kk_2[key];

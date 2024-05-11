@@ -117,13 +117,11 @@ bool NameRecord::isValid() const
 bool NameRecord::isBothArmed() const
 {
     return !sortingSides[W].empty() && !sortingSides[B].empty();
-//    return attackerMats[W] > 0 && attackerMats[B] > 0 ;
 }
 
 bool NameRecord::hasAttackers() const
 {
     return !sortingSides[W].empty();
-//    return attackerMats[W] + attackerMats[B] > 0 ;
 }
 
 bool NameRecord::isMeSmaller(const NameRecord& other) const
@@ -164,12 +162,6 @@ bool NameRecord::isMeSmaller(const NameRecord& other) const
         return sortingSides[W] < other.sortingSides[W];
     }
     return sortingSides[B] < other.sortingSides[B];
-
-//    if (attackerMats[W] != other.attackerMats[W]) {
-//        return attackerMats[W] < other.attackerMats[W];
-//    }
-//
-//    return attackerMats[W] + attackerMats[B] < other.attackerMats[W] + other.attackerMats[B];
 }
 
 std::string NameRecord::getSubfolder() const
@@ -194,25 +186,22 @@ void EgtbGenDb::gen_thread_init(int threadIdx) {
             std::cout << "init, threadIdx = " << threadIdx << ", idx = " << idx << ", toIdx = " << rcd.toIdx << ", " << (idx - rcd.fromIdx) * 100 / (rcd.toIdx - rcd.fromIdx) << "%" << std::endl;
         }
 
-        auto de = idx == 50448384 || idx == 44255232;
+//        auto de = idx == 1185504 || idx == 1861316;
         
         if (!egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white)
 #ifdef _FELICITY_XQ_
             || !rcd.board->isLegal() /// don't need to check legal for chess variant
 #endif
             ) {
+            
+//            if (de) {
+//                rcd.board->printOut();
+//            }
             egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, Side::black);
             egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, Side::white);
-            if (de) {
-                rcd.board->printOut();
-                egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white);
-            }
             continue;
         }
         
-        if (de) {
-            rcd.board->printOut();
-        }
         assert(rcd.board->isValid());
         
         bool inchecks[] = { rcd.board->isIncheck(Side::black), rcd.board->isIncheck(Side::white) };
@@ -266,8 +255,9 @@ int EgtbGenDb::probe_gen(EgtbBoard& board, i64 idx, Side side) {
 
             int score;
             if (internal) {
-                auto idx2 = egtbFile->getKey(board).key;
-                score = egtbFile->getScore(idx2, xside, false);
+                auto r = egtbFile->getKey(board);
+                auto xs = r.flipSide ? side : xside;
+                score = egtbFile->getScore(r.key, xs, false);
             } else {
                 if (!board.hasAttackers()) {
                     score = EGTB_SCORE_DRAW;

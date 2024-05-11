@@ -137,7 +137,7 @@ i64 CompressLib::compressAllBlocks(int blockSize, u8* blocktable, char *dest, co
         for (auto j = 0; j <= MaxGenExtraThreads && i + j < blocknum; ++j) {
             const char *s = src + (i + j) * blockSize;
             auto left = slen - (i64)(s - src);
-            auto sSize = (int)std::min(left, (i64)blockSize); assert(sSize > 0);
+            auto sSize = (int)std::min<i64>(left, (i64)blockSize); assert(sSize > 0);
 
             threadVec.push_back(std::thread(&compressABlock, j, i + j, tmpBuf[j],  compSizes + j, s, sSize));
         }
@@ -149,7 +149,7 @@ i64 CompressLib::compressAllBlocks(int blockSize, u8* blocktable, char *dest, co
         for (auto j = 0; j <= MaxGenExtraThreads && i + j < blocknum; ++j) {
             const char *s = src + (i + j) * blockSize;
             auto left = slen - (i64)(s - src);
-            auto curBlockSize = (int)std::min(left, (i64)blockSize); assert(curBlockSize > 0);
+            auto curBlockSize = (int)std::min<i64>(left, (i64)blockSize); assert(curBlockSize > 0);
 
             i64 flag = 0;
             auto compSz = compSizes[j]; assert(compSz > 0);
@@ -206,7 +206,7 @@ i64 CompressLib::compressAllBlocksSingleThread(int blocksize, u8* blocktable, ch
         i64 flag = 0;
         auto left = slen - (i64)(s - src);
         
-        auto curBlockSize = (int)std::min(left, (i64)blocksize); assert(curBlockSize > 0);
+        auto curBlockSize = (int)std::min<i64>(left, (i64)blocksize); assert(curBlockSize > 0);
         
         auto compSz = compress(p, s, curBlockSize); assert(compSz > 0);
         if (compSz > 0 && compSz + 128 < curBlockSize) {
@@ -308,7 +308,7 @@ i64 CompressLib::decompressAllBlocks(int blocksize, int blocknum, int fromBlockI
         } else {
             // Size of uncompressed data (dest, not src)
             auto left = uncompressedlen - (i64)(p - dest); assert(left > 0);
-            auto curBlockSize = (int)std::min(left, (i64)blocksize);
+            auto curBlockSize = (int)std::min<i64>(left, (i64)blocksize);
 
             auto originSz = decompress((char*)p, curBlockSize, s, blocksz);
             assert(originSz == curBlockSize || (i + 1 == blocknum && originSz > 0));

@@ -513,7 +513,6 @@ bool EgtbGenFile::saveFile(const std::string& folder, Side side, CompressMode co
     assert(sd == 0 || sd == 1);
     auto compress = compressMode != CompressMode::compress_none;
     auto thePath = createFileName(folder, getName(), getEgtbType(), side, compress);
-    std::cout << "Saving " << thePath << std::endl;
 
     setPath(thePath, side);
     std::ofstream outfile (thePath, std::ofstream::binary);
@@ -645,7 +644,6 @@ bool EgtbGenFile::saveFile(const std::string& folder, Side side, CompressMode co
 
     if (outfile) {
         outfile.close();
-        std::cout << "SAVED " << thePath << std::endl;
     }
 
     return r;

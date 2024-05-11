@@ -118,10 +118,6 @@ std::string explainScore(int score) {
             str = "mate";
             break;
             
-//        case EGTB_SCORE_WINNING:
-//            str = "winning";
-//            break;
-            
         case EGTB_SCORE_ILLEGAL:
             str = "illegal";
             break;
@@ -191,7 +187,7 @@ static void processName(std::string& endgameName, bool& isExactName)
 }
 
 int main(int argc, char* argv[])
-{
+{    
 #if defined(_MSC_VER)
 	setvbuf(stdout, 0, _IOLBF, 4096);
 #endif

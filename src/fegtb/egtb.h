@@ -176,9 +176,6 @@ const int EGTB_SIZE_PPPP          = 194580;
 const int EGTB_SIZE_PPPPP         = -1;
 
 enum EgtbIdx {
-//    EGTB_IDX_K_8,
-//    EGTB_IDX_K_2,
-//    EGTB_IDX_K,
     EGTB_IDX_KK_8,
     EGTB_IDX_KK_2,
 
