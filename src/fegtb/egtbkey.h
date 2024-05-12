@@ -60,6 +60,9 @@ namespace fegtb {
         void createXXKeys();
         void createKingKeys();
     };
+
+    extern int *tb_kk_2, *tb_kk_8;
+
 #endif // _FELICITY_CHESS_
 
 #ifdef _FELICITY_XQ_

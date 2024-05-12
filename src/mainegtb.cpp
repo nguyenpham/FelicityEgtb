@@ -84,16 +84,18 @@ static void show_usage(std::string name)
     << "Example:\n"
 #ifdef _FELICITY_CHESS_
     << "  " << name << " -n krpkp -subinfo\n"
-    << "  " << name << " -n 2\n"
-    << "  " << name << " -d d:\\mainegtb -n kbbkp -g -core 4\n"
+    << "  " << name << " -n kbbkp -d d:\\mainegtb -g\n"
+    << "  " << name << " -n 3 -d d:\\mainegtb -g -core 8\n"
     << "  " << name << " -d d:\\mainegtb -fen K7/8/7k/8/8/1Rp5/8/8 w - - 0 2\n"
     << "  " << name << " -n kqrkrn -v\n"
+    << "  " << name << " -n 2 -vkey\n"
     << "  " << name << " -n rn -v\n"
-    << "  " << name << " -n r-h -v\n"
+    << "  " << name << " -n r-n -v\n"
 #else
     << "  " << name << " -n knpaabbkaabb -subinfo\n"
-    << "  " << name << " -n 2\n"
-    << "  " << name << " -d d:\\mainegtb -n kraabbkaabb -g -core 4\n"
+    << "  " << name << " -n 2 -vkey\n"
+    << "  " << name << " -n kraabbkaabb -d d:\\mainegtb -g\n"
+    << "  " << name << " -n 1 -d d:\\mainegtb -g -core 4\n"
     << "  " << name << " -d d:\\mainegtb -fen 3ak4/4a4/9/9/9/9/n8/3AK4/9/3A5 b 0 0\n"
     << "  " << name << " -n kraaeekaaee -v\n"
     << "  " << name << " -n rn -v\n"
@@ -104,7 +106,7 @@ static void show_usage(std::string name)
 }
 
 std::string explainScore(int score) {
-    std::string str = "";
+    std::string str;
     
     switch (score) {
         case EGTB_SCORE_DRAW:
@@ -127,13 +129,10 @@ std::string explainScore(int score) {
             break;
             
         default: {
-            char buf[250];
             auto mateInPly = EGTB_SCORE_MATE - abs(score);
-            int mateIn = (mateInPly + 1) / 2; // devide 2 for full (not half or ply) moves
+            auto mateIn = (mateInPly + 1) / 2; // devide 2 for full (not half or ply) moves
             if (score < 0) mateIn = -mateIn;
-            
-            snprintf(buf, sizeof(buf), "mate in %d (%d %s)", mateIn, mateInPly, mateInPly <= 1 ? "ply" : "plies");
-            str = buf;
+            str = "mate in " + std::to_string(mateIn) + " (" + std::to_string(mateInPly) + " " + (mateInPly <= 1 ? "ply" : "plies") + ")";
             break;
         }
     }

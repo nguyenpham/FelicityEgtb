@@ -33,14 +33,15 @@
 
 using namespace bslib;
 
-const char* sideStrings[] = {
+static const char* sideStrings[] = {
     "black", "white", "none", nullptr
 };
-const char* shortSideStrings[] = {
+
+static const char* shortSideStrings[] = {
     "b", "w", "n", nullptr
 };
 
-const char* variantStrings[] = {
+static const char* variantStrings[] = {
     "standard", "chess960", nullptr
 };
 
@@ -75,7 +76,6 @@ Side Funcs::string2Side(std::string s)
         }
     }
     return Side::none;
-
 }
 
 std::string Funcs::chessVariant2String(ChessVariant variant)

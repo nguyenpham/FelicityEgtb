@@ -177,38 +177,18 @@ void BoardCore::takeBack()
 Move BoardCore::flip(const Move& move, FlipMode flipMode) const
 {
     auto m = move;
-    m.from = int8_t(flip(m.from, flipMode));
-    m.dest = int8_t(flip(m.dest, flipMode));
+    m.from = int8_t(Funcs::flip(m.from, flipMode));
+    m.dest = int8_t(Funcs::flip(m.dest, flipMode));
     return m;
 }
 
 MoveFull BoardCore::flip(const MoveFull& move, FlipMode flipMode) const
 {
     auto m = move;
-    m.from = int8_t(flip(m.from, flipMode));
-    m.dest = int8_t(flip(m.dest, flipMode));
+    m.from = int8_t(Funcs::flip(m.from, flipMode));
+    m.dest = int8_t(Funcs::flip(m.dest, flipMode));
     return m;
 }
-
-//static const FlipMode flipflip_h[] = { FlipMode::horizontal, FlipMode::none, FlipMode::rotate, FlipMode::vertical };
-//static const FlipMode flipflip_v[] = { FlipMode::vertical, FlipMode::rotate, FlipMode::none, FlipMode::horizontal };
-//static const FlipMode flipflip_r[] = { FlipMode::rotate, FlipMode::vertical, FlipMode::horizontal, FlipMode::none };
-//
-//FlipMode BoardCore::flip(FlipMode oMode, FlipMode flipMode)
-//{
-//    switch (flipMode) {
-//        case FlipMode::none:
-//            break;
-//        case FlipMode::horizontal:
-//            return flipflip_h[static_cast<int>(oMode)];
-//            
-//        case FlipMode::vertical:
-//            return flipflip_v[static_cast<int>(oMode)];
-//        case FlipMode::rotate:
-//            return flipflip_r[static_cast<int>(oMode)];
-//    }
-//    return oMode;
-//}
 
 void BoardCore::printOut(const std::string& msg) const
 {
@@ -269,12 +249,6 @@ void BoardCore::flip(FlipMode flipMode)
             assert(false);
     }
 }
-
-int BoardCore::flip(int pos, FlipMode flipMode) const
-{
-    return Funcs::flip(pos, flipMode);
-}
-
 
 void BoardCore::flipPieceColors()
 {

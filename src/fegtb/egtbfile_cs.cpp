@@ -32,9 +32,6 @@ using namespace bslib;
 
 #ifdef _FELICITY_CHESS_
 
-extern int subppp_sizes[7];
-extern int *kk_2, *kk_8;
-
 i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, int* pieceCount, u16 order)
 {
     if (pieceCount) {
@@ -128,8 +125,6 @@ i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
     return sz;
 }
 
-extern const int tb_kIdxToPos[10];
-
 bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side firstsider) const
 {
     board.reset();
@@ -157,7 +152,7 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
         switch (rec.idx) {
             case EGTB_IDX_KK_2:
             {
-                int kk = kk_2[key];
+                int kk = tb_kk_2[key];
                 int k0 = kk >> 8, k1 = kk & 0xff;
                 board.setPiece(k0, Piece(PieceType::king, side));
                 board.setPiece(k1, Piece(PieceType::king, getXSide(side)));
@@ -166,7 +161,7 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
 
             case EGTB_IDX_KK_8:
             {
-                auto kk = kk_8[key];
+                auto kk = tb_kk_8[key];
                 auto k0 = kk >> 8, k1 = kk & 0xff;
                 assert(k0 != k1 && board.isPositionValid(k0) && board.isPositionValid(k1));
                 board.setPiece(k0, Piece(PieceType::king, side));

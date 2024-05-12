@@ -186,7 +186,7 @@ void EgtbGenDb::gen_thread_init(int threadIdx) {
             std::cout << "init, threadIdx = " << threadIdx << ", idx = " << idx << ", toIdx = " << rcd.toIdx << ", " << (idx - rcd.fromIdx) * 100 / (rcd.toIdx - rcd.fromIdx) << "%" << std::endl;
         }
 
-        auto de = false; // idx == 286794;
+//        auto de = false; // idx == 286794;
         
         if (!egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white)
 #ifdef _FELICITY_XQ_
@@ -194,19 +194,15 @@ void EgtbGenDb::gen_thread_init(int threadIdx) {
 #endif
             ) {
             
-            if (de) {
-                rcd.board->printOut();
-            }
+//            if (de) {
+//                rcd.board->printOut();
+//            }
             egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, Side::black);
             egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, Side::white);
             continue;
         }
         
         assert(rcd.board->isValid());
-
-        if (de) {
-            rcd.board->printOut();
-        }
 
         bool inchecks[] = { rcd.board->isIncheck(Side::black), rcd.board->isIncheck(Side::white) };
         
@@ -424,22 +420,19 @@ void EgtbGenDb::gen_forward(const std::string& folder) {
 /// Gen a single endgame
 bool EgtbGenDb::gen_single(const std::string& folder, const std::string& name, EgtbType egtbType, CompressMode compressMode)
 {
-    startTime = time(NULL);
-
-    //verifyEgtbFileSides();
+    time_start = Funcs::now();
 
     assert(egtbFile == nullptr);
     egtbFile = new EgtbGenFile();
     egtbFile->create(name, egtbType);
-
-//    auto writtingFolder = _folder + egtbFile->getSubfolder();
 
     auto sz = egtbFile->getSize();
     auto bufsz = sz * 2;
     if (egtbFile->isTwoBytes()) bufsz += bufsz;
     if (useBackward) bufsz += sz / 2;
 
-    std::cout << std::endl << "Start generating " << name << ", " << GenLib::formatString(sz) << (egtbFile->isTwoBytes() ? ", 2b/item" : "") << ", main mem sz: " << GenLib::formatString(bufsz) << ", " << GenLib::currentTimeDate() << std::endl;
+    startTimeString = GenLib::currentTimeDate();
+    std::cout << std::endl << "Start generating " << name << ", " << GenLib::formatString(sz) << (egtbFile->isTwoBytes() ? ", 2b/item" : "") << ", main mem sz: " << GenLib::formatString(bufsz) << ", " << startTimeString << std::endl;
 
     egtbFile->createBuffersForGenerating();
     assert(egtbFile->isValidHeader());
@@ -465,27 +458,35 @@ bool EgtbGenDb::gen_finish(const std::string& folder, CompressMode compressMode,
     egtbFile->getHeader()->addSide(Side::white);
     egtbFile->getHeader()->addSide(Side::black);
 
-    auto elapsed_secs = std::max(1, (int)(time(NULL) - startTime));
-    total_elapsed += elapsed_secs;
+    time_completed = Funcs::now();
+    elapsed_gen = time_completed - time_start;
+    total_elapsed_gen += elapsed_gen;
+    
     if (egtbVerbose) {
-        std::cout << "Completed generating " << egtbFile->getName() << ", elapse: " << GenLib::formatPeriod(elapsed_secs) << ", speed: " << GenLib::formatSpeed((int)(egtbFile->getSize() / elapsed_secs)) << std::endl;
+        std::cout << "Completed generating " << egtbFile->getName() << ", elapse: " << GenLib::formatPeriod(int(elapsed_gen)) << ", speed: " << GenLib::formatSpeed((int)(egtbFile->getSize() * 1000 / std::max(1, int(elapsed_gen)))) << std::endl;
     }
 
     addEgtbFile(egtbFile);
 
-    std::cout << "Total generating time (not including verifying): " << GenLib::formatPeriod(total_elapsed) << std::endl;
 
     /// Verify
-    if (needVerify && !verifyData(egtbFile)) {
-        std::cerr << "Error: verify FAILED for " << egtbFile->getName() << std::endl;
-        exit(1);
-        return false;
+    elapsed_verify = 0;
+    if (needVerify) {
+        if (!verifyData(egtbFile)) {
+            std::cerr << "Error: verify FAILED for " << egtbFile->getName() << std::endl;
+            exit(1);
+            return false;
+        }
+        
+        elapsed_verify = Funcs::now() - time_completed;
+        total_elapsed_verify += elapsed_verify;
     }
     
-//    egtbFile->checkAndConvert2bytesTo1();
+    std::cout << "Total time, generating: " << GenLib::formatPeriod(int(total_elapsed_gen / 1000)) << ", verifying: " << GenLib::formatPeriod(int(total_elapsed_verify / 1000)) << std::endl;
 
     if (egtbFile->saveFile(folder, compressMode)) {
         egtbFile->createStatsFile();
+        writeLog();
 
         egtbFile->removeTmpFiles(folder);
         egtbFile = nullptr;
@@ -495,6 +496,28 @@ bool EgtbGenDb::gen_finish(const std::string& folder, CompressMode compressMode,
     std::cerr << "Error: Can't save files. UNSUCCESSFULLY " << egtbFile->getName() << std::endl;
     exit(-1);
     return false;
+}
+
+void EgtbGenDb::writeLog()
+{
+    static bool newSection = true;
+    std::string str;
+    
+    if (newSection) {
+        newSection = false;
+        str += "\n====== New section ======\n";
+    }
+    str += "\n" + egtbFile->getName()
+    + "\n\tsize: " + std::to_string(egtbFile->getSize())
+    + "\n\tstart: " + startTimeString
+    + "\n\tgen elapsed: " + GenLib::formatPeriod(int(elapsed_gen / 1000))
+    + "\n\tverify elapsed: " + GenLib::formatPeriod(int(elapsed_verify / 1000))
+    + "\n\ttotal gen elapsed: " + GenLib::formatPeriod(int(total_elapsed_gen / 1000))
+    + "\n\ttotal verify elapsed: " + GenLib::formatPeriod(int(total_elapsed_verify / 1000))
+    ;
+    
+    auto logPath = gen_folder + "gen.log";
+    GenLib::appendStringToFile(logPath, str);
 }
 
 void EgtbGenDb::gen_finish_adjust_scores()
@@ -537,6 +560,7 @@ bool EgtbGenDb::gen_all(std::string folder, const std::string& name, EgtbType eg
         GenLib::createFolder(folder);
         folder += STRING_PATH_SLASH;
     }
+    gen_folder = folder;
 
     for(auto && aName : vec) {
         auto p = nameMap.find(aName);
@@ -544,17 +568,6 @@ bool EgtbGenDb::gen_all(std::string folder, const std::string& name, EgtbType eg
             continue;
         }
 
-//        SubfolderParser subfolder(aName);
-//        subfolder.createAllSubfolders(folder);
-//        auto writtingFolder = folder + subfolder.subfolder;
-//        
-//        auto sz = EgtbFile::computeSize(aName);
-//
-//        if (maxEndgameSize > 0 && sz > maxEndgameSize) {
-//            std::cout << aName << " is larger than maxsize limit (" << (maxEndgameSize >> 30) << " G). Ignored!" << std::endl;
-//            continue;
-//        }
-        
         NameRecord nameRecord(aName);
         
         auto writtingFolder = folder + nameRecord.getSubfolder();

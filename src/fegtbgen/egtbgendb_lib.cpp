@@ -396,9 +396,10 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
 
         auto k = idx - rcd.fromIdx;
         if (k % (64L * 1024 * 1024) == 0 && egtbVerbose) {
-            auto elapsed = u64(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - begin).count()) / 1000.0;
-            if (elapsed <= 0) elapsed = 1;
             if (egtbVerbose) {
+                auto elapsed = (Funcs::now() - time_start_verify) / 1000.0;
+                if (elapsed <= 0) elapsed = 1;
+
                 std::lock_guard<std::mutex> thelock(printMutex);
                 std::cout << "\tverify threadIdx = " << threadIdx << ", idx = " << GenLib::formatString(idx) << " of " << rcd.toIdx << " " << k * 100 / (rcd.toIdx - rcd.fromIdx) << "%, speed: " << GenLib::formatSpeed((int)(k / elapsed)) << std::endl;
             }
@@ -545,7 +546,7 @@ bool EgtbGenDb::verifyData(EgtbFile* egtbFile)
 {
     assert(egtbFile);
     
-    begin = std::chrono::steady_clock::now();
+    time_start_verify = Funcs::now();
 
     egtbFile->getScore(0LL, Side::black, false);
     if (egtbFile->getLoadStatus() == EgtbLoadStatus::error) {

@@ -71,14 +71,12 @@ protected:
     EgtbGenFile* egtbFile = nullptr;
     
 public:
-    std::chrono::steady_clock::time_point begin;
-    time_t startTime;
-    int total_elapsed = 0;
+//    std::chrono::steady_clock::time_point begin;
+//    time_t startTime;
     
 public:
     virtual bool compress(std::string folder, const std::string& endgameName, bool includingSubEndgames, bool compress);
     
-//    void verifyData(const std::string& endgameName, bool includingSubEndgames);
     void verifyData(const std::vector<std::string>& nameVec);
 
     
@@ -113,6 +111,8 @@ protected:
     virtual void gen_thread_init(int threadIdx);
     virtual void gen_thread(int threadIdx, int sd, int fly);
     
+    void writeLog();
+    
 protected:
     virtual bool compressEndgame(EgtbGenFile* egtbFile, std::string writtenfolder, CompressMode compressMode);
     
@@ -125,7 +125,12 @@ protected:
     int probe_gen(EgtbBoard& board, i64 idx, bslib::Side side);
     
 private:
+    std::string gen_folder;
     bool verifyDataOK = true;
+    
+    /// for report/log purposes
+    std::string startTimeString;
+    std::chrono::milliseconds::rep time_start, time_completed, time_start_verify, total_elapsed_gen = 0, total_elapsed_verify = 0, elapsed_gen = 0, elapsed_verify = 0;
 
 };
 

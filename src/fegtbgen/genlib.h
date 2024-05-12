@@ -44,8 +44,8 @@ public:
     static std::string getFileName(const std::string & path);
     
     static void copy_file(const std::string& dest_file, const std::string& srce_file);
-//    static i64 getFileSize(const std::string& fileName);
     
+//    static i64 getFileSize(const std::string& fileName);
 //    static std::vector<std::string> listdir(std::string dirname);
     static void createFolder(std::string dirname);
     
@@ -59,6 +59,9 @@ public:
     
     static int fitBitSizeToStoreValue(int value);
     static int encodeRL(char* buf, int size, char* toBuf);
+    
+    static void appendStringToFile(const std::string& filepath, const std::string& string);
+
 };
 
 extern const std::string originalFen;

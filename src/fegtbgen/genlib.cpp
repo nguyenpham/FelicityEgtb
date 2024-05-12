@@ -323,3 +323,14 @@ int GenLib::encodeRL(char* buf, int size, char* toBuf) {
 
     return (int)(q - toBuf);
 }
+
+void GenLib::appendStringToFile(const std::string& filepath, const std::string& string)
+{
+    std::ofstream file;
+    file.open(filepath, std::ios::out | std::ios::app);
+    if (file.fail()) {
+        return;
+    }
+
+    file << string << std::endl;
+}

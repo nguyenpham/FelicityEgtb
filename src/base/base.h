@@ -208,7 +208,7 @@ namespace bslib {
         Move flip(const Move& move, FlipMode flipMode) const;
         MoveFull flip(const MoveFull& move, FlipMode flipMode) const;
 
-        virtual int flip(int pos, FlipMode flipMode) const;
+//        virtual int flip(int pos, FlipMode flipMode) const;
         virtual void flip(FlipMode flipMode);
         virtual void flipPieceColors();
 
