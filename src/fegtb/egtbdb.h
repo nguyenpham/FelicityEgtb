@@ -75,6 +75,7 @@ namespace fegtb {
         static std::string getEgtbFileName(const bslib::BoardCore& board);
 
         void addEgtbFile(EgtbFile *egtbFile);
+        bool verifyEgtbFileSides() const;
 
         int getScoreOnePly(EgtbBoard& board, bslib::Side side);
 

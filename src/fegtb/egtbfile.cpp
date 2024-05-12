@@ -215,16 +215,18 @@ bool EgtbFile::loadHeaderAndTable(const std::string& path) {
             egtbType = EgtbType::dtm;
 
             setPath(path, loadingSide);
-            header->setOnlySide(loadingSide);
+            //header->setOnlySide(loadingSide);
             assert(loadingSide == (path.find("w.") != std::string::npos ? Side::white : Side::black));
             r = loadingSide != Side::none;
 
             if (r) {
+                header->addSide(loadingSide);
+
                 setupIdxComputing(getName(), header->getOrder());
 
-                if (oldSide != Side::none) {
-                    header->addSide(oldSide);
-                }
+                //if (oldSide != Side::none) {
+                //    header->addSide(oldSide);
+                //}
 
                 auto sd = static_cast<int>(loadingSide);
                 startpos[sd] = endpos[sd] = 0;
@@ -392,6 +394,9 @@ void EgtbFile::checkToLoadHeaderAndTables(Side side) {
         assert(!path[sd].empty());
         r = loadHeaderAndTable(path[sd]);
     } else {
+        if (path[0].empty() || path[1].empty()) {
+            std::cerr << "Error: missing a path for " << getName() << std::endl;
+        }
         if (r && !path[1].empty()) {
             r = loadHeaderAndTable(path[1]);
         }

@@ -449,9 +449,9 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                         int score;
                         
                         if (internal) {     /// score from current working buffers
-                            auto idx2 = pEgtbFile->getKey(board).key;
-                            score = pEgtbFile->getScore(idx2, xside, false);
-
+                            auto r = pEgtbFile->getKey(board);
+                            auto xs = r.flipSide ? side : xside;
+                            score = egtbFile->getScore(r.key, xs, false);
                         } else if (!board.hasAttackers()) {
                             score = EGTB_SCORE_DRAW;
                         } else {            /// probe from a sub-endgame

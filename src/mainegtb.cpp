@@ -86,7 +86,7 @@ static void show_usage(std::string name)
     << "  " << name << " -n krpkp -subinfo\n"
     << "  " << name << " -n 2\n"
     << "  " << name << " -d d:\\mainegtb -n kbbkp -g -core 4\n"
-    << "  " << name << " -fen K7/8/7k/8/8/1Rp5/8/8 w - - 0 2\n"
+    << "  " << name << " -d d:\\mainegtb -fen K7/8/7k/8/8/1Rp5/8/8 w - - 0 2\n"
     << "  " << name << " -n kqrkrn -v\n"
     << "  " << name << " -n rn -v\n"
     << "  " << name << " -n r-h -v\n"
@@ -94,7 +94,7 @@ static void show_usage(std::string name)
     << "  " << name << " -n knpaabbkaabb -subinfo\n"
     << "  " << name << " -n 2\n"
     << "  " << name << " -d d:\\mainegtb -n kraabbkaabb -g -core 4\n"
-//    << "  " << name << " -fen 3ak4/4a4/9/9/9/9/h8/3AK4/9/3A5 b 0 0\n"
+    << "  " << name << " -d d:\\mainegtb -fen 3ak4/4a4/9/9/9/9/n8/3AK4/9/3A5 b 0 0\n"
     << "  " << name << " -n kraaeekaaee -v\n"
     << "  " << name << " -n rn -v\n"
     << "  " << name << " -n r-n -v\n"
@@ -188,6 +188,22 @@ static void processName(std::string& endgameName, bool& isExactName)
 
 int main(int argc, char* argv[])
 {    
+    /// Quick test
+ /*   {
+        EgtbBoard board;
+        board.setFen("1Nk5/K1n5/8/8/8/8/8/8 b - - 0 1");
+        board.printOut();
+
+        EgtbGenFile egtbFile;
+        egtbFile.create("knkn");
+        auto r = egtbFile.getKey(board);
+        std::cout << "Key = " << r.key << std::endl;
+        board.reset();
+        auto ok = egtbFile.setupBoard(board, r.key, FlipMode::none, Side::white);
+        board.printOut();
+        std::cout << "OK = " << ok << std::endl;
+    }*/
+
 #if defined(_MSC_VER)
 	setvbuf(stdout, 0, _IOLBF, 4096);
 #endif
@@ -261,9 +277,9 @@ int main(int argc, char* argv[])
     
     egtbVerbose = argmap.find("-verbose") != argmap.end();
     
-//    if (argmap.find("-genforward") != argmap.end()) {
-//        useBackward = false;
-//    }
+    if (argmap.find("-genforward") != argmap.end()) {
+        useBackward = false;
+    }
 
     if (argmap.find("-maxsize") != argmap.end()) {
         maxEndgameSize = std::atoi(argmap["-maxsize"].c_str()) * 1024LL * 1024LL * 1024LL;
@@ -435,7 +451,7 @@ bool probeFen(EgtbDb& egtbDb, const std::string& fenString, bool allMoveScores)
     EgtbBoard board;
     board.setFen(fenString);
     if (board.isValid()) {
-        board.printOut("Board to check");
+        board.printOut("Board to probe");
         
         auto score = egtbDb.getScore(board);
         auto idx = egtbDb.getKey(board);

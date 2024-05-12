@@ -116,7 +116,7 @@ namespace fegtb {
 
         void    addProperty(uint addprt);
 
-        void    create(const std::string& name, EgtbType, u32 order = 0);
+        void    create(const std::string& name, EgtbType = EgtbType::dtm, u32 order = 0);
 //        int     getVersion() const;
         bool    saveHeader(std::ofstream& outfile) const;
 

@@ -186,7 +186,7 @@ void EgtbGenDb::gen_thread_init(int threadIdx) {
             std::cout << "init, threadIdx = " << threadIdx << ", idx = " << idx << ", toIdx = " << rcd.toIdx << ", " << (idx - rcd.fromIdx) * 100 / (rcd.toIdx - rcd.fromIdx) << "%" << std::endl;
         }
 
-//        auto de = idx == 1185504 || idx == 1861316;
+        auto de = false; // idx == 286794;
         
         if (!egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white)
 #ifdef _FELICITY_XQ_
@@ -194,16 +194,20 @@ void EgtbGenDb::gen_thread_init(int threadIdx) {
 #endif
             ) {
             
-//            if (de) {
-//                rcd.board->printOut();
-//            }
+            if (de) {
+                rcd.board->printOut();
+            }
             egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, Side::black);
             egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, Side::white);
             continue;
         }
         
         assert(rcd.board->isValid());
-        
+
+        if (de) {
+            rcd.board->printOut();
+        }
+
         bool inchecks[] = { rcd.board->isIncheck(Side::black), rcd.board->isIncheck(Side::white) };
         
         for (auto sd = 0; sd < 2; sd++) {
@@ -244,13 +248,12 @@ int EgtbGenDb::probe_gen(EgtbBoard& board, i64 idx, Side side) {
     auto legalCount = 0, unsetCount = 0, bestScore = EGTB_SCORE_UNSET;
     auto xside = getXSide(side);
     Hist hist;
-    for(auto move
+    for(auto && move
         : board.gen(side)) {
         board.make(move, hist);
         if (!board.isIncheck(side)) {
             legalCount++;
             
-            /// If the move is a capture or a promotion, it should probe from sub-endgames
             auto internal = hist.cap.isEmpty() && move.promotion == PieceType::empty;
 
             int score;
@@ -262,6 +265,8 @@ int EgtbGenDb::probe_gen(EgtbBoard& board, i64 idx, Side side) {
                 if (!board.hasAttackers()) {
                     score = EGTB_SCORE_DRAW;
                 } else {
+                    /// If the move is a capture or a promotion, it should probe from outside/a sub-endgames
+
                     score = getScore(board, xside);
 
                     if (score == EGTB_SCORE_MISSING) {
@@ -419,8 +424,9 @@ void EgtbGenDb::gen_forward(const std::string& folder) {
 /// Gen a single endgame
 bool EgtbGenDb::gen_single(const std::string& folder, const std::string& name, EgtbType egtbType, CompressMode compressMode)
 {
-    
     startTime = time(NULL);
+
+    //verifyEgtbFileSides();
 
     assert(egtbFile == nullptr);
     egtbFile = new EgtbGenFile();

@@ -88,6 +88,19 @@ void EgtbDb::preload(EgtbMemMode egtbMemMode, EgtbLoadMode loadMode)
 }
 
 
+bool EgtbDb::verifyEgtbFileSides() const
+{
+    auto r = true;
+    for (auto&& egtbFile : egtbFileVec) {
+        auto header = egtbFile->getHeader();
+        if (header && (!header->isSide(Side::white) || !header->isSide(Side::black))) {
+            std::cerr << "Error, missing sides for endgame " << egtbFile->getName() << std::endl;
+            r = false;
+        }
+    }
+    return r;
+}
+
 void EgtbDb::addEgtbFile(EgtbFile *egtbFile) {
     egtbFileVec.push_back(egtbFile);
 
@@ -131,9 +144,18 @@ int EgtbDb::getScore(EgtbBoard& board, Side side) {
         return pEgtbFile->getScore(r.key, querySide);
     }
 
-    board.printOut("Error: missing endgame for this board");
+    {
+        board.printOut(std::string("Error: missing endgame for this board with side ") + Funcs::side2String(querySide, false));
+        std::cout << "path: " << pEgtbFile->getPath(querySide) << ", getProperty" << pEgtbFile->getHeader()->getProperty() << std::endl;
+        auto b0 = pEgtbFile->getHeader()->isSide(querySide);
+        auto b1 = pEgtbFile->getHeader()->isSide(querySide);
 
-    return getScoreOnePly(board, side);
+    }
+
+
+    exit(2);
+//    return getScoreOnePly(board, side);
+    return EGTB_SCORE_MISSING;
 }
 
 i64 EgtbDb::getKey(EgtbBoard& board) {
@@ -220,7 +242,7 @@ int EgtbDb::probe(EgtbBoard& board, std::vector<MoveFull>& moveList) {
     auto cont = true;
     auto bestMove = MoveFull::illegalMove;
 
-    for(auto move : board.gen(side)) {
+    for(auto && move : board.gen(side)) {
         if (!cont) {
             break;
         }
