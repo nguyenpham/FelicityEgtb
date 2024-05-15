@@ -22,7 +22,7 @@ using namespace fegtb;
 using namespace bslib;
 
 bool twoBytes = false; // per item
-bool useTempFiles = false;
+//bool useTempFiles = false;
 bool useBackward = false;
 
 bool verifyMode = true;
@@ -45,7 +45,8 @@ bool NameRecord::parse(const std::string& _name)
     type = EgtbType::dtm;
     pawnCount[0] = pawnCount[1] = 0; /// for Chess only
     sortingSides[0] = sortingSides[1] = "";
-    
+    attackerSides[0] = attackerSides[1] = ""; /// for Xiangqi
+
     auto prevCh = '9';
     for(auto i = 0, sd = W; i < name.size(); i++) {
         char ch = name[i];
@@ -82,8 +83,7 @@ bool NameRecord::parse(const std::string& _name)
         }
 #else
         if (t >= ROOK) {
-            attackerMats[sd] += mat;
-            attackerCount[sd]++;
+            attackerSides[sd] += c;
         }
 #endif
     }
@@ -91,7 +91,11 @@ bool NameRecord::parse(const std::string& _name)
     return pieceCount[0][KING] == 1 && pieceCount[1][KING] == 1
     && !sortingSides[W].empty()
     && sortingSides[W] >= sortingSides[B]
-    && !isLimited()
+    
+#ifdef _FELICITY_XQ_
+    && attackerSides[0].size() + attackerSides[1].size()
+#endif
+//    && !isLimited()
     ;
 }
 
@@ -104,8 +108,9 @@ bool NameRecord::isLimited() const
     /// Don't count endgames:
     /// - B has attackers
     /// - W has two attackers with a Rook
-    return attackerCount[B] > 0 ||
-            (attackerCount[W] > 1 && pieceCount[W][ROOK] > 0);
+//    return attackerCount[B] > 0 ||
+//            (attackerCount[W] > 1 && pieceCount[W][ROOK] > 0);
+    return false;
 #endif
 }
 
@@ -126,8 +131,8 @@ bool NameRecord::hasAttackers() const
 
 bool NameRecord::isMeSmaller(const NameRecord& other) const
 {
-    auto attackers = sortingSides[W].size() + sortingSides[B].size();
-    auto attackers_o = other.sortingSides[W].size() + other.sortingSides[B].size();
+    auto attackers = attackerSides[W].size() + attackerSides[B].size();
+    auto attackers_o = other.attackerSides[W].size() + other.attackerSides[B].size();
     
     if (attackers != attackers_o) {
         return attackers < attackers_o;
@@ -142,17 +147,6 @@ bool NameRecord::isMeSmaller(const NameRecord& other) const
     if (pawns1 > pawns2) {
         return false;
     }
-#else
-    auto all = allCount[0] + allCount[1];
-    auto all_o = other.allCount[0] + other.allCount[1];
-
-    if (all != all_o) {
-        return all < all_o;
-    }
-    if (allCount[W] != other.allCount[W]) {
-        return allCount[W] < other.allCount[W];
-    }
-#endif
     
     if (sortingSides[W].size() != other.sortingSides[W].size()) {
         return sortingSides[W].size() < other.sortingSides[W].size();
@@ -161,7 +155,35 @@ bool NameRecord::isMeSmaller(const NameRecord& other) const
     if (sortingSides[W] != other.sortingSides[W]) {
         return sortingSides[W] < other.sortingSides[W];
     }
+    
+    
+
     return sortingSides[B] < other.sortingSides[B];
+
+#else
+    if (attackerSides[W] != other.attackerSides[W]) {
+        return attackerSides[W] < other.attackerSides[W];
+    }
+
+    if (attackerSides[B] != other.attackerSides[B]) {
+        return attackerSides[B] < other.attackerSides[B];
+    }
+    
+    if (sortingSides[W].size() != other.sortingSides[W].size()) {
+        return sortingSides[W].size() < other.sortingSides[W].size();
+    }
+
+    if (sortingSides[B].size() != other.sortingSides[B].size()) {
+        return sortingSides[B].size() < other.sortingSides[B].size();
+    }
+
+    if (sortingSides[W] != other.sortingSides[W]) {
+        return sortingSides[W] < other.sortingSides[W];
+    }
+    
+    return sortingSides[B] < other.sortingSides[B];
+
+#endif
 }
 
 std::string NameRecord::getSubfolder() const
@@ -288,6 +310,7 @@ int EgtbGenDb::probe_gen(EgtbBoard& board, i64 idx, Side side) {
         board.takeBack(hist);
     }
     
+    /// Something wrong since it should always have legal moves
     if (legalCount == 0) {
 #ifdef _FELICITY_CHESS_
         return board.isIncheck(side) ? -EGTB_SCORE_MATE : EGTB_SCORE_DRAW;
@@ -345,10 +368,10 @@ void EgtbGenDb::gen_forward(const std::string& folder) {
     
     /// Load temp files
     auto wLoop = 0, bLoop = 0;
-    if (useTempFiles) {
-        wLoop = egtbFile->readFromTmpFile(folder, Side::white);
-        bLoop = egtbFile->readFromTmpFile(folder, Side::black);
-    }
+//    if (useTempFiles) {
+//        wLoop = egtbFile->readFromTmpFile(folder, Side::white);
+//        bLoop = egtbFile->readFromTmpFile(folder, Side::black);
+//    }
     
     if (wLoop > 0 && bLoop > 0) {
         ply = std::max(wLoop, bLoop);
@@ -405,9 +428,9 @@ void EgtbGenDb::gen_forward(const std::string& folder) {
             std::cout << "\tChanged: " << GenLib::formatString(callLoopChangeCnt) << ", elapsed: " << GenLib::formatPeriod(elapsed_secs) << " (" << elapsed_secs << " s), speed: " << GenLib::formatSpeed((int)(egtbFile->getSize() / elapsed_secs)) << std::endl;
         }
         
-        if (useTempFiles && ply > 0 && callLoopChangeCnt > 0) {
-            egtbFile->writeTmpFile(folder, side, ply);
-        }
+//        if (useTempFiles && ply > 0 && callLoopChangeCnt > 0) {
+//            egtbFile->writeTmpFile(folder, side, ply);
+//        }
         
         if (callLoopChangeCnt == 0) {
             tryCnt--;
@@ -488,8 +511,8 @@ bool EgtbGenDb::gen_finish(const std::string& folder, CompressMode compressMode,
         egtbFile->createStatsFile();
         writeLog();
 
-        egtbFile->removeTmpFiles(folder);
-        egtbFile = nullptr;
+//        egtbFile->removeTmpFiles(folder);
+        egtbFile = nullptr; /// not delete it because it has been added to the system
         return true;
     }
 

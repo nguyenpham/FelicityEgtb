@@ -61,6 +61,10 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n 2"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-n rn-n"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

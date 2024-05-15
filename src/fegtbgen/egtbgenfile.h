@@ -47,7 +47,6 @@ namespace fegtb {
 
         void    setSize(i64 sz) { size = sz; }
 
-//        virtual int cellToScore(char cell);
         static char scoreToCell(int score);
 
         virtual bool isValidHeader() const {
@@ -57,38 +56,11 @@ namespace fegtb {
     public:
         bool    saveFile(const std::string& folder, bslib::Side side, CompressMode compressMode);
 
-    public:
-        u32     checksum(void* data, i64 len) const;
-
-        bool    readFromTmpFiles(const std::string& folder, int& ply, int& mPly);
-        bool    writeTmpFiles(const std::string& folder, int ply, int mPly);
-        void    removeTmpFiles(const std::string& folder) const;
-
-        int     readFromTmpFile(const std::string& folder, bslib::Side side);
-        int     readFromTmpFile(const std::string& folder, bslib::Side side, i64 fromIdx, i64 toIdx, char * toBuf);
-        bool    writeTmpFile(const std::string& folder, bslib::Side side, int loop);
-
-    private:
-        bool readFlagTmpFile(const std::string& folder);
-        bool writeFlagTmpFile(const std::string& folder);
-
-        std::string getTmpFileName(const std::string& folder, bslib::Side side) const;
-        std::string getFlagTmpFileName(const std::string& folder) const;
-
-    public:
-//        std::string getLogFileName() const;
-//        int     readFromLogFile() const;
-//        void    writeLogFile(int completedPly) const;
-
         bool    verifyKeys();
         bool    verifyKey(int threadIdx, i64 idx);
         bool    verifyKeys_loop(int threadIdx);
 
         bool    createBuffersForGenerating();
-//        void    createFlagBuffer();
-//        void    removeFlagBuffer();
-//        void    clearFlagBuffer();
-
         bool    setBufScore(i64 idx, int score, bslib::Side side);
         void    fillBufs(int score);
 
@@ -117,7 +89,6 @@ namespace fegtb {
         void    addProperty(uint addprt);
 
         void    create(const std::string& name, EgtbType = EgtbType::dtm, u32 order = 0);
-//        int     getVersion() const;
         bool    saveHeader(std::ofstream& outfile) const;
 
         virtual std::string toString() const {
@@ -128,47 +99,75 @@ namespace fegtb {
             }
             return stringStream.str();
         }
-        
-        void flag_clear_side(i64 idx, bslib::Side side) {
-            auto sd = static_cast<int>(side);
-            assert(idx >= 0 && sd >= 0 && sd <= 1);
-            auto f = 1 << (sd + ((idx & 1) ? 4 : 0));
-            flags[idx >> 1] &= ~f;
-        }
-        void flag_set_side(i64 idx, bslib::Side side) {
-            auto sd = static_cast<int>(side);
-            assert(idx >= 0 && sd >= 0 && sd <= 1);
-            auto f = 1 << (sd + ((idx & 1) ? 4 : 0));
-            flags[idx >> 1] |= f;
-        }
-        bool flag_is_side(i64 idx, bslib::Side side) const {
-            auto sd = static_cast<int>(side);
-            assert(idx >= 0 && sd >= 0 && sd <= 1);
-            auto f = 1 << (sd + ((idx & 1) ? 4 : 0));
-            return (flags[idx >> 1] & f) != 0;
-        }
+   
+    public:
+//        u32     checksum(void* data, i64 len) const;
+//
+//        bool    readFromTmpFiles(const std::string& folder, int& ply, int& mPly);
+//        bool    writeTmpFiles(const std::string& folder, int ply, int mPly);
+//        void    removeTmpFiles(const std::string& folder) const;
+//
+//        int     readFromTmpFile(const std::string& folder, bslib::Side side);
+//        int     readFromTmpFile(const std::string& folder, bslib::Side side, i64 fromIdx, i64 toIdx, char * toBuf);
+//        bool    writeTmpFile(const std::string& folder, bslib::Side side, int loop);
+//
+//    private:
+//        bool readFlagTmpFile(const std::string& folder);
+//        bool writeFlagTmpFile(const std::string& folder);
+//
+//        std::string getTmpFileName(const std::string& folder, bslib::Side side) const;
+//        std::string getFlagTmpFileName(const std::string& folder) const;
 
-        void flag_clear_cap(i64 idx, bslib::Side side) {
-            auto sd = static_cast<int>(side);
-            assert(idx >= 0 && sd >= 0 && sd <= 1);
-            auto f = 1 << (sd + ((idx & 1) ? 6 : 2));
-            flags[idx >> 1] &= ~f;
-        }
-        
-        void flag_set_cap(i64 idx, bslib::Side side) {
-            auto sd = static_cast<int>(side);
-            assert(idx >= 0 && sd >= 0 && sd <= 1);
-            auto f = 1 << (sd + ((idx & 1) ? 6 : 2));
-            flags[idx >> 1] |= f;
-        }
-        bool flag_is_cap(i64 idx, bslib::Side side) const {
-            auto sd = static_cast<int>(side);
-            assert(idx >= 0 && idx < getSize() && sd >= 0 && sd <= 1);
-            auto f = 1 << (sd + ((idx & 1) ? 6 : 2));
-            return (flags[idx >> 1] & f) != 0;
-        }
+//    public:
+//        std::string getLogFileName() const;
+//        int     readFromLogFile() const;
+//        void    writeLogFile(int completedPly) const;
 
-        uint8_t* flags = nullptr;
+//        void    createFlagBuffer();
+//        void    removeFlagBuffer();
+//        void    clearFlagBuffer();
+
+     
+//        void flag_clear_side(i64 idx, bslib::Side side) {
+//            auto sd = static_cast<int>(side);
+//            assert(idx >= 0 && sd >= 0 && sd <= 1);
+//            auto f = 1 << (sd + ((idx & 1) ? 4 : 0));
+//            flags[idx >> 1] &= ~f;
+//        }
+//        void flag_set_side(i64 idx, bslib::Side side) {
+//            auto sd = static_cast<int>(side);
+//            assert(idx >= 0 && sd >= 0 && sd <= 1);
+//            auto f = 1 << (sd + ((idx & 1) ? 4 : 0));
+//            flags[idx >> 1] |= f;
+//        }
+//        bool flag_is_side(i64 idx, bslib::Side side) const {
+//            auto sd = static_cast<int>(side);
+//            assert(idx >= 0 && sd >= 0 && sd <= 1);
+//            auto f = 1 << (sd + ((idx & 1) ? 4 : 0));
+//            return (flags[idx >> 1] & f) != 0;
+//        }
+//
+//        void flag_clear_cap(i64 idx, bslib::Side side) {
+//            auto sd = static_cast<int>(side);
+//            assert(idx >= 0 && sd >= 0 && sd <= 1);
+//            auto f = 1 << (sd + ((idx & 1) ? 6 : 2));
+//            flags[idx >> 1] &= ~f;
+//        }
+//        
+//        void flag_set_cap(i64 idx, bslib::Side side) {
+//            auto sd = static_cast<int>(side);
+//            assert(idx >= 0 && sd >= 0 && sd <= 1);
+//            auto f = 1 << (sd + ((idx & 1) ? 6 : 2));
+//            flags[idx >> 1] |= f;
+//        }
+//        bool flag_is_cap(i64 idx, bslib::Side side) const {
+//            auto sd = static_cast<int>(side);
+//            assert(idx >= 0 && idx < getSize() && sd >= 0 && sd <= 1);
+//            auto f = 1 << (sd + ((idx & 1) ? 6 : 2));
+//            return (flags[idx >> 1] & f) != 0;
+//        }
+//
+//        uint8_t* flags = nullptr;
     };
 
 } // namespace fegtb

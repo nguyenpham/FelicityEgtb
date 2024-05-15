@@ -33,7 +33,7 @@ using namespace bslib;
 
 extern bool twoBytes;
 extern bool useBackward;
-extern bool useTempFiles;
+//extern bool useTempFiles;
 extern i64 maxEndgameSize;
 
 void chessDbAnalyse();
@@ -63,23 +63,24 @@ static void show_usage(std::string name)
     << " (kabrcnp: for king, advisor, bishop/elephant, rook, cannon, knight, pawn)"
 #endif
     << "; could be a number of attackers\n"
-    << "  -i          Show info of all existent endgames\n"
-    << "  -subinfo    Show sub endgames\n"
-	<< "  -fen FEN    FEN string to probe\n"
-    << "  -d FOLDER   Egtb data folder, default is egtb inside program folder\n"
-    << "  -d2 FOLDER  Second egtb data folder, for comparing, converting\n"
-    << "  -verbose    Verbose - print more information\n"
+    << "  -i           Show info of all existent endgames\n"
+    << "  -subinfo     Show sub endgames\n"
+	<< "  -fen FEN     FEN string to probe\n"
+    << "  -d FOLDER    Egtb data folder, default is egtb inside program folder\n"
+    << "  -d2 FOLDER   Second egtb data folder, for comparing, converting\n"
+    << "  -verbose     Verbose - print more information\n"
     << "\n"
-    << "  -g          Generate\n"
-//    << "  -c          Compare (need another folder d2)\n"
-//    << "  -maxsize    Max index size of endgames in Giga (\"-maxsize 8\" means 8 G indexes) for generating\n"
-//    << "  -minset     Min set of sub endgames for generating / showing\n"
-//    << "  -zip        Compress endgames (create .ztb files)\n"
-//    << "  -unzip      Uncompress endgames (create .xtb files)\n"
-    << "  -v          Verify endgames (exact name or attack pieces such as ch, r-h)\n"
-    << "  -vkey       Verify keys (boards <-> indeces)\n"
-//    << "  -speed      Test speed\n"
-//    << "  -2          2 bytes per item\n"
+    << "  -g           Generate\n"
+    << "  -notempfiles Not using temporary files\n"
+//    << "  -c           Compare (need another folder d2)\n"
+//    << "  -maxsize     Max index size of endgames in Giga (\"-maxsize 8\" means 8 G indexes) for generating\n"
+//    << "  -minset      Min set of sub endgames for generating / showing\n"
+//    << "  -zip         Compress endgames (create .ztb files)\n"
+//    << "  -unzip       Uncompress endgames (create .xtb files)\n"
+    << "  -v           Verify endgames (exact name or attack pieces such as ch, r-h)\n"
+    << "  -vkey        Verify keys (boards <-> indeces)\n"
+//    << "  -speed       Test speed\n"
+//    << "  -2           2 bytes per item\n"
     << "\n"
     << "Example:\n"
 #ifdef _FELICITY_CHESS_
@@ -288,9 +289,9 @@ int main(int argc, char* argv[])
         std::cout << "generating with 2 bytes per item.\n";
     }
 
-    if (argmap.find("-notempfiles") != argmap.end()) {
-        useTempFiles = false;
-    }
+//    if (argmap.find("-notempfiles") != argmap.end()) {
+//        useTempFiles = false;
+//    }
 
 	EgtbBoard board;
 

@@ -671,7 +671,7 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
                     }
                     assert(board.getPiece(pos).type == type);
                     
-                    pos = board.flip(pos, flipMode);
+                    pos = Funcs::flip(pos, flipMode);
                     assert(pos >= 0 && pos < 90);
                     
                     if (type == PieceType::pawn) {
@@ -713,7 +713,7 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
                         continue;
                     }
                     assert(board.getPiece(pos).type == type);
-                    pos = board.flip(pos, flipMode);
+                    pos = Funcs::flip(pos, flipMode);
                     assert(pos >= 0 && pos < 90);
                     if (pos0 < 0) pos0 = pos;
                     else {
@@ -751,7 +751,7 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
                         continue;
                     }
                     assert(board.getPiece(pos).type == PieceType::pawn);
-                    pos = board.flip(pos, flipMode);
+                    pos = Funcs::flip(pos, flipMode);
                     assert(pos >= 0 && pos < 90);
                     pawns[k++] = pos;
                     if (k >= 3) {
