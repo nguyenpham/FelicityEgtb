@@ -649,6 +649,65 @@ bool EgtbGenFile::saveFile(const std::string& folder, Side side, CompressMode co
     return r;
 }
 
+
+void EgtbGenFile::checkAndConvert2bytesTo1() {
+    if (!isTwoBytes()) {
+        return;
+    }
+    
+    for(i64 idx = 0; idx < getSize(); ++idx) {
+        auto score = getScore(idx, Side::white);
+        bool confirm = false;
+        if (score < EGTB_SCORE_MATE && score != EGTB_SCORE_DRAW) {
+            auto dtm = EGTB_SCORE_MATE - std::abs(score);
+            confirm = dtm > 248;
+//        } else {
+//            confirm = std::abs(score) >= EGTB_SCORE_PERPETUAL_BEGIN;
+        }
+        if (confirm) {
+            std::cout << "\t\tconfirmed: 2 bytes per item." << std::endl;
+            return;
+        }
+    }
+    
+    /// Convert into 1 byte
+    header->setProperty(header->getProperty() & ~EGTB_PROP_2BYTES);
+    assert(!isTwoBytes());
+    
+    for(i64 idx = 0; idx < getSize(); ++idx) {
+        for(auto sd = 0; sd < 2; sd++) {
+            i16* p = (i16*)pBuf[sd];
+            i16 score = p[idx];
+            setBufScore(idx, score, static_cast<Side>(sd));
+        }
+    }
+    
+    std::cout << "\t\tredundant. Converted into 1 byte per item." << std::endl;
+}
+
+void EgtbGenFile::convert1byteTo2() {
+    if (isTwoBytes()) {
+        return;
+    }
+    
+    for(auto sd = 0; sd < 2; sd++) {
+        auto side = static_cast<Side>(sd);
+        auto p = (i16*)malloc(getSize() * 2 + 64);
+        for(i64 idx = 0; idx < getSize(); ++idx) {
+            auto score = getScore(idx, side);
+            p[idx] = score;
+        }
+        
+        free(pBuf[sd]);
+        pBuf[sd] = (char*)p;
+    }
+
+    header->setProperty(header->getProperty() | EGTB_PROP_2BYTES);
+    assert(isTwoBytes());
+
+    std::cout << "\t\tConverted into 2 bytes per item." << std::endl;
+}
+
 bool EgtbGenFile::verifyKey(int threadIdx, i64 idx) {
     auto& rcd = threadRecordVec.at(threadIdx);
     assert(rcd.board);
