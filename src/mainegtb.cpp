@@ -31,11 +31,6 @@
 using namespace fegtb;
 using namespace bslib;
 
-extern bool twoBytes;
-extern bool useBackward;
-//extern bool useTempFiles;
-extern i64 maxEndgameSize;
-
 void chessDbAnalyse();
 
 void quickTest();
@@ -278,14 +273,14 @@ int main(int argc, char* argv[])
     egtbVerbose = argmap.find("-verbose") != argmap.end();
     
     if (argmap.find("-genforward") != argmap.end()) {
-        useBackward = false;
+        EgtbGenDb::useBackward = false;
     }
 
     if (argmap.find("-maxsize") != argmap.end()) {
-        maxEndgameSize = std::atoi(argmap["-maxsize"].c_str()) * 1024LL * 1024LL * 1024LL;
+        EgtbGenDb::maxEndgameSize = std::atoi(argmap["-maxsize"].c_str()) * 1024LL * 1024LL * 1024LL;
     }
     if (argmap.find("-2") != argmap.end()) {
-        twoBytes = true;
+        EgtbGenDb::twoBytes = true;
         std::cout << "generating with 2 bytes per item.\n";
     }
 

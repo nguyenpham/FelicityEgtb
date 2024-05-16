@@ -118,56 +118,56 @@ namespace fegtb {
 //        std::string getTmpFileName(const std::string& folder, bslib::Side side) const;
 //        std::string getFlagTmpFileName(const std::string& folder) const;
 
-//    public:
+    public:
 //        std::string getLogFileName() const;
 //        int     readFromLogFile() const;
 //        void    writeLogFile(int completedPly) const;
 
-//        void    createFlagBuffer();
-//        void    removeFlagBuffer();
-//        void    clearFlagBuffer();
+        void    createFlagBuffer();
+        void    removeFlagBuffer();
+        void    clearFlagBuffer();
 
      
-//        void flag_clear_side(i64 idx, bslib::Side side) {
-//            auto sd = static_cast<int>(side);
-//            assert(idx >= 0 && sd >= 0 && sd <= 1);
-//            auto f = 1 << (sd + ((idx & 1) ? 4 : 0));
-//            flags[idx >> 1] &= ~f;
-//        }
-//        void flag_set_side(i64 idx, bslib::Side side) {
-//            auto sd = static_cast<int>(side);
-//            assert(idx >= 0 && sd >= 0 && sd <= 1);
-//            auto f = 1 << (sd + ((idx & 1) ? 4 : 0));
-//            flags[idx >> 1] |= f;
-//        }
-//        bool flag_is_side(i64 idx, bslib::Side side) const {
-//            auto sd = static_cast<int>(side);
-//            assert(idx >= 0 && sd >= 0 && sd <= 1);
-//            auto f = 1 << (sd + ((idx & 1) ? 4 : 0));
-//            return (flags[idx >> 1] & f) != 0;
-//        }
-//
-//        void flag_clear_cap(i64 idx, bslib::Side side) {
-//            auto sd = static_cast<int>(side);
-//            assert(idx >= 0 && sd >= 0 && sd <= 1);
-//            auto f = 1 << (sd + ((idx & 1) ? 6 : 2));
-//            flags[idx >> 1] &= ~f;
-//        }
-//        
-//        void flag_set_cap(i64 idx, bslib::Side side) {
-//            auto sd = static_cast<int>(side);
-//            assert(idx >= 0 && sd >= 0 && sd <= 1);
-//            auto f = 1 << (sd + ((idx & 1) ? 6 : 2));
-//            flags[idx >> 1] |= f;
-//        }
-//        bool flag_is_cap(i64 idx, bslib::Side side) const {
-//            auto sd = static_cast<int>(side);
-//            assert(idx >= 0 && idx < getSize() && sd >= 0 && sd <= 1);
-//            auto f = 1 << (sd + ((idx & 1) ? 6 : 2));
-//            return (flags[idx >> 1] & f) != 0;
-//        }
-//
-//        uint8_t* flags = nullptr;
+        void flag_clear_side(i64 idx, bslib::Side side) {
+            auto sd = static_cast<int>(side);
+            assert(idx >= 0 && sd >= 0 && sd <= 1);
+            auto f = 1 << (sd + ((idx & 1) ? 4 : 0));
+            flags[idx >> 1] &= ~f;
+        }
+        void flag_set_side(i64 idx, bslib::Side side) {
+            auto sd = static_cast<int>(side);
+            assert(idx >= 0 && sd >= 0 && sd <= 1);
+            auto f = 1 << (sd + ((idx & 1) ? 4 : 0));
+            flags[idx >> 1] |= f;
+        }
+        bool flag_is_side(i64 idx, bslib::Side side) const {
+            auto sd = static_cast<int>(side);
+            assert(idx >= 0 && sd >= 0 && sd <= 1);
+            auto f = 1 << (sd + ((idx & 1) ? 4 : 0));
+            return (flags[idx >> 1] & f) != 0;
+        }
+
+        void flag_clear_cap(i64 idx, bslib::Side side) {
+            auto sd = static_cast<int>(side);
+            assert(idx >= 0 && sd >= 0 && sd <= 1);
+            auto f = 1 << (sd + ((idx & 1) ? 6 : 2));
+            flags[idx >> 1] &= ~f;
+        }
+        
+        void flag_set_cap(i64 idx, bslib::Side side) {
+            auto sd = static_cast<int>(side);
+            assert(idx >= 0 && sd >= 0 && sd <= 1);
+            auto f = 1 << (sd + ((idx & 1) ? 6 : 2));
+            flags[idx >> 1] |= f;
+        }
+        bool flag_is_cap(i64 idx, bslib::Side side) const {
+            auto sd = static_cast<int>(side);
+            assert(idx >= 0 && idx < getSize() && sd >= 0 && sd <= 1);
+            auto f = 1 << (sd + ((idx & 1) ? 6 : 2));
+            return (flags[idx >> 1] & f) != 0;
+        }
+
+        uint8_t* flags = nullptr;
     };
 
 } // namespace fegtb

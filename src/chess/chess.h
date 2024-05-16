@@ -66,6 +66,9 @@ namespace bslib {
 
         using BoardCore::gen;
         virtual void gen(std::vector<MoveFull>& moveList, Side attackerSide) const override;
+        
+        virtual std::vector<MoveFull> gen_backward_nocap(Side attackerSide) const override;
+
         virtual bool isIncheck(Side beingAttackedSide) const override;
 
         using BoardCore::make;
@@ -128,6 +131,8 @@ namespace bslib {
         virtual bool beAttacked(int pos, Side attackerSide) const;
 
         virtual void genPawn(std::vector<MoveFull>& moves, Side side, int pos) const;
+        virtual void genPawn_backward_nocap(std::vector<MoveFull>& moves, Side side, int pos) const;
+
         virtual void genKnight(std::vector<MoveFull>& moves, Side side, int pos) const;
         virtual void genRook(std::vector<MoveFull>& moves, Side side, int pos, bool oneStep) const;
         virtual void genBishop(std::vector<MoveFull>& moves, Side side, int pos, bool oneStep) const;

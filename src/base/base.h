@@ -264,6 +264,8 @@ namespace bslib {
             gen(moveList, attackerSide);
             return moveList;
         }
+        
+        virtual std::vector<MoveFull> gen_backward_nocap(Side attackerSide) const = 0;
 
         virtual char pieceType2Char(int pieceType) const = 0;
         virtual int coordinateStringToPos(const std::string& str) const = 0;
@@ -283,7 +285,8 @@ namespace bslib {
 
     public:
         static void pieceList_reset(int *pieceList);
-        virtual bool pieceList_isDraw() const;
+        bool pieceList_isDraw() const;
+        bool pieceList_isThereAttacker() const;
 
     protected:
             

@@ -21,6 +21,7 @@
 #include "../base/funcs.h"
 
 #include "egtbgenfile.h"
+#include "egtbgendb.h"
 #include "compresslib.h"
 #include "genlib.h"
 
@@ -29,7 +30,6 @@ std::mutex printMutex;
 using namespace fegtb;
 using namespace bslib;
 
-extern bool twoBytes;
 extern const int pieceValForOrdering[7];
 
 #define COPYRIGHT       "Copyright 2024 by Felicity EGTB"
@@ -77,7 +77,7 @@ void EgtbGenFile::create(const std::string& name, EgtbType _egtbType, u32 order)
 
     header->setOrder(order);
     
-    if (twoBytes) {
+    if (EgtbGenDb::twoBytes) {
         header->addProperty(EGTB_PROP_2BYTES);
         assert(isTwoBytes());
     }
@@ -730,3 +730,25 @@ bool EgtbGenFile::verifyKeys()
     return r;
 }
 
+void EgtbGenFile::createFlagBuffer() {
+    removeFlagBuffer();
+    auto flagLen = getSize() / 2 + 16;
+    flags = (uint8_t*) malloc(flagLen);
+    memset(flags, 0, flagLen);
+}
+
+
+void EgtbGenFile::removeFlagBuffer()
+{
+    if (flags) {
+        free(flags);
+        flags = nullptr;
+    }
+}
+
+void EgtbGenFile::clearFlagBuffer() {
+    if (flags) {
+        auto flagLen = getSize() / 2 + 16;
+        memset(flags, 0, flagLen);
+    }
+}

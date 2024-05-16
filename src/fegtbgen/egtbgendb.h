@@ -67,13 +67,17 @@ private:
 
 
 class EgtbGenDb : public EgtbDb, public ThreadMng {
-    
+
+public:
+    static bool twoBytes; // per item
+    static  bool useTempFiles;
+    static bool useBackward;
+    static bool verifyMode;
+    static i64 maxEndgameSize;
+
 protected:
     EgtbGenFile* egtbFile = nullptr;
     
-public:
-//    std::chrono::steady_clock::time_point begin;
-//    time_t startTime;
     
 public:
     virtual bool compress(std::string folder, const std::string& endgameName, bool includingSubEndgames, bool compress);
@@ -118,13 +122,22 @@ protected:
     virtual bool compressEndgame(EgtbGenFile* egtbFile, std::string writtenfolder, CompressMode compressMode);
     
     virtual bool gen_single(const std::string& folder, const std::string& name, EgtbType egtbType, CompressMode compressMode);
+    
     void gen_forward(const std::string& folder);
+    
+    
+    void gen_backward(const std::string& folder);
+
     bool gen_finish(const std::string& folder, CompressMode compressMode, bool needVerify = true);
     
     void gen_finish_adjust_scores();
     
     int probe_gen(EgtbBoard& board, i64 idx, bslib::Side side);
     
+    void gen_thread_init_backward(int threadIdx);
+    int probe_gen_backward(EgtbBoard& board, i64 idx, bslib::Side side, int ply);
+
+    void gen_thread_backward(int threadIdx, int sd, int ply, int task);
 private:
     std::string gen_folder;
     bool verifyDataOK = true;
@@ -134,6 +147,7 @@ private:
     std::chrono::milliseconds::rep time_start, time_completed, time_start_verify, total_elapsed_gen = 0, total_elapsed_verify = 0, elapsed_gen = 0, elapsed_verify = 0;
 
 };
+
 
 } // namespace fegtb
 

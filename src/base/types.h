@@ -193,7 +193,6 @@ public:
     }
 
     std::string toCoordinateString(ChessVariant chessVariant) const;
-
 };
 
 class MoveFull : public Move {

@@ -740,6 +740,110 @@ void ChessBoard::gen_castling(std::vector<MoveFull>& moves, int kingPos) const
     }
 }
 
+////////////////////////////////////////////////////////////////////////
+
+std::vector<MoveFull> ChessBoard::gen_backward_nocap(Side side) const
+{
+    std::vector<MoveFull> moves, moves2;
+
+    const int* pl = pieceList[static_cast<int>(side)];
+
+    for (int l = 0; l < 16; l++) {
+        auto pos = pl[l];
+        if (pos < 0) {
+            continue;
+        }
+
+        auto piece = pieces[pos]; assert(piece.side == side);
+
+        switch (static_cast<PieceType>(piece.type)) {
+            case PieceType::king:
+            {
+                genBishop(moves, side, pos, true);
+                genRook(moves, side, pos, true);
+                gen_castling(moves, pos);
+                break;
+            }
+
+            case PieceType::queen:
+            {
+                genBishop(moves, side, pos, false);
+                genRook(moves, side, pos, false);
+                break;
+            }
+
+            case PieceType::bishop:
+            {
+                genBishop(moves, side, pos, false);
+                break;
+            }
+
+            case PieceType::rook: // both queen and rook here
+            {
+                genRook(moves, side, pos, false);
+                break;
+            }
+
+            case PieceType::knight:
+            {
+                genKnight(moves, side, pos);
+                break;
+            }
+
+            case PieceType::pawn:
+            {
+                genPawn_backward_nocap(moves, side, pos);
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+    
+    for (auto && move : moves) {
+        if (isEmpty(move.dest)) {
+            moves2.push_back(move);
+        }
+    }
+    return moves2;
+}
+
+void ChessBoard::genPawn_backward_nocap(std::vector<MoveFull>& moves, Side side, int pos) const
+{
+    auto col = getColumn(pos);
+
+    if (side == Side::black) {
+        if (isEmpty(pos + 8)) {
+            gen_addPawnMove(moves, pos, pos + 8);
+        }
+        if (pos < 16 && isEmpty(pos + 8) && isEmpty(pos + 16)) {
+            gen_addMove(moves, pos, pos + 16);
+        }
+
+//        if (col && (getPiece(pos + 7).side == Side::white || (pos + 7 == enpassant && getPiece(pos + 7).side == Side::none))) {
+//            gen_addPawnMove(moves, pos, pos + 7);
+//        }
+//        if (col < 7 && (getPiece(pos + 9).side == Side::white || (pos + 9 == enpassant && getPiece(pos + 9).side == Side::none))) {
+//            gen_addPawnMove(moves, pos, pos + 9);
+//        }
+    } else {
+        if (isEmpty(pos - 8)) {
+            gen_addPawnMove(moves, pos, pos - 8);
+        }
+        if (pos >= 48 && isEmpty(pos - 8) && isEmpty(pos - 16)) {
+            gen_addMove(moves, pos, pos - 16);
+        }
+
+//        if (col < 7 && (getPiece(pos - 7).side == Side::black || (pos - 7 == enpassant && getPiece(pos - 7).side == Side::none)))
+//            gen_addPawnMove(moves, pos, pos - 7);
+//        if (col && (getPiece(pos - 9).side == Side::black || (pos - 9 == enpassant && getPiece(pos - 9).side == Side::none)))
+//            gen_addPawnMove(moves, pos, pos - 9);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////
+
 bool ChessBoard::beAttacked(int pos, Side attackerSide) const
 {
     int row = getRank(pos), col = getColumn(pos);

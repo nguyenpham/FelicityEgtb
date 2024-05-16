@@ -720,8 +720,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "346"
-            endingLineNumber = "346"
+            startingLineNumber = "341"
+            endingLineNumber = "341"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1247,8 +1247,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "212"
-            endingLineNumber = "212"
+            startingLineNumber = "207"
+            endingLineNumber = "207"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
             <Locations>
@@ -1295,8 +1295,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "208"
-            endingLineNumber = "208"
+            startingLineNumber = "203"
+            endingLineNumber = "203"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1311,8 +1311,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "202"
-            endingLineNumber = "202"
+            startingLineNumber = "197"
+            endingLineNumber = "197"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1359,8 +1359,8 @@
             filePath = "src/chess/chess.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1147"
-            endingLineNumber = "1147"
+            startingLineNumber = "1251"
+            endingLineNumber = "1251"
             landmarkName = "ChessBoard::pieceList_isValid()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1375,10 +1375,42 @@
             filePath = "src/chess/chess.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1157"
-            endingLineNumber = "1157"
+            startingLineNumber = "1261"
+            endingLineNumber = "1261"
             landmarkName = "ChessBoard::pieceList_isValid()"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "83B7619A-CCE3-4986-92E1-99A49455638E - a31cddbfeda555b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::ChessBoard::pieceList_isValid() const"
+                  moduleName = "FelicityEgtb"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1157"
+                  endingLineNumber = "1157"
+                  offsetFromSymbolStart = "241">
+               </Location>
+               <Location
+                  uuid = "83B7619A-CCE3-4986-92E1-99A49455638E - a31cddbfeda5bc3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::ChessBoard::pieceList_isValid() const"
+                  moduleName = "FelicityEgtb"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1261"
+                  endingLineNumber = "1261"
+                  offsetFromSymbolStart = "241">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1391,8 +1423,8 @@
             filePath = "src/chess/chess.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1151"
-            endingLineNumber = "1151"
+            startingLineNumber = "1255"
+            endingLineNumber = "1255"
             landmarkName = "ChessBoard::pieceList_isValid()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1407,8 +1439,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "323"
-            endingLineNumber = "323"
+            startingLineNumber = "318"
+            endingLineNumber = "318"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1502,8 +1534,8 @@
             filePath = "src/fegtbgen/egtbgendb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "220"
-            endingLineNumber = "220"
+            startingLineNumber = "218"
+            endingLineNumber = "218"
             landmarkName = "EgtbGenDb::gen_thread_init(threadIdx)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1518,8 +1550,8 @@
             filePath = "src/fegtbgen/egtbgendb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "230"
-            endingLineNumber = "230"
+            startingLineNumber = "228"
+            endingLineNumber = "228"
             landmarkName = "EgtbGenDb::gen_thread_init(threadIdx)"
             landmarkType = "7">
          </BreakpointContent>

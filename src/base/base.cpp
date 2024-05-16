@@ -365,6 +365,11 @@ bool BoardCore::pieceList_isThereAttacker(const int *pieceList) {
     return false;
 }
 
+bool BoardCore::pieceList_isThereAttacker() const
+{
+    return pieceList_isThereAttacker((const int*) pieceList);
+}
+
 bool BoardCore::pieceList_isDraw() const
 {
     return pieceList_isDraw((const int*) pieceList);

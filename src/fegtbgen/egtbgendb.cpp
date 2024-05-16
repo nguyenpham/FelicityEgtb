@@ -21,13 +21,11 @@
 using namespace fegtb;
 using namespace bslib;
 
-bool twoBytes = false; // per item
-//bool useTempFiles = false;
-bool useBackward = false;
-
-bool verifyMode = true;
-
-i64 maxEndgameSize = -1;
+bool EgtbGenDb::twoBytes = false; // per item
+bool EgtbGenDb::useTempFiles = false;
+bool EgtbGenDb::useBackward = true;
+bool EgtbGenDb::verifyMode = true;
+i64 EgtbGenDb::maxEndgameSize = -1;
 
 #ifdef _FELICITY_CHESS_
 static const std::string pieceSorting = "0987654321";
@@ -462,8 +460,11 @@ bool EgtbGenDb::gen_single(const std::string& folder, const std::string& name, E
     
     setupThreadRecords(egtbFile->getSize());
 
-    /// WARNING: not use backward
-    gen_forward(folder);
+    if (useBackward) {
+        gen_backward(folder);
+    } else {
+        gen_forward(folder);
+    }
 
     auto r = gen_finish(folder, compressMode, verifyMode);
     if (r) {
