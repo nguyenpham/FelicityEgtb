@@ -4,31 +4,34 @@
 Endgame name
 ============
 
-The generator will generate endgames one by one. The name of the endgame describes which pieces it has. "krkp" is an endgame of 4 pieces, beside of of-couse exist two King (k and k) there are two other pieces: a Rook (r) for one side and a Pawn (p) for the other side. The stronger side is always on the left/first part of the name and the weaker on the rest.
+The generator will generate endgames one by one. The name of the endgame describes which pieces it has. "krkp" is an endgame of 4 pieces, beside of of-course exist two King (k and k) there are two other pieces: a Rook (r) for one side and a Pawn (p) for the other side. The stronger side is always on the left/first part of the name and the weaker on the rest.
 
-We don’t create all possible endgames but ignoring ones that could be probed replacely by others via some simple flipping, and mapping. For example, an endgame with a black Rook and a white Pawn is considered similar and is just flipped side with an endgame of a white Rook and a black Pawn. We keep and store the first endgame only.
+We don’t create all possible endgames but ignore ones that could be probed replacely by others via some simple flipping, and mapping. For example, an endgame with a black Rook and a white Pawn is considered similar and is just flipped side with an endgame of a white Rook and a black Pawn. We keep and store the first endgame only.
 
 We use the name of the endgame as its file name. An endgame typically has two files, one for the white side and the other for the black side and they have .w. and .b. in their extension perspective.
 
-A file is containing a data array, each entry mapped by a key/index or a chess position. The array is compressed and stored by chunks.
+A file contains a data array, each entry mapped by a key/index or a chess position. The array is compressed and stored in chunks.
 
 Entry size
 ==========
-Theoritical, we can store what we want with the data array. However, dute to the hugeness of the array (because the index spaces may so huge), we try to store at small as posible for each entry. Typically, we store on an entry the value of Distance To Mate (DTM). Depending on endgames we need 1 or 2 bytes for an entry.
+Theoretically, we can store what we want with the data array. However, due to the hugeness of the array (because the index spaces may be so huge), we try to store at small as possible for each entry. Typically, we store on an entry the value of Distance To Mate (DTM). Depending on endgames we need 1 or 2 bytes for an entry.
 
 Scores
 ------
-Typically in computer chess scores have value ranges fit in two bytes (16 bits). Our score range is similar with the range [-1000, +1000].
+Typically in computer chess scores have value ranges fit in two bytes (16 bits). Our score range is similar to the range [-1000, +1000].
 
 
 One byte
 --------
-One byte can store 256 values or a range of -128 to +128. We take out first 4 values for special purposes (to mark the position is illegal, unused, missing and unknown) thus the range becomes [-126, +126]. We set 5 for draw value and use 130 as the middle point of the range. In computer chess we store typically mate scores by plies or half moves, that range equals +/- mate in 126/2 = +/-63 or [-63, +63]. However, in our case, we used full move instead, thus that range equals +/- mate in 126 or [-126, +126]. By doing that we can delay using 2 bytes for endgames, reduce a lot of size.
+One byte can store 256 values or a range of -128 to +128. We take out the first 4 values for special purposes (to mark the position as illegal, unused, missing and unknown) thus the range becomes [-126, +126]. We set 5 for draw value and use 130 as the middle point of the range. In computer chess we store typically mate scores by plies or half moves, that range equals +/- mate in 126/2 = +/-63 or [-63, +63]. However, in our case, we used full move instead, thus that range equals +/- mate in 126 or [-126, +126]. By doing that we can delay using 2 bytes for endgames, and reduce a lot of size.
+
 We need to convert scores (of two bytes) into the values of 1 byte to store or load.
 
 Two bytes
 ---------
-Thus those scores are stored straighforward in data entries, without any converting.
+Thus those scores are stored straightforwardly in data entries, without any converting.
+
+After all data is generated, before compressing, the program will scan all data to verify if two bytes are really necessary not not. If not, it will convert data back into 1 byte to save space.
 
 
 Folder
@@ -45,9 +48,14 @@ There are two main methods to generate endgames:
 I. Generate forward
 -------------------
 This is the most simple and straightforward.
+
 Buffers and RAM
+---------------
+
 The program will create two main arrays with the size of the index space of the endgame. Those are the largest ones and the generator will work mainly with them. To make sure the generator can work as fast as possible, we allocate them all in the memory. For large endgames, they may eat all RAM and it becomes a huge challenge to create just a bit larger endgames.
+
 When generating, some sub-endgames may be probed. To get high speed, they load their whole data into the RAM too, stretching the memory whenever lacing. However, modern operating systems nowadays are so clever that they can manage to make the program run smoothly when missing RAM a bit.
+
 We didn’t have the right size of RAM and sizes of endgames. Just from our experience, the generator can still work well with the sizes of two main buffers take about 90% of RAM.
 
 
@@ -69,9 +77,8 @@ The loop will stop if there are no changes in the last two loops.
 
 Finish
 ------
-When the generating is done, the program will verify all data then compress it into multi chunks and store in 2 files.
+When the generating is done, the program will verify all data then compress it into multiple chunks and store it in 2 files.
 
- 
  
 II. Generate backward
 ---------------------
@@ -80,10 +87,10 @@ II. Generate backward
 
  
 
-Multi threading
+Multithreading
 ===============
-The generator is multi threading. Generation is a long and havy process, require all power and memory of computers. Users should use threads as many as possible.
-The way the program divides tasks for threads are quite simple. Each thread will be given a small range of indexes to work. Thus they don't get conflicts when writting and don't need mutex locks. However, they may get conflicts when probing sub-endgames thus they need to mutex locks. Accessing values outside their index range also have some (small) chance of conflicts too when they read values being updated. However, we think that kind of conflicts are quite small and almost didnot see in practising.
+The generator is multi-threading. Generation is a long and heavy process, requiring all the power and memory of computers. Users should use threads as many as possible.
+The way the program divides tasks for threads is quite simple. Each thread will be given a small range of indexes to work. Thus they don't get conflicts when writing and don't need mutex locks. However, they may get into conflicts when probing sub-endgames thus they need to mutex locks. Accessing values outside their index range also has some (small) chance of conflicts when they read values being updated. However, we think that these kinds of conflicts are quite small and almost not seen in practice.
 
 
 Verify
@@ -95,3 +102,4 @@ Compress
 ========
 
 Data will be devised compressed and stored in small chunks. Original chunks have a fixed size of 4 Kb. After compressing, their sizes are smaller and not the same. When saving to disk, to know what size and where location of each chunk we need to store that info in a compressed table.
+
