@@ -12,8 +12,23 @@ We use the name of the endgame as its file name. An endgame typically has two fi
 
 A file is containing a data array, each entry mapped by a key/index or a chess position. The array is compressed and stored by chunks.
 
-Typically a data entry contains the value of Distance To Mate (DTM). To save size of endgames, almost all small endgames use only 1 byte to store that value. One byte can store 256 values or a range of -128 to +128. We take out first 4 values for special purposes (to mark the position is illegal, unused, missing and unknown) thus the range becomes [-126, +126]. We set 5 for draw value and use 130 as the middle point of the range. In computer chess we store typically mate scores by plies or half moves, that range equals +/- mate in 126/2 = +/-63 or [-63, +63]. However, in our case, we used full move instead, thus that range equals +/- mate in 126 or [-126, +126]. By doing that we can delay using 2 bytes for endgames, reduce a lot of size.
+Entry size
+==========
+Theoritical, we can store what we want with the data array. However, dute to the hugeness of the array (because the index spaces may so huge), we try to store at small as posible for each entry. Typically, we store on an entry the value of Distance To Mate (DTM). Depending on endgames we need 1 or 2 bytes for an entry.
 
+Scores
+------
+Typically in computer chess scores have value ranges fit in two bytes (16 bits). Our score range is similar with the range [-1000, +1000].
+
+
+One byte
+--------
+One byte can store 256 values or a range of -128 to +128. We take out first 4 values for special purposes (to mark the position is illegal, unused, missing and unknown) thus the range becomes [-126, +126]. We set 5 for draw value and use 130 as the middle point of the range. In computer chess we store typically mate scores by plies or half moves, that range equals +/- mate in 126/2 = +/-63 or [-63, +63]. However, in our case, we used full move instead, thus that range equals +/- mate in 126 or [-126, +126]. By doing that we can delay using 2 bytes for endgames, reduce a lot of size.
+We need to convert scores (of two bytes) into the values of 1 byte to store or load.
+
+Two bytes
+---------
+Thus those scores are stored straighforward in data entries, without any converting.
 
 
 Folder
