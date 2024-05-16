@@ -506,6 +506,8 @@ bool EgtbGenDb::gen_finish(const std::string& folder, CompressMode compressMode,
         total_elapsed_verify += elapsed_verify;
     }
     
+    egtbFile->checkAndConvert2bytesTo1();
+
     std::cout << "Total time, generating: " << GenLib::formatPeriod(int(total_elapsed_gen / 1000)) << ", verifying: " << GenLib::formatPeriod(int(total_elapsed_verify / 1000)) << std::endl;
 
     if (egtbFile->saveFile(folder, compressMode)) {
@@ -529,7 +531,7 @@ void EgtbGenDb::writeLog()
     
     if (newSection) {
         newSection = false;
-        str += "\n====== New section ======\n";
+        str += "\n====== New section, cores: " + std::to_string(MaxGenExtraThreads) + " ======\n";
     }
     str += "\n" + egtbFile->getName()
     + "\n\tsize: " + std::to_string(egtbFile->getSize())

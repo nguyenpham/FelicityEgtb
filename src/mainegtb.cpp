@@ -75,7 +75,7 @@ static void show_usage(std::string name)
     << "  -v           Verify endgames (exact name or attack pieces such as ch, r-h)\n"
     << "  -vkey        Verify keys (boards <-> indeces)\n"
 //    << "  -speed       Test speed\n"
-//    << "  -2           2 bytes per item\n"
+    << "  -2           2 bytes per item\n"
     << "\n"
     << "Example:\n"
 #ifdef _FELICITY_CHESS_

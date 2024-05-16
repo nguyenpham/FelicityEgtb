@@ -56,6 +56,9 @@ namespace fegtb {
     public:
         bool    saveFile(const std::string& folder, bslib::Side side, CompressMode compressMode);
 
+        void    checkAndConvert2bytesTo1();
+        void    convert1byteTo2();
+        
         bool    verifyKeys();
         bool    verifyKey(int threadIdx, i64 idx);
         bool    verifyKeys_loop(int threadIdx);
