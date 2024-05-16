@@ -128,6 +128,7 @@
 		B181546B2BCEB38D00EF7716 /* FelicityEgtb-xq */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "FelicityEgtb-xq"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1A8BEEB2BEB4C2E0074CE7B /* ChessIndex.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ChessIndex.md; sourceTree = "<group>"; };
 		B1A8BEEC2BEB4C800074CE7B /* Files.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Files.md; sourceTree = "<group>"; };
+		B1B27CAE2BF58B4A00333F09 /* Generation.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Generation.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -269,6 +270,7 @@
 				B16AE0AE2BCC0D8400B75FC0 /* Perft.md */,
 				B1A8BEEB2BEB4C2E0074CE7B /* ChessIndex.md */,
 				B1A8BEEC2BEB4C800074CE7B /* Files.md */,
+				B1B27CAE2BF58B4A00333F09 /* Generation.md */,
 			);
 			path = docs;
 			sourceTree = "<group>";
