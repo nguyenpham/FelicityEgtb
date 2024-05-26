@@ -1,7 +1,7 @@
 /**
  This file is part of Felicity Egtb, distributed under MIT license.
 
- * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 Nguyen Hong Pham (github@nguyenpham)
  * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -201,7 +201,6 @@ public:
     bool    preload(const std::string& _path, EgtbMemMode memMode, EgtbLoadMode loadMode);
     bool    loadHeaderAndTable(const std::string& path);
     void    merge(EgtbFile& otherEgtbFile);
-//    virtual bool merge(EgtbFile* otherEgtbFile);
 
     
     virtual int cellToScore(char cell);

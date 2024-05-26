@@ -15,14 +15,38 @@
  copies or substantial portions of the Software.
  */
 
-#include "egtbkey.h"
+#ifndef GenBoard_h
+#define GenBoard_h
+
+#include <assert.h>
+#include <string.h>
+#include <fstream>
+
+#include "defs.h"
+#include "../chess/chess.h"
+#include "../xq/xq.h"
+
+
 
 namespace fegtb {
-    EgtbKey egtbKey;
-} // namespace
 
-using namespace fegtb;
+    class GenBoard : public EgtbBoard {
+    public:
+        virtual ~GenBoard() {}
+        
+        std::vector<bslib::MoveFull> gen_backward_nocap(bslib::Side attackerSide) const;
+        
+        bslib::FlipMode needFlip() const;
+        
+#ifdef _FELICITY_CHESS_
 
-EgtbKey::EgtbKey() {
-    initOnce();
-}
+    private:
+        void genPawn_backward_nocap(std::vector<bslib::MoveFull>& moves, bslib::Side side, int pos) const;
+#endif
+        
+    };
+
+} // namespace fegtb
+
+#endif /* GenBoard_h */
+

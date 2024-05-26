@@ -1,7 +1,7 @@
 /**
  This file is part of Felicity Egtb, distributed under MIT license.
 
- * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 Nguyen Hong Pham (github@nguyenpham)
  * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -39,7 +39,7 @@ void EgtbDb::closeAll() {
     nameMap.clear();
 }
 
-void EgtbDb::removeAllBuffers() {
+void EgtbDb::removeAllProbedBuffers() {
     for (auto && egtbFile : egtbFileVec) {
         egtbFile->removeBuffers();
     }

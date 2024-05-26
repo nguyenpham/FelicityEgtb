@@ -1,7 +1,7 @@
 /**
  This file is part of Felicity Egtb, distributed under MIT license.
 
- * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 Nguyen Hong Pham (github@nguyenpham)
  * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -56,10 +56,11 @@ public:
     bool hasAttackers() const;
 
     /// for sorting
-    bool isMeSmaller(const NameRecord& other) const;
-    std::string getSubfolder() const;
+    bool isSmaller(const NameRecord& other) const;
     
     bool isLimited() const;
+    
+    std::string getSubfolder() const;
     
 private:
     bool parse(const std::string& _name);
@@ -113,8 +114,8 @@ public:
     
 protected:
 
-    virtual void gen_thread_init(int threadIdx);
-    virtual void gen_thread(int threadIdx, int sd, int fly);
+    virtual void gen_thread_init_forward(int threadIdx);
+    virtual void gen_thread_forward(int threadIdx, int sd, int fly);
     
     void writeLog();
     
@@ -126,18 +127,20 @@ protected:
     void gen_forward(const std::string& folder);
     
     
-    void gen_backward(const std::string& folder);
-
     bool gen_finish(const std::string& folder, CompressMode compressMode, bool needVerify = true);
     
     void gen_finish_adjust_scores();
     
-    int probe_gen(EgtbBoard& board, i64 idx, bslib::Side side);
+    int probe_gen_forward(GenBoard& board, i64 idx, bslib::Side side, bool setup = true);
     
-    void gen_thread_init_backward(int threadIdx);
-    int probe_gen_backward(EgtbBoard& board, i64 idx, bslib::Side side, int ply);
+public:
+    void gen_backward(const std::string& folder);
 
-    void gen_thread_backward(int threadIdx, int sd, int ply, int task);
+    void gen_thread_init_backward(int threadIdx);
+    int probe_gen_backward(GenBoard& board, i64 idx, bslib::Side side, int ply);
+
+    void gen_thread_backward(int threadIdx, int sd, int ply, int phase);
+    
 private:
     std::string gen_folder;
     bool verifyDataOK = true;

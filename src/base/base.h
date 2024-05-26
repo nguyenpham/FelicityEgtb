@@ -1,7 +1,7 @@
 /**
  This file is part of Felicity Egtb, distributed under MIT license.
 
- * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 Nguyen Hong Pham (github@nguyenpham)
  * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -120,6 +120,9 @@ namespace bslib {
 
         virtual void clone(const BoardCore* oboard) {
             pieces = oboard->pieces; assert(pieces.size() == oboard->pieces.size());
+            
+            memcpy(pieceList, oboard->pieceList, sizeof(pieceList));
+            
             side = oboard->side;
             status = oboard->status;
             histList = oboard->histList;
@@ -150,6 +153,8 @@ namespace bslib {
             histList.clear();
             quietCnt = 0;
             pieceList_reset((int *)pieceList);
+            side = Side::none;
+            status = 0;
         }
 
         
@@ -265,8 +270,6 @@ namespace bslib {
             return moveList;
         }
         
-        virtual std::vector<MoveFull> gen_backward_nocap(Side attackerSide) const = 0;
-
         virtual char pieceType2Char(int pieceType) const = 0;
         virtual int coordinateStringToPos(const std::string& str) const = 0;
 

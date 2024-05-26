@@ -1,7 +1,7 @@
 /**
  This file is part of Felicity Egtb, distributed under MIT license.
 
- * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 Nguyen Hong Pham (github@nguyenpham)
  * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -299,10 +299,10 @@ void ChessBoard::setFen(const std::string& fen)
         }
     }
     
-    side = Side::none;
-    enpassant = -1;
-    status = 0;
-    setFenCastleRights_clear();
+//    side = Side::none;
+//    status = 0;
+//    enpassant = -1;
+//    setFenCastleRights_clear();
     
     auto vec = Funcs::splitString(str, ' ');
     auto thefen = vec.front();
@@ -558,7 +558,7 @@ void ChessBoard::gen(std::vector<MoveFull>& moves, Side side) const
                 break;
             }
 
-            case PieceType::rook: // both queen and rook here
+            case PieceType::rook:
             {
                 genRook(moves, side, pos, false);
                 break;
@@ -740,107 +740,6 @@ void ChessBoard::gen_castling(std::vector<MoveFull>& moves, int kingPos) const
     }
 }
 
-////////////////////////////////////////////////////////////////////////
-
-std::vector<MoveFull> ChessBoard::gen_backward_nocap(Side side) const
-{
-    std::vector<MoveFull> moves, moves2;
-
-    const int* pl = pieceList[static_cast<int>(side)];
-
-    for (int l = 0; l < 16; l++) {
-        auto pos = pl[l];
-        if (pos < 0) {
-            continue;
-        }
-
-        auto piece = pieces[pos]; assert(piece.side == side);
-
-        switch (static_cast<PieceType>(piece.type)) {
-            case PieceType::king:
-            {
-                genBishop(moves, side, pos, true);
-                genRook(moves, side, pos, true);
-                gen_castling(moves, pos);
-                break;
-            }
-
-            case PieceType::queen:
-            {
-                genBishop(moves, side, pos, false);
-                genRook(moves, side, pos, false);
-                break;
-            }
-
-            case PieceType::bishop:
-            {
-                genBishop(moves, side, pos, false);
-                break;
-            }
-
-            case PieceType::rook: // both queen and rook here
-            {
-                genRook(moves, side, pos, false);
-                break;
-            }
-
-            case PieceType::knight:
-            {
-                genKnight(moves, side, pos);
-                break;
-            }
-
-            case PieceType::pawn:
-            {
-                genPawn_backward_nocap(moves, side, pos);
-                break;
-            }
-
-            default:
-                break;
-        }
-    }
-    
-    for (auto && move : moves) {
-        if (isEmpty(move.dest)) {
-            moves2.push_back(move);
-        }
-    }
-    return moves2;
-}
-
-void ChessBoard::genPawn_backward_nocap(std::vector<MoveFull>& moves, Side side, int pos) const
-{
-    auto col = getColumn(pos);
-
-    if (side == Side::black) {
-        if (isEmpty(pos + 8)) {
-            gen_addPawnMove(moves, pos, pos + 8);
-        }
-        if (pos < 16 && isEmpty(pos + 8) && isEmpty(pos + 16)) {
-            gen_addMove(moves, pos, pos + 16);
-        }
-
-//        if (col && (getPiece(pos + 7).side == Side::white || (pos + 7 == enpassant && getPiece(pos + 7).side == Side::none))) {
-//            gen_addPawnMove(moves, pos, pos + 7);
-//        }
-//        if (col < 7 && (getPiece(pos + 9).side == Side::white || (pos + 9 == enpassant && getPiece(pos + 9).side == Side::none))) {
-//            gen_addPawnMove(moves, pos, pos + 9);
-//        }
-    } else {
-        if (isEmpty(pos - 8)) {
-            gen_addPawnMove(moves, pos, pos - 8);
-        }
-        if (pos >= 48 && isEmpty(pos - 8) && isEmpty(pos - 16)) {
-            gen_addMove(moves, pos, pos - 16);
-        }
-
-//        if (col < 7 && (getPiece(pos - 7).side == Side::black || (pos - 7 == enpassant && getPiece(pos - 7).side == Side::none)))
-//            gen_addPawnMove(moves, pos, pos - 7);
-//        if (col && (getPiece(pos - 9).side == Side::black || (pos - 9 == enpassant && getPiece(pos - 9).side == Side::none)))
-//            gen_addPawnMove(moves, pos, pos - 9);
-    }
-}
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -1016,7 +915,7 @@ void ChessBoard::make(const MoveFull& move, Hist& hist)
                 assert(pieces[rookPos].type == PieceType::rook);
                 int newRookPos = (move.from + move.dest) / 2;
                 assert(pieces[newRookPos].isEmpty());
-
+                
                 pieces[newRookPos] = pieces[rookPos];
                 pieces[rookPos].setEmpty();
                 quietCnt = 0;
@@ -1033,23 +932,22 @@ void ChessBoard::make(const MoveFull& move, Hist& hist)
         }
             
         case PieceType::pawn: {
-            int d = abs(move.from - move.dest);
+            auto d = abs(move.from - move.dest);
             quietCnt = 0;
-
+            
             if (d == 16) {
                 enpassant = (move.from + move.dest) / 2;
             } else if (move.dest == hist.enpassant) {
-                int ep = move.dest + (p.side == Side::white ? +8 : -8);
+                auto ep = move.dest + (p.side == Side::white ? +8 : -8);
                 hist.cap = pieces[ep];
                 assert(hist.cap.isValid() && hist.cap.type != PieceType::pawn);
-
+                
                 pieces[ep].setEmpty();
-            } else {
-                if (move.promotion != PieceType::empty) {
-                    pieces[move.dest].type = static_cast<PieceType>(move.promotion);
-                    assert(pieces[move.dest].isValid());
-                }
+            } else if (move.promotion != PieceType::empty) {
+                pieces[move.dest].type = static_cast<PieceType>(move.promotion);
+                assert(pieces[move.dest].isValid());
             }
+            
             break;
         }
         default:
@@ -1188,6 +1086,41 @@ void ChessBoard::clone(const BoardCore* oboard)
 }
 
 
+void ChessBoard::flip(FlipMode flipMode)
+{
+    switch (flipMode) {
+        case FlipMode::none:
+            return;
+            
+        case FlipMode::flipVH: {
+            
+//            auto k1 = pieceList[0][0];
+//            auto p = ROW(k1) == COL(k1);
+//            if (p) {
+//                if (ROW(k1) != COL(k1)) {
+//                    k1 = k1;
+//                }
+//                printOut("before flipVH " + std::to_string(k1));
+//            }
+            std::vector<Piece> pieces2 = pieces;
+            setFenCastleRights_clear();
+            reset();
+            for(auto i = 0; i < 64; i++) {
+                if (!pieces2[i].isEmpty()) {
+                    auto k = Funcs::flip(i, flipMode);
+                    setPiece(k, pieces2[i]);
+                }
+            }
+//            if (p) {
+//                printOut("after flipVH");
+//            }
+            return;
+        }
+
+        default:
+            BoardCore::flip(flipMode);
+    }
+}
 int ChessBoard::toPieceCount(int* pieceCnt) const
 {
     if (pieceCnt) {
@@ -1251,7 +1184,7 @@ bool ChessBoard::pieceList_isValid() const
                 return false;
             }
             auto piece = pieces[k];
-            if (static_cast<int>(piece.side) != sd) {
+            if (!piece.isValid() || static_cast<int>(piece.side) != sd) {
                 return false;
             }
             

@@ -1,7 +1,7 @@
 /**
  This file is part of Felicity Egtb, distributed under MIT license.
 
- * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 Nguyen Hong  Pham (github@nguyenpham)
  * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,7 +34,6 @@ namespace fegtb {
     class EgtbGenFile : public EgtbFile, public ThreadMng {
     public:
         ~EgtbGenFile();
-        virtual void removeBuffers();
 
         std::string createStatsString();
         void createStatsFile();

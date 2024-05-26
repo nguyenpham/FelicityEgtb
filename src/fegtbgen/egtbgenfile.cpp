@@ -1,7 +1,7 @@
 /**
  This file is part of Felicity Egtb, distributed under MIT license.
 
- * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 Nguyen Hong Pham (github@nguyenpham)
  * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -50,10 +50,10 @@ EgtbGenFile::~EgtbGenFile()
 {
 }
 
-void EgtbGenFile::removeBuffers()
-{
-    EgtbFile::removeBuffers();
-}
+//void EgtbGenFile::removeBuffers()
+//{
+//    EgtbFile::removeBuffers();
+//}
 
 void EgtbGenFile::setName(const std::string& s)
 {
@@ -743,7 +743,7 @@ bool EgtbGenFile::verifyKey(int threadIdx, i64 idx) {
 bool EgtbGenFile::verifyKeys_loop(int threadIdx) {
     auto& rcd = threadRecordVec.at(threadIdx);
     if (!rcd.board) {
-        rcd.board = new EgtbBoard();
+        rcd.createBoard();
     }
 
     for(i64 idx = rcd.fromIdx; idx < rcd.toIdx && rcd.ok; idx++) {

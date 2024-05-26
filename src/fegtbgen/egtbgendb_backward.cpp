@@ -1,7 +1,7 @@
 /**
  This file is part of Felicity Egtb, distributed under MIT license.
 
- * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 Nguyen Hong Pham (github@nguyenpham)
  * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,125 +21,116 @@
 using namespace fegtb;
 using namespace bslib;
 
-
 void EgtbGenDb::gen_thread_init_backward(int threadIdx)
 {
-    auto record = threadRecordVec.at(threadIdx);
+    auto& rcd = threadRecordVec.at(threadIdx);
+    assert(rcd.fromIdx < rcd.toIdx);
+    assert(!rcd.board);
+    rcd.createBoard();
 
-    // Init loop
-//    if (egtbVerbose) {
-//        std::lock_guard<std::mutex> thelock(printMutex);
-//        std::cout << "init. threadIdx: " << threadIdx << ", " << record.fromIdx << "->" << record.toIdx << ", sz: " << egtbFile->getSize() << std::endl;
-//    }
 
-    for (auto idx = record.fromIdx; idx < record.toIdx; idx++) {
-//        if (egtbVerbose && (idx - record.fromIdx) % (16 * 1024 * 1024) == 0) {
-//            std::lock_guard<std::mutex> thelock(printMutex);
-//            std::cout << "init, threadIdx = " << threadIdx << ", idx = " << idx << ", toIdx = " << record.toIdx << ", " << (idx - record.fromIdx) * 100 / (record.toIdx - record.fromIdx) << "%" << std::endl;
-//        }
-
-        if (!egtbFile->setupBoard(*record.board, idx, FlipMode::none, Side::white)) {
+    /// Init loop
+    for (auto idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
+        if (!egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white)
+#ifdef _FELICITY_XQ_
+            || !rcd.board->isLegal() /// don't need to check legal for chess variant
+#endif
+            ) {
             egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, Side::black);
             egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, Side::white);
             continue;
         }
 
-        assert(record.board->isValid());
+        assert(rcd.board->isValid());
         
-        bool inchecks[] = { record.board->isIncheck(Side::black), record.board->isIncheck(Side::white) };
-        int scores[2];
-        
-        for (auto sd = 0; sd < 2; sd++) {
-            auto xsd = 1 - sd;
-            if (inchecks[xsd]) {
-                scores[sd] = EGTB_SCORE_ILLEGAL;
-                continue;
-            }
-
-            auto side = static_cast<Side>(sd), xside = getXSide(side);
-
-            Hist hist;
-            auto moveList = record.board->gen(side);
-
-            auto legalCount = 0, capCnt = 0;
-            auto score = EGTB_SCORE_UNSET;
-            for(auto && m : moveList) {
-                record.board->make(m, hist);
-                
-                if (!record.board->isIncheck(side)) {
-                    legalCount++;
-
-                    if (!hist.cap.isEmpty()) {
-                        capCnt++;
-                        int cScore;
-                        if (!record.board->pieceList_isThereAttacker()) {
-                            cScore = EGTB_SCORE_DRAW;
-                        } else {
-                            cScore = getScore(*record.board, xside);
-                        }
-                        
-                        if (cScore <= EGTB_SCORE_MATE) {
-                            if (cScore != EGTB_SCORE_DRAW) {
-                                cScore = -cScore + (cScore < 0 ? -1 : +1);
-                            }
-                            if (score > EGTB_SCORE_MATE || cScore > score) {
-                                score = cScore;
-                            }
-                        } else if (cScore == EGTB_SCORE_MISSING) {
-                            std::lock_guard<std::mutex> thelock(printMutex);
-                            record.board->printOut("Error: missing endagme for probing below board:");
-                            exit(-1);
-                        }
-                    }
-                }
-                record.board->takeBack(hist);
-            }
-
-            if (!legalCount) {
-                scores[sd] = -EGTB_SCORE_MATE;
-                continue;
-            }
-            
-            if (score < EGTB_SCORE_MATE) {
-                egtbFile->flag_set_cap(idx, side);
-//            } else if (inchecks[sd] && egtbFile->isBothArmed()) {
-//                assert(score == EGTB_SCORE_UNSET);
-//                score = EGTB_SCORE_CHECKED;
-            }
-            
-            scores[sd] = score;
-
-        } // for sd
+        bool inchecks[] = {
+            rcd.board->isIncheck(Side::black),
+            rcd.board->isIncheck(Side::white)
+        };
         
         for (auto sd = 0; sd < 2; sd++) {
             auto side = static_cast<Side>(sd);
-            auto r = egtbFile->setBufScore(idx, scores[sd], side); assert(r);
-            assert(scores[sd] == egtbFile->getScore(idx, side));
-        }
+            auto xsd = 1 - sd;
+            auto score = EGTB_SCORE_UNSET;
 
-    } // for (i64 idx
+            if (inchecks[xsd]) {
+                score = EGTB_SCORE_ILLEGAL;
+            } else {
+                Hist hist;
+                auto legalCount = 0, capCnt = 0;
+                auto xside = getXSide(side);
+                
+                for(auto && move : rcd.board->gen(side)) {
+                    rcd.board->make(move, hist);
+                    
+                    if (!rcd.board->isIncheck(side)) {
+                        legalCount++;
+                        
+                        if (!hist.cap.isEmpty() || move.hasPromotion()) {
+                            capCnt++;
+                            int cScore;
+                            if (!hist.cap.isEmpty() && !rcd.board->pieceList_isThereAttacker()) {
+                                cScore = EGTB_SCORE_DRAW;
+                            } else {
+                                /// probe a sub-endgame for score
+                                cScore = getScore(*rcd.board, xside);
+                                
+                                if (cScore == EGTB_SCORE_MISSING) {
+                                    std::lock_guard<std::mutex> thelock(printMutex);
+                                    rcd.board->printOut("Error: missing endagme for probing below board:");
+                                    exit(-1);
+                                }
+                                
+                                if (cScore != EGTB_SCORE_DRAW) {
+                                    cScore = -cScore + (cScore < 0 ? -1 : +1);
+                                }
+                            }
+                            
+                            assert(cScore <= EGTB_SCORE_MATE);
+                            if (score > EGTB_SCORE_MATE || score < cScore) {
+                                score = cScore;
+                            }
+                        }
+                    }
+                    rcd.board->takeBack(hist);
+                }
+                
+                if (legalCount > 0) {
+                    if (capCnt > 0) {
+                        egtbFile->flag_set_cap(idx, side);
+                    }
+                } else {
+#ifdef _FELICITY_CHESS_
+                    score = inchecks[sd] ? -EGTB_SCORE_MATE : EGTB_SCORE_DRAW;
+#else
+                    s = -EGTB_SCORE_MATE;
+#endif
+                }
+            } /// if (inchecks
+
+            auto r = egtbFile->setBufScore(idx, score, side); assert(r);
+            assert(score == egtbFile->getScore(idx, side));
+        } /// for sd
+    } /// for idx
 }
 
-int EgtbGenDb::probe_gen_backward(EgtbBoard& board, i64 idx, Side side, int ply)
+int EgtbGenDb::probe_gen_backward(GenBoard& board, i64 idx, Side side, int)
 {
     auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white);
     assert(ok);
-
+    
     auto legalCount = 0, unsetCount = 0;
     auto bestScore = EGTB_SCORE_UNSET, capScore = EGTB_SCORE_UNSET;
-    auto sd = static_cast<int>(side);
-    auto xsd = 1 - sd;
+
     auto xside = getXSide(side);
 
     Hist hist;
-    auto moveList = board.gen(side); assert(!moveList.empty());
-
-    for(auto && m : moveList) {
-        board.make(m, hist);
+    for(auto && move : board.gen(side)) {
+        board.make(move, hist);
         if (!board.isIncheck(side)) {
             legalCount++;
             
-            auto internal = hist.cap.isEmpty();
+            auto internal = hist.cap.isEmpty() && !move.hasPromotion();
             
             int score;
             if (internal) {
@@ -149,7 +140,7 @@ int EgtbGenDb::probe_gen_backward(EgtbBoard& board, i64 idx, Side side, int ply)
                 } else {
                     score = egtbFile->getScore(idx2, xside, false);
                 }
-            } else {
+            } else { /// capture or promotion, the value is probed already
                 if (capScore == EGTB_SCORE_UNSET) {
                     if (egtbFile->flag_is_cap(idx, side)) {
                         capScore = egtbFile->getScore(idx, side, false);
@@ -176,39 +167,51 @@ int EgtbGenDb::probe_gen_backward(EgtbBoard& board, i64 idx, Side side, int ply)
             }
         }
         board.takeBack(hist);
+        
+        
+        if (unsetCount) {
+            return EGTB_SCORE_UNSET;
+        }
     }
     
-    if (legalCount == 0) {
-        return -EGTB_SCORE_MATE;
-    }
-
-    assert(legalCount > 0); assert(bestScore != EGTB_SCORE_ILLEGAL);
-    return unsetCount == 0 ? bestScore : EGTB_SCORE_UNSET;
+    assert(legalCount > 0 && unsetCount == 0);
+    return bestScore;
 }
 
-void EgtbGenDb::gen_thread_backward(int threadIdx, int sd, int ply, int task)
-{
-    auto& rcd = threadRecordVec.at(threadIdx);
 
+void EgtbGenDb::gen_thread_backward(int threadIdx, int sd, int ply, int phase)
+{
+    auto& rcd = threadRecordVec.at(threadIdx); assert(rcd.board);
     auto side = static_cast<Side>(sd), xside = getXSide(side);
-    auto xsd = 1 - sd;
     
+    /// In phase 0, all position with curMate will be considered
     auto curMate = EGTB_SCORE_MATE - ply;
-    if ((ply & 1) == 0)
+    if ((ply & 1) == 0) {
         curMate = -curMate;
+    }
 
     auto fillScore = -curMate + (curMate > 0 ? +1 : -1);
 
-    for (i64 idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
-        if (task == 0) {
-            if (egtbVerbose && sd == 0 && (idx - rcd.fromIdx) % (16 * 1024 * 1024) == 0) {
-                std::lock_guard<std::mutex> thelock(printMutex);
-                std::cout << "loop " << ply << ", threadIdx = " << threadIdx << ", idx = " << idx << ", toIdx = " << rcd.toIdx << ", " << (idx - rcd.fromIdx) * 100 / (rcd.toIdx - rcd.fromIdx) << "%" << std::endl;
-            }
+#ifdef _FELICITY_CHESS_
+    auto check2Flip = egtbFile->getName().find('p') == std::string::npos;
+#else
+    auto check2Flip = true;
+#endif
 
-            int oScore = egtbFile->getScore(idx, side, false);
 
-            if (egtbFile->flag_is_cap(idx, side)) {
+    EgtbBoard extraBoard; /// for flipping
+
+    for (auto idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
+
+        auto oScore = egtbFile->getScore(idx, side, false);
+        if (oScore == EGTB_SCORE_ILLEGAL) {
+            continue;
+        }
+
+        if (phase == 0) {
+            /// The position has capture values, not last one
+            auto is_cap = egtbFile->flag_is_cap(idx, side);
+            if (is_cap) {
                 if (fillScore == oScore) {
                     if (fillScore > 0) {
                         egtbFile->setBufScore(idx, fillScore, side);
@@ -219,123 +222,125 @@ void EgtbGenDb::gen_thread_backward(int threadIdx, int sd, int ply, int task)
                 } else if (curMate == oScore && curMate > 0) {
                     egtbFile->setBufScore(idx, curMate, side);
                     egtbFile->flag_clear_cap(idx, side);
-                } else
+                } else {
                     continue;
+                }
             }
-
+            
+            /// In phase 0, all position with curMate will be considered
             if (oScore != curMate) {
                 continue;
             }
-
+            
             auto ok = egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white);
             assert(ok);
-
-            auto moveList = rcd.board->gen_backward_nocap(xside);
-
-            for(auto && move : moveList) {
-                Hist hist;
-                rcd.board->make(move, hist);
+            
+            Hist hist;
+            for(auto && move : rcd.board->gen_backward_nocap(xside)) {
                 
-                assert(hist.cap.isEmpty());
+                auto special = false;
+                rcd.board->make(move, hist); assert(hist.cap.isEmpty());
                 
                 if (!rcd.board->isIncheck(side)) {
+                    /// clear enpassant, it is not for backward move
+                    rcd.board->enpassant = -1;
+
                     assert(rcd.board->isValid());
+                                        
+                    auto rIdx = egtbFile->getKey(*rcd.board).key; assert(rIdx >= 0);
+                    i64 sIdx = -1;
                     
-                    auto rIdx = egtbFile->getKey(*rcd.board).key;
-                    if (rIdx >= 0) {
-                        i64 sIdx = -1;
-                        
-//                        if (needFlip(board)) {
-//                            board.flip(FlipMode::horizontal);
-//                            sIdx = egtbFile->getKey(board).key;
-//                            board.flip(FlipMode::horizontal);
-//                        }
-                        
-                        if (fillScore > 0) {
-                            auto theScore = egtbFile->getScore(rIdx, xside, false);
-                            if (theScore > EGTB_SCORE_MATE || theScore <= fillScore) {
-                                egtbFile->setBufScore(rIdx, fillScore, xside);
-                                egtbFile->flag_clear_cap(rIdx, xside);
-                                
-                                if (sIdx >= 0) {
-                                    
-                                    theScore = egtbFile->getScore(sIdx, xside, false);
-                                    if (theScore > EGTB_SCORE_MATE || theScore < fillScore) {
-                                        egtbFile->setBufScore(sIdx, fillScore, xside);
-                                        egtbFile->flag_clear_cap(sIdx, xside);
-                                    }
-                                }
-                                
-                                rcd.changes++;
+                    if (check2Flip) {
+                        auto flip = rcd.board->needFlip();
+                        if (flip != FlipMode::none) {
+                            extraBoard.clone(rcd.board);
+                            extraBoard.flip(flip);
+                            sIdx = egtbFile->getKey(extraBoard).key;
+                            if (rIdx == sIdx) {
+                                sIdx = -1;
                             }
-                            
-                        } else {
-                            egtbFile->flag_set_side(rIdx, xside);
+                        }
+                    }
+                    
+                    /// Winning score will be filled right now
+                    if (fillScore > 0) {
+                        auto theScore = egtbFile->getScore(rIdx, xside, false);
+                        assert(theScore != EGTB_SCORE_ILLEGAL);
+                        if (theScore > EGTB_SCORE_MATE || theScore <= fillScore) {
+
+                            egtbFile->setBufScore(rIdx, fillScore, xside);
+                            egtbFile->flag_clear_cap(rIdx, xside);
                             
                             if (sIdx >= 0) {
-                                egtbFile->flag_set_side(sIdx, xside);
+                                
+                                theScore = egtbFile->getScore(sIdx, xside, false);
+                                assert(theScore != EGTB_SCORE_ILLEGAL);
+                                if (theScore > EGTB_SCORE_MATE || theScore <= fillScore) {
+                                    egtbFile->setBufScore(sIdx, fillScore, xside);
+                                    egtbFile->flag_clear_cap(sIdx, xside);
+                                }
                             }
+                            
+                            rcd.changes++;
+                        }
+                        
+                    } else {
+                        /// Mark positions we will consider later in phase 1
+                        egtbFile->flag_set_side(rIdx, xside);
+                        
+                        if (sIdx >= 0) {
+                            egtbFile->flag_set_side(sIdx, xside);
                         }
                     }
                 }
                 
                 rcd.board->takeBack(hist);
+                
+                if (special) {
+                    rcd.board->printOut("special, idx = " + std::to_string(idx));
+                }
             }
-            continue;
-        }
+            
+        /// phase 1 - Losing positions, work with marked positions only
+        } else if (egtbFile->flag_is_side(idx, side)) {
+            
+            auto bestScore = probe_gen_backward(*rcd.board, idx, side, ply);
+            if (bestScore != EGTB_SCORE_UNSET) {
+                egtbFile->setBufScore(idx, bestScore, side);
+                egtbFile->flag_clear_cap(idx, side);
+                
+                if (check2Flip) {
+                    auto flip = rcd.board->needFlip();
+                    if (flip != FlipMode::none) {
+                        extraBoard.clone(rcd.board);
+                        extraBoard.flip(flip);
+                        auto sIdx = egtbFile->getKey(extraBoard).key;
+                        
+                        if (idx != sIdx) {
+                            egtbFile->setBufScore(sIdx, bestScore, side);
+                            egtbFile->flag_clear_cap(sIdx, side);
+                        }
+                    }
+                }
 
-        // Task 1 - Losing
-        if (!egtbFile->flag_is_side(idx, side)) {
-            continue;
-        }
-
-        int oScore = egtbFile->getScore(idx, side, false);
-        if (oScore == EGTB_SCORE_ILLEGAL) {
-            auto ok = egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white);
-            rcd.board->printOut("Illegal");
-            assert(ok);
-        }
-        
-        auto bestScore = probe_gen_backward(*rcd.board, idx, side, ply);
-
-        if (bestScore != EGTB_SCORE_UNSET) {
-            egtbFile->setBufScore(idx, bestScore, side);
-            egtbFile->flag_clear_cap(idx, side);
-            rcd.changes++;
+                rcd.changes++;
+            }
         }
     }
 }
+
+
+
 
 /// Using backward move-generator
 void EgtbGenDb::gen_backward(const std::string& folder) {
     if (egtbVerbose) {
         std::cout << "\tGenerate backwardly!" << std::endl;
     }
-
     egtbFile->createFlagBuffer();
 
     auto ply = 0, mPly = 0;
-
-    auto side = Side::white;
-    
-    /// Load temp files
-    auto wLoop = 0, bLoop = 0;
-//    if (useTempFiles) {
-//        wLoop = egtbFile->readFromTmpFile(folder, Side::white);
-//        bLoop = egtbFile->readFromTmpFile(folder, Side::black);
-//    }
-//    
-//    if (wLoop > 0 && bLoop > 0) {
-//        ply = std::max(wLoop, bLoop);
-//        side = wLoop > bLoop ? Side::white : Side::black;
-//        
-//        ply++; /// next loop
-//        side = getXSide(side);
-//        
-//        if (egtbVerbose) {
-//            std::cout << "\tLoaded temp file, start from ply: " << ply << ", sd: " << Funcs::side2String(side, false) << std::endl;
-//        }
-//    }
+    auto side = Side::black;
     
     /// Init loop
     if (ply == 0) {
@@ -351,11 +356,13 @@ void EgtbGenDb::gen_backward(const std::string& folder) {
         }
         threadVec.clear();
         
-        removeAllBuffers();
+        /// remove buffers of all sub-endgames since they have been probed already, to save RAM
+        removeAllProbedBuffers();
 
         /// Calculate ply
         ply = mPly = 0;
-        int maxScore = EGTB_SCORE_UNSET, minScore = EGTB_SCORE_UNSET;
+        auto maxScore = EGTB_SCORE_UNSET, minScore = EGTB_SCORE_UNSET;
+
         for(i64 idx = 0; idx < egtbFile->getSize(); idx++) {
             for(auto sd = 0; sd < 2; sd++) {
                 auto score = abs(egtbFile->getScore(idx, static_cast<Side>(sd)));
@@ -377,9 +384,8 @@ void EgtbGenDb::gen_backward(const std::string& folder) {
         assert(ply >= 0 && ply <= mPly && mPly < EGTB_SCORE_MATE);
 
         if (egtbVerbose) {
-            std::cout << "Init successfully." << std::endl;
+            std::cout << "Init for backward successfully." << std::endl;
         }
-
     }
 
 
@@ -387,61 +393,46 @@ void EgtbGenDb::gen_backward(const std::string& folder) {
     i64 totalChangeCnt = 0;
     
     for(auto tryCnt = 2; tryCnt > 0; ply++, side = getXSide(side)) {
-        auto startLoop = time(NULL);
-
         resetAllThreadRecordCounters();
         
-        for(i64 idx = 0; idx < egtbFile->getSize() / 2 + 1; idx++) {
+        /// Clear all side-marks
+        for(i64 idx = 0; idx < egtbFile->getSize() / 2; idx++) {
             egtbFile->flags[idx] &= ~(3 | 3 << 4);
         }
-
         
-        
-        for(int task = 0; task < 2; task++) {
-            for(int sd = 0; sd < 2; sd++) {
+        /// Fill positions by two phrases, we should not combine them info one to avoid being
+        /// conflicted on writting between threads
+        /// phase 0: fill winning positions, mark losing positions by retro/backward moves
+        /// phase 1: probe and fill marked positions
+        for(auto phase = 0; phase < 2; phase++) {
+            for(auto sd = 0; sd < 2; sd++) {
                 
                 std::vector<std::thread> threadVec;
-                auto side = static_cast<Side>(sd);
                 for (auto i = 1; i < threadRecordVec.size(); ++i) {
-                    threadVec.push_back(std::thread(&EgtbGenDb::gen_thread_backward, this, i, sd, ply, task));
+                    threadVec.push_back(std::thread(&EgtbGenDb::gen_thread_backward, this, i, sd, ply, phase));
                 }
-                gen_thread_backward(0, sd, ply, task);
+                gen_thread_backward(0, sd, ply, phase);
                 
                 for (auto && t : threadVec) {
                     t.join();
                 }
-                
-                auto callLoopChangeCnt = allThreadChangeCount();
-                
-                totalChangeCnt += callLoopChangeCnt;
             }
         }
         
-//        if (egtbVerbose) {
-//            int elapsed_secs = std::max(1, (int)(time(NULL) - startLoop));
-//            std::cout << "\tChanged: " << GenLib::formatString(callLoopChangeCnt) << ", elapsed: " << GenLib::formatPeriod(elapsed_secs) << " (" << elapsed_secs << " s), speed: " << GenLib::formatSpeed((int)(egtbFile->getSize() / elapsed_secs)) << std::endl;
-//        }
-        
-//        if (useTempFiles && ply > 0 && callLoopChangeCnt > 0) {
-//            egtbFile->writeTmpFile(folder, side, ply);
-//        }
-        
-        if (allThreadChangeCount() == 0) {
+        auto callLoopChangeCnt = allThreadChangeCount();
+        totalChangeCnt += callLoopChangeCnt;
+
+        if (callLoopChangeCnt == 0) {
             if (ply > mPly) {
                 tryCnt--;
             }
         } else {
-//            if (useTempFiles && (ply & 7) == 0) {
-//                egtbFile->writeTmpFiles(folder, ply, ply);
-//            }
             tryCnt = 2;
         }
     }
     
-    if (egtbVerbose) {
-        std::cout << "Completed main loops." << std::endl;
-    }
-
+    
+    /// Generated all posible positions, fill the rest
     for(i64 idx = 0; idx < egtbFile->getSize(); idx++) {
         for(auto sd = 0; sd < 2; sd++) {
             auto side = static_cast<Side>(sd);
@@ -451,4 +442,7 @@ void EgtbGenDb::gen_backward(const std::string& folder) {
         }
     }
 
+    if (egtbVerbose) {
+        std::cout << "Completed main loops." << std::endl;
+    }
 }

@@ -16,20 +16,20 @@ Entry size
 ==========
 Theoretically, we can store what we want with the data array. However, due to the hugeness of the array (because the index spaces may be so huge), we try to store at small as possible for each entry. Typically, we store on an entry the value of Distance To Mate (DTM). Depending on endgames we need 1 or 2 bytes for an entry.
 
-Scores
-------
+Score
+-----
 Typically in computer chess scores have value ranges fit in two bytes (16 bits). Our score range is similar to the range [-1000, +1000].
 
 
 One byte
 --------
-One byte can store 256 values or a range of -128 to +128. We take out the first 4 values for special purposes (to mark the position as illegal, unused, missing and unknown) thus the range becomes [-126, +126]. We set 5 for draw value and use 130 as the middle point of the range. In computer chess we store typically mate scores by plies or half moves, that range equals +/- mate in 126/2 = +/-63 or [-63, +63]. However, in our case, we used full move instead, thus that range equals +/- mate in 126 or [-126, +126]. By doing that we can delay using 2 bytes for endgames, and reduce a lot of size.
+One byte can store 256 values or a range of -128 to +128. We take out the first 4 values for special purposes (to mark the position as illegal, unused, missing and unknown) thus the range is sinked into [-126, +126]. We use the number 5 for draw value and use 130 as the middle point of the range. In computer chess we store typically mate scores by plies or half moves, that range equals mate in +/-126/2 = +/-63 or [-63, +63]. However, in our case, we used full move instead, thus that range expanded back and be mate in +/- 126 or [-126, +126]. By doing that we can delay using 2 bytes for endgames, and reduce a lot of size.
 
 We need to convert scores (of two bytes) into the values of 1 byte to store or load.
 
 Two bytes
 ---------
-Thus those scores are stored straightforwardly in data entries, without any converting.
+Thus those scores are stored straightforwardly in data entries, without any converting. Using two bytes is faster when generating. However, it uses more and may create more stress on memory unneccesarily.
 
 After all data is generated, before compressing, the program will scan all data to verify if two bytes are really necessary not not. If not, it will convert data back into 1 byte to save space.
 

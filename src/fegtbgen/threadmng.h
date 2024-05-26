@@ -1,7 +1,7 @@
 /**
  This file is part of Felicity Egtb, distributed under MIT license.
 
- * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 Nguyen Hong Pham (github@nguyenpham)
  * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,6 +23,7 @@
 #include <map>
 
 #include "defs.h"
+#include "genboard.h"
 #include "../fegtb/egtb.h"
 
 namespace fegtb {
@@ -33,7 +34,7 @@ public:
     i64 fromIdx, toIdx, changes, cnt;
     bool ok;
     
-    EgtbBoard* board = nullptr;
+    GenBoard* board = nullptr;
     
     EgtbGenThreadRecord() {}
     EgtbGenThreadRecord(int _threadIdx, i64 _fromIdx, i64 _toIdx) {
@@ -41,12 +42,23 @@ public:
     }
     
     ~EgtbGenThreadRecord() {
+        deleteBoard();
+    }
+
+    void createBoard() {
+        if (!board) {
+            board = new GenBoard();
+        }
+    }
+    
+    void deleteBoard() {
         if (board) {
             delete board;
             board = nullptr;
         }
-    }
 
+    }
+    
     void resetCounters() {
         changes = 0; cnt = 0; ok = true;
     }

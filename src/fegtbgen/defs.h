@@ -1,7 +1,7 @@
 /**
  This file is part of Felicity Egtb, distributed under MIT license.
 
- * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 Nguyen Hong Pham (github@nguyenpham)
  * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -59,18 +59,6 @@ enum CompressMode {
 #define MASKRANK			0x7f // 0x1ff
 #define MASKFILE			0xff //0x3ff
 
-//#define Status_incheck      (1<<0)
-//#define Status_notincheck   (1<<1)
-//
-//#define isPosValid(pos) ((pos)>=0 && (pos)<90)
-
-//#define getXSide(side) ((side)==bslib::Side::white ? bslib::Side::black : bslib::Side::white)
-//
-//#define getRow(pos) ((pos)/9)
-//#define getCol(pos) ((pos)%9)
-//
-//#define sider(side) (static_cast<int>(side))
-
 
 #define MATE_BEGIN                      8000
 #define MATE_EVAL0                      8200
@@ -99,8 +87,5 @@ enum ScoreType {
 #define EGTB_ID_MAIN_V3                 556681
 //#define EGTB_ID_MAIN_V4                 556682
 
-//enum class SearchMode {
-//    normal, ponder, infinite, test
-//};
 
 #endif /* Defs_h */

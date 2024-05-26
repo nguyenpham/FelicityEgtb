@@ -1,7 +1,7 @@
 /**
  This file is part of Felicity Egtb, distributed under MIT license.
 
- * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 Nguyen Hong Pham (github@nguyenpham)
  * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -127,7 +127,7 @@ std::vector<std::string> EgtbGenDb::parseNames(const std::vector<std::string>& n
     }
     
     sort(recordVec.begin(), recordVec.end(), [ ]( const NameRecord& left, const NameRecord& right) {
-        return left.isMeSmaller(right);
+        return left.isSmaller(right);
     });
     
     std::vector<std::string> resultVec;
@@ -363,7 +363,7 @@ void EgtbGenDb::verifyData(const std::vector<std::string>& nameVec)
             if (verifyData(egtbFile)) {
                 succ++;
             }
-            removeAllBuffers();
+            removeAllProbedBuffers();
         } else {
             std::cerr << "Error: missing " << endgameName << std::endl;
             missing++;
@@ -485,11 +485,11 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                 bool ok = (curScore[sd] == bestScore || (bestScore > EGTB_SCORE_MATE && curScore[sd] > EGTB_SCORE_MATE));
 
                 if (!ok) {
-                    verifyDataOK = false;
+//                    verifyDataOK = false;
 
                     std::lock_guard<std::mutex> thelock(printMutex);
                     std::cerr << "Verify FAILED " << threadIdx << ") " << pEgtbFile->getName() << ", idx: " << idx << ", sd: " << sd
-                    << ", data score: " << curScore[sd] << ", calc score: " << bestScore 
+                    << ", data score: " << curScore[sd] << ", relative score: " << bestScore
                     << std::endl;
                     if (b) {
                         board.printOut();

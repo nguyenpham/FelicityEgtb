@@ -1,7 +1,7 @@
 /**
  This file is part of Felicity Egtb, distributed under MIT license.
 
- * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 Nguyen Hong Pham (github@nguyenpham)
  * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -80,13 +80,17 @@ void EgtbKey::createKingKeys() {
         auto k0 = tb_kIdxToPos[i];
         auto r0 = ROW(k0), f0 = COL(k0);
         for(auto k1 = 0; k1 < 64; k1++) {
-            if (k0 == k1 || (abs(ROW(k1) - r0) <= 1 && abs(COL(k1) - f0) <= 1)) {
+            if (k0 == k1 
+                || (abs(ROW(k1) - r0) <= 1 && abs(COL(k1) - f0) <= 1) /// can capture other King
+//                || (r0 == f0 && ROW(k1) > COL(k1))
+            ) {
                 continue;
             }
 
             tb_kk_8[x++] = k0 << 8 | k1;
         }
     }
+    assert(x == EGTB_SIZE_KK8);
 
     tb_kk_2 = new int[EGTB_SIZE_KK2];
     x = 0;
@@ -106,6 +110,7 @@ void EgtbKey::createKingKeys() {
             tb_kk_2[x++] = k0 << 8 | k1;
         }
     }
+    assert(x == EGTB_SIZE_KK2);
 }
 
 void EgtbKey::createXXKeys() {
@@ -400,6 +405,15 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
                     pos1 = Funcs::flip(pos1, flipMode2);
                     flipMode = Funcs::flip(flipMode, flipMode2);
                 }
+
+                /// When stronger King on the V-H line
+//                if (ROW(pos0) == COL(pos0) && ROW(pos1) > COL(pos1)) {
+//                    auto flipMode2 = FlipMode::flipVH;
+//                    
+//                    pos0 = Funcs::flip(pos0, flipMode2);
+//                    pos1 = Funcs::flip(pos1, flipMode2);
+//                    flipMode = Funcs::flip(flipMode, flipMode2);
+//                }
 
                 assert(pos0 >= 0 && pos0 <= tb_kIdxToPos[9]);
                 auto kk = pos0 << 8 | pos1;

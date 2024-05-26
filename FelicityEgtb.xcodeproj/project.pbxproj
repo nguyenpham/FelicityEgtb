@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B16C3B482C0323D8006B3EE2 /* egtbgendb_forward.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B16C3B472C0323D8006B3EE2 /* egtbgendb_forward.cpp */; };
+		B16C3B492C0323D8006B3EE2 /* egtbgendb_forward.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B16C3B472C0323D8006B3EE2 /* egtbgendb_forward.cpp */; };
 		B16CABB12BCA7DA90001D9B1 /* chess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B16CABA72BCA7DA90001D9B1 /* chess.cpp */; };
 		B16CABB42BCA7DA90001D9B1 /* base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B16CABAD2BCA7DA90001D9B1 /* base.cpp */; };
 		B16CABB52BCA7DA90001D9B1 /* funcs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B16CABAE2BCA7DA90001D9B1 /* funcs.cpp */; };
@@ -16,6 +18,10 @@
 		B17711792BDD395500586C78 /* LzFind.c in Sources */ = {isa = PBXBuildFile; fileRef = B17711662BDD395500586C78 /* LzFind.c */; };
 		B177117A2BDD395500586C78 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B17711682BDD395500586C78 /* LzmaDec.c */; };
 		B177117B2BDD395500586C78 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B17711682BDD395500586C78 /* LzmaDec.c */; };
+		B17B01E12BFD798C0035254D /* genboard_cs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B17B01DF2BFD798B0035254D /* genboard_cs.cpp */; };
+		B17B01E22BFD798C0035254D /* genboard_cs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B17B01DF2BFD798B0035254D /* genboard_cs.cpp */; };
+		B17B01E42BFD79C50035254D /* genboard_xq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B17B01E32BFD79C50035254D /* genboard_xq.cpp */; };
+		B17B01E52BFD79C50035254D /* genboard_xq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B17B01E32BFD79C50035254D /* genboard_xq.cpp */; };
 		B18035492BE32F19007F7F91 /* egtbkey_cs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B180353B2BE32F19007F7F91 /* egtbkey_cs.cpp */; };
 		B180354A2BE32F19007F7F91 /* egtbkey_cs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B180353B2BE32F19007F7F91 /* egtbkey_cs.cpp */; };
 		B180354B2BE32F19007F7F91 /* egtbfile_xq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B180353E2BE32F19007F7F91 /* egtbfile_xq.cpp */; };
@@ -78,6 +84,7 @@
 		749AF5BF1FB548440024B589 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		749E8AD31FB5193200A2F578 /* FelicityEgtb */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FelicityEgtb; sourceTree = BUILT_PRODUCTS_DIR; };
 		B16AE0AE2BCC0D8400B75FC0 /* Perft.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Perft.md; sourceTree = "<group>"; };
+		B16C3B472C0323D8006B3EE2 /* egtbgendb_forward.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = egtbgendb_forward.cpp; sourceTree = "<group>"; };
 		B16CABA62BCA7DA90001D9B1 /* chess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chess.h; sourceTree = "<group>"; };
 		B16CABA72BCA7DA90001D9B1 /* chess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chess.cpp; sourceTree = "<group>"; };
 		B16CABAC2BCA7DA90001D9B1 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
@@ -96,6 +103,9 @@
 		B17711692BDD395500586C78 /* LzmaEnc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LzmaEnc.h; sourceTree = "<group>"; };
 		B177116A2BDD395500586C78 /* LzFind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LzFind.h; sourceTree = "<group>"; };
 		B177116B2BDD395500586C78 /* LzmaDec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LzmaDec.h; sourceTree = "<group>"; };
+		B17B01DF2BFD798B0035254D /* genboard_cs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = genboard_cs.cpp; sourceTree = "<group>"; };
+		B17B01E02BFD798C0035254D /* genboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = genboard.h; sourceTree = "<group>"; };
+		B17B01E32BFD79C50035254D /* genboard_xq.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = genboard_xq.cpp; sourceTree = "<group>"; };
 		B17CBF252BE727AA00DD316C /* XiangqiIndex.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = XiangqiIndex.md; sourceTree = "<group>"; };
 		B180353B2BE32F19007F7F91 /* egtbkey_cs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = egtbkey_cs.cpp; sourceTree = "<group>"; };
 		B180353C2BE32F19007F7F91 /* egtbdb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = egtbdb.h; sourceTree = "<group>"; };
@@ -256,12 +266,16 @@
 				B180356E2BE3D881007F7F91 /* compresslib.cpp */,
 				B18035662BE3D881007F7F91 /* threadmng.h */,
 				B18035722BE3D881007F7F91 /* threadmng.cpp */,
+				B180356D2BE3D881007F7F91 /* egtbgenfile.cpp */,
+				B18035702BE3D881007F7F91 /* egtbgenfile.h */,
+				B17B01DF2BFD798B0035254D /* genboard_cs.cpp */,
+				B17B01E02BFD798C0035254D /* genboard.h */,
+				B17B01E32BFD79C50035254D /* genboard_xq.cpp */,
 				B180356C2BE3D881007F7F91 /* egtbgendb.h */,
 				B18035612BE3D881007F7F91 /* egtbgendb.cpp */,
-				B18035742BE3D881007F7F91 /* egtbgendb_lib.cpp */,
-				B18035702BE3D881007F7F91 /* egtbgenfile.h */,
-				B180356D2BE3D881007F7F91 /* egtbgenfile.cpp */,
 				B1B27CAF2BF6293D00333F09 /* egtbgendb_backward.cpp */,
+				B16C3B472C0323D8006B3EE2 /* egtbgendb_forward.cpp */,
+				B18035742BE3D881007F7F91 /* egtbgendb_lib.cpp */,
 			);
 			path = fegtbgen;
 			sourceTree = "<group>";
@@ -378,11 +392,14 @@
 				B180357B2BE3D881007F7F91 /* egtbgendb.cpp in Sources */,
 				B18035592BE32F19007F7F91 /* egtbfile_cs.cpp in Sources */,
 				B16CABB12BCA7DA90001D9B1 /* chess.cpp in Sources */,
+				B16C3B482C0323D8006B3EE2 /* egtbgendb_forward.cpp in Sources */,
 				B16CABB52BCA7DA90001D9B1 /* funcs.cpp in Sources */,
 				B17711782BDD395500586C78 /* LzFind.c in Sources */,
 				B18035492BE32F19007F7F91 /* egtbkey_cs.cpp in Sources */,
+				B17B01E12BFD798C0035254D /* genboard_cs.cpp in Sources */,
 				B1B27CB02BF6293D00333F09 /* egtbgendb_backward.cpp in Sources */,
 				B180354F2BE32F19007F7F91 /* egtbfile.cpp in Sources */,
+				B17B01E42BFD79C50035254D /* genboard_xq.cpp in Sources */,
 				B18035512BE32F19007F7F91 /* egtb.cpp in Sources */,
 				B18035852BE3D881007F7F91 /* mainegtb.cpp in Sources */,
 				B18035572BE32F19007F7F91 /* egtbdb.cpp in Sources */,
@@ -407,11 +424,14 @@
 				B180357C2BE3D881007F7F91 /* egtbgendb.cpp in Sources */,
 				B180355A2BE32F19007F7F91 /* egtbfile_cs.cpp in Sources */,
 				B18154622BCEB38D00EF7716 /* base.cpp in Sources */,
+				B16C3B492C0323D8006B3EE2 /* egtbgendb_forward.cpp in Sources */,
 				B18154642BCEB38D00EF7716 /* funcs.cpp in Sources */,
 				B17711792BDD395500586C78 /* LzFind.c in Sources */,
 				B180354A2BE32F19007F7F91 /* egtbkey_cs.cpp in Sources */,
+				B17B01E22BFD798C0035254D /* genboard_cs.cpp in Sources */,
 				B1B27CB12BF6293D00333F09 /* egtbgendb_backward.cpp in Sources */,
 				B18035502BE32F19007F7F91 /* egtbfile.cpp in Sources */,
+				B17B01E52BFD79C50035254D /* genboard_xq.cpp in Sources */,
 				B18035522BE32F19007F7F91 /* egtb.cpp in Sources */,
 				B18035862BE3D881007F7F91 /* mainegtb.cpp in Sources */,
 				B18035582BE32F19007F7F91 /* egtbdb.cpp in Sources */,

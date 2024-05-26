@@ -1,7 +1,7 @@
 /**
  This file is part of Felicity Egtb, distributed under MIT license.
 
- * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 Nguyen Hong Pham (github@nguyenpham)
  * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,7 +32,7 @@ namespace bslib {
 
     class ChessBoard : public BoardCore {
     public:
-        int enpassant = 0;
+        int enpassant = -1;
         int8_t castleRights[2];
 
     protected:
@@ -56,7 +56,8 @@ namespace bslib {
         virtual void reset() override {
             BoardCore::reset();
             enpassant = -1;
-            castleRights[0] = castleRights[1] = 0;
+            //castleRights[0] = castleRights[1] = 0;
+            setFenCastleRights_clear();
         }
         
         virtual void setFen(const std::string& fen) override;
@@ -67,7 +68,6 @@ namespace bslib {
         using BoardCore::gen;
         virtual void gen(std::vector<MoveFull>& moveList, Side attackerSide) const override;
         
-        virtual std::vector<MoveFull> gen_backward_nocap(Side attackerSide) const override;
 
         virtual bool isIncheck(Side beingAttackedSide) const override;
 
@@ -92,11 +92,8 @@ namespace bslib {
 
         virtual std::string posToCoordinateString(int pos) const override;
 
-//        using BoardCore::flip;
-//        virtual int flip(int, FlipMode) const override {
-//            assert(0);
-//            return 0;
-//        }
+        using BoardCore::flip;
+        virtual void flip(FlipMode flipMode) override;
 
         virtual void createFullMoves(std::vector<MoveFull>& moveList, MoveFull m) const override;
         
@@ -131,7 +128,6 @@ namespace bslib {
         virtual bool beAttacked(int pos, Side attackerSide) const;
 
         virtual void genPawn(std::vector<MoveFull>& moves, Side side, int pos) const;
-        virtual void genPawn_backward_nocap(std::vector<MoveFull>& moves, Side side, int pos) const;
 
         virtual void genKnight(std::vector<MoveFull>& moves, Side side, int pos) const;
         virtual void genRook(std::vector<MoveFull>& moves, Side side, int pos, bool oneStep) const;
@@ -166,7 +162,7 @@ namespace bslib {
         
         int toPieceCount(int* pieceCnt) const;
         
-    private:
+    protected:
         void gen_addPawnMove(std::vector<MoveFull>& moveList, int from, int dest) const;
     };
     

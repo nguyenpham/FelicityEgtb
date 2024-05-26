@@ -1,7 +1,7 @@
 /**
  This file is part of Felicity Egtb, distributed under MIT license.
 
- * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 Nguyen Hong Pham (github@nguyenpham)
  * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -176,6 +176,10 @@ public:
         return promotion > PieceType::king;
     }
 
+    bool hasPromotion() {
+        return promotion > PieceType::king;
+    }
+
     bool isValid() const {
         return isValid(from, dest);
     }
@@ -192,7 +196,7 @@ public:
         return from != other.from || dest != other.dest || promotion != other.promotion;
     }
 
-    std::string toCoordinateString(ChessVariant chessVariant) const;
+//    std::string toCoordinateString(ChessVariant chessVariant) const;
 };
 
 class MoveFull : public Move {

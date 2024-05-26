@@ -51,7 +51,11 @@ Position indexes work for both Chess and Xiangqi/Jeiqi
 Attempt 10:
 Calculate position indexes for Xiangqi/Jeiqi
 
-Attempt 11: (in-progress) Generating all 5-men engames for chess, using forward method.
+Attempt 11: Generating all 5-men engames for chess, using forward method.
+Total time: 4 day 13 h
+Size: 8.88 GB
+Endgames: 145
+Files: 190
 
 
 Status

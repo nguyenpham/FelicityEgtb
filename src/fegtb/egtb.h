@@ -1,7 +1,7 @@
 /**
  This file is part of Felicity Egtb, distributed under MIT license.
 
- * Copyright (c) 2024 Nguyen Pham (github@nguyenpham)
+ * Copyright (c) 2024 Nguyen Hong Pham (github@nguyenpham)
  * Copyright (c) 2024 developers
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -161,6 +161,7 @@ const int EGTB_SIZE_K8            = 10;
 const int EGTB_SIZE_K             = 64;
 
 const int EGTB_SIZE_KK8           = 564;
+//const int EGTB_SIZE_KK8           = 462;
 const int EGTB_SIZE_KK2           = 1806;
 
 const int EGTB_SIZE_X             = 64;

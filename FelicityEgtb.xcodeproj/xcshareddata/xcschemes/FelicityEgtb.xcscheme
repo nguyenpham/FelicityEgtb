@@ -57,15 +57,27 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-core 5"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-v"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-n 1"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-n 3"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-n krk"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-n kqk"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n krknn"
@@ -89,15 +101,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-g"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-subinfo"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-verbose"
+            argument = "-subinfo"
             isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-verbose"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-allmovescores"
