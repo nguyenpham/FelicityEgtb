@@ -138,9 +138,9 @@ bool NameRecord::isSmaller(const NameRecord& other) const
         return attackers < attackers_o;
     }
     
-    if (attackerSides[W].size() != other.attackerSides[W].size()) {
-        return attackerSides[W].size() < other.attackerSides[W].size();
-    }
+    //if (attackerSides[W].size() != other.attackerSides[W].size()) {
+    //    return attackerSides[W].size() < other.attackerSides[W].size();
+    //}
 
 #ifdef _FELICITY_CHESS_
     auto pawns1 = pawnCount[0] + pawnCount[1];

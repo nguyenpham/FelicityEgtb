@@ -24,8 +24,12 @@
     <ClCompile Include="src\chess\chess.cpp" />
     <ClCompile Include="src\fegtbgen\compresslib.cpp" />
     <ClCompile Include="src\fegtbgen\egtbgendb.cpp" />
+    <ClCompile Include="src\fegtbgen\egtbgendb_backward.cpp" />
+    <ClCompile Include="src\fegtbgen\egtbgendb_forward.cpp" />
     <ClCompile Include="src\fegtbgen\egtbgendb_lib.cpp" />
     <ClCompile Include="src\fegtbgen\egtbgenfile.cpp" />
+    <ClCompile Include="src\fegtbgen\genboard_cs.cpp" />
+    <ClCompile Include="src\fegtbgen\genboard_xq.cpp" />
     <ClCompile Include="src\fegtbgen\genlib.cpp" />
     <ClCompile Include="src\fegtbgen\threadmng.cpp" />
     <ClCompile Include="src\fegtb\egtb.cpp" />
@@ -51,6 +55,7 @@
     <ClInclude Include="src\fegtbgen\defs.h" />
     <ClInclude Include="src\fegtbgen\egtbgendb.h" />
     <ClInclude Include="src\fegtbgen\egtbgenfile.h" />
+    <ClInclude Include="src\fegtbgen\genboard.h" />
     <ClInclude Include="src\fegtbgen\genlib.h" />
     <ClInclude Include="src\fegtbgen\obj.h" />
     <ClInclude Include="src\fegtbgen\threadmng.h" />
