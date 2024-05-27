@@ -70,6 +70,7 @@ private:
 class EgtbGenDb : public EgtbDb, public ThreadMng {
 
 public:
+    static DataItemMode dataItemMode;
     static bool twoBytes; // per item
     static  bool useTempFiles;
     static bool useBackward;

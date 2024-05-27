@@ -19,7 +19,6 @@
 #define Defs_h
 
 #define EGTB_SCORE_MAX                      245
-//#define EGTB_SCORE_UNSET                    1007 //(127 + EGTB_SCORE_BASE)
 
 
 enum class GameResultType { // Based on white side
@@ -48,16 +47,16 @@ enum CompressMode {
     compress_none, compress, compress_optimizing
 };
 
-#define EGTBLU_FILENAME_EXT             ".ltb"
-#define EGTBLU_ZIP_FILENAME_EXT         ".zlt"
+//#define EGTBLU_FILENAME_EXT             ".ltb"
+//#define EGTBLU_ZIP_FILENAME_EXT         ".zlt"
 
 ////////////////////////////////////
 
 /*
  * The rank and file are actually not full file & rank but only internal bits 9-2=7 & 10-2=8
  */
-#define MASKRANK			0x7f // 0x1ff
-#define MASKFILE			0xff //0x3ff
+#define MASKRANK			            0x7f // 0x1ff
+#define MASKFILE			            0xff //0x3ff
 
 
 #define MATE_BEGIN                      8000
@@ -78,14 +77,16 @@ enum ScoreType {
     none = 0, exact = 1, lower = 2, upper = 3
 };
 
+enum DataItemMode {
+    one, two, autodetect
+};
 
 #define MoveMAX                         200
 #define PlyMAX                          200
 
-#define TB_ID_MAIN_V1                   556678
-#define EGTB_ID_MAIN_V2                 556679
-#define EGTB_ID_MAIN_V3                 556681
-//#define EGTB_ID_MAIN_V4                 556682
+//#define TB_ID_MAIN_V1                   556678
+//#define EGTB_ID_MAIN_V2                 556679
+//#define EGTB_ID_MAIN_V3                 556681
 
 
 #endif /* Defs_h */
