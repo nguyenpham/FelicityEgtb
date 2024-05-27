@@ -35,9 +35,6 @@
 #endif
 
 
-//#define MIN(a, b) (((a) <= (b)) ? (a) : (b))
-//#define MAX(a, b) (((a) >= (b)) ? (a) : (b))
-
 
 namespace fegtb {
 
@@ -59,12 +56,7 @@ const int EGTB_VERSION = 1;
 
 #define EGTB_ID_MAIN_V0                 23456
 
-//#define EGTB_SIZE_COMPRESS_BLOCK        (4 * 1024)
-//#define EGTB_PROP_COMPRESSED            (1 << 2)
 #define EGTB_PROP_SPECIAL_SCORE_RANGE   (1 << 3)
-
-//#define EGTB_HEADER_SIZE                128
-//#define EGTB_SMART_MODE_THRESHOLD       10L * 1024 * 1024L
 
 
 #define i16 int16_t

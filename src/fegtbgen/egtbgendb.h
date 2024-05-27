@@ -114,9 +114,6 @@ public:
     
 protected:
 
-    virtual void gen_thread_init_forward(int threadIdx);
-    virtual void gen_thread_forward(int threadIdx, int sd, int fly);
-    
     void writeLog();
     
 protected:
@@ -124,22 +121,29 @@ protected:
     
     virtual bool gen_single(const std::string& folder, const std::string& name, EgtbType egtbType, CompressMode compressMode);
     
-    void gen_forward(const std::string& folder);
-    
     
     bool gen_finish(const std::string& folder, CompressMode compressMode, bool needVerify = true);
     
     void gen_finish_adjust_scores();
     
-    int probe_gen_forward(GenBoard& board, i64 idx, bslib::Side side, bool setup = true);
     
 public:
+    void gen_forward(const std::string& folder);
+        
+protected:
+    void gen_forward_thread_init(int threadIdx);
+    void gen_forward_thread(int threadIdx, int sd, int fly);
+    int  gen_forward_probe(GenBoard& board, i64 idx, bslib::Side side, bool setup = true);
+
+
+public:
     void gen_backward(const std::string& folder);
+    void gen_backward_thread(int threadIdx, int sd, int ply, int phase);
+    
+protected:
+    void gen_backward_thread_init(int threadIdx);
+    int  gen_backward_probe(GenBoard& board, i64 idx, bslib::Side side, int ply);
 
-    void gen_thread_init_backward(int threadIdx);
-    int probe_gen_backward(GenBoard& board, i64 idx, bslib::Side side, int ply);
-
-    void gen_thread_backward(int threadIdx, int sd, int ply, int phase);
     
 private:
     std::string gen_folder;

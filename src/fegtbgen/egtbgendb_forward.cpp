@@ -22,7 +22,7 @@ using namespace fegtb;
 using namespace bslib;
 
 
-int EgtbGenDb::probe_gen_forward(GenBoard& board, i64 idx, Side side, bool setupBoard) {
+int EgtbGenDb::gen_forward_probe(GenBoard& board, i64 idx, Side side, bool setupBoard) {
     
     if (setupBoard) {
         auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white);
@@ -92,7 +92,7 @@ int EgtbGenDb::probe_gen_forward(GenBoard& board, i64 idx, Side side, bool setup
     return unsetCount == 0 || bestScore > EGTB_SCORE_DRAW || (bestScore == EGTB_SCORE_DRAW && side == Side::black && !egtbFile->isBothArmed()) ? bestScore : EGTB_SCORE_UNSET;
 }
 
-void EgtbGenDb::gen_thread_init_forward(int threadIdx) {
+void EgtbGenDb::gen_forward_thread_init(int threadIdx) {
     auto& rcd = threadRecordVec.at(threadIdx);
     assert(rcd.fromIdx < rcd.toIdx && !rcd.board);
     rcd.createBoard();
@@ -153,7 +153,7 @@ void EgtbGenDb::gen_thread_init_forward(int threadIdx) {
 
 
 /// Generate within a thread
-void EgtbGenDb::gen_thread_forward(int threadIdx, int sd, int ply) {
+void EgtbGenDb::gen_forward_thread(int threadIdx, int sd, int ply) {
     auto& rcd = threadRecordVec.at(threadIdx);
 
     if (egtbVerbose) {
@@ -170,7 +170,7 @@ void EgtbGenDb::gen_thread_forward(int threadIdx, int sd, int ply) {
             continue;
         }
 
-        auto bestScore = probe_gen_forward(*rcd.board, idx, side);
+        auto bestScore = gen_forward_probe(*rcd.board, idx, side);
         assert(bestScore >= -EGTB_SCORE_MATE);
 
         if (bestScore != oldScore && bestScore <= EGTB_SCORE_MATE) {
@@ -218,10 +218,10 @@ void EgtbGenDb::gen_forward(const std::string& folder) {
     if (ply == 0) {
         std::vector<std::thread> threadVec;
         for (auto i = 1; i < threadRecordVec.size(); ++i) {
-            threadVec.push_back(std::thread(&EgtbGenDb::gen_thread_init_forward, this, i));
+            threadVec.push_back(std::thread(&EgtbGenDb::gen_forward_thread_init, this, i));
         }
         
-        gen_thread_init_forward(0);
+        gen_forward_thread_init(0);
         
         for (auto && t : threadVec) {
             t.join();
@@ -240,9 +240,9 @@ void EgtbGenDb::gen_forward(const std::string& folder) {
         std::vector<std::thread> threadVec;
         auto sd = static_cast<int>(side);
         for (auto i = 1; i < threadRecordVec.size(); ++i) {
-            threadVec.push_back(std::thread(&EgtbGenDb::gen_thread_forward, this, i, sd, ply));
+            threadVec.push_back(std::thread(&EgtbGenDb::gen_forward_thread, this, i, sd, ply));
         }
-        gen_thread_forward(0, sd, ply);
+        gen_forward_thread(0, sd, ply);
         
         for (auto && t : threadVec) {
             t.join();

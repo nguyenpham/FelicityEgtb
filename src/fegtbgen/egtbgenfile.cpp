@@ -657,16 +657,15 @@ void EgtbGenFile::checkAndConvert2bytesTo1() {
     
     for(i64 idx = 0; idx < getSize(); ++idx) {
         auto score = getScore(idx, Side::white);
-        bool confirm = false;
         if (score < EGTB_SCORE_MATE && score != EGTB_SCORE_DRAW) {
             auto dtm = EGTB_SCORE_MATE - std::abs(score);
-            confirm = dtm > 248;
+            auto confirm = dtm > 248;
 //        } else {
 //            confirm = std::abs(score) >= EGTB_SCORE_PERPETUAL_BEGIN;
-        }
-        if (confirm) {
-            std::cout << "\t\tconfirmed: 2 bytes per item." << std::endl;
-            return;
+            if (confirm) {
+                std::cout << "\t\tconfirmed: 2 bytes per item." << std::endl;
+                return;
+            }
         }
     }
     

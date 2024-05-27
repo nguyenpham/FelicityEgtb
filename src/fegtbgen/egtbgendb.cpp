@@ -160,8 +160,6 @@ bool NameRecord::isSmaller(const NameRecord& other) const
         return sortingSides[W] < other.sortingSides[W];
     }
     
-    
-
     return sortingSides[B] < other.sortingSides[B];
 
 #else

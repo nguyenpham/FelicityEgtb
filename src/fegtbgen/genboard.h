@@ -27,26 +27,26 @@
 #include "../xq/xq.h"
 
 
-
 namespace fegtb {
 
     class GenBoard : public EgtbBoard {
     public:
         virtual ~GenBoard() {}
         
-        std::vector<bslib::MoveFull> gen_backward_nocap(bslib::Side attackerSide) const;
+        /// Generate retro moves without captures and promotions
+        std::vector<bslib::MoveFull> gen_backward_quiet(bslib::Side attackerSide) const;
         
         bslib::FlipMode needFlip() const;
         
 #ifdef _FELICITY_CHESS_
 
     private:
-        void genPawn_backward_nocap(std::vector<bslib::MoveFull>& moves, bslib::Side side, int pos) const;
+        void genPawn_backward_quiet(std::vector<bslib::MoveFull>& moves, bslib::Side side, int pos) const;
 #endif
         
     };
 
-} // namespace fegtb
+} /// namespace fegtb
 
 #endif /* GenBoard_h */
 

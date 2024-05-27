@@ -25,7 +25,8 @@
 using namespace fegtb;
 using namespace bslib;
 
-std::vector<MoveFull> GenBoard::gen_backward_nocap(Side side) const
+/// Generate retro moves without captures and promotions
+std::vector<MoveFull> GenBoard::gen_backward_quiet(Side side) const
 {
     std::vector<MoveFull> moves;
 
@@ -75,7 +76,7 @@ std::vector<MoveFull> GenBoard::gen_backward_nocap(Side side) const
 
             case PieceType::pawn:
             {
-                genPawn_backward_nocap(moves, side, pos);
+                genPawn_backward_quiet(moves, side, pos);
                 break;
             }
 
@@ -93,7 +94,7 @@ std::vector<MoveFull> GenBoard::gen_backward_nocap(Side side) const
     return moves2;
 }
 
-void GenBoard::genPawn_backward_nocap(std::vector<MoveFull>& moves, Side side, int pos) const
+void GenBoard::genPawn_backward_quiet(std::vector<MoveFull>& moves, Side side, int pos) const
 {
     if (side == Side::white) {
         if (pos < 48 && isEmpty(pos + 8)) {
