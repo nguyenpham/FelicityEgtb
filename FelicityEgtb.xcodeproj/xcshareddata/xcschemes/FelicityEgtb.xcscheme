@@ -64,12 +64,12 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n 1"
-            isEnabled = "NO">
+            argument = "-n 2"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n 3"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n krk"

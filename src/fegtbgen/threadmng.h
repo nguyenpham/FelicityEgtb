@@ -28,11 +28,26 @@
 
 namespace fegtb {
 
+/// Use for backward
+//class IdxScoreRec {
+//public:
+//    IdxScoreRec() {}
+//    IdxScoreRec(i64 idx, int score)
+//    : idx(idx), score(score)
+//    {}
+//    i64 idx;
+//    int score;
+//};
+
 class EgtbGenThreadRecord {
 public:
     int threadIdx;
     i64 fromIdx, toIdx, changes, cnt;
     bool ok;
+    
+    /// Use for backward
+//    std::vector<IdxScoreRec> idxScoreVec;
+    std::map<i64, int> idxScoreMap;
     
     GenBoard* board = nullptr;
     
@@ -61,6 +76,10 @@ public:
     
     void resetCounters() {
         changes = 0; cnt = 0; ok = true;
+    }
+    
+    bool inRange(i64 idx) const {
+        return idx >= fromIdx && idx < toIdx;
     }
 };
 

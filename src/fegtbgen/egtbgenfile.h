@@ -130,6 +130,7 @@ namespace fegtb {
         void    clearFlagBuffer();
 
      
+//        void setBufScore();
         void flag_clear_side(i64 idx, bslib::Side side) {
             auto sd = static_cast<int>(side);
             assert(idx >= 0 && sd >= 0 && sd <= 1);

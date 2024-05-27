@@ -1646,9 +1646,9 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "218"
-            endingLineNumber = "218"
-            landmarkName = "EgtbGenDb::gen_thread_backward(threadIdx, sd, ply, phase)"
+            startingLineNumber = "220"
+            endingLineNumber = "220"
+            landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, sd, ply, phase)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1662,9 +1662,9 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "216"
-            endingLineNumber = "216"
-            landmarkName = "EgtbGenDb::gen_thread_backward(threadIdx, sd, ply, phase)"
+            startingLineNumber = "218"
+            endingLineNumber = "218"
+            landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, sd, ply, phase)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1678,9 +1678,9 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "215"
-            endingLineNumber = "215"
-            landmarkName = "EgtbGenDb::gen_thread_backward(threadIdx, sd, ply, phase)"
+            startingLineNumber = "217"
+            endingLineNumber = "217"
+            landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, sd, ply, phase)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1694,9 +1694,9 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "223"
-            endingLineNumber = "223"
-            landmarkName = "EgtbGenDb::gen_thread_backward(threadIdx, sd, ply, phase)"
+            startingLineNumber = "225"
+            endingLineNumber = "225"
+            landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, sd, ply, phase)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1712,7 +1712,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "104"
             endingLineNumber = "104"
-            landmarkName = "EgtbGenDb::gen_thread_init_backward(threadIdx)"
+            landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1792,7 +1792,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "70"
             endingLineNumber = "70"
-            landmarkName = "EgtbGenDb::gen_thread_init_backward(threadIdx)"
+            landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1808,7 +1808,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "56"
             endingLineNumber = "56"
-            landmarkName = "EgtbGenDb::gen_thread_init_backward(threadIdx)"
+            landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1824,7 +1824,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "52"
             endingLineNumber = "52"
-            landmarkName = "EgtbGenDb::gen_thread_init_backward(threadIdx)"
+            landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

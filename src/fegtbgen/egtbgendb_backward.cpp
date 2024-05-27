@@ -114,10 +114,12 @@ void EgtbGenDb::gen_backward_thread_init(int threadIdx)
     } /// for idx
 }
 
-int EgtbGenDb::gen_backward_probe(GenBoard& board, i64 idx, Side side, int)
+int EgtbGenDb::gen_backward_probe(GenBoard& board, i64 idx, Side side, bool setupBoard)
 {
-    auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white);
-    assert(ok);
+    if (setupBoard) {
+        auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white);
+        assert(ok);
+    }
     
     auto legalCount = 0, unsetCount = 0;
     auto bestScore = EGTB_SCORE_UNSET, capScore = EGTB_SCORE_UNSET;
@@ -199,7 +201,7 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int sd, int ply, int phase)
 #endif
 
 
-    EgtbBoard extraBoard; /// for flipping
+    GenBoard extraBoard; /// for flipping
 
     for (auto idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
 
@@ -208,7 +210,7 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int sd, int ply, int phase)
             continue;
         }
 
-        if (phase == 0) {
+//        if (phase == 0) {
             /// The position has capture values, not last one
             auto is_cap = egtbFile->flag_is_cap(idx, side);
             if (is_cap) {
@@ -248,47 +250,114 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int sd, int ply, int phase)
                     assert(rcd.board->isValid());
                                         
                     auto rIdx = egtbFile->getKey(*rcd.board).key; assert(rIdx >= 0);
-                    i64 sIdx = -1;
-                    
-                    if (check2Flip) {
-                        auto flip = rcd.board->needFlip();
-                        if (flip != FlipMode::none) {
-                            extraBoard.clone(rcd.board);
-                            extraBoard.flip(flip);
-                            sIdx = egtbFile->getKey(extraBoard).key;
-                            if (rIdx == sIdx) {
-                                sIdx = -1;
-                            }
-                        }
-                    }
+//                    i64 sIdx = -1;
+//                    if (check2Flip) {
+//                        auto flip = rcd.board->needFlip();
+//                        if (flip != FlipMode::none) {
+//                            extraBoard.clone(rcd.board);
+//                            extraBoard.flip(flip);
+//                            sIdx = egtbFile->getKey(extraBoard).key;
+//                            if (rIdx == sIdx) {
+//                                sIdx = -1;
+//                            }
+//                        }
+//                    }
                     
                     /// Winning score will be filled right now (for parents's positions of the given one)
                     if (fillScore > 0) {
-                        auto theScore = egtbFile->getScore(rIdx, xside, false);
-                        assert(theScore != EGTB_SCORE_ILLEGAL);
-                        if (theScore > EGTB_SCORE_MATE || theScore <= fillScore) {
-                            egtbFile->setBufScore(rIdx, fillScore, xside);
-                            egtbFile->flag_clear_cap(rIdx, xside);
-                            
-                            if (sIdx >= 0) {
-                                theScore = egtbFile->getScore(sIdx, xside, false);
-                                assert(theScore != EGTB_SCORE_ILLEGAL);
-                                if (theScore > EGTB_SCORE_MATE || theScore <= fillScore) {
-                                    egtbFile->setBufScore(sIdx, fillScore, xside);
-                                    egtbFile->flag_clear_cap(sIdx, xside);
+//                        if (rcd.inRange(rIdx)) {
+//                            auto theScore = egtbFile->getScore(rIdx, xside, false);
+//                            assert(theScore != EGTB_SCORE_ILLEGAL);
+//                            if (theScore > EGTB_SCORE_MATE || theScore <= fillScore) {
+//                                egtbFile->setBufScore(rIdx, fillScore, xside);
+//                                egtbFile->flag_clear_cap(rIdx, xside);
+//                                rcd.changes++;
+//                           }
+//                        } else {
+//                            IdxScoreRec rec(rIdx, fillScore);
+//                            rcd.idxScoreVec.push_back(rec);
+//                        }
+//                        IdxScoreRec rec(rIdx, fillScore);
+//                        rcd.idxScoreVec.push_back(rec);
+                        rcd.idxScoreMap[rIdx] = fillScore;
+
+                        
+//                        if (sIdx >= 0) {
+//                            if (rcd.inRange(rIdx)) {
+//                                auto theScore = egtbFile->getScore(sIdx, xside, false);
+//                                assert(theScore != EGTB_SCORE_ILLEGAL);
+//                                if (theScore > EGTB_SCORE_MATE || theScore <= fillScore) {
+//                                    egtbFile->setBufScore(sIdx, fillScore, xside);
+//                                    egtbFile->flag_clear_cap(sIdx, xside);
+//                                }
+//                            } else {
+//                                IdxScoreRec rec(sIdx, fillScore);
+//                                rcd.idxScoreVec.push_back(rec);
+//                            }
+//                        }
+                        
+                        if (check2Flip) {
+                            auto flip = rcd.board->needFlip();
+                            if (flip != FlipMode::none) {
+                                extraBoard.clone(rcd.board);
+                                extraBoard.flip(flip);
+                                auto sIdx = egtbFile->getKey(extraBoard).key;
+                                if (rIdx != sIdx) {
+                                    rcd.idxScoreMap[sIdx] = fillScore;
+
+//                                    IdxScoreRec rec(sIdx, fillScore);
+//                                    rcd.idxScoreVec.push_back(rec);
+
+//                                    if (rcd.inRange(rIdx)) {
+//                                        auto theScore = egtbFile->getScore(sIdx, xside, false);
+//                                        assert(theScore != EGTB_SCORE_ILLEGAL);
+//                                        if (theScore > EGTB_SCORE_MATE || theScore <= fillScore) {
+//                                            egtbFile->setBufScore(sIdx, fillScore, xside);
+//                                            egtbFile->flag_clear_cap(sIdx, xside);
+//                                        }
+//                                    } else {
+//                                        IdxScoreRec rec(sIdx, fillScore);
+//                                        rcd.idxScoreVec.push_back(rec);
+//                                    }
                                 }
                             }
-
-                            rcd.changes++;
                         }
+
                         
                     } else {
                         /// Mark positions we will consider later in phase 1
-                        egtbFile->flag_set_side(rIdx, xside);
+                        //egtbFile->flag_set_side(rIdx, xside);
                         
-                        if (sIdx >= 0) {
-                            egtbFile->flag_set_side(sIdx, xside);
+                        auto bestScore = gen_backward_probe(*rcd.board, idx, side, false);
+                        if (bestScore != EGTB_SCORE_UNSET) {
+                            rcd.idxScoreMap[idx] = bestScore;
+
+//                            IdxScoreRec rec(idx, bestScore);
+//                            rcd.idxScoreVec.push_back(rec);
                         }
+
+//                        if (sIdx >= 0) {
+//                            egtbFile->flag_set_side(sIdx, xside);
+//                        }
+                        
+                        if (check2Flip) {
+                            auto flip = rcd.board->needFlip();
+                            if (flip != FlipMode::none) {
+                                extraBoard.clone(rcd.board);
+                                extraBoard.flip(flip);
+                                auto sIdx = egtbFile->getKey(extraBoard).key;
+                                if (idx != sIdx) {
+                                    auto bestScore = gen_backward_probe(extraBoard, sIdx, side, false);
+                                    if (bestScore != EGTB_SCORE_UNSET) {
+                                        rcd.idxScoreMap[sIdx] = bestScore;
+
+//                                        IdxScoreRec rec(sIdx, bestScore);
+//                                        rcd.idxScoreVec.push_back(rec);
+                                    }
+                                }
+                            }
+                        }
+
                     }
                 }
                 
@@ -296,30 +365,17 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int sd, int ply, int phase)
             }
             
         /// phase 1 - work with marked positions only, they are lossing ones
-        } else if (egtbFile->flag_is_side(idx, side)) {
-            
-            auto bestScore = gen_backward_probe(*rcd.board, idx, side, ply);
-            if (bestScore != EGTB_SCORE_UNSET) {
-                egtbFile->setBufScore(idx, bestScore, side);
-                egtbFile->flag_clear_cap(idx, side);
-                
-                if (check2Flip) {
-                    auto flip = rcd.board->needFlip();
-                    if (flip != FlipMode::none) {
-                        extraBoard.clone(rcd.board);
-                        extraBoard.flip(flip);
-                        auto sIdx = egtbFile->getKey(extraBoard).key;
-                        
-                        if (idx != sIdx) {
-                            egtbFile->setBufScore(sIdx, bestScore, side);
-                            egtbFile->flag_clear_cap(sIdx, side);
-                        }
-                    }
-                }
-
-                rcd.changes++;
-            }
-        }
+//        } 
+//        else if (egtbFile->flag_is_side(idx, side)) {
+//            
+//            auto bestScore = gen_backward_probe(*rcd.board, idx, side);
+//            if (bestScore != EGTB_SCORE_UNSET) {
+//                egtbFile->setBufScore(idx, bestScore, side);
+//                egtbFile->flag_clear_cap(idx, side);
+//
+//                rcd.changes++;
+//            }
+//        }
     }
 }
 
@@ -398,7 +454,8 @@ void EgtbGenDb::gen_backward(const std::string& folder) {
         /// conflicted on writting between threads
         /// phase 0: fill winning positions, mark losing positions by retro/backward moves
         /// phase 1: probe and fill marked positions
-        for(auto phase = 0; phase < 2; phase++) {
+        //for(auto phase = 0; phase < 2; phase++) {
+        auto phase = 0;
             for(auto sd = 0; sd < 2; sd++) {
                 
                 std::vector<std::thread> threadVec;
@@ -410,8 +467,23 @@ void EgtbGenDb::gen_backward(const std::string& folder) {
                 for (auto && t : threadVec) {
                     t.join();
                 }
+                
+                auto xside = static_cast<Side>(1 - sd);
+                for (auto && rcd : threadRecordVec) {
+                    for(auto && p : rcd.idxScoreMap) {
+                        auto theScore = egtbFile->getScore(p.first, xside, false);
+                        assert(theScore != EGTB_SCORE_ILLEGAL);
+                        if (theScore > EGTB_SCORE_MATE || theScore <= p.second) {
+                            egtbFile->setBufScore(p.first, p.second, xside);
+                            egtbFile->flag_clear_cap(p.first, xside);
+                            rcd.changes++;
+                        }
+                    }
+                    
+                    rcd.idxScoreMap.clear();
+                }
             }
-        }
+        //}
         
         auto callLoopChangeCnt = allThreadChangeCount();
         totalChangeCnt += callLoopChangeCnt;
