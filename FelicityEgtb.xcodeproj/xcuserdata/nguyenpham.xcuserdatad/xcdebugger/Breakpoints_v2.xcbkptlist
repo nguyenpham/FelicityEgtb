@@ -720,8 +720,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "354"
-            endingLineNumber = "354"
+            startingLineNumber = "346"
+            endingLineNumber = "346"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1369,7 +1369,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "83B7619A-CCE3-4986-92E1-99A49455638E"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/chess/chess.cpp"
@@ -1407,8 +1407,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "331"
-            endingLineNumber = "331"
+            startingLineNumber = "323"
+            endingLineNumber = "323"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1423,8 +1423,8 @@
             filePath = "src/fegtbgen/egtbgenfile.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "731"
-            endingLineNumber = "731"
+            startingLineNumber = "728"
+            endingLineNumber = "728"
             landmarkName = "EgtbGenFile::verifyKey(threadIdx, idx)"
             landmarkType = "7">
             <Locations>
@@ -1488,21 +1488,6 @@
                   endingLineNumber = "728"
                   offsetFromSymbolStart = "372">
                </Location>
-               <Location
-                  uuid = "F345DCA3-5A9A-4DA4-AEB1-5B668C2510E8 - 58c55156bba660e8"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenFile::verifyKey(int, long long)"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgenfile.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "731"
-                  endingLineNumber = "731"
-                  offsetFromSymbolStart = "419">
-               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -1532,8 +1517,8 @@
             filePath = "src/fegtbgen/egtbgendb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "252"
-            endingLineNumber = "252"
+            startingLineNumber = "220"
+            endingLineNumber = "220"
             landmarkName = "EgtbGenDb::gen_single(folder, name, egtbType, compressMode)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1548,8 +1533,8 @@
             filePath = "src/fegtbgen/egtbgendb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "262"
-            endingLineNumber = "262"
+            startingLineNumber = "230"
+            endingLineNumber = "230"
             landmarkName = "EgtbGenDb::gen_single(folder, name, egtbType, compressMode)"
             landmarkType = "7">
          </BreakpointContent>
