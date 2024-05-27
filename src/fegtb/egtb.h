@@ -88,6 +88,8 @@ const static int COPYRIGHT_BUFSZ = 64;
 #define TB_START_MATING                     (TB_DRAW + 1)
 #define TB_START_LOSING                     130
 
+#define TB_RANGE_1_BYTE                     124
+
 //////////////////////////////////////////////////////////////////////
 
 #define EGTB_SCORE_DRAW                         0

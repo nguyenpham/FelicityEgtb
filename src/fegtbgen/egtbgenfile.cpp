@@ -123,15 +123,15 @@ char EgtbGenFile::scoreToCell(int score) {
         if (score == EGTB_SCORE_DRAW) return TB_DRAW;
         
         auto mi = (EGTB_SCORE_MATE - abs(score)) / 2;
-
-        auto k = mi + (score > 0 ? TB_START_MATING : TB_START_LOSING);
-        assert(k >= 0 && k < 255);
         
-        if (mi > 125 || k < 0 || k >= 255 || (score > 0 && k >= (TB_START_LOSING - 2))) {
+        if (mi > TB_RANGE_1_BYTE) {
             std::lock_guard<std::mutex> thelock(printMutex);
             std::cerr << "FATAL ERROR: overflown score: " << score << ". Please use 2 bytes per item (param: -2)." << std::endl;
             exit(-1);
         }
+
+        auto k = mi + (score > 0 ? TB_START_MATING : TB_START_LOSING);
+        assert(k >= 0 && k < 255);
 
         return (char)k;
     }
@@ -658,8 +658,9 @@ void EgtbGenFile::checkAndConvert2bytesTo1() {
     for(i64 idx = 0; idx < getSize(); ++idx) {
         auto score = getScore(idx, Side::white);
         if (score < EGTB_SCORE_MATE && score != EGTB_SCORE_DRAW) {
-            auto dtm = EGTB_SCORE_MATE - std::abs(score);
-            auto confirm = dtm > 248;
+            auto mi = TB_START_LOSING + EGTB_SCORE_MATE - std::abs(score) / 2;
+            
+            auto confirm = mi > 255;
 //        } else {
 //            confirm = std::abs(score) >= EGTB_SCORE_PERPETUAL_BEGIN;
             if (confirm) {
@@ -669,6 +670,8 @@ void EgtbGenFile::checkAndConvert2bytesTo1() {
         }
     }
     
+    std::cout << "\t\tredundant. Converting into 1 byte per item." << std::endl;
+
     /// Convert into 1 byte
     header->setProperty(header->getProperty() & ~EGTB_PROP_2BYTES);
     assert(!isTwoBytes());
@@ -681,7 +684,7 @@ void EgtbGenFile::checkAndConvert2bytesTo1() {
         }
     }
     
-    std::cout << "\t\tredundant. Converted into 1 byte per item." << std::endl;
+    std::cout << "\t\tconverted into 1 byte per item." << std::endl;
 }
 
 void EgtbGenFile::convert1byteTo2() {
