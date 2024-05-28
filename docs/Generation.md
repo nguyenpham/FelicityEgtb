@@ -45,8 +45,8 @@ Generate methods
 There are two main methods to generate endgames:
 
 
-I. Generate forward
--------------------
+I. Generate forwarding
+----------------------
 This is the most simple and straightforward.
 
 Buffers and RAM
@@ -80,12 +80,40 @@ Finish
 When the generating is done, the program will verify all data then compress it into multiple chunks and store it in 2 files.
 
  
-II. Generate backward
----------------------
+II. Generate backwarding
+------------------------
+
+Backward move generator 
+------------------------
+
+In this method, we will use a backward/retro move generator. From a given chess position the backward move generator will create a list of all moves to reach that position. Those moves will lead to be back of all parent positions. Theoretically, those parents could differ on materials with the given position because of captures or promotions.
+
+However, we don’t use a full backward move generator but a simplified version or a “quiet” one that ignores all capture and promotion moves. It means all parent positions of the given position will have the same material as the given one.
+
+Bit flag buffers
+----------------
+
+We will allocate an extra 4 bits (half a byte) per index/key. Those bits are devised by 2 for each side and work as marks for special purposes. Typically we allocate 2 bytes per index (one for White and one for Black sides). Thus the allocated memory will increase by 25%. However, we will save some memory later.
+
+Initial
+-------
+
+Similar to the forward, for each index we will check if its position is valid or not, as well as if one side is mated or the game is a draw.
+
+The extra work is that if the given position has some captures or promotions, we will probe all sub-endgames, get the best score and write down the score buffers. Then we mark the index as a capture.
+
+Loops
+-----
+We start from the index with a mate in 0 (ply), create their boards, generate “quiet” backward/retro moves, reach their parents’ positions and fill their parents’ indexes with the value mate in 1 (ply). Those parents can always make the move to that given position to win a mate in +1, regardless of other moves.
+
+In the next loop, the value to fill should be mate in -2 (plies). We reach their parents’ positions in the above way. However, we can’t find immediate mate in -2 for those parents since those moves are losing but their parents may have other moves as better choices, say to be drawn or even win back. Instead, we will probe those parents’ positions, and get their scores based on their children's scores. That probe function is somehow similar to the one of the forwarding method. However, we have a special bit flag to mark if a position has captured moves and we probed already all sub-end games thus we don’t need to probe again and again, saving some computing and time for that.
 
 
+The redundancy of board symmetry
+--------------------------------
+We use 8-fold symmetry to reduce index space for none-Pawn endgames. That kind of symmetry can cause redundancy when the white King is on one of two middle dia lines. Two different positions that symmetries each other via that line may have different indexes. Because of symmetry, they should have the same score. When working with the forwarding method, we don’t have any problem with that kind of symmetry position since the algorithm will scan multiple times to make sure everything is up to date. However, in this method, we update a winning position only once when one of its children has the right mating score. The problem the retro move generator can’t reach some symmetry positions, leading to not being up to date in time. We solved the problem by detecting those positions and updating them.
 
- 
+
 
 Multithreading
 ===============
@@ -95,7 +123,7 @@ The way the program divides tasks for threads is quite simple. Each thread will 
 
 Verify
 ======
-All scores on arrays will be verified. The algorithms are somehow similar to the above probe one. The endgame is considered good and be saved only if it passes the verification step
+All scores on arrays will be verified. That function checks the consistency: the score of a given position should be consistent with the scores of its children. The algorithm works like a minimax with one ply only. The endgame is considered good and be saved only if it passes the verification step
 
 
 Compress

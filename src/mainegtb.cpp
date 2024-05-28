@@ -76,6 +76,7 @@ static void show_usage(std::string name)
     << "  -vkey        Verify keys (boards <-> indeces)\n"
 //    << "  -speed       Test speed\n"
     << "  -2           2 bytes per item\n"
+    << "  -noverify    Turn off verifying\n"
     << "\n"
     << "Example:\n"
 #ifdef _FELICITY_CHESS_
@@ -279,8 +280,19 @@ int main(int argc, char* argv[])
     if (argmap.find("-maxsize") != argmap.end()) {
         EgtbGenDb::maxEndgameSize = std::atoi(argmap["-maxsize"].c_str()) * 1024LL * 1024LL * 1024LL;
     }
+    if (argmap.find("-noverify") != argmap.end()) {
+        EgtbGenDb::verifyMode = false;
+    }
+
+    if (argmap.find("-1") != argmap.end()) {
+        EgtbGenDb::twoBytes = false;
+        EgtbGenDb::dataItemMode = DataItemMode::one;
+        std::cout << "generating with 1 byte per item.\n";
+    }
+
     if (argmap.find("-2") != argmap.end()) {
         EgtbGenDb::twoBytes = true;
+        EgtbGenDb::dataItemMode = DataItemMode::two;
         std::cout << "generating with 2 bytes per item.\n";
     }
 

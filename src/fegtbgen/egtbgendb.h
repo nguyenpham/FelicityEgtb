@@ -70,6 +70,7 @@ private:
 class EgtbGenDb : public EgtbDb, public ThreadMng {
 
 public:
+    static DataItemMode dataItemMode;
     static bool twoBytes; // per item
     static  bool useTempFiles;
     static bool useBackward;
@@ -138,7 +139,7 @@ protected:
 
 public:
     void gen_backward(const std::string& folder);
-    void gen_backward_thread(int threadIdx, int sd, int ply, int phase);
+    void gen_backward_thread(int threadIdx, int ply);
     
 protected:
     void gen_backward_thread_init(int threadIdx);

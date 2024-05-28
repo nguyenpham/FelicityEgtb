@@ -21,6 +21,7 @@
 using namespace fegtb;
 using namespace bslib;
 
+DataItemMode EgtbGenDb::dataItemMode = DataItemMode::autodetect;
 bool EgtbGenDb::twoBytes = false; // per item
 bool EgtbGenDb::useTempFiles = false;
 bool EgtbGenDb::useBackward = true;
@@ -29,6 +30,14 @@ i64 EgtbGenDb::maxEndgameSize = -1;
 
 #ifdef _FELICITY_CHESS_
 static const std::string pieceSorting = "0987654321";
+
+static const std::set<std::string> knownTwoBytesEndgameSet {
+    "kqpkq", "kqnkp", "kqbkp", "kqrkp", "kqqkp", "knnpk", "kbnpk", "kbbpk",
+    "krnpk", "krbpk", "krrpk", "kqnpk", "kqbpk", "kqrpk", "kqqpk", "knkpp",
+    "kbkpp", "krkpp", "kqkpp", "knpkp", "kbpkp", "krpkp", "kqpkp", "knppk",
+    "kbppk", "krppk", "kqppk", "kppkp", "kpppk"
+};
+
 #else
 
 static const std::string pieceSorting = "09218765430";
@@ -201,6 +210,29 @@ bool EgtbGenDb::gen_single(const std::string& folder, const std::string& name, E
 {
     time_start = Funcs::now();
 
+    /// Detect size of each item
+    switch (EgtbGenDb::dataItemMode) {
+        case DataItemMode::one:
+            EgtbGenDb::twoBytes = false;
+            break;
+        case DataItemMode::two:
+            EgtbGenDb::twoBytes = true;
+            break;
+
+        default:
+        {
+            NameRecord nameRecord(name);
+            auto attackerCnt = nameRecord.attackerSides[0].size() + nameRecord.attackerSides[1].size();
+            
+            EgtbGenDb::twoBytes = false;
+            if (attackerCnt > 4
+                || knownTwoBytesEndgameSet.find(name) != knownTwoBytesEndgameSet.end()) {
+                EgtbGenDb::twoBytes = true;
+            }
+            break;
+        }
+    }
+
     assert(egtbFile == nullptr);
     egtbFile = new EgtbGenFile();
     egtbFile->create(name, egtbType);
@@ -289,7 +321,7 @@ void EgtbGenDb::writeLog()
     
     if (newSection) {
         newSection = false;
-        str += "\n====== New session, cores: " + std::to_string(MaxGenExtraThreads) + " ======\n";
+        str += "\n====== New session, cores: " + std::to_string(MaxGenExtraThreads + 1) + " ======\n";
     }
     str += "\n" + egtbFile->getName()
     + "\n\tsize: " + std::to_string(egtbFile->getSize())

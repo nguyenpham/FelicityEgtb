@@ -162,7 +162,7 @@ public:
 class Move {
 public:
     int from, dest;
-    PieceType promotion;
+    PieceType promotion; /// use for chess and Jeiqi
     
 public:
     Move() {}
