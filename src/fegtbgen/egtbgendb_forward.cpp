@@ -95,7 +95,7 @@ int EgtbGenDb::gen_forward_probe(GenBoard& board, i64 idx, Side side, bool setup
 void EgtbGenDb::gen_forward_thread_init(int threadIdx) {
     auto& rcd = threadRecordVec.at(threadIdx);
     assert(rcd.fromIdx < rcd.toIdx && !rcd.board);
-    rcd.createBoard();
+    rcd.createBoards();
     
     for (auto idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
         

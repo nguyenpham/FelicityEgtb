@@ -66,6 +66,8 @@ namespace fegtb {
         bool    setBufScore(i64 idx, int score, bslib::Side side);
         void    fillBufs(int score);
 
+        int getBufScore(i64 idx, bslib::Side side);
+
         bool    setBuf(i64 idx, char cell, bslib::Side side) {
             auto sd = static_cast<int>(side);
             if (pBuf[sd] && idx >= startpos[sd] && idx < endpos[sd]) {
@@ -130,7 +132,6 @@ namespace fegtb {
         void    clearFlagBuffer();
 
      
-//        void setBufScore();
         void flag_clear_side(i64 idx, bslib::Side side) {
             auto sd = static_cast<int>(side);
             assert(idx >= 0 && sd >= 0 && sd <= 1);

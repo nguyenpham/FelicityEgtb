@@ -47,6 +47,9 @@ enum CompressMode {
     compress_none, compress, compress_optimizing
 };
 
+//#define EGTBLU_FILENAME_EXT             ".ltb"
+//#define EGTBLU_ZIP_FILENAME_EXT         ".zlt"
+
 ////////////////////////////////////
 
 /*
@@ -80,5 +83,10 @@ enum DataItemMode {
 
 #define MoveMAX                         200
 #define PlyMAX                          200
+
+//#define TB_ID_MAIN_V1                   556678
+//#define EGTB_ID_MAIN_V2                 556679
+//#define EGTB_ID_MAIN_V3                 556681
+
 
 #endif /* Defs_h */

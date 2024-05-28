@@ -139,11 +139,11 @@ protected:
 
 public:
     void gen_backward(const std::string& folder);
-    void gen_backward_thread(int threadIdx, int ply);
+    void gen_backward_thread(int threadIdx, int ply, int sd, int phase);
     
 protected:
     void gen_backward_thread_init(int threadIdx);
-    int  gen_backward_probe(GenBoard& board, i64 idx, bslib::Side side, bool setupBoard);
+    int  gen_backward_probe(GenBoard& board, i64 idx, bslib::Side side);
 
     
 private:

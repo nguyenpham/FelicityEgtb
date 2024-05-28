@@ -19,7 +19,7 @@
 
 using namespace fegtb;
 
-int MaxGenExtraThreads = 0;
+int MaxGenExtraThreads = 4;
 
 void ThreadMng::setupThreadRecords(i64 size) {
     int extThreadCnt = size > 64 * 1024L ? MaxGenExtraThreads : 0;

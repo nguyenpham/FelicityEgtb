@@ -431,11 +431,6 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                     board.printOut();
                     return false;
                 }
-                
-//                auto d = idx == 1386139 && sd == 0;
-//                if (d) {
-//                    board.printOut("idx=" + std::to_string(idx));
-//                }
 
                 bestScore = -EGTB_SCORE_MATE;
                 auto legalCount = 0;
@@ -448,7 +443,7 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                         legalCount++;
                         
                         /// If the move is a capture or a promotion, it should probe from sub-endgames
-                        auto internal = hist.cap.isEmpty() && !move.hasPromotion();
+                        auto internal = hist.cap.isEmpty() && move.promotion == PieceType::empty;
 
                         int score;
                         
@@ -456,7 +451,7 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                             auto r = pEgtbFile->getKey(board);
                             auto xs = r.flipSide ? side : xside;
                             score = egtbFile->getScore(r.key, xs, false);
-                        } else if (!hist.cap.isEmpty() && !board.hasAttackers()) {
+                        } else if (!board.hasAttackers()) {
                             score = EGTB_SCORE_DRAW;
                         } else {            /// probe from a sub-endgame
                             score = getScore(board, xside);
@@ -479,7 +474,7 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                     bestScore = -EGTB_SCORE_MATE;
 #endif
                 } else {
-                    if (bestScore <= EGTB_SCORE_MATE && bestScore != EGTB_SCORE_DRAW) {
+                    if (abs(bestScore) <= EGTB_SCORE_MATE && bestScore != EGTB_SCORE_DRAW) {
                         if (bestScore > 0) bestScore--;
                         else bestScore++;
                     }
@@ -490,6 +485,8 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                 bool ok = (curScore[sd] == bestScore || (bestScore > EGTB_SCORE_MATE && curScore[sd] > EGTB_SCORE_MATE));
 
                 if (!ok) {
+//                    verifyDataOK = false;
+
                     std::lock_guard<std::mutex> thelock(printMutex);
                     std::cerr << "Verify FAILED " << threadIdx << ") " << pEgtbFile->getName() << ", idx: " << idx << ", sd: " << sd
                     << ", data score: " << curScore[sd] << ", relative score: " << bestScore
