@@ -139,7 +139,7 @@ protected:
 
 public:
     void gen_backward(const std::string& folder);
-    void gen_backward_thread(int threadIdx, int ply, int phase);
+    void gen_backward_thread(int threadIdx, int ply, int sd, int phase);
     
 protected:
     void gen_backward_thread_init(int threadIdx);

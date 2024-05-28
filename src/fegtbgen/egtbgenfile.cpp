@@ -108,6 +108,25 @@ void EgtbGenFile::fillBufs(int score)
     }
 }
 
+int EgtbGenFile::getBufScore(i64 idx, Side side)
+{
+    if (idx >= getSize()) {
+        return TB_UNSET;
+    }
+    int sd = static_cast<int>(side);
+
+    if (isTwoBytes()) {
+        
+        assert(idx >= startpos[sd] && idx < endpos[sd]);
+        const i16 * p = (const i16 * )pBuf[sd];
+        i16 score = p[idx - startpos[sd]];
+        return score;
+    }
+    
+    char cell = pBuf[sd][idx - startpos[sd]];
+    return cellToScore(cell);
+}
+
 bool EgtbGenFile::setBufScore(i64 idx, int score, Side side)
 {
     if (isTwoBytes()) {
@@ -745,7 +764,7 @@ bool EgtbGenFile::verifyKey(int threadIdx, i64 idx) {
 bool EgtbGenFile::verifyKeys_loop(int threadIdx) {
     auto& rcd = threadRecordVec.at(threadIdx);
     if (!rcd.board) {
-        rcd.createBoard();
+        rcd.createBoards();
     }
 
     for(i64 idx = rcd.fromIdx; idx < rcd.toIdx && rcd.ok; idx++) {
