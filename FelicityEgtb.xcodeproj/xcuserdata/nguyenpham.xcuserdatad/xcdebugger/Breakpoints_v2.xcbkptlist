@@ -1564,42 +1564,10 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "228"
-            endingLineNumber = "228"
+            startingLineNumber = "250"
+            endingLineNumber = "250"
             landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "341173B2-D757-4D95-8A6A-C12DD1C7683C - 9be216a236a6cb12"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::gen_backward_thread(int, int)"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "223"
-                  endingLineNumber = "223"
-                  offsetFromSymbolStart = "561">
-               </Location>
-               <Location
-                  uuid = "341173B2-D757-4D95-8A6A-C12DD1C7683C - 9be216a236a6c8bf"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::gen_backward_thread(int, int)"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "228"
-                  endingLineNumber = "228"
-                  offsetFromSymbolStart = "584">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1612,8 +1580,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "242"
-            endingLineNumber = "242"
+            startingLineNumber = "260"
+            endingLineNumber = "260"
             landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply)"
             landmarkType = "7">
             <Locations>
@@ -1675,8 +1643,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "235"
-            endingLineNumber = "235"
+            startingLineNumber = "256"
+            endingLineNumber = "256"
             landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply)"
             landmarkType = "7">
             <Locations>
@@ -1732,14 +1700,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "6E03D898-0EAA-49F5-91DD-DE5F48392C21"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "232"
-            endingLineNumber = "232"
+            startingLineNumber = "254"
+            endingLineNumber = "254"
             landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply)"
             landmarkType = "7">
             <Locations>
@@ -1788,36 +1756,6 @@
                   endingLineNumber = "254"
                   offsetFromSymbolStart = "691">
                </Location>
-               <Location
-                  uuid = "6E03D898-0EAA-49F5-91DD-DE5F48392C21 - 9be216a236a6c864"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::gen_backward_thread(int, int)"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "233"
-                  endingLineNumber = "233"
-                  offsetFromSymbolStart = "682">
-               </Location>
-               <Location
-                  uuid = "6E03D898-0EAA-49F5-91DD-DE5F48392C21 - 9be216a236a6c83b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::gen_backward_thread(int, int)"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "232"
-                  endingLineNumber = "232"
-                  offsetFromSymbolStart = "665">
-               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -1831,8 +1769,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "83"
-            endingLineNumber = "83"
+            startingLineNumber = "86"
+            endingLineNumber = "86"
             landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1847,8 +1785,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "109"
-            endingLineNumber = "109"
+            startingLineNumber = "116"
+            endingLineNumber = "116"
             landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
             landmarkType = "7">
             <Locations>
@@ -1910,8 +1848,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
+            startingLineNumber = "129"
+            endingLineNumber = "129"
             landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1989,8 +1927,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "80"
-            endingLineNumber = "80"
+            startingLineNumber = "83"
+            endingLineNumber = "83"
             landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2005,10 +1943,58 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "70"
-            endingLineNumber = "70"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
             landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "24F78221-482B-4BE2-8F68-E08EFAFDB6B4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
+            landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "24F78221-482B-4BE2-8F68-E08EFAFDB6B4 - c00ce8fb6b9e23ad"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::gen_backward_thread_init(int)"
+                  moduleName = "FelicityEgtb"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "62"
+                  endingLineNumber = "62"
+                  offsetFromSymbolStart = "537">
+               </Location>
+               <Location
+                  uuid = "24F78221-482B-4BE2-8F68-E08EFAFDB6B4 - c00ce8fb6b9e23cc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::gen_backward_thread_init(int)"
+                  moduleName = "FelicityEgtb"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "61"
+                  endingLineNumber = "61"
+                  offsetFromSymbolStart = "547">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2021,8 +2007,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "225"
-            endingLineNumber = "225"
+            startingLineNumber = "244"
+            endingLineNumber = "244"
             landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply)"
             landmarkType = "7">
             <Locations>
@@ -2056,22 +2042,23 @@
                   endingLineNumber = "240"
                   offsetFromSymbolStart = "677">
                </Location>
-               <Location
-                  uuid = "F4742395-0F24-401A-8DA9-50984C87FF55 - 9be216a236a6cb5c"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::gen_backward_thread(int, int)"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "225"
-                  endingLineNumber = "225"
-                  offsetFromSymbolStart = "475">
-               </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AB7F5F7C-7150-4629-90E5-4E811D0241FB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "93"
+            endingLineNumber = "93"
+            landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2084,8 +2071,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "223"
-            endingLineNumber = "223"
+            startingLineNumber = "237"
+            endingLineNumber = "237"
             landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply)"
             landmarkType = "7">
             <Locations>
@@ -2132,8 +2119,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "259"
-            endingLineNumber = "259"
+            startingLineNumber = "275"
+            endingLineNumber = "275"
             landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply)"
             landmarkType = "7">
             <Locations>
@@ -2195,9 +2182,9 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "196"
-            endingLineNumber = "196"
-            landmarkName = "EgtbGenDb::gen_backward_probe(board, idx, side, setupBoard)"
+            startingLineNumber = "206"
+            endingLineNumber = "206"
+            landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2211,8 +2198,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "384"
-            endingLineNumber = "384"
+            startingLineNumber = "395"
+            endingLineNumber = "395"
             landmarkName = "EgtbGenDb::gen_backward(folder)"
             landmarkType = "7">
             <Locations>
@@ -2247,70 +2234,6 @@
                   offsetFromSymbolStart = "1028">
                </Location>
             </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B25FAEDF-4631-480E-836F-F711A53FB535"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "399"
-            endingLineNumber = "399"
-            landmarkName = "EgtbGenDb::gen_backward(folder)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B20C378C-9DAD-4FFE-BD35-E03C3E35D073"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "425"
-            endingLineNumber = "425"
-            landmarkName = "EgtbGenDb::gen_backward(folder)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "8AA3A5A7-00A6-483E-9647-5C3E505E3E02"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "224"
-            endingLineNumber = "224"
-            landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "521F4FF2-AF67-472F-8C71-6D594080F152"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "279"
-            endingLineNumber = "279"
-            landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply)"
-            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

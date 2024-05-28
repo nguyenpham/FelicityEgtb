@@ -21,7 +21,6 @@
 #include <stdio.h>
 #include <vector>
 #include <map>
-#include <unordered_map>
 
 #include "defs.h"
 #include "genboard.h"
@@ -37,7 +36,7 @@ public:
     bool ok;
     
     /// Use for backward
-    std::unordered_map<i64, int> idxScoreMap[2];
+    std::map<i64, int> idxScoreMap[2];
     
     GenBoard* board = nullptr;
     
