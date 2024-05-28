@@ -38,29 +38,22 @@ Concluded for current mailbox board representation:
 - easy to support different chess variants, from small to huge boards
 - fast (for basic functions such as in/out, move generators, make, takeback, incheck...) enough for chess, be faster than ones with bitboards for huge board
 
-Attempt 8:
-We compare the access speeds of some arrays in memory:
+Attempt 8: We compare the access speeds of some arrays in memory:
 - created some huge arrays in memory (about 7 GB) using 3 ways: malloc, std::vector and std::array
 - create random values and set them to random locations in those arrays
 - measure time
 Conclusion: their speeds are quite similar. We can use any of them.
 
-Attempt 9:
-Position indexes work for both Chess and Xiangqi/Jeiqi
+Attempt 9: Position indexes work for both Chess and Xiangqi/Jeiqi
 
-Attempt 10:
-Calculate position indexes for Xiangqi/Jeiqi
+Attempt 10: Calculate position indexes for Xiangqi/Jeiqi
 
 Attempt 11: calculate 5-men Index space for chess
 
 Attempt 12: generating all 5-men engames for chess, using the forward method.
-Total time: 3 days 15 hours (generating time only)
-Size: 8.88 GB
-Endgames: 145
-Files: 190
+Total time: 3 days 15 hours (generating time only). Total size: 8.88 GB, endgames: 145, files: 190.
 
-Attempt 13: generate all 5-men endgames for chess using the backward method
-Total time: 21 hours (generating time only)
+Attempt 13: generate all 5-men endgames for chess using the backward method. Total time: 21 hours (generating time only), 4 times faster than Attempt 12.
 
 
 Status
@@ -68,7 +61,7 @@ Status
 
 In development: All code has been still being written. You may use them for studying or trying to integrate into your code. However, you should not use them to generate endgames since the code has been in checking process and all could be changed seriously, from algorithms to file formats.
 
-- Chess: it could generate all 5 men with forward method. 6 men is not verified yet
+- Chess: it could generate all 5 men with forward/backward method. 6 men is possible but not verified yet
 - Xiangqi: it could calculate index spaces
 - Jeiqi: no code yet
 

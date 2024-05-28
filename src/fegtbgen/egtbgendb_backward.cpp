@@ -206,12 +206,14 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
                     if (fillScore > 0) {
                         egtbFile->setBufScore(idx, fillScore, side);
                         egtbFile->flag_clear_cap(idx, side);
+                        rcd.changes++;
                     } else {
                         egtbFile->flag_set_side(idx, side);
                     }
                 } else if (curMate == oScore && curMate > 0) {
                     egtbFile->setBufScore(idx, curMate, side);
                     egtbFile->flag_clear_cap(idx, side);
+                    rcd.changes++;
                 }
                 continue;
             }
