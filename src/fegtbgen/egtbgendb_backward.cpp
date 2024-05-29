@@ -30,7 +30,6 @@ void EgtbGenDb::gen_backward_thread_init(int threadIdx)
     assert(!rcd.board);
     rcd.createBoards();
 
-
     /// Init loop
     for (auto idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
         if (!egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white)
@@ -168,7 +167,6 @@ int EgtbGenDb::gen_backward_probe(GenBoard& board, i64 idx, Side side)
             }
         }
         board.takeBack(hist);
-        
         
         if (unsetCount) {
             return EGTB_SCORE_UNSET;
@@ -386,11 +384,10 @@ void EgtbGenDb::gen_backward(const std::string& folder) {
             egtbFile->flags[idx] &= ~(3 | 3 << 4);
         }
         
-        /// Fill positions by two phrases, we should not combine them info one to avoid being
+        /// Fill positions by two phrases and two sides, we should not combine them info one to avoid being
         /// conflicted on writting between threads
         /// phase 0: fill winning positions, mark losing positions by retro/backward moves
         /// phase 1: probe and fill marked positions
-        /// Update by side to avoid being conflicted between threads
         for(auto phase = 0; phase < 2; phase++) {
             for(auto sd = 0; sd < 2; sd++) {
                 

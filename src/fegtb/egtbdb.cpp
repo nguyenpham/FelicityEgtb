@@ -147,9 +147,8 @@ int EgtbDb::getScore(EgtbBoard& board, Side side) {
     {
         board.printOut(std::string("Error: missing endgame for this board with side ") + Funcs::side2String(querySide, false));
         std::cout << "path: " << pEgtbFile->getPath(querySide) << ", getProperty" << pEgtbFile->getHeader()->getProperty() << std::endl;
-        auto b0 = pEgtbFile->getHeader()->isSide(querySide);
-        auto b1 = pEgtbFile->getHeader()->isSide(querySide);
-
+//        auto b0 = pEgtbFile->getHeader()->isSide(querySide);
+//        auto b1 = pEgtbFile->getHeader()->isSide(querySide);
     }
 
 

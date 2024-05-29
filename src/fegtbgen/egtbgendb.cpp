@@ -21,7 +21,7 @@
 using namespace fegtb;
 using namespace bslib;
 
-DataItemMode EgtbGenDb::dataItemMode = DataItemMode::autodetect;
+DataItemMode EgtbGenDb::dataItemMode = DataItemMode::two;
 bool EgtbGenDb::twoBytes = false; // per item
 bool EgtbGenDb::useTempFiles = false;
 bool EgtbGenDb::useBackward = true;
@@ -243,7 +243,7 @@ bool EgtbGenDb::gen_single(const std::string& folder, const std::string& name, E
     if (useBackward) bufsz += sz / 2;
 
     startTimeString = GenLib::currentTimeDate();
-    std::cout << std::endl << "Start generating " << name << ", " << GenLib::formatString(sz) << (egtbFile->isTwoBytes() ? ", 2b/item" : "") << ", main mem sz: " << GenLib::formatString(bufsz) << ", " << startTimeString << std::endl;
+    std::cout << std::endl << "Start generating " << name << ", " << GenLib::formatString(sz) << (egtbFile->isTwoBytes() ? ", 2 bytes/item" : "") << ", main mem sz: " << GenLib::formatString(bufsz) << ", " << startTimeString << std::endl;
 
     egtbFile->createBuffersForGenerating();
     assert(egtbFile->isValidHeader());
@@ -378,6 +378,13 @@ bool EgtbGenDb::gen_all(std::string folder, const std::string& name, EgtbType eg
     }
     gen_folder = folder;
 
+    if (vec.empty()) {
+        std::cout << "No missing endgames for " << name << std::endl;
+        return true;
+    }
+    
+    std::cout << "New session, #cores: " << (MaxGenExtraThreads + 1) << std::endl;
+
     for(auto && aName : vec) {
         auto p = nameMap.find(aName);
         if (p != nameMap.end()) {
@@ -397,6 +404,7 @@ bool EgtbGenDb::gen_all(std::string folder, const std::string& name, EgtbType eg
         }
         removeAllProbedBuffers();
     }
+        
 
     std::cout << "Generating ENDED for " << name << std::endl;
     return true;

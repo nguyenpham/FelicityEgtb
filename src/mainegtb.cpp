@@ -287,13 +287,11 @@ int main(int argc, char* argv[])
     if (argmap.find("-1") != argmap.end()) {
         EgtbGenDb::twoBytes = false;
         EgtbGenDb::dataItemMode = DataItemMode::one;
-        std::cout << "generating with 1 byte per item.\n";
     }
 
     if (argmap.find("-2") != argmap.end()) {
         EgtbGenDb::twoBytes = true;
         EgtbGenDb::dataItemMode = DataItemMode::two;
-        std::cout << "generating with 2 bytes per item.\n";
     }
 
 //    if (argmap.find("-notempfiles") != argmap.end()) {

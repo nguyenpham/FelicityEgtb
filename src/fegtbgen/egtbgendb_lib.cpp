@@ -260,7 +260,7 @@ bool EgtbGenDb::compress(std::string folder, const std::string& endgameName, boo
     GenLib::createFolder(writtenfolder);
     writtenfolder += STRING_PATH_SLASH;
 
-    auto compressMode = compress ? CompressMode::compress : CompressMode::compress_none;
+//    auto compressMode = compress ? CompressMode::compress : CompressMode::compress_none;
     
     int count = 0, succ = 0;
     if (includingSubEndgames) {
@@ -296,7 +296,7 @@ bool EgtbGenDb::compress(std::string folder, const std::string& endgameName, boo
         count++;
         
         if (nameMap.find(endgameName) != nameMap.end()) {
-            auto egtbFile = (EgtbGenFile*) nameMap[endgameName];
+//            auto egtbFile = (EgtbGenFile*) nameMap[endgameName];
             
             assert(false);
             /// WARNING

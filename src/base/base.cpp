@@ -75,7 +75,7 @@ int BoardCore::attackerCnt() const
 #endif
     
     for(auto && piece : pieces) {
-        if (piece.type >= PieceType::king) cnt++;
+        if (piece.type >= fromPiece) cnt++;
     }
     return cnt;
 }

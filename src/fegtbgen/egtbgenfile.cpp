@@ -110,9 +110,8 @@ void EgtbGenFile::fillBufs(int score)
 
 int EgtbGenFile::getBufScore(i64 idx, Side side)
 {
-    if (idx >= getSize()) {
-        return TB_UNSET;
-    }
+    assert (idx < getSize());
+    
     int sd = static_cast<int>(side);
 
     if (isTwoBytes()) {
@@ -675,13 +674,11 @@ void EgtbGenFile::checkAndConvert2bytesTo1() {
     }
     
     for(i64 idx = 0; idx < getSize(); ++idx) {
-        auto score = getScore(idx, Side::white);
+        auto score = getBufScore(idx, Side::white);
         if (score < EGTB_SCORE_MATE && score != EGTB_SCORE_DRAW) {
-            auto mi = TB_START_LOSING + EGTB_SCORE_MATE - std::abs(score) / 2;
+            auto mi = TB_START_LOSING + (EGTB_SCORE_MATE - std::abs(score)) / 2;
             
             auto confirm = mi > 255;
-//        } else {
-//            confirm = std::abs(score) >= EGTB_SCORE_PERPETUAL_BEGIN;
             if (confirm) {
                 std::cout << "\t\tconfirmed: 2 bytes per item." << std::endl;
                 return;
@@ -689,7 +686,7 @@ void EgtbGenFile::checkAndConvert2bytesTo1() {
         }
     }
     
-    std::cout << "\t\tredundant. Converting into 1 byte per item." << std::endl;
+    std::cout << "\t\t2 bytes are redundant. Converting into 1 byte per item." << std::endl;
 
     /// Convert into 1 byte
     header->setProperty(header->getProperty() & ~EGTB_PROP_2BYTES);
@@ -746,13 +743,13 @@ bool EgtbGenFile::verifyKey(int threadIdx, i64 idx) {
         std::lock_guard<std::mutex> thelock(printMutex);
         rcd.board->printOut("FAILED verifyKey, key: " + std::to_string(idx));
         
-        auto b0 = setupBoard(*rcd.board, idx, FlipMode::none, Side::white);
-        rcd.board->printOut();
-        
-        if (rcd.board->isValid()) {
-            auto idx2 = getKey(*rcd.board).key;
-            rcd.board->printOut();
-        }
+//        auto b0 = setupBoard(*rcd.board, idx, FlipMode::none, Side::white);
+//        rcd.board->printOut();
+//        
+//        if (rcd.board->isValid()) {
+//            auto idx2 = getKey(*rcd.board).key;
+//            rcd.board->printOut();
+//        }
 
     }
 

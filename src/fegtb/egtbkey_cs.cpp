@@ -30,7 +30,7 @@ int *tb_kk_2, *tb_kk_8;
 };
 
 
-static const int exchangePieceValue[8] = { -1, 10000, 1100, 500, 300, 250, 100, 0 };
+//static const int exchangePieceValue[8] = { -1, 10000, 1100, 500, 300, 250, 100, 0 };
 
 
 /// Flip board into 1/8

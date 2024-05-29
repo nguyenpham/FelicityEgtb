@@ -42,12 +42,6 @@ A folder is where to store that endgame. For convenience, we create and store en
 
 Generate methods
 ================
-There are two main methods to generate endgames:
-
-
-I. Generate forwarding
-----------------------
-This is the most simple and straightforward.
 
 Buffers and RAM
 ---------------
@@ -57,6 +51,13 @@ The program will create two main arrays with the size of the index space of the 
 When generating, some sub-endgames may be probed. To get high speed, they load their whole data into the RAM too, stretching the memory whenever lacing. However, modern operating systems nowadays are so clever that they can manage to make the program run smoothly when missing RAM a bit.
 
 We didn’t have the right size of RAM and sizes of endgames. Just from our experience, the generator can still work well with the sizes of two main buffers take about 90% of RAM.
+
+
+There are two main methods to generate endgames:
+
+I. Generate forwarding
+----------------------
+This is the most simple and straightforward.
 
 
 Initial
@@ -75,9 +76,6 @@ Main loops
 We use an algorithm similar to MiniMax for one fly only. For each key and chess position, we generate all moves, make them get scores from new positions then create the best score for the position. Say, a new position is a mate in -n, which means the current position should be mate in +n + 1. If the best score is different from the current one, it will be stored.
 The loop will stop if there are no changes in the last two loops.
 
-Finish
-------
-When the generating is done, the program will verify all data then compress it into multiple chunks and store it in 2 files.
 
  
 II. Generate backwarding
@@ -88,7 +86,7 @@ Backward move generator
 
 In this method, we will use a backward/retro move generator. From a given chess position the backward move generator will create a list of all moves to reach that position. Those moves will lead to be back of all parent positions. Theoretically, those parents could differ on materials with the given position because of captures or promotions.
 
-However, we don’t use a full backward move generator but a simplified version or a “quiet” one that ignores all capture and promotion moves. It means all parent positions of the given position will have the same material as the given one.
+However, we don’t need a full backward move generator but a simplified version or a “quiet” one that ignores all capture and promotion moves. It means all parent positions of the given position will have the same material as the given one.
 
 Bit flag buffers
 ----------------
@@ -102,8 +100,9 @@ Similar to the forward, for each index we will check if its position is valid or
 
 The extra work is that if the given position has some captures or promotions, we will probe all sub-endgames, get the best score and write down the score buffers. Then we mark the index as a capture.
 
-Loops
------
+Main loops
+----------
+
 We start from the index with a mate in 0 (ply), create their boards, generate “quiet” backward/retro moves, reach their parents’ positions and fill their parents’ indexes with the value mate in 1 (ply). Those parents can always make the move to that given position to win a mate in +1, regardless of other moves.
 
 In the next loop, the value to fill should be mate in -2 (plies). We reach their parents’ positions in the above way. However, we can’t find immediate mate in -2 for those parents since those moves are losing but their parents may have other moves as better choices, say to be drawn or even win back. Instead, we will probe those parents’ positions, and get their scores based on their children's scores. That probe function is somehow similar to the one of the forwarding method. However, we have a special bit flag to mark if a position has captured moves and we probed already all sub-end games thus we don’t need to probe again and again, saving some computing and time for that.
@@ -114,20 +113,26 @@ The redundancy of board symmetry
 We use 8-fold symmetry to reduce index space for none-Pawn endgames. That kind of symmetry can cause redundancy when the white King is on one of two middle dia lines. Two different positions that symmetries each other via that line may have different indexes. Because of symmetry, they should have the same score. When working with the forwarding method, we don’t have any problem with that kind of symmetry position since the algorithm will scan multiple times to make sure everything is up to date. However, in this method, we update a winning position only once when one of its children has the right mating score. The problem the retro move generator can’t reach some symmetry positions, leading to not being up to date in time. We solved the problem by detecting those positions and updating them.
 
 
+Finish
+======
 
-Multithreading
-===============
-The generator is multi-threading. Generation is a long and heavy process, requiring all the power and memory of computers. Users should use threads as many as possible.
-The way the program divides tasks for threads is quite simple. Each thread will be given a small range of indexes to work. Thus they don't get conflicts when writing and don't need mutex locks. However, they may get into conflicts when probing sub-endgames thus they need to mutex locks. Accessing values outside their index range also has some (small) chance of conflicts when they read values being updated. However, we think that these kinds of conflicts are quite small and almost not seen in practice.
+When the generating is done, the program will verify all data then compress it into multiple chunks and store it in 2 files.
 
 
 Verify
 ======
-All scores on arrays will be verified. That function checks the consistency: the score of a given position should be consistent with the scores of its children. The algorithm works like a minimax with one ply only. The endgame is considered good and be saved only if it passes the verification step
+All scores on arrays should be verified. That function checks the consistency: the score of a given position should be consistent with the scores of its children. The algorithm works like a minimax with one ply only. The endgame is considered good and be saved only if it passes the verification step
 
 
 Compress
 ========
 
 Data will be devised compressed and stored in small chunks. Original chunks have a fixed size of 4 Kb. After compressing, their sizes are smaller and not the same. When saving to disk, to know what size and where location of each chunk we need to store that info in a compressed table.
+
+
+Multithreading
+==============
+The generator is multi-threading. Generation is a long and heavy process, requiring all the power and memory of computers. Users should use threads as many as possible.
+
+The way the program divides tasks for threads is quite simple. Each thread will be given a small range of indexes to work. Thus they don't get conflicts when writing and don't need mutex locks. However, they may get into conflicts when probing sub-endgames thus they need to mutex locks. Accessing values outside their index range also has some (small) chance of conflicts when they read values being updated. However, we think that these kinds of conflicts are quite small and almost not seen in practice.
 
