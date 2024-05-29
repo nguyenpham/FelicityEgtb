@@ -206,7 +206,7 @@ std::string NameRecord::getSubfolder() const
 }
 
 /// Gen a single endgame
-bool EgtbGenDb::gen_single(const std::string& folder, const std::string& name, EgtbType egtbType, CompressMode compressMode)
+bool EgtbGenDb::gen_single(int egtbidx, const std::string& folder, const std::string& name, EgtbType egtbType, CompressMode compressMode)
 {
     time_start = Funcs::now();
 
@@ -243,7 +243,7 @@ bool EgtbGenDb::gen_single(const std::string& folder, const std::string& name, E
     if (useBackward) bufsz += sz / 2;
 
     startTimeString = GenLib::currentTimeDate();
-    std::cout << std::endl << "Start generating " << name << ", " << GenLib::formatString(sz) << (egtbFile->isTwoBytes() ? ", 2 bytes/item" : "") << ", main mem sz: " << GenLib::formatString(bufsz) << ", " << startTimeString << std::endl;
+    std::cout << std::endl << egtbidx + 1 << ") Start generating " << name << ", " << GenLib::formatString(sz) << (egtbFile->isTwoBytes() ? ", 2 bytes/item" : "") << ", main mem sz: " << GenLib::formatString(bufsz) << ", " << startTimeString << std::endl;
 
     egtbFile->createBuffersForGenerating();
     assert(egtbFile->isValidHeader());
@@ -385,7 +385,9 @@ bool EgtbGenDb::gen_all(std::string folder, const std::string& name, EgtbType eg
     
     std::cout << "New session, #cores: " << (MaxGenExtraThreads + 1) << std::endl;
 
-    for(auto && aName : vec) {
+    for(auto egtbidx = 0; egtbidx < vec.size(); egtbidx++) {
+        auto aName = vec.at(egtbidx);
+        
         auto p = nameMap.find(aName);
         if (p != nameMap.end()) {
             continue;
@@ -397,7 +399,7 @@ bool EgtbGenDb::gen_all(std::string folder, const std::string& name, EgtbType eg
         GenLib::createFolder(writtingFolder);
 
 
-        if (!gen_single(writtingFolder, aName, egtbType, compressMode)) {
+        if (!gen_single(egtbidx, writtingFolder, aName, egtbType, compressMode)) {
             std::cerr << "ERROR: generating UNSUCCESSFULLY " << aName << std::endl;
             exit(-1);
             break;

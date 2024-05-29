@@ -120,7 +120,7 @@ protected:
 protected:
     virtual bool compressEndgame(EgtbGenFile* egtbFile, std::string writtenfolder, CompressMode compressMode);
     
-    virtual bool gen_single(const std::string& folder, const std::string& name, EgtbType egtbType, CompressMode compressMode);
+    virtual bool gen_single(int egtbidx, const std::string& folder, const std::string& name, EgtbType egtbType, CompressMode compressMode);
     
     
     bool gen_finish(const std::string& folder, CompressMode compressMode, bool needVerify = true);
