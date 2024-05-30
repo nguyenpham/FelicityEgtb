@@ -237,8 +237,9 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
                     assert(rcd.board->isValid());
                     
                     auto rIdx = egtbFile->getKey(*rcd.board).key; assert(rIdx >= 0);
+                    auto rScore = egtbFile->getBufScore(rIdx, xside);
+
                     i64 sIdx = -1;
-                    
                     if (check2Flip) {
                         auto flip = rcd.board->needFlip();
                         if (flip != FlipMode::none) {
@@ -251,28 +252,23 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
                         }
                     }
                     
-                    /// Winning score will be filled right now (for parents's positions of the given one)
+                    /// Winning score will be filled right now (they are parents's positions of the given one)
                     if (fillScore > 0) {
-                        auto theScore = egtbFile->getBufScore(rIdx, xside);
-                        assert(theScore != EGTB_SCORE_ILLEGAL);
-                        if (theScore > EGTB_SCORE_MATE || theScore <= fillScore) {
+                        assert(rScore != EGTB_SCORE_ILLEGAL);
+                        if (rScore > EGTB_SCORE_MATE || rScore <= fillScore) {
                             egtbFile->setBufScore(rIdx, fillScore, xside);
                             egtbFile->flag_clear_cap(rIdx, xside);
                             
                             if (sIdx >= 0) {
-                                theScore = egtbFile->getBufScore(sIdx, xside);
-                                assert(theScore != EGTB_SCORE_ILLEGAL);
-                                if (theScore > EGTB_SCORE_MATE || theScore <= fillScore) {
-                                    egtbFile->setBufScore(sIdx, fillScore, xside);
-                                    egtbFile->flag_clear_cap(sIdx, xside);
-                                }
+                                egtbFile->setBufScore(sIdx, fillScore, xside);
+                                egtbFile->flag_clear_cap(sIdx, xside);
                             }
                             
                             rcd.changes++;
                         }
                         
-                    } else {
-                        /// Mark positions we will consider later in phase 1
+                    } else if (rScore > EGTB_SCORE_MATE || egtbFile->flag_is_cap(rIdx, xside)) {
+                        /// Losing positions, mark them to consider later in phase 1
                         egtbFile->flag_set_side(rIdx, xside);
                         
                         if (sIdx >= 0) {
@@ -286,6 +282,8 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
             
         } else if (egtbFile->flag_is_side(idx, side)) {
             /// phase 1 - work with marked positions only, they are lossing ones
+            /// those positions have at least one lossing child but they may have
+            /// better choices/children to draw or win back. We need to probe fully
             
             auto bestScore = gen_backward_probe(*rcd.board, idx, side);
             if (bestScore != EGTB_SCORE_UNSET) {

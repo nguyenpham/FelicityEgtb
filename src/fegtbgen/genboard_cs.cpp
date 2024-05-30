@@ -45,7 +45,6 @@ std::vector<MoveFull> GenBoard::gen_backward_quiet(Side side) const
             {
                 genBishop(moves, side, pos, true);
                 genRook(moves, side, pos, true);
-                //gen_castling(moves, pos);
                 break;
             }
 
@@ -85,6 +84,7 @@ std::vector<MoveFull> GenBoard::gen_backward_quiet(Side side) const
         }
     }
     
+    /// remove all captures
     std::vector<MoveFull> moves2;
     for (auto && move : moves) {
         if (isEmpty(move.dest)) {
@@ -115,13 +115,11 @@ void GenBoard::genPawn_backward_quiet(std::vector<MoveFull>& moves, Side side, i
     }
 }
 
+/// flip if white King is on one of two main diagonal lines
 FlipMode GenBoard::needFlip() const
 {
     auto pos0 = pieceList[W][0], r0 = ROW(pos0), c0 = COL(pos0);
-    if (r0 != c0 && r0 != 7 - c0) {
-        return FlipMode::none;
-    }
-    return FlipMode::flipVH;
+    return r0 != c0 && r0 != 7 - c0 ? FlipMode::none : FlipMode::flipVH;
 }
 
 #endif /// _FELICITY_CHESS_

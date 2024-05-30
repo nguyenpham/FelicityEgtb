@@ -15,8 +15,8 @@
  copies or substantial portions of the Software.
  */
 
-#ifndef EgtbFile_h
-#define EgtbFile_h
+#ifndef fegtb_file_h
+#define fegtb_file_h
 
 #include <assert.h>
 #include <fstream>
@@ -209,7 +209,7 @@ public:
         int sd = static_cast<int>(side);
         return pos >= startpos[sd] && pos < endpos[sd] && pBuf[sd]; }
 
-    bool setupBoard(EgtbBoard& board, i64 idx, bslib::FlipMode flip, bslib::Side firstsider) const;
+    bool setupBoard(EgtbBoard& board, i64 idx, bslib::FlipMode flip, bslib::Side firstSide) const;
 
     virtual EgtbKeyRec getKey(const EgtbBoard& board) const;
 

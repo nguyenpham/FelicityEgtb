@@ -15,8 +15,8 @@
  copies or substantial portions of the Software.
  */
 
-#ifndef Egtb_h
-#define Egtb_h
+#ifndef fegtb_h
+#define fegtb_h
 
 
 #include <iostream>

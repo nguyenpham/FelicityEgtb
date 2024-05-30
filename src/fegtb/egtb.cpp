@@ -21,7 +21,7 @@
 
 #include "egtb.h"
 
-//f for scaning files from a given path
+/// for scaning files from a given path
 #ifdef _WIN32
 
 #include <windows.h>

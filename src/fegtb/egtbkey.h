@@ -15,8 +15,8 @@
  copies or substantial portions of the Software.
  */
 
-#ifndef EgtbKey_h
-#define EgtbKey_h
+#ifndef fegtb_key_h
+#define fegtb_key_h
 
 #include <map>
 

@@ -549,6 +549,7 @@
 		749E8ADB1FB5193200A2F578 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3FHDXJ5CB2;
 				GCC_C_LANGUAGE_STANDARD = c17;
@@ -563,10 +564,11 @@
 		749E8ADC1FB5193200A2F578 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3FHDXJ5CB2;
 				GCC_C_LANGUAGE_STANDARD = c17;
-				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				OTHER_CFLAGS = (
 					"-D_FELICITY_CHESS_",
 					"-D_7ZIP_ST",

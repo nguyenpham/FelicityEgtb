@@ -30,9 +30,6 @@ int *tb_kk_2, *tb_kk_8;
 };
 
 
-//static const int exchangePieceValue[8] = { -1, 10000, 1100, 500, 300, 250, 100, 0 };
-
-
 /// Flip board into 1/8
 static const int tb_flipMode[64] = {
     0, 0, 0, 0, 1, 1, 1, 1,
@@ -254,7 +251,6 @@ bool EgtbKey::setupBoard_xx(BoardCore& board, int key, PieceType type, Side side
     board.setPiece(pos0, piece);
     board.setPiece(pos1, piece);
     return true;
-    return false;
 }
 
 bool EgtbKey::setupBoard_xxx(BoardCore& board, int key, PieceType type, Side side) const
@@ -405,15 +401,6 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
                     pos1 = Funcs::flip(pos1, flipMode2);
                     flipMode = Funcs::flip(flipMode, flipMode2);
                 }
-
-                /// When stronger King on the V-H line
-//                if (ROW(pos0) == COL(pos0) && ROW(pos1) > COL(pos1)) {
-//                    auto flipMode2 = FlipMode::flipVH;
-//                    
-//                    pos0 = Funcs::flip(pos0, flipMode2);
-//                    pos1 = Funcs::flip(pos1, flipMode2);
-//                    flipMode = Funcs::flip(flipMode, flipMode2);
-//                }
 
                 assert(pos0 >= 0 && pos0 <= tb_kIdxToPos[9]);
                 auto kk = pos0 << 8 | pos1;

@@ -15,8 +15,8 @@
  copies or substantial portions of the Software.
  */
 
-#ifndef EgtbDb_h
-#define EgtbDb_h
+#ifndef fegtb_db_h
+#define fegtb_db_h
 
 #include <vector>
 #include <map>

@@ -1,5 +1,4 @@
-Xiangqi Index for 2 attackers
-==========
+# Xiangqi Index for 2 attackers
 
 If we ignore all two attackers with Rooks, then all attackers 2-vs-0 should be generating are: CC, CN, NN, CP, NP, PP. The below table shows all 729 endgames with those attackers + all configurations of defenders.
 

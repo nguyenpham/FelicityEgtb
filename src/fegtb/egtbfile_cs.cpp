@@ -125,7 +125,7 @@ i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
     return sz;
 }
 
-bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side firstsider) const
+bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side firstSide) const
 {
     board.reset();
 
@@ -142,7 +142,7 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
         }
 
         auto side = rec.side;
-        if (firstsider == Side::black) {
+        if (firstSide == Side::black) {
             side = getXSide(side);
         }
 

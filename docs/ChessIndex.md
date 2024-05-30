@@ -1,12 +1,12 @@
 #  Chess Index
 
-Bellow is the table of all endgames of 5 men for chess. They are totally 149 endgames and their index space is 21 G. Suppose we store information of one index within 1 byte and we need to store information of both sides, total size = 21 G x 2 sides x 1 byte = 42 GB. Suppose we compress all endgames with ratio 4 times (0.25), the size will be 42 x 0.25 = 10.5 GB (over 10 GB).
+Below is the table of all endgames of 5 men for chess. They are a total of 149 endgames and their index space is 21 G. Suppose we store information of one index within 1 byte and we need to store information of both sides, total size = 21 G x 2 sides x 1 byte = 42 GB. Suppose we compress all endgames with a ratio of 4 times (0.25), the size will be 42 x 0.25 = 10.5 GB (over 10 GB).
 
-Compare with current existing EGTBs, our one (uncompressed 42 GB) is better than Edward (uncompressed, 56 GB estimated), but it is worser, compared with Gaviota (6.5 GB, vs 8.75 GB). Especially, it is not on the same rank to be compared with Syzygy 5 men (0.9 GB)!
+Compared with current existing EGTBs, our one (uncompressed 42 GB) is better than Edward's (uncompressed, 56 GB estimated), but it is worse, compared with Gaviota (6.5 GB, vs 8.75 GB). Especially, it is not on the same rank to be compared with Syzygy 5 men (0.9 GB)!
 
-However, our size is just an estimate, we hope the real compress ratio is a bit better or be improved. We may reduce the size but omitting some unnecessary endgames too (such as kqqqk, krrrk…).
+However, our size is just an estimate, we hope the real compress ratio is a bit better or be improved. We may reduce the size but omit some unnecessary endgames too (such as kqqqk, krrrk…).
 
-The largest endgames are just 355 M (kqbkp). They will take about 710 MB if we allocate in memory for 2 sides, using only 1 byte to store information for each index. That size is fine to store in memory of modern computers. The total size of 9 GB is fine too for downloading and storing.
+The largest endgames are just 355 M (kqbkp). They will take about 710 MB if we allocate in memory for 2 sides, using only 1 byte to store information for each index. That size is fine to store in the memory of modern computers. The total size of 9 GB is fine too for downloading and storing.
 
 All interesting 5 men endgames (order - name - index size)
   1)              knk           36'096
