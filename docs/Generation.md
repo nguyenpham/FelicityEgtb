@@ -1,20 +1,11 @@
 # Generate EGTB
 
 
-Endgame name
-============
-
-The generator will generate endgames one by one. The name of the endgame describes which pieces it has. "krkp" is an endgame of 4 pieces, course exist two King (k and k) there are two other pieces: a Rook (r) for one side and a Pawn (p) for the other side. The stronger side is always on the left/first part of the name and the weaker on the rest.
-
-We don’t create all possible endgames but ignore ones that could be probed replacely by others via some simple flipping, and mapping. For example, an endgame with a black Rook and a white Pawn is considered similar and is just flipped side with an endgame of a white Rook and a black Pawn. We keep and store the first endgame only.
-
-We use the name of the endgame as its file name. An endgame typically has two files, one for the white side and the other for the black side and they have .w. and .b. in their extension perspective.
-
-A file contains a data array, each entry mapped by a key/index or a chess position. The array is compressed and stored in chunks.
+The generator will generate endgames one by one. A file contains a data array, each entry mapped by a key/index or a chess position. The array is compressed and stored in chunks.
 
 Entry size
 ==========
-Theoretically, we can store what we want with the data array. However, due to the hugeness of the array (because the index spaces may be so huge), we try to store as small as possible for each entry. Typically, we store on an entry the value of Distance To Mate (DTM). Depending on endgames we need 1 or 2 bytes for an entry.
+Theoretically, we can store what we want with the data array. However, due to the hugeness of the array (because the index spaces may be so huge), we try to store as small as possible for each entry. Typically, we store on an entry the score of Distance To Mate (DTM). Depending on endgames we need 1 or 2 bytes for an entry.
 
 Score
 -----
@@ -34,12 +25,6 @@ Thus those scores are stored straightforwardly in data entries, without any conv
 After all data is generated, before compressing, the program will scan all data to verify if two bytes are really necessary not not. If not, it will convert data back into 1 byte to save space.
 
 
-Folder
-======
-
-A folder is where to store that endgame. For convenience, we create and store endgames in some sub-folders, named by their attackers, such as sub-folder 2 to store all endgames of 2 vs 0, 2-1 is 2 vs 1.
-
-
 
 Buffers and RAM
 ================
@@ -53,10 +38,11 @@ We didn’t have the right size of RAM and sizes of endgames. Just from our expe
 Each entry of the array is mapped to a chess position. Not all positions are valid since some have pieces that overlap with others because of the way we index them (we can use more complicated ways to avoid being overlapped but that requires much more computing/slowing down everything). Some positions are valid for one side but invalid for the other side since the side to move can capture the opposite King. For Xiangqi/Jeiqi a position may be invalid if two Kings can see each other.
 
 
-Generate methods
-================
+Generate
+========
 
 There are two main methods to generate endgames:
+
 
 I. Generate forwarding
 ----------------------
@@ -117,12 +103,12 @@ We use 8-fold symmetry to reduce index space for none-Pawn endgames. That kind o
 Finish
 ======
 
-When the generating is done, the program will verify all data then compress it into multiple chunks and store it in 2 files.
+When the generating is done, the program will verify all data then compress it into multiple chunks and store it in 2 files by sides.
 
 
 Verify
 ======
-All scores on arrays should be verified. That function checks the consistency: the score of a given position should be consistent with the scores of its children. The algorithm works like a minimax with one ply only. The endgame is considered good and be saved only if it passes the verification step
+All scores on arrays should be verified. That function checks the consistency: the score of a given position should be consistent with the scores of its children. The algorithm works like a minimax with one ply only. The endgame is considered good and be saved only if it passes the verification step. If not, the generator will print error message and stop immediately.
 
 
 Compress
@@ -135,6 +121,6 @@ Multithreading
 ==============
 The generator is multi-threading. Generation is a long and heavy process, requiring all the power and memory of computers. Users should use threads as many as possible.
 
-The way the program divides tasks for threads is quite straightforward. Each thread will be given a small chunk of main arrays to work. Thus they don't get conflicts when writing and don't need mutex locks. However, they may get into conflicts when probing sub-endgames thus they need to mutex locks. Accessing values outside their index range also has some (small) chance of conflicts when they read values being updated. However, we think that these kinds of conflicts are quite small and almost not seen in practice.
+The way the program divides tasks for threads is quite straightforward. Each thread will be given a small chunk of main arrays to work. Thus they don't get conflicts when writing and don't need mutex locks. However, they may get into conflicts when probing sub-endgames thus they need to mutex locks. Accessing values outside their index range also has some (small) chance of conflicts when they read values being updated. However, we think that these kinds of conflicts are quite small and almost not seen in practice (any wrong on generating will be detected by the verification step).
 
 

@@ -44,7 +44,7 @@ static const int tb_flipMode[64] = {
 
 /// Convert King position (1/8) into index 0-9
 static const int tb_kIdx[64] = {
-    0, 1, 2, 3, -1,-1,-1,-1,
+     0, 1, 2, 3, -1,-1,-1,-1,
     -1, 4, 5, 6, -1,-1,-1,-1,
     -1,-1, 7, 8, -1,-1,-1,-1,
     -1,-1,-1, 9, -1,-1,-1,-1,

@@ -155,13 +155,16 @@ const int EGTB_SIZE_K8            = 10;
 const int EGTB_SIZE_K             = 64;
 
 const int EGTB_SIZE_KK8           = 564;
-//const int EGTB_SIZE_KK8           = 462;
+
 const int EGTB_SIZE_KK2           = 1806;
 
 const int EGTB_SIZE_X             = 64;
+
+/// Combines of similar pieces
 const int EGTB_SIZE_XX            = 2016;
 const int EGTB_SIZE_XXX           = 41664;
 const int EGTB_SIZE_XXXX          = 635376;
+
 const int EGTB_SIZE_XXXXX         = -1; // not calculated yet
 
 const int EGTB_SIZE_P             = 48;
