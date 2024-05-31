@@ -355,7 +355,9 @@ int main(int argc, char* argv[])
         processName(endgameName, isExactName);
     }
         
-    auto nameVec = EgtbGenDb::parseName(endgameName, !isExactName);
+    auto subinfo = argmap.find("-subinfo") != argmap.end();
+    auto includeSubs = !isExactName || subinfo;
+    auto nameVec = EgtbGenDb::parseName(endgameName, includeSubs);
 
     if (nameVec.empty()) {
         if (!showInfo) {
@@ -388,8 +390,9 @@ int main(int argc, char* argv[])
     /////////////////////////////////////////////////
     // Display info
     /////////////////////////////////////////////////
-    if (argmap.find("-subinfo") != argmap.end()) {
+    if (subinfo) {
         EgtbGenDb::showSubTables(nameVec, EgtbType::dtm);
+        return 1;
     }
     
     /////////////////////////////////////////////////

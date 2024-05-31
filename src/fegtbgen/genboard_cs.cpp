@@ -116,7 +116,7 @@ void GenBoard::genPawn_backward_quiet(std::vector<MoveFull>& moves, Side side, i
 }
 
 /// flip if white King is on one of two main diagonal lines
-FlipMode GenBoard::needFlip() const
+FlipMode GenBoard::needSymmetryFlip() const
 {
     auto pos0 = pieceList[W][0], r0 = ROW(pos0), c0 = COL(pos0);
     return r0 != c0 && r0 != 7 - c0 ? FlipMode::none : FlipMode::flipVH;

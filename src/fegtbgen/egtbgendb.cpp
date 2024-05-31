@@ -41,6 +41,11 @@ static const std::set<std::string> knownTwoBytesEndgameSet {
 #else
 
 static const std::string pieceSorting = "09218765430";
+
+static const std::set<std::string> knownTwoBytesEndgameSet {
+    "",
+};
+
 #endif
 
 ////////////////////////////////////////////

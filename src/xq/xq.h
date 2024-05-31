@@ -15,8 +15,8 @@
  copies or substantial portions of the Software.
  */
 
-#ifndef bs_chess_h
-#define bs_chess_h
+#ifndef bs_xq_h
+#define bs_xq_h
 
 #include <stdio.h>
 #include "../base/base.h"

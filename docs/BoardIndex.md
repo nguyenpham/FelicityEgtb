@@ -28,7 +28,7 @@ For example, the endgame "krk" has k0, r0, k1 are positions of the first king, t
 
 The chess Pawns have a limited area to display on the chessboard. They should be on 6 middle ranks but the first and the last ranks. That means Pawns can be located on 48 cells and their index should be in the range of [0, 47].
 
-Xiangqi and Jeiqi can index their pieces in the simplest and similar way, with the range of [0, 89] for non-Pawn, and [0, 54] for Pawns.
+Xiangqi and Jeiqi can index their pieces in the simplest and similar way, with the range of [0, 89] for non-Pawn pieces, [0, 54] for Pawns, [0, 8] for Kings, [0, 4] for Advisors, and [0, 6] for Elephants.
 
 Index space
 ===========
@@ -39,13 +39,23 @@ The index space of an endgame is the maximum number of its index. For the simple
 The total number of all index spaces of all endgames in an EGTB is an index space of that EGTB.
 
 
+Reduce size
+===========
+Popular EGTBs have huge sizes. Reducing their sizes are the most important factor of their success since smaller on sizes can get much easier to generate, using cheaper hardware, easier to have more endgames, easier to contribute, users get easier to download and store on their computers.
+
+There are some ways to reduce sizes:
+- Reduce the size of each item
+- Reduce index spaces, of individual endgames and EGTB as whole
+- Increase the compress ratios
+
+
 Symmetries
 ==========
 
 The simple way to calculate index space creates huge numbers. To reduce index spaces, we use some symmetries.
 
 1. Chess symmetries
--------------------
+===================
 
 8 fold
 ------
@@ -81,7 +91,8 @@ For example, for two similar pieces, when using the simple way, their range is 6
 
 
 2. Xiangqi and Jeiqi symmetries
--------------------------------
+===============================
+
 
 Defender sub-indexes
 --------------------
@@ -108,9 +119,10 @@ If we assign horizontal symmetry for the first attacker, that attacker is on 50 
 Indexes vs hash keys
 ====================
 
-It is somewhat similar to the hash key, in terms of position representation. However, there are some differences between them:
-- It is two ways. From an (endgame) index, we can get back the chess position. Hash key is one way only which cannot get back to the position
-- It starts from 0 and continuously increases to the end. The space or range of those indexes is quite small, thus we can store them efficiently in memory/hard disk. In contrast, hash keys are typical random numbers of 64-bit integers, their space is all range of 64-bit integers, so huge, makes them inefficiently to store or use as references/pointers
+It is somewhat similar to the hash key, in terms of position representation. However, there are some differences between them, when indexing:
+- is guaranty unique. Two similar or different (on terms of an endgame) chess positions will have the same index or different indexes, respective. However, two different chess positions may create the same hash key event it is very rare
+- is two ways. From an (endgame) index, we can get back the chess position. Hash key is one way only which cannot get back to the position
+- starts from 0 and continuously increases to the end. The space or range of those indexes is quite small, thus we can store them efficiently in memory/hard disk. In contrast, hash keys are typical random numbers of 64-bit integers, their space is all range of 64-bit integers, so huge, makes them inefficiently to store or use as references/pointers
 
 
 Database pointers

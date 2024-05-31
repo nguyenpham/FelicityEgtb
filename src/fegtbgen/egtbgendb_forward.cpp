@@ -29,7 +29,9 @@ int EgtbGenDb::gen_forward_probe(GenBoard& board, i64 idx, Side side, bool setup
         assert(ok);
     }
     
+#ifdef _FELICITY_CHESS_
     assert(side == Side::black || board.enpassant <= 0);
+#endif
 
     auto legalCount = 0, unsetCount = 0, bestScore = EGTB_SCORE_UNSET;
     auto xside = getXSide(side);
@@ -75,8 +77,6 @@ int EgtbGenDb::gen_forward_probe(GenBoard& board, i64 idx, Side side, bool setup
             }
         }
         board.takeBack(hist);
-
-        assert(side == Side::black || board.enpassant <= 0);
     }
     
     /// Something wrong since it should always have legal moves

@@ -107,7 +107,7 @@ void EgtbGenDb::gen_backward_thread_init(int threadIdx)
 #ifdef _FELICITY_CHESS_
                     score = inchecks[sd] ? -EGTB_SCORE_MATE : EGTB_SCORE_DRAW;
 #else
-                    s = -EGTB_SCORE_MATE;
+                    score = -EGTB_SCORE_MATE;
 #endif
                 }
             } /// if (inchecks
@@ -231,8 +231,10 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
                 rcd.board->make(move, hist); assert(hist.cap.isEmpty());
                 
                 if (!rcd.board->isIncheck(side)) {
+#ifdef _FELICITY_CHESS_
                     /// clear enpassant, it is not for backward move
                     rcd.board->enpassant = -1;
+#endif
                     
                     assert(rcd.board->isValid());
                     
@@ -241,7 +243,7 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
 
                     i64 sIdx = -1;
                     if (check2Flip) {
-                        auto flip = rcd.board->needFlip();
+                        auto flip = rcd.board->needSymmetryFlip();
                         if (flip != FlipMode::none) {
                             rcd.board2->clone(rcd.board);
                             rcd.board2->flip(flip);
@@ -291,7 +293,7 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
                 egtbFile->flag_clear_cap(idx, side);
                 
                 if (check2Flip) {
-                    auto flip = rcd.board->needFlip();
+                    auto flip = rcd.board->needSymmetryFlip();
                     if (flip != FlipMode::none) {
                         rcd.board->flip(flip);
                         auto sIdx = egtbFile->getKey(*rcd.board).key;

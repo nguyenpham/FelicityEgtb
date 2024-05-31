@@ -36,13 +36,13 @@ namespace fegtb {
         /// Generate retro moves without captures and promotions
         std::vector<bslib::MoveFull> gen_backward_quiet(bslib::Side attackerSide) const;
         
-        bslib::FlipMode needFlip() const;
+        bslib::FlipMode needSymmetryFlip() const;
         
 #ifdef _FELICITY_CHESS_
+#endif
 
     private:
         void genPawn_backward_quiet(std::vector<bslib::MoveFull>& moves, bslib::Side side, int pos) const;
-#endif
         
     };
 

@@ -65,7 +65,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n rn-n"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-n krckr"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-n rc-r"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-subinfo"

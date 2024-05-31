@@ -50,14 +50,13 @@ std::vector<MoveFull> GenBoard::gen_backward_quiet(Side side) const
                 break;
             }
 
-            case PieceType::bishop:
+            case PieceType::advisor:
             {
                 break;
             }
 
             case PieceType::rook:
             {
-                genRook(moves, side, pos, false);
                 break;
             }
 
@@ -66,15 +65,14 @@ std::vector<MoveFull> GenBoard::gen_backward_quiet(Side side) const
                 break;
             }
 
-            case PieceType::knight:
+            case PieceType::horse:
             {
-                genKnight(moves, side, pos);
                 break;
             }
 
             case PieceType::pawn:
             {
-                genPawn_backward_nocap(moves, side, pos);
+                genPawn_backward_quiet(moves, side, pos);
                 break;
             }
 
@@ -94,27 +92,27 @@ std::vector<MoveFull> GenBoard::gen_backward_quiet(Side side) const
 
 void GenBoard::genPawn_backward_quiet(std::vector<MoveFull>& moves, Side side, int pos) const
 {
-    if (side == Side::white) {
-        if (isEmpty(pos + 8)) {
-            gen_addPawnMove(moves, pos, pos + 8);
-        }
-        if (pos < 16 && isEmpty(pos + 8) && isEmpty(pos + 16)) {
-            gen_addMove(moves, pos, pos + 16);
-        }
-    } else {
-        if (isEmpty(pos - 8)) {
-            gen_addPawnMove(moves, pos, pos - 8);
-        }
-        if (pos >= 48 && isEmpty(pos - 8) && isEmpty(pos - 16)) {
-            gen_addMove(moves, pos, pos - 16);
-        }
-    }
+//    if (side == Side::white) {
+//        if (isEmpty(pos + 8)) {
+//            gen_addPawnMove(moves, pos, pos + 8);
+//        }
+//        if (pos < 16 && isEmpty(pos + 8) && isEmpty(pos + 16)) {
+//            gen_addMove(moves, pos, pos + 16);
+//        }
+//    } else {
+//        if (isEmpty(pos - 8)) {
+//            gen_addPawnMove(moves, pos, pos - 8);
+//        }
+//        if (pos >= 48 && isEmpty(pos - 8) && isEmpty(pos - 16)) {
+//            gen_addMove(moves, pos, pos - 16);
+//        }
+//    }
 }
 
-FlipMode GenBoard::needFlip() const
+FlipMode GenBoard::needSymmetryFlip() const
 {
     assert(false);
-    return FlipMode::flipVH;
+    return FlipMode::none;
 }
 
 
