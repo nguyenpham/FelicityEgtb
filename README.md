@@ -44,17 +44,19 @@ Attempt 8: We compare the access speeds of some arrays in memory:
 - measure time
 Conclusion: their speeds are quite similar. We can use any of them.
 
-Attempt 9: Position indexes work for both Chess and Xiangqi/Jeiqi
+Attempt 9: Position indexes work for both Chess and Xiangqi/Jeiqi.
 
-Attempt 10: Calculate position indexes for Xiangqi/Jeiqi
+Attempt 10: Calculate position indexes for Xiangqi/Jeiqi.
 
-Attempt 11: calculate 5-men Index space for chess
+Attempt 11: calculate 5-men Index space for chess.
 
-Attempt 12: generating all 5-men engames for chess, using the forward method.
-Total time: 3 days 15 hours (generating time only). Total size: 8.88 GB, endgames: 145, files: 190.
+Attempt 12: generating all 5-men engames for chess, using the forward method. Total time: 3 days 15 hours (generating time only). Total size: 8.88 GB, endgames: 145, files: 190.
 
 Attempt 13: generate all 5-men endgames for chess using the backward method. Total time: 21 hours (generating time only), 4 times faster than Attempt 12.
 
+Attempt 14: Improve the speed of generating all 5-men endgames for chess with the backward method. Total time: 17 hours (generating time only), 5 times faster than Attempt 12.
+
+Attempt 15: calculate index spaces for more men for chess. Some code has been added to make sure the generator can generate 7 men and get information till 9 men. Some variants (unsigned 64-bit) starts being overflowed when working with 10 and 11 men.
 
 Status
 ======

@@ -30,9 +30,9 @@
       shouldAutocreateTestPlan = "YES">
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Release"
-      selectedDebuggerIdentifier = ""
-      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -57,11 +57,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-2"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-core 5"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-v"
@@ -69,7 +69,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n 2"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-n 7"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-n kqrbnpkqbnn"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-noverify"
@@ -105,19 +113,19 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-d /Users/nguyenpham/Downloads/chess5men"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-g"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-subinfo"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-verbose"
+            argument = "-g"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-subinfo"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-verbose"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-allmovescores"

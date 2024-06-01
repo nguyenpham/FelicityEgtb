@@ -32,17 +32,17 @@ using namespace bslib;
 
 #ifdef _FELICITY_CHESS_
 
-i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, int* pieceCount, u16 order)
+u64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, int* pieceCount, u16 order)
 {
     if (pieceCount) {
         memset(pieceCount, 0, 2 * 10 * sizeof(int));
         pieceCount[KING] = pieceCount[KING + 10] = 1;
     }
     
-    static const int sizeArrX[] = { EGTB_SIZE_X, EGTB_SIZE_XX, EGTB_SIZE_XXX, EGTB_SIZE_XXXX, EGTB_SIZE_XXXXX, 0, 0 };
-    static const int sizeArrP[] = { EGTB_SIZE_P, EGTB_SIZE_PP, EGTB_SIZE_PPP, EGTB_SIZE_PPPP, EGTB_SIZE_PPPPP, 0, 0 };
+    static const i64 sizeArrX[] = { EGTB_SIZE_X, EGTB_SIZE_XX, EGTB_SIZE_XXX, EGTB_SIZE_XXXX, EGTB_SIZE_XXXXX, EGTB_SIZE_XXXXXX, EGTB_SIZE_XXXXXXX, EGTB_SIZE_XXXXXXXX, EGTB_SIZE_XXXXXXXXX, EGTB_SIZE_XXXXXXXXXX, 0, 0 };
+    static const int sizeArrP[] = { EGTB_SIZE_P, EGTB_SIZE_PP, EGTB_SIZE_PPP, EGTB_SIZE_PPPP, EGTB_SIZE_PPPPP, EGTB_SIZE_PPPPPP, EGTB_SIZE_PPPPPPP, EGTB_SIZE_PPPPPPPP, 0, 0 };
 
-    i64 sz = 1;
+    u64 sz = 1;
     auto side = Side::white;
     auto k = 0;
     for (auto i = 0, atkCnt = 0, d = 10; i < (int)name.size(); i++) {
@@ -62,7 +62,9 @@ i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
                     auto hasPawns = name.find('p') != std::string::npos;
                     idx = hasPawns ? EGTB_IDX_KK_2 : EGTB_IDX_KK_8;
                     h = hasPawns ? EGTB_SIZE_KK2 : EGTB_SIZE_KK8;
-                    sz *= h;
+                    sz *= u64(h);
+                    assert(h > 0);
+                    assert(sz > 0);
                 } else {
                     side = Side::black;
                     d = 0;
@@ -88,7 +90,7 @@ i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
                     t++;
                 }
 
-                assert(t <= 5);
+                assert(t <= 10);
                 i += t - 1;
                 
                 if (pieceCount) {
@@ -100,7 +102,10 @@ i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
                 egtbIdxArray[k].side = side;
 
                 auto h = type == PieceType::pawn ? sizeArrP[t - 1] : sizeArrX[t - 1];
-                sz *= h;
+                sz *= u64(h);
+                assert(h > 0);
+                assert(sz > 0);
+
                 egtbIdxArray[k].factor = h;
                 atkCnt++;
                 k++;
@@ -121,7 +126,7 @@ i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
         }
     }
 
-    assert(sz);
+    assert(sz > 0);
     return sz;
 }
 

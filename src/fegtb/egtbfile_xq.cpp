@@ -33,7 +33,7 @@ using namespace bslib;
 #ifdef _FELICITY_XQ_
 
 
-i64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, int* pieceCount, u16 order)
+u64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, int* pieceCount, u16 order)
 {
     auto k = 0;
     auto side = Side::white;

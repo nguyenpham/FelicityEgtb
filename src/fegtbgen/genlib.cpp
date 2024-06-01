@@ -218,7 +218,7 @@ std::string GenLib::currentTimeDate() {
     return ss.str();
 }
 
-std::string GenLib::formatString(i64 num, bool format) {
+std::string GenLib::formatString(uint64_t num, bool format) {
     if (num < 0) {
         return "*** overflow ***";
     }

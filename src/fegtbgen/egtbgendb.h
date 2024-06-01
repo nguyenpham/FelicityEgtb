@@ -51,6 +51,7 @@ public:
     }
     
     bool isValid() const;
+    static bool isValid(const std::string& name);
     
     bool isBothArmed() const;
     bool hasAttackers() const;

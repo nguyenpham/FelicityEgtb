@@ -164,14 +164,24 @@ const int EGTB_SIZE_X             = 64;
 const int EGTB_SIZE_XX            = 2016;
 const int EGTB_SIZE_XXX           = 41664;
 const int EGTB_SIZE_XXXX          = 635376;
+const int EGTB_SIZE_XXXXX         = 7624512;
 
-const int EGTB_SIZE_XXXXX         = -1; // not calculated yet
+const int EGTB_SIZE_XXXXXX        = 74974368;
+const int EGTB_SIZE_XXXXXXX       = 621216192;
+
+const i64 EGTB_SIZE_XXXXXXXX      = 4426165368;
+const i64 EGTB_SIZE_XXXXXXXXX     = 27540584512;
+const i64 EGTB_SIZE_XXXXXXXXXX    = 151473214816;
 
 const int EGTB_SIZE_P             = 48;
 const int EGTB_SIZE_PP            = 1128;
 const int EGTB_SIZE_PPP           = 17296;
 const int EGTB_SIZE_PPPP          = 194580;
-const int EGTB_SIZE_PPPPP         = -1;
+const int EGTB_SIZE_PPPPP         = 1712304;
+
+const int EGTB_SIZE_PPPPPP        = 12271512;
+const int EGTB_SIZE_PPPPPPP       = 73629072;
+const int EGTB_SIZE_PPPPPPPP      = 377348994;
 
 enum EgtbIdx {
     EGTB_IDX_KK_8,
@@ -207,8 +217,38 @@ enum EgtbIdx {
     EGTB_IDX_HHHHH,
     EGTB_IDX_PPPPP,
 
+    EGTB_IDX_QQQQQQ,
+    EGTB_IDX_RRRRRR,
+    EGTB_IDX_BBBBBB,
+    EGTB_IDX_HHHHHH,
+    EGTB_IDX_PPPPPP,
 
-    EGTB_IDX_LAST = EGTB_IDX_PPPP,
+    EGTB_IDX_QQQQQQQ,
+    EGTB_IDX_RRRRRRR,
+    EGTB_IDX_BBBBBBB,
+    EGTB_IDX_HHHHHHH,
+    EGTB_IDX_PPPPPPP,
+
+    EGTB_IDX_QQQQQQQQ,
+    EGTB_IDX_RRRRRRRR,
+    EGTB_IDX_BBBBBBBB,
+    EGTB_IDX_HHHHHHHH,
+    EGTB_IDX_PPPPPPPP,
+
+    EGTB_IDX_QQQQQQQQQ,
+    EGTB_IDX_RRRRRRRRR,
+    EGTB_IDX_BBBBBBBBB,
+    EGTB_IDX_HHHHHHHHH,
+    EGTB_IDX_PPPPPPPP_, /// not existent
+
+    EGTB_IDX_QQQQQQQQQ_, /// not existent
+    EGTB_IDX_RRRRRRRRRR,
+    EGTB_IDX_BBBBBBBBBB,
+    EGTB_IDX_HHHHHHHHHH,
+    EGTB_IDX_PPPPPPPP__, /// not existent
+
+
+    EGTB_IDX_LAST = EGTB_IDX_PPPPPPPP__,
 
     EGTB_IDX_NONE = 254
 };

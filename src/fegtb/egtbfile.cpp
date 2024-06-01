@@ -600,7 +600,7 @@ i64 EgtbFile::setupIdxComputing(const std::string& name, int order)
     return size;
 }
 
-i64 EgtbFile::computeSize(const std::string &name)
+u64 EgtbFile::computeSize(const std::string &name)
 {
     EgtbIdxRecord egtbIdxRecord[16];
     return parseAttr(name, egtbIdxRecord, nullptr, 0);

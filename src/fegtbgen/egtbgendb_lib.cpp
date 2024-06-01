@@ -30,16 +30,42 @@ using namespace bslib;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void createSubName(const std::string& aName, std::map<std::string, NameRecord>& allNameMap) {
-    if (allNameMap.find(aName) != allNameMap.end()) {
-        return;
-    }
-    NameRecord record(aName);
-    if (!record.isValid()) {
+//void createSubName(const std::string& aName, std::map<std::string, NameRecord>& allNameMap) {
+//    if (allNameMap.find(aName) != allNameMap.end()) {
+//        return;
+//    }
+//    NameRecord record(aName);
+//    if (!record.isValid()) {
+//        return;
+//    }
+//
+//    allNameMap[aName] = record;
+//
+//    auto k = aName.find_last_of("k");
+//    std::string ss[2];
+//    ss[0] = aName.substr(0, k);
+//    ss[1] = aName.substr(k);
+//    
+//    for(auto sd = 0; sd < 2; sd++) {
+//        auto s = ss[sd];
+//        auto xs = ss[1 - sd];
+//        assert(std::count(s.begin(), s.end(), 'k') == 1);
+//        
+//        for(auto i = 1; i < s.length(); i++) {
+//            std::string ss = s.substr(0, i) + (i + 1 < s.length() ? s.substr(i + 1) : "");
+//
+//            createSubName(ss + xs, allNameMap);
+//            createSubName(xs + ss, allNameMap);
+//        }
+//    }
+//}
+
+void createSubName(const std::string& aName, std::set<std::string>& allNameSet) {
+    if (allNameSet.find(aName) != allNameSet.end() || !NameRecord::isValid(aName)) {
         return;
     }
 
-    allNameMap[aName] = record;
+    allNameSet.insert(aName);
 
     auto k = aName.find_last_of("k");
     std::string ss[2];
@@ -54,8 +80,8 @@ void createSubName(const std::string& aName, std::map<std::string, NameRecord>& 
         for(auto i = 1; i < s.length(); i++) {
             std::string ss = s.substr(0, i) + (i + 1 < s.length() ? s.substr(i + 1) : "");
 
-            createSubName(ss + xs, allNameMap);
-            createSubName(xs + ss, allNameMap);
+            createSubName(ss + xs, allNameSet);
+            createSubName(xs + ss, allNameSet);
         }
     }
 }
@@ -113,17 +139,41 @@ std::vector<std::string> EgtbGenDb::parseName(const std::string& name, bool incl
 
 std::vector<std::string> EgtbGenDb::parseNames(const std::vector<std::string>& names)
 {
+//    std::map<std::string, NameRecord> allNameMap;
+//    for(auto && name : names) {
+//        createSubName(name, allNameMap);
+//    }
+//
+//    std::vector<NameRecord> recordVec;
+//    
+//    for(auto && x : allNameMap) {
+//        recordVec.push_back(x.second);
+//    }
+//    
+//    sort(recordVec.begin(), recordVec.end(), [ ]( const NameRecord& left, const NameRecord& right) {
+//        return left.isSmaller(right);
+//    });
+//    
+//    std::vector<std::string> resultVec;
+//    for(auto && x : recordVec) {
+//        resultVec.push_back(x.name);
+//    }
+//    
+//    
+//    return resultVec;
     
-    std::map<std::string, NameRecord> allNameMap;
-    
+    std::set<std::string> allNameSet;
     for(auto && name : names) {
-        createSubName(name, allNameMap);
+        createSubName(name, allNameSet);
     }
-    
+
     std::vector<NameRecord> recordVec;
     
-    for(auto && x : allNameMap) {
-        recordVec.push_back(x.second);
+    for(auto && name : allNameSet) {
+        NameRecord record(name);
+        if (record.isValid()) {
+            recordVec.push_back(record);
+        }
     }
     
     sort(recordVec.begin(), recordVec.end(), [ ]( const NameRecord& left, const NameRecord& right) {
@@ -134,9 +184,10 @@ std::vector<std::string> EgtbGenDb::parseNames(const std::vector<std::string>& n
     for(auto && x : recordVec) {
         resultVec.push_back(x.name);
     }
-    
-    
+
     return resultVec;
+
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -148,19 +199,32 @@ void EgtbGenDb::showSubTables(const std::string& name, EgtbType egtbType) {
 
 void EgtbGenDb::showSubTables(const std::vector<std::string>& egNames, EgtbType)
 {
-    i64 total = 0;
+    u64 total = 0, largestSz = 0;
+    std::string largestName;
     auto cnt = 0;
     for(auto && aName : egNames) {
         assert(std::count(aName.begin(), aName.end(), 'k') == 2);
 
         cnt++;
-        auto sz = EgtbFile::computeSize(aName);
+        auto sz = EgtbFile::computeSize(aName); assert(sz > 0);
         total += sz;
-        std::cout << std::setw(3) << cnt << ") " << std::setw(16) << aName << "  " << std::setw(15) << GenLib::formatString(sz) << std::endl;
+        if (sz > largestSz) {
+            largestSz = sz;
+            largestName = aName;
+        }
+        std::cout << std::setw(3) << cnt << ") " << std::setw(16) << aName << "  " << std::setw(28) << GenLib::formatString(sz) << std::endl;
     }
 
     std::cout << std::setw(0)<< std::endl;
-    std::cout << "Total files: " << cnt << ", total size: " << GenLib::formatString(total) << std::endl;
+    std::cout << "Total endgames: " << cnt 
+    << ", total size: " << GenLib::formatString(total)
+    << std::endl;
+
+    if (!largestName.empty()) {
+        std::cout << "One of the largest endgames: " << largestName
+        << ", size: " << GenLib::formatString(largestSz)
+        << std::endl;
+    }
 }
 
 void EgtbGenDb::showIntestingSubTables(EgtbType egtbType)

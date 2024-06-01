@@ -51,7 +51,7 @@ public:
     
     
     static std::string formatSpeed(int speed);
-    static std::string formatString(i64 num, bool format = true);
+    static std::string formatString(uint64_t num, bool format = true);
     
     static std::string formatPeriod(int seconds);
     static std::string currentTimeDate();

@@ -43,6 +43,7 @@ enum class GameReasonType {
 
 #define i64 int64_t
 
+
 enum CompressMode {
     compress_none, compress, compress_optimizing
 };

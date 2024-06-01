@@ -53,7 +53,7 @@ public:
     EgtbIdx         idx;
     i64             mult;
     bslib::Side     side;
-    int             factor;
+    i64             factor;
 };
 
 
@@ -164,7 +164,7 @@ public:
     std::string getName() const { return egtbName; }
 
     virtual void removeBuffers();
-    static i64 computeSize(const std::string &name);
+    static u64 computeSize(const std::string &name);
     
     virtual int getCompressBlockSize() const {
         return EGTB_SIZE_COMPRESS_BLOCK;
@@ -187,7 +187,7 @@ public:
     bool isBothArmed() const { return bothArmed; }
     u32 getMaterialsign() const { return materialsign; }
     
-    static i64 parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxRecordArray, int* pieceCount, u16 order);
+    static u64 parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxRecordArray, int* pieceCount, u16 order);
 
 
     virtual void checkToLoadHeaderAndTables(bslib::Side side);

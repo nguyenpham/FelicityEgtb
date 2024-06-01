@@ -101,11 +101,34 @@ bool NameRecord::parse(const std::string& _name)
 #endif
     }
     
+#ifdef _FELICITY_CHESS_
+    /// Check promotion exceed the limit
+    if (name.size() > 6) {
+        int promotionCnt[2] = { 0, 0 };
+        for(auto sd = 0; sd < 2; sd++) {
+            for(auto t = QUEEN; t < PAWN; t++) {
+                auto m = t == QUEEN ? 1 : 2;
+                if (pieceCount[sd][t] > m) {
+                    if (pieceCount[sd][t] > m + 8) {
+                        return false;
+                    }
+                    promotionCnt[sd] += pieceCount[sd][t] - m;
+                }
+            }
+        }
+        
+        if (promotionCnt[0] + pieceCount[0][PAWN] > 8 || promotionCnt[1] + pieceCount[1][PAWN] > 8) {
+            return false;
+        }
+    }
+#endif
+    
     return pieceCount[0][KING] == 1 && pieceCount[1][KING] == 1
     && !sortingSides[W].empty()
     && sortingSides[W] >= sortingSides[B]
     
-#ifdef _FELICITY_XQ_
+#ifdef _FELICITY_CHESS_
+#else
     && attackerSides[0].size() + attackerSides[1].size()
 #endif
 //    && !isLimited()
@@ -130,6 +153,12 @@ bool NameRecord::isLimited() const
 bool NameRecord::isValid() const
 {
     return ok;
+}
+
+bool NameRecord::isValid(const std::string& name)
+{
+    NameRecord record(name);
+    return record.isValid();
 }
 
 bool NameRecord::isBothArmed() const

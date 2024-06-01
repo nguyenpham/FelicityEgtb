@@ -206,7 +206,7 @@ int main(int argc, char* argv[])
     
     static const auto programName = "egtbgen";
     std::cout << "Felicity EGTB generator for " << EGTB_MAJOR_VARIANT
-    << ", by Nguyen Pham 2024, version: " << EGTB_VERSION_STRING
+    << ", by Nguyen Hong Pham 2024, version: " << EGTB_VERSION_STRING
     << "\n" << std::endl;
 
     if (argc < 2) {

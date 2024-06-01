@@ -55,8 +55,13 @@ static const int tb_kIdx[64] = {
     -1,-1,-1,-1, -1,-1,-1,-1
 };
 
-static int* tb_xx, *tb_xxx, *tb_xxxx;
-static int* tb_pp, *tb_ppp, *tb_pppp;
+static int *tb_xx, *tb_xxx, *tb_xxxx;
+static int *tb_pp, *tb_ppp, *tb_pppp;
+
+#if _LARGE_CHESS_
+static i64 *tb_xxxxx;
+static i64 *tb_ppppp, *tb_pppppp;
+#endif
 
 static const int tb_kIdxToPos[10] = {
     0, 1, 2, 3, 9, 10, 11, 18, 19, 27
@@ -115,7 +120,13 @@ void EgtbKey::createXXKeys() {
     tb_xxx = new int[EGTB_SIZE_XXX];
     tb_xxxx = new int[EGTB_SIZE_XXXX];
 
-    auto k0 = 0, k1 = 0, k2 = 0;
+    i64 k0 = 0, k1 = 0, k2 = 0;
+
+#if _LARGE_CHESS_
+    tb_xxxxx = new int[EGTB_SIZE_XXXXX];
+    i64 k3 = 0;
+#endif
+    
 
     for(auto i0 = 0; i0 < 64; i0++) {
         for(auto i1 = i0 + 1; i1 < 64; i1++) {
@@ -124,16 +135,25 @@ void EgtbKey::createXXKeys() {
                 tb_xxx[k1++] = i0 << 16 | i1 << 8 | i2;
                 for(auto i3 = i2 + 1; i3 < 64; i3++) {
                     tb_xxxx[k2++] = i0 << 24 | i1 << 16 | i2 << 8 | i3;
+#if _LARGE_CHESS_
+                    for(auto i4 = i3 + 1; i4 < 64; i4++) {
+                        tb_xxxxx[k3++] = i0 << 32 | i1 << 24 | i2 << 16 | i3 << 8 | i4;
+                    }
+#endif /// _LARGE_CHESS_
                 }
             }
         }
     }
-
+    
     /// Pawns
     tb_pp = new int[EGTB_SIZE_PP];
     tb_ppp = new int[EGTB_SIZE_PPP];
     tb_pppp = new int[EGTB_SIZE_PPPP];
 
+#if _LARGE_CHESS_
+    k3 = 0;
+#endif
+    
     k0 = k1 = k2 = 0;
 
     for(auto i0 = 8; i0 < 56; i0++) {
@@ -143,10 +163,19 @@ void EgtbKey::createXXKeys() {
                 tb_ppp[k1++] = i0 << 16 | i1 << 8 | i2;
                 for(auto i3 = i2 + 1; i3 < 56; i3++) {
                     tb_pppp[k2++] = i0 << 24 | i1 << 16 | i2 << 8 | i3;
+#if _LARGE_CHESS_
+                    for(auto i4 = i3 + 1; i4 < 56; i4++) {
+                        tb_ppppp[k3++] = i0 << 32 | i1 << 24 | i2 << 16 | i3 << 8 | i4;
+                        for(auto i5 = i4 + 1; i5 < 56; i5++) {
+                            tb_ppppp[k4++] = i0 << 40 | i1 << 32 | i2 << 24 | i3 << 16 | i4 << 8 | i5;
+                        }
+                    }
+#endif // _LARGE_CHESS_
                 }
             }
         }
     }
+    
 }
 
 int EgtbKey::getKey_x(int pos0)
@@ -519,7 +548,5 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
     
     return rec;
 }
-
-
 
 #endif /// _FELICITY_CHESS_
