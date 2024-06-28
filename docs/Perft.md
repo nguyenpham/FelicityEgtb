@@ -91,3 +91,6 @@ Attempt 16
 When making a move, whole board data is copied into Hist record, thus the takeback function could be simplified by copying back stored board.
 
 - Chess perft 5 took 523 ms, 161% longer (slower) than Attemp 7
+
+Code is in branch "wholeboardinhist".
+
