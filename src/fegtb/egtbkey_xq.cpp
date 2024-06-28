@@ -581,19 +581,16 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
     
     rec.flipSide = strongSd == B;
     
-    auto orderVec = EgtbFile::order2Vec(order);
-    
     /// Calculate key
     i64 key = 0;
     
     for(auto i = 0; ; i++) {
-        auto x = orderVec[i];
-        auto attr = egtbIdxRecord[x].idx;
+        auto attr = egtbIdxRecord[i].idx;
         if (attr == EGTB_IDX_NONE) {
             break;
         }
-        auto mul = egtbIdxRecord[x].mult;
-        auto side = egtbIdxRecord[x].side;
+        auto mul = egtbIdxRecord[i].mult;
+        auto side = egtbIdxRecord[i].side;
         if (rec.flipSide) {
             side = getXSide(side);
         }

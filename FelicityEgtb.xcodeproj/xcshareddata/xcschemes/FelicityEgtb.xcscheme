@@ -73,7 +73,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n 7"
-            isEnabled = "YES">
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-n krrrknnnn"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n kqrbnpkqbnn"
@@ -121,7 +125,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-subinfo"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-verbose"
@@ -142,6 +146,10 @@
          <CommandLineArgument
             argument = "-i"
             isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-perft 5"
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>

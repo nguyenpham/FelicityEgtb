@@ -59,6 +59,8 @@ const int FirstAttacker = QUEEN;
 
 #define EgtbBoard bslib::ChessBoard
 
+#define BOARD_SZ 64
+
 #else
 enum class PieceType {
     empty, king, advisor, elephant, rook, cannon, horse, pawn
@@ -74,6 +76,7 @@ const int FirstAttacker = ROOK;
 
 #define EgtbBoard bslib::XqBoard
 
+#define BOARD_SZ 90
 
 #endif
 
@@ -195,8 +198,6 @@ public:
     bool operator != (const Move& other) const {
         return from != other.from || dest != other.dest || promotion != other.promotion;
     }
-
-//    std::string toCoordinateString(ChessVariant chessVariant) const;
 };
 
 class MoveFull : public Move {
@@ -243,7 +244,7 @@ class Hist {
 public:
     MoveFull move;
     Piece cap;
-    int status, quietCnt;
+    int quietCnt;
     
 #ifdef _FELICITY_CHESS_
     int enpassant, castled;

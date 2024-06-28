@@ -31,24 +31,33 @@ namespace bslib {
     
     ///////////////////////////////////
 
+    class BoardData {
+    public:
+        Side side;
+        int quietCnt, fullMoveCnt = 1;
+        int pieceList[2][16];
+    protected:
+        Piece pieces[BOARD_SZ];
+        
+        void cloneData(const BoardData* oboard) {
+            *this = *oboard;
+        }
+        
+#ifdef _FELICITY_CHESS_
+    public:
+        int enpassant = -1;
+        int8_t castleRights[2];
+#endif
+        
+    };
 
-    class BoardCore {
+    class BoardCore : public BoardData {
     public:
         ChessVariant variant;
-        Side side;
-
-        int status;
-
-        int quietCnt, fullMoveCnt = 1;
-        
         std::string startFen;
 
-        int pieceList[2][16];
-
     protected:
-        std::vector<Piece> pieces;
         std::vector<Hist> histList;
-
 
     public:
 
@@ -89,16 +98,16 @@ namespace bslib {
         }
         
         int size() const {
-            return int(pieces.size());
+            return BOARD_SZ;
         }
 
         virtual bool isPositionValid(int pos) const {
-            return pos >= 0 && pos < int(pieces.size());
+            return pos >= 0 && pos < BOARD_SZ;
         }
 
         Piece getPiece(int pos) const {
             assert(isPositionValid(pos));
-            return pieces.at(size_t(pos));
+            return pieces[pos];
         }
 
         bool isEmpty(int pos) const {
@@ -119,17 +128,10 @@ namespace bslib {
         }
 
         virtual void clone(const BoardCore* oboard) {
-            pieces = oboard->pieces; assert(pieces.size() == oboard->pieces.size());
+            assert(variant == oboard->variant);
+            cloneData(oboard);
             
-            memcpy(pieceList, oboard->pieceList, sizeof(pieceList));
-            
-            side = oboard->side;
-            status = oboard->status;
             histList = oboard->histList;
-            variant = oboard->variant;
-
-            quietCnt = oboard->quietCnt;
-            fullMoveCnt = oboard->fullMoveCnt;
             startFen = oboard->startFen;
         }
 
@@ -154,7 +156,6 @@ namespace bslib {
             quietCnt = 0;
             pieceList_reset((int *)pieceList);
             side = Side::none;
-            status = 0;
         }
 
         

@@ -225,8 +225,6 @@ public:
         return (header->getProperty() & EGTB_PROP_2BYTES) != 0;
     }
 
-    static std::vector<int> order2Vec(int order);
-
     bool verifyKeys(bool printRandom = false) const;
     
 #define Verify_bit_setupOK  1

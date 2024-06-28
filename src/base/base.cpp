@@ -152,7 +152,7 @@ int BoardCore::findKing(Side side) const
 {
     auto sd = static_cast<int>(side);
     auto kingpos = pieceList[sd][0];
-    assert(kingpos >= 0 && kingpos < pieces.size() && pieces[kingpos] == Piece(PieceType::king, side));
+    assert(kingpos >= 0 && kingpos < BOARD_SZ && pieces[kingpos] == Piece(PieceType::king, side));
     return kingpos;
 }
 
@@ -314,11 +314,11 @@ uint64_t BoardCore::perft(int depth, int ply)
 
     if (ply == 0) {
         auto elapsed = Funcs::now() - start;
-        std::cout << "\nDepth         : " << depth
+        std::cout << "\nPerft depth   : " << depth
                   << "\nNodes         : " << nodes
                   << "\nElapsed (ms)  : " << elapsed
                   << "\nNodes/second  : " << nodes * 1000 / (elapsed + 1)
-                  << "\nincheckCnt    : " << incheckCnt
+//                  << "\nincheckCnt    : " << incheckCnt
                   << std::endl;
     }
     return nodes;

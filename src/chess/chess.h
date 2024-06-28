@@ -28,15 +28,13 @@ namespace bslib {
     const int CastleRight_long  = (1<<0);
     const int CastleRight_short = (1<<1);
     const int CastleRight_mask  = (CastleRight_long|CastleRight_short);
+    const int castleRights_column_king = 4, castleRights_column_rook_left = 0, castleRights_column_rook_right = 7;
 
 
     class ChessBoard : public BoardCore {
-    public:
-        int enpassant = -1;
-        int8_t castleRights[2];
-
-    protected:
-        int castleRights_column_king = 4, castleRights_column_rook_left = 0, castleRights_column_rook_right = 7;
+//    public:
+//        int enpassant = -1;
+//        int8_t castleRights[2];
 
     public:
         
@@ -56,7 +54,6 @@ namespace bslib {
         virtual void reset() override {
             BoardCore::reset();
             enpassant = -1;
-            //castleRights[0] = castleRights[1] = 0;
             setFenCastleRights_clear();
         }
         
@@ -97,7 +94,7 @@ namespace bslib {
 
         virtual void createFullMoves(std::vector<MoveFull>& moveList, MoveFull m) const override;
         
-        virtual void clone(const BoardCore* oboard) override;
+//        virtual void clone(const BoardCore* oboard) override;
 
         int8_t getCastleRights(int sd) const {
             return castleRights[sd];

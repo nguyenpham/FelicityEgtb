@@ -6,8 +6,8 @@ Overview
 
 Felicity EGTB (Endgame database/tablebase) is an open source for generating and probing EGTB. All code is written in C++ (using the standard C++17 library). It supports some chess variants: chess, Xiangqi, and Jeiqi.
 
-From testing, EGTB doesn't help chess engines much, in terms of strength/Elo gaining. 6 men-Syzygy EGTB can help Stockfish to gain < 13 Elo.
-In contrast, we believe EGTB can help much more for Xiangqi/Jeiqi engines because the endgames of those chess variants are much more complicated, with a lot of exceptions/tricky wins, which are much harder for humans/programs to learn. However, we don't have real statistics. We need to build some good EGTB first before measuring.
+From testing, EGTB doesn't help chess engines much, in terms of strength/Elo gaining. 6 men-Syzygy EGTB can help Stockfish to gain < 13 Elo. However, we believe EGTB can help much more for Xiangqi/Jeiqi engines because the endgames of those chess variants are much more complicated, with a lot of exceptions/tricky wins, which are much harder for humans/programs to learn. However, we don't have real statistics. We need to build some good EGTB first before measuring.
+
 This project focuses on Xiaqqi and Jeiqi. But we will support chess too, for testing, learning and comparing.
 
 
@@ -15,10 +15,10 @@ Restart
 =======
 
 April 2024: restart the project. Plan to rewrite all. Support chess, Xiangqi, Jeiqi
-The project has been restarted. We will rewrite all code when doing some research.
 
-Research
-========
+
+Study
+=====
 This is a long journey, to find good code, algorithmns.
 
 
@@ -61,7 +61,7 @@ Attempt 15: calculate index spaces for more men for chess. Some code has been ad
 Status
 ======
 
-In development: All code has been still being written. You may use them for studying or trying to integrate into your code. However, you should not use them to generate endgames since the code has been in checking process and all could be changed seriously, from algorithms to file formats.
+In development: All code has been still being written. You may use them for studying, trying to integrate into your code, generating some small EGTBs. However, you should not use them to generate EGTBs seriously nor contribute them since the code has been in checking process and all could be changed, from algorithms to file structures.
 
 - Chess: it could generate all 5 men with forward/backward method. 6 men is possible but not verified yet
 - Xiangqi: it could calculate index spaces

@@ -656,20 +656,6 @@ int EgtbFile::_cellToScore(char cell) {
     }
 }
 
-const std::vector<int> defaultOrderVec { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-
-std::vector<int> EgtbFile::order2Vec(int order)
-{
-    std::vector<int> vec;
-    if (order) {
-        vec = { order & 0x7, (order >> 3) & 0x7, (order >> 6) & 0x7, (order >> 9) & 0x7 , (order >> 12) & 0x7, (order >> 15) & 0x7 };
-    } else {
-        vec = defaultOrderVec;
-    }
-
-    return vec;
-}
-
 int EgtbFile::verifyAKey(EgtbBoard& board, i64 idx) const
 {
     /// It is considered OK if it cann't setup the board

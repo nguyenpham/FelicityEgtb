@@ -51,9 +51,9 @@ ChessBoard::ChessBoard(ChessVariant _variant)
     variant = _variant;
     assert(Funcs::isChessFamily(variant));
 
-    pieces.clear();
+    //pieces.clear();
     for(auto i = 0; i < 64; i++) {
-        pieces.push_back(Piece::emptyPiece);
+        pieces[i] = Piece::emptyPiece;
     }
 }
 
@@ -137,7 +137,7 @@ bool ChessBoard::isValid() const
     int pieceCout[2][7] = { { 0, 0, 0, 0, 0, 0, 0}, { 0, 0, 0, 0, 0, 0, 0} };
     
     auto cnt = 0;
-    for (auto i = 0; i < pieces.size(); i++) {
+    for (auto i = 0; i < BOARD_SZ; i++) {
         auto piece = getPiece(i);
         assert(piece.isValid());
         if (piece.isEmpty()) {
@@ -886,7 +886,6 @@ void ChessBoard::make(const MoveFull& move, Hist& hist)
     assert(pieceList_isValid());
     assert(!move.piece.isEmpty() && move.isValid());
     hist.enpassant = enpassant;
-    hist.status = status;
     hist.castleRights[0] = castleRights[0];
     hist.castleRights[1] = castleRights[1];
     hist.castled = 0;
@@ -940,7 +939,7 @@ void ChessBoard::make(const MoveFull& move, Hist& hist)
             } else if (move.dest == hist.enpassant) {
                 auto ep = move.dest + (p.side == Side::white ? +8 : -8);
                 hist.cap = pieces[ep];
-                assert(hist.cap.isValid() && hist.cap.type != PieceType::pawn);
+                assert(hist.cap.isValid() && hist.cap.type == PieceType::pawn);
                 
                 pieces[ep].setEmpty();
             } else if (move.promotion != PieceType::empty) {
@@ -1010,7 +1009,6 @@ void ChessBoard::takeBack(const Hist& hist)
         assert(pieces[hist.move.from].isValid() && pieces[hist.move.from].type == PieceType::pawn);
     }
     
-    status = hist.status;
     castleRights[0] = hist.castleRights[0];
     castleRights[1] = hist.castleRights[1];
     enpassant = hist.enpassant;
@@ -1070,22 +1068,6 @@ Move ChessBoard::moveFromString_castling(const std::string& str, Side side) cons
     return Move(from, dest, PieceType::empty);
 }
 
-
-void ChessBoard::clone(const BoardCore* oboard)
-{
-    BoardCore::clone(oboard);
-    assert(Funcs::isChessFamily(oboard->variant));
-    auto ob = static_cast<const ChessBoard*>(oboard);
-    enpassant = ob->enpassant;
-    castleRights[0] = ob->castleRights[0];
-    castleRights[1] = ob->castleRights[1];
-
-    castleRights_column_king = ob->castleRights_column_king;
-    castleRights_column_rook_left = ob->castleRights_column_rook_left;
-    castleRights_column_rook_right = ob->castleRights_column_rook_right;
-}
-
-
 void ChessBoard::flip(FlipMode flipMode)
 {
     switch (flipMode) {
@@ -1093,16 +1075,9 @@ void ChessBoard::flip(FlipMode flipMode)
             return;
             
         case FlipMode::flipVH: {
-            
-//            auto k1 = pieceList[0][0];
-//            auto p = ROW(k1) == COL(k1);
-//            if (p) {
-//                if (ROW(k1) != COL(k1)) {
-//                    k1 = k1;
-//                }
-//                printOut("before flipVH " + std::to_string(k1));
-//            }
-            std::vector<Piece> pieces2 = pieces;
+            Piece pieces2[BOARD_SZ];
+            //pieces2 = pieces;
+            memcpy(pieces2, pieces, sizeof(pieces2));
             setFenCastleRights_clear();
             reset();
             for(auto i = 0; i < 64; i++) {
@@ -1180,7 +1155,7 @@ bool ChessBoard::pieceList_isValid() const
             if (k < 0) {
                 continue;
             }
-            if (k >= pieces.size()) {
+            if (k >= BOARD_SZ) {
                 return false;
             }
             auto piece = pieces[k];

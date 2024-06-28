@@ -84,7 +84,6 @@ void EgtbKey::createKingKeys() {
         for(auto k1 = 0; k1 < 64; k1++) {
             if (k0 == k1 
                 || (abs(ROW(k1) - r0) <= 1 && abs(COL(k1) - f0) <= 1) /// can capture other King
-//                || (r0 == f0 && ROW(k1) > COL(k1))
             ) {
                 continue;
             }
@@ -362,20 +361,16 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
 
     auto flipMode = FlipMode::none;
 
-    auto orderVec = EgtbFile::order2Vec(order);
-
-
     /// Calculate key
     i64 key = 0;
 
     for(auto i = 0; ; i++) {
-        auto x = orderVec[i];
-        auto attr = egtbIdxRecord[x].idx;
+        auto attr = egtbIdxRecord[i].idx;
         if (attr == EGTB_IDX_NONE) {
             break;
         }
-        auto mul = egtbIdxRecord[x].mult; assert(mul > 0);
-        auto side = egtbIdxRecord[x].side; assert(side == Side::white || side == Side::black);
+        auto mul = egtbIdxRecord[i].mult; assert(mul > 0);
+        auto side = egtbIdxRecord[i].side; assert(side == Side::white || side == Side::black);
         if (rec.flipSide) {
             side = getXSide(side);
         }

@@ -135,13 +135,12 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
     board.reset();
 
     auto order = header ? header->getOrder() : 0;
-    auto orderVec = order2Vec(order);
     
     i64 rest = idx;
 
     for(auto i = 0; ; i++) {
-        auto x = orderVec[i]; assert(x >= 0 && x < 16);
-        auto rec = egtbIdxArray[x];
+        assert(i < 16);
+        auto rec = egtbIdxArray[i];
         if (rec.idx == EGTB_IDX_NONE) {
             break;
         }

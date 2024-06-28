@@ -50,9 +50,8 @@ XqBoard::XqBoard(ChessVariant _variant)
     variant = _variant;
     assert(!Funcs::isChessFamily(variant));
 
-    pieces.clear();
-    for(auto i = 0; i < 90; i++) {
-        pieces.push_back(Piece::emptyPiece);
+    for(auto i = 0; i < BOARD_SZ; i++) {
+        pieces[i] = Piece::emptyPiece;
     }
 }
 
@@ -113,7 +112,7 @@ bool XqBoard::isValid() const
 {
     int pieceCout[2][8] = { { 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0} };
     
-    for (int i = 0; i < pieces.size(); i++) {
+    for (int i = 0; i < BOARD_SZ; i++) {
         auto piece = getPiece(i);
         if (piece.isEmpty()) {
             continue;
@@ -184,7 +183,6 @@ void XqBoard::setFen(const std::string& fen)
 {
     reset();
     pieceList_reset((int *)pieceList);
-    status = 0;
 
     std::string str = fen;
     startFen = fen;
@@ -261,7 +259,7 @@ std::string XqBoard::getFen(bool enpassantLegal, int halfCount, int fullMoveCoun
     std::ostringstream stringStream;
     
     int e = 0;
-    for (int i = 0; i < pieces.size(); i++) {
+    for (int i = 0; i < BOARD_SZ; i++) {
         auto piece = getPiece(i);
         if (piece.isEmpty()) {
             e += 1;
@@ -301,12 +299,11 @@ void XqBoard::gen_addMove(std::vector<MoveFull>& moveList, int from, int dest) c
     }
 }
 
-int incheckCnt = 0;
 bool XqBoard::isIncheck(Side beingAttackedSide) const {
     auto kingPos = findKing(beingAttackedSide);
     auto attackerSide = xSide(beingAttackedSide);
     
-    incheckCnt ++;
+//    incheckCnt ++;
     /*
      * Check horizontal and vertical lines for attacking of Rook, Cannon and
      * King face
@@ -829,7 +826,7 @@ bool XqBoard::pieceList_isValid() const {
             if (k < 0) {
                 continue;
             }
-            if (k >= pieces.size()) {
+            if (k >= BOARD_SZ) {
                 return false;
             }
             auto piece = pieces[k];

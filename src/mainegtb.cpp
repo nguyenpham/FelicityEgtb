@@ -184,21 +184,6 @@ static void processName(std::string& endgameName, bool& isExactName)
 
 int main(int argc, char* argv[])
 {    
-    /// Quick test
- /*   {
-        EgtbBoard board;
-        board.setFen("1Nk5/K1n5/8/8/8/8/8/8 b - - 0 1");
-        board.printOut();
-
-        EgtbGenFile egtbFile;
-        egtbFile.create("knkn");
-        auto r = egtbFile.getKey(board);
-        std::cout << "Key = " << r.key << std::endl;
-        board.reset();
-        auto ok = egtbFile.setupBoard(board, r.key, FlipMode::none, Side::white);
-        board.printOut();
-        std::cout << "OK = " << ok << std::endl;
-    }*/
 
 #if defined(_MSC_VER)
 	setvbuf(stdout, 0, _IOLBF, 4096);
@@ -225,7 +210,7 @@ int main(int argc, char* argv[])
         std::string str = arg;
         auto ok = true;
 
-        if (arg == "-core" || arg == "-ram" || arg == "-n" || arg == "-fen" || arg == "-fenfile" || arg == "-d" || arg == "-d2" || arg == "-maxsize") {
+        if (arg == "-core" || arg == "-ram" || arg == "-n" || arg == "-fen" || arg == "-fenfile" || arg == "-d" || arg == "-d2" || arg == "-maxsize" || arg == "-perft") {
             if (i + 1 < argc) {
                 i++;
                 str = argv[i];
@@ -249,6 +234,28 @@ int main(int argc, char* argv[])
         argmap[arg] = str;
     }
 
+    if (argmap.find("-perft") != argmap.end()) {
+        auto depth = -1;
+        auto s = argmap["-perft"];
+        if (Funcs::is_integer(s)) {
+            depth = std::stoi(s);
+        }
+
+        if (depth > 0) {
+            std::string fenString;
+            if (argmap.find("-fen") != argmap.end()) {
+                fenString = argmap["-fen"];
+            }
+            
+            EgtbBoard board;
+            board.setFen(fenString);
+            board.perft(depth);
+        } else {
+            std::cerr << " -perft requires a positive number." << std::endl;
+        }
+        return 0;
+    }
+    
     const auto separator = CHAR_PATH_SLASH;
     std::string egtbFolder, egtbFolder2;
 
@@ -381,7 +388,7 @@ int main(int argc, char* argv[])
     }
         
     if (argmap.find("-core") != argmap.end()) {
-        int core = std::atoi(argmap["-core"].c_str());
+        auto core = std::atoi(argmap["-core"].c_str());
         if (core > 0) {
             MaxGenExtraThreads = core - 1;
         }
