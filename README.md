@@ -58,6 +58,9 @@ Attempt 14: Improve the speed of generating all 5-men endgames for chess with th
 
 Attempt 15: calculate index spaces for more men for chess. Some code has been added to make sure the generator can generate 7 men and get information till 9 men. Some variants (unsigned 64-bit) starts being overflowed when working with 10 and 11 men.
 
+Attempt 16: Store whole board data in Hist record when making a move, thus the takeback function could be simplified by copying back stored board. Chess perft 5 took 523 ms, 161% longer (slower) than Attempt 7. The code is in the branch "wholeboardinhist".
+
+
 Status
 ======
 
