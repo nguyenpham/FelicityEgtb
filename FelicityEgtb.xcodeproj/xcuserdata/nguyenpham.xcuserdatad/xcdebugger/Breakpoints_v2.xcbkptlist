@@ -1419,9 +1419,9 @@
             filePath = "src/chess/chess.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1122"
-            endingLineNumber = "1122"
-            landmarkName = "ChessBoard::toPieceCount(pieceCnt)"
+            startingLineNumber = "1091"
+            endingLineNumber = "1091"
+            landmarkName = "ChessBoard::flip(flipMode)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1435,10 +1435,10 @@
             filePath = "src/chess/chess.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1132"
-            endingLineNumber = "1132"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "1101"
+            endingLineNumber = "1101"
+            landmarkName = "ChessBoard::flip(flipMode)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1451,9 +1451,9 @@
             filePath = "src/chess/chess.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1126"
-            endingLineNumber = "1126"
-            landmarkName = "ChessBoard::toPieceCount(pieceCnt)"
+            startingLineNumber = "1095"
+            endingLineNumber = "1095"
+            landmarkName = "ChessBoard::flip(flipMode)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

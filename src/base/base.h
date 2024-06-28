@@ -31,23 +31,41 @@ namespace bslib {
     
     ///////////////////////////////////
 
+
     class BoardData {
     public:
-        Side side;
         int quietCnt, fullMoveCnt = 1;
         int pieceList[2][16];
-    protected:
-        Piece pieces[BOARD_SZ];
-        
-        void cloneData(const BoardData* oboard) {
-            *this = *oboard;
-        }
         
 #ifdef _FELICITY_CHESS_
-    public:
         int enpassant = -1;
         int8_t castleRights[2];
 #endif
+
+    protected:
+        Piece pieces[BOARD_SZ];
+
+    public:
+        void cloneData(const BoardData* oboard) {
+            *this = *oboard;
+        }
+    };
+
+    class Hist {
+
+    public:
+        MoveFull move;
+        Piece cap;
+        
+        BoardData boardData;
+        
+        void set(const MoveFull& _move) {
+            move = _move;
+        }
+
+        bool isValid() const {
+            return move.isValid() && cap.isValid();
+        }
         
     };
 
@@ -55,6 +73,8 @@ namespace bslib {
     public:
         ChessVariant variant;
         std::string startFen;
+
+        Side side;
 
     protected:
         std::vector<Hist> histList;
@@ -131,6 +151,7 @@ namespace bslib {
             assert(variant == oboard->variant);
             cloneData(oboard);
             
+            side = oboard->side;
             histList = oboard->histList;
             startFen = oboard->startFen;
         }

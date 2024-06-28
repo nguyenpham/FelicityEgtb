@@ -85,3 +85,9 @@ We list some advantages of mailbox mailbox board representation:
 
 It is good that our work targets mainly Xiangqi but not chess. Thus we are satisfied with the results, finish that task, and move on to others.
 
+Attempt 16
+----------
+
+When making a move, whole board data is copied into Hist record, thus the takeback function could be simplified by copying back stored board.
+
+- Chess perft 5 took 523 ms, 161% longer (slower) than Attemp 7

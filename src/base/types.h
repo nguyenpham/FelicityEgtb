@@ -240,27 +240,31 @@ public:
 };
 
 
-class Hist {
-public:
-    MoveFull move;
-    Piece cap;
-    int quietCnt;
-    
-#ifdef _FELICITY_CHESS_
-    int enpassant, castled;
-    int8_t castleRights[2];
-#endif
-    
-    
-    void set(const MoveFull& _move) {
-        move = _move;
-    }
-
-    bool isValid() const {
-        return move.isValid() && cap.isValid();
-    }
-    
-};
+//class Hist {
+//    friend class BoardData;
+//
+//public:
+//    MoveFull move;
+//    Piece cap;
+//
+////    int quietCnt;
+////    
+////#ifdef _FELICITY_CHESS_
+////    int enpassant, castled;
+////    int8_t castleRights[2];
+////#endif
+//    
+//    BoardData boardData;
+//    
+//    void set(const MoveFull& _move) {
+//        move = _move;
+//    }
+//
+//    bool isValid() const {
+//        return move.isValid() && cap.isValid();
+//    }
+//    
+//};
 
 
 #define getXSide(side) ((side)==bslib::Side::white ? bslib::Side::black : bslib::Side::white)

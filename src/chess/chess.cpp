@@ -885,13 +885,15 @@ void ChessBoard::make(const MoveFull& move, Hist& hist)
 {
     assert(pieceList_isValid());
     assert(!move.piece.isEmpty() && move.isValid());
-    hist.enpassant = enpassant;
-    hist.castleRights[0] = castleRights[0];
-    hist.castleRights[1] = castleRights[1];
-    hist.castled = 0;
+    hist.boardData.cloneData(this);
+    
+//    hist.enpassant = enpassant;
+//    hist.castleRights[0] = castleRights[0];
+//    hist.castleRights[1] = castleRights[1];
+//    hist.quietCnt = quietCnt;
+//    hist.castled = 0;
     hist.move = move;
     hist.cap = pieces[move.dest]; assert(hist.cap.isValid() && hist.cap.type != PieceType::king);
-    hist.quietCnt = quietCnt;
     
     auto p = pieces[move.from];
     assert(p.isValid() && !p.isEmpty() && p == move.piece);
@@ -918,7 +920,7 @@ void ChessBoard::make(const MoveFull& move, Hist& hist)
                 pieces[newRookPos] = pieces[rookPos];
                 pieces[rookPos].setEmpty();
                 quietCnt = 0;
-                hist.castled = move.dest == 2 || move.dest == 56 + 2 ? CastleRight_long : CastleRight_short;
+//                hist.castled = move.dest == 2 || move.dest == 56 + 2 ? CastleRight_long : CastleRight_short;
             }
             break;
         }
@@ -936,7 +938,7 @@ void ChessBoard::make(const MoveFull& move, Hist& hist)
             
             if (d == 16) {
                 enpassant = (move.from + move.dest) / 2;
-            } else if (move.dest == hist.enpassant) {
+            } else if (move.dest == hist.boardData.enpassant) {
                 auto ep = move.dest + (p.side == Side::white ? +8 : -8);
                 hist.cap = pieces[ep];
                 assert(hist.cap.isValid() && hist.cap.type == PieceType::pawn);
@@ -957,19 +959,19 @@ void ChessBoard::make(const MoveFull& move, Hist& hist)
         quietCnt = 0;
     }
     
-    if (hist.castleRights[W] != castleRights[W]) {
-        if ((hist.castleRights[W] & CastleRight_short) != (castleRights[W] & CastleRight_short)) {
+    if (hist.boardData.castleRights[W] != castleRights[W]) {
+        if ((hist.boardData.castleRights[W] & CastleRight_short) != (castleRights[W] & CastleRight_short)) {
             quietCnt = 0;
         }
-        if ((hist.castleRights[W] & CastleRight_long) != (castleRights[W] & CastleRight_long)) {
+        if ((hist.boardData.castleRights[W] & CastleRight_long) != (castleRights[W] & CastleRight_long)) {
             quietCnt = 0;
         }
     }
-    if (hist.castleRights[B] != castleRights[B]) {
-        if ((hist.castleRights[B] & CastleRight_short) != (castleRights[B] & CastleRight_short)) {
+    if (hist.boardData.castleRights[B] != castleRights[B]) {
+        if ((hist.boardData.castleRights[B] & CastleRight_short) != (castleRights[B] & CastleRight_short)) {
             quietCnt = 0;
         }
-        if ((hist.castleRights[B] & CastleRight_long) != (castleRights[B] & CastleRight_long)) {
+        if ((hist.boardData.castleRights[B] & CastleRight_long) != (castleRights[B] & CastleRight_long)) {
             quietCnt = 0;
         }
     }
@@ -980,41 +982,8 @@ void ChessBoard::make(const MoveFull& move, Hist& hist)
 
 void ChessBoard::takeBack(const Hist& hist)
 {
-    assert(pieceList_isValid());
-    auto movep = pieces[hist.move.dest]; assert(movep.isValid());
-    pieces[hist.move.from] = movep;
+    cloneData(&hist.boardData);
 
-    auto capPos = hist.move.dest;
-
-    if (movep.type == PieceType::pawn && hist.enpassant == hist.move.dest) {
-        capPos = hist.move.dest + (movep.side == Side::white ? +8 : -8);
-        pieces[hist.move.dest].setEmpty();
-    }
-    pieces[capPos] = hist.cap;
-
-    if (movep.type == PieceType::king) {
-        if (abs(hist.move.from - hist.move.dest) == 2) {
-            assert(hist.castled == CastleRight_long || hist.castled == CastleRight_short);
-            int rookPos = hist.move.from + (hist.move.from < hist.move.dest ? 3 : -4);
-            assert(isEmpty(rookPos));
-
-            int newRookPos = (hist.move.from + hist.move.dest) / 2;
-            pieces[rookPos] = pieces[newRookPos];
-            pieces[newRookPos].setEmpty();
-        }
-    }
-    
-    if (hist.move.promotion != PieceType::empty) {
-        pieces[hist.move.from] = Piece(PieceType::pawn, movep.side);
-        assert(pieces[hist.move.from].isValid() && pieces[hist.move.from].type == PieceType::pawn);
-    }
-    
-    castleRights[0] = hist.castleRights[0];
-    castleRights[1] = hist.castleRights[1];
-    enpassant = hist.enpassant;
-    quietCnt = hist.quietCnt;
-    
-    pieceList_takeback(hist);
     assert(pieceList_isValid());
 }
 
@@ -1207,7 +1176,7 @@ bool ChessBoard::pieceList_make(const Hist& hist)
 {
     if (!hist.cap.isEmpty()) {
         auto dest = hist.move.dest;
-        if (hist.cap.type == PieceType::pawn && dest == hist.enpassant) {
+        if (hist.cap.type == PieceType::pawn && dest == hist.boardData.enpassant) {
             dest = dest + (hist.cap.side == Side::black ? +8 : -8);
         }
         for (auto t = pieceListStartIdxByType[static_cast<int>(hist.cap.type)], sd = static_cast<int>(hist.cap.side); ; t++) {
