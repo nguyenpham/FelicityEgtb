@@ -32,9 +32,6 @@ namespace bslib {
 
 
     class ChessBoard : public BoardCore {
-//    public:
-//        int enpassant = -1;
-//        int8_t castleRights[2];
 
     public:
         
@@ -94,8 +91,6 @@ namespace bslib {
 
         virtual void createFullMoves(std::vector<MoveFull>& moveList, MoveFull m) const override;
         
-//        virtual void clone(const BoardCore* oboard) override;
-
         int8_t getCastleRights(int sd) const {
             return castleRights[sd];
         }
@@ -159,8 +154,15 @@ namespace bslib {
         
         int toPieceCount(int* pieceCnt) const;
         
+        
+        void generateGenData();
+        void genKnight(std::vector<std::vector<int>>& moves, int pos) const;
+        void genRook(std::vector<std::vector<int>>& moves, int pos, bool oneStep) const;
+        void genBishop(std::vector<std::vector<int>>& moves, int pos, bool oneStep) const;
+
     protected:
         void gen_addPawnMove(std::vector<MoveFull>& moveList, int from, int dest) const;
+        
     };
     
     extern const char* pieceTypeFullNames[8];

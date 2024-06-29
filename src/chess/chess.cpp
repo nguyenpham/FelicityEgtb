@@ -45,16 +45,20 @@ const PieceType pieceListIdxToType[16] = {
 
 static const std::string originFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq";
 
+static bool gendataInit = false;
+static std::vector<std::vector<int>> gendata[64][PAWN + 1];
 
 ChessBoard::ChessBoard(ChessVariant _variant)
 {
     variant = _variant;
     assert(Funcs::isChessFamily(variant));
 
-    //pieces.clear();
+    
     for(auto i = 0; i < 64; i++) {
         pieces[i] = Piece::emptyPiece;
     }
+
+    generateGenData();
 }
 
 ChessBoard::ChessBoard(const ChessBoard& other)
@@ -65,6 +69,173 @@ ChessBoard::ChessBoard(const ChessBoard& other)
 ChessBoard::~ChessBoard()
 {
 }
+
+void ChessBoard::generateGenData()
+{
+    if (gendataInit) {
+        return;
+    }
+    gendataInit = true;
+    
+    for (auto i = 0; i < 64; ++i) {
+        
+        /// King
+        genBishop(gendata[i][KING], i, true);
+        genRook(gendata[i][KING], i, true);
+        
+        std::vector<std::vector<int>> moves;
+        /// Queen, Bishop
+        genBishop(moves, i, false);
+        gendata[i][static_cast<int>(PieceType::queen)] = moves;
+        gendata[i][static_cast<int>(PieceType::bishop)] = moves;
+
+
+        /// Queen, Rook
+        moves.clear();
+        genRook(moves, i, false);
+        
+        gendata[i][static_cast<int>(PieceType::queen)].insert(gendata[i][static_cast<int>(PieceType::queen)].end(), moves.begin(), moves.end());
+
+        gendata[i][static_cast<int>(PieceType::rook)].insert(gendata[i][static_cast<int>(PieceType::rook)].end(), moves.begin(), moves.end());
+
+
+        /// Knight
+        genKnight(gendata[i][static_cast<int>(PieceType::knight)], i);
+
+        /// Pawn
+    }
+}
+
+////////////
+void ChessBoard::genKnight(std::vector<std::vector<int>>& moves, int pos) const
+{
+    auto col = getColumn(pos);
+    auto y = pos - 6;
+
+    if (y >= 0 && col < 6) {
+        moves.push_back(std::vector<int>{y});
+    }
+    y = pos - 10;
+    if (y >= 0 && col > 1)
+        moves.push_back(std::vector<int>{y});
+    y = pos - 15;
+    if (y >= 0 && col < 7)
+        moves.push_back(std::vector<int>{y});
+    y = pos - 17;
+    if (y >= 0 && col > 0)
+        moves.push_back(std::vector<int>{y});
+    y = pos + 6;
+    if (y < 64 && col > 1)
+        moves.push_back(std::vector<int>{y});
+    y = pos + 10;
+    if (y < 64 && col < 6)
+        moves.push_back(std::vector<int>{y});
+    y = pos + 15;
+    if (y < 64 && col > 0)
+        moves.push_back(std::vector<int>{y});
+    y = pos + 17;
+    if (y < 64 && col < 7)
+        moves.push_back(std::vector<int>{y});
+}
+
+void ChessBoard::genRook(std::vector<std::vector<int>>& moves, int pos, bool oneStep) const
+{
+    auto col = getColumn(pos);
+    std::vector<int> v;
+    for (auto y = pos - 1; y >= pos - col; y--) { /* go left */
+        v.push_back(y);
+        if (oneStep) {
+            break;
+        }
+    }
+    
+    if (!v.empty()) {
+        moves.push_back(v);
+        v.clear();
+    }
+
+    for (auto y = pos + 1; y < pos - col + 8; y++) { /* go right */
+        v.push_back(y);
+        if (oneStep) {
+            break;
+        }
+    }
+
+    if (!v.empty()) {
+        moves.push_back(v);
+        v.clear();
+    }
+
+    for (auto y = pos - 8; y >= 0; y -= 8) { /* go up */
+        v.push_back(y);
+        if (oneStep) {
+            break;
+        }
+    }
+    if (!v.empty()) {
+        moves.push_back(v);
+        v.clear();
+    }
+
+    for (auto y = pos + 8; y < 64; y += 8) { /* go down */
+        v.push_back(y);
+        if (oneStep) {
+            break;
+        }
+    }
+    if (!v.empty()) {
+        moves.push_back(v);
+    }
+}
+
+void ChessBoard::genBishop(std::vector<std::vector<int>>& moves, int pos, bool oneStep) const
+{
+    std::vector<int> v;
+    for (auto y = pos - 9; y >= 0 && getColumn(y) != 7; y -= 9) {        /* go left up */
+        v.push_back(y);
+        if (oneStep) {
+            break;
+        }
+    }
+    if (!v.empty()) {
+        moves.push_back(v);
+        v.clear();
+    }
+    for (auto y = pos - 7; y >= 0 && getColumn(y) != 0; y -= 7) {        /* go right up */
+        v.push_back(y);
+        if (oneStep) {
+            break;
+        }
+    }
+    if (!v.empty()) {
+        moves.push_back(v);
+        v.clear();
+    }
+    for (auto y = pos + 9; y < 64 && getColumn(y) != 0; y += 9) {        /* go right down */
+        v.push_back(y);
+        if (oneStep) {
+            break;
+        }
+    }
+    if (!v.empty()) {
+        moves.push_back(v);
+        v.clear();
+    }
+    
+    for (auto y = pos + 7; y < 64 && getColumn(y) != 7; y += 7) {        /* go right down */
+        v.push_back(y);
+        if (oneStep) {
+            break;
+        }
+    }
+    
+    if (!v.empty()) {
+        moves.push_back(v);
+    }
+}
+
+
+///////////
 
 int ChessBoard::columnCount() const
 {
@@ -522,8 +693,71 @@ bool ChessBoard::isIncheck(Side beingAttackedSide) const {
 
 ////////////////////////////////////////////////////////////////////////
 
+//void ChessBoard::gen(std::vector<MoveFull>& moves, Side side) const
+//{
+//    moves.reserve(MaxMoveBranch);
+//
+//    const int* pl = pieceList[static_cast<int>(side)];
+//
+//    for (int l = 0; l < 16; l++) {
+//        auto pos = pl[l];
+//        if (pos < 0) {
+//            continue;
+//        }
+//
+//        auto piece = pieces[pos]; assert(piece.side == side);
+//
+//        switch (static_cast<PieceType>(piece.type)) {
+//            case PieceType::king:
+//            {
+//                genBishop(moves, side, pos, true);
+//                genRook(moves, side, pos, true);
+//                gen_castling(moves, pos);
+//                break;
+//            }
+//
+//            case PieceType::queen:
+//            {
+//                genBishop(moves, side, pos, false);
+//                genRook(moves, side, pos, false);
+//                break;
+//            }
+//
+//            case PieceType::bishop:
+//            {
+//                genBishop(moves, side, pos, false);
+//                break;
+//            }
+//
+//            case PieceType::rook:
+//            {
+//                genRook(moves, side, pos, false);
+//                break;
+//            }
+//
+//            case PieceType::knight:
+//            {
+//                genKnight(moves, side, pos);
+//                break;
+//            }
+//
+//            case PieceType::pawn:
+//            {
+//                genPawn(moves, side, pos);
+//                break;
+//            }
+//
+//            default:
+//                break;
+//        }
+//    }
+//}
+
+
 void ChessBoard::gen(std::vector<MoveFull>& moves, Side side) const
 {
+    assert(gendataInit);
+    
     moves.reserve(MaxMoveBranch);
 
     const int* pl = pieceList[static_cast<int>(side)];
@@ -533,51 +767,25 @@ void ChessBoard::gen(std::vector<MoveFull>& moves, Side side) const
         if (pos < 0) {
             continue;
         }
-
+        
         auto piece = pieces[pos]; assert(piece.side == side);
-
-        switch (static_cast<PieceType>(piece.type)) {
-            case PieceType::king:
-            {
-                genBishop(moves, side, pos, true);
-                genRook(moves, side, pos, true);
+        
+        if (piece.type == PieceType::pawn) {
+            genPawn(moves, side, pos);
+        } else {
+            auto t = static_cast<int>(piece.type);
+            for(auto i = 0; i < gendata[pos][t].size(); ++i) {
+                for (auto && y : gendata[pos][t][i]) {
+                    gen_addMove(moves, pos, y);
+                    if (!isEmpty(y)) {
+                        break;
+                    }
+                }
+            }
+            
+            if (piece.type == PieceType::king) {
                 gen_castling(moves, pos);
-                break;
             }
-
-            case PieceType::queen:
-            {
-                genBishop(moves, side, pos, false);
-                genRook(moves, side, pos, false);
-                break;
-            }
-
-            case PieceType::bishop:
-            {
-                genBishop(moves, side, pos, false);
-                break;
-            }
-
-            case PieceType::rook:
-            {
-                genRook(moves, side, pos, false);
-                break;
-            }
-
-            case PieceType::knight:
-            {
-                genKnight(moves, side, pos);
-                break;
-            }
-
-            case PieceType::pawn:
-            {
-                genPawn(moves, side, pos);
-                break;
-            }
-
-            default:
-                break;
         }
     }
 }
@@ -743,6 +951,145 @@ void ChessBoard::gen_castling(std::vector<MoveFull>& moves, int kingPos) const
 
 ////////////////////////////////////////////////////////////////////////
 
+//bool ChessBoard::beAttacked(int pos, Side attackerSide) const
+//{
+//    int row = getRank(pos), col = getColumn(pos);
+//    /* Check attacking of Knight */
+//    if (col > 0 && row > 1 && isPiece(pos - 17, PieceType::knight, attackerSide))
+//        return true;
+//    if (col < 7 && row > 1 && isPiece(pos - 15, PieceType::knight, attackerSide))
+//        return true;
+//    if (col > 1 && row > 0 && isPiece(pos - 10, PieceType::knight, attackerSide))
+//        return true;
+//    if (col < 6 && row > 0 && isPiece(pos - 6, PieceType::knight, attackerSide))
+//        return true;
+//    if (col > 1 && row < 7 && isPiece(pos + 6, PieceType::knight, attackerSide))
+//        return true;
+//    if (col < 6 && row < 7 && isPiece(pos + 10, PieceType::knight, attackerSide))
+//        return true;
+//    if (col > 0 && row < 6 && isPiece(pos + 15, PieceType::knight, attackerSide))
+//        return true;
+//    if (col < 7 && row < 6 && isPiece(pos + 17, PieceType::knight, attackerSide))
+//        return true;
+//    
+//    /* Check horizontal and vertical lines for attacking of Queen, Rook, King */
+//    /* go down */
+//    for (auto y = pos + 8; y < 64; y += 8) {
+//        auto piece = getPiece(y);
+//        if (!piece.isEmpty()) {
+//            if (piece.side == attackerSide) {
+//                if (piece.type == PieceType::queen || piece.type == PieceType::rook ||
+//                    (piece.type == PieceType::king && y == pos + 8)) {
+//                    return true;
+//                }
+//            }
+//            break;
+//        }
+//    }
+//    
+//    /* go up */
+//    for (auto y = pos - 8; y >= 0; y -= 8) {
+//        auto piece = getPiece(y);
+//        if (!piece.isEmpty()) {
+//            if (piece.side == attackerSide) {
+//                if (piece.type == PieceType::queen || piece.type == PieceType::rook ||
+//                    (piece.type == PieceType::king && y == pos - 8)) {
+//                    return true;
+//                }
+//            }
+//            break;
+//        }
+//    }
+//    
+//    /* go left */
+//    for (auto y = pos - 1; y >= pos - col; y--) {
+//        auto piece = getPiece(y);
+//        if (!piece.isEmpty()) {
+//            if (piece.side == attackerSide) {
+//                if (piece.type == PieceType::queen || piece.type == PieceType::rook ||
+//                    (piece.type == PieceType::king && y == pos - 1)) {
+//                    return true;
+//                }
+//            }
+//            break;
+//        }
+//    }
+//    
+//    /* go right */
+//    for (auto y = pos + 1; y < pos - col + 8; y++) {
+//        auto piece = getPiece(y);
+//        if (!piece.isEmpty()) {
+//            if (piece.side == attackerSide) {
+//                if (piece.type == PieceType::queen || piece.type == PieceType::rook ||
+//                    (piece.type == PieceType::king && y == pos + 1)) {
+//                    return true;
+//                }
+//            }
+//            break;
+//        }
+//    }
+//    
+//    /* Check diagonal lines for attacking of Queen, Bishop, King, Pawn */
+//    /* go right down */
+//    for (auto y = pos + 9; y < 64 && getColumn(y) != 0; y += 9) {
+//        auto piece = getPiece(y);
+//        if (!piece.isEmpty()) {
+//            if (piece.side == attackerSide) {
+//                if (piece.type == PieceType::queen || piece.type == PieceType::bishop ||
+//                    (y == pos + 9 && (piece.type == PieceType::king || (piece.type == PieceType::pawn && piece.side == Side::white)))) {
+//                    return true;
+//                }
+//            }
+//            break;
+//        }
+//    }
+//    
+//    /* go left down */
+//    for (auto y = pos + 7; y < 64 && getColumn(y) != 7; y += 7) {
+//        auto piece = getPiece(y);
+//        if (!piece.isEmpty()) {
+//            if (piece.side == attackerSide) {
+//                if (piece.type == PieceType::queen || piece.type == PieceType::bishop ||
+//                    (y == pos + 7 && (piece.type == PieceType::king || (piece.type == PieceType::pawn && piece.side == Side::white)))) {
+//                    return true;
+//                }
+//            }
+//            break;
+//        }
+//    }
+//    
+//    /* go left up */
+//    for (auto y = pos - 9; y >= 0 && getColumn(y) != 7; y -= 9) {
+//        auto piece = getPiece(y);
+//        if (!piece.isEmpty()) {
+//            if (piece.side == attackerSide) {
+//                if (piece.type == PieceType::queen || piece.type == PieceType::bishop ||
+//                    (y == pos - 9 && (piece.type == PieceType::king || (piece.type == PieceType::pawn && piece.side == Side::black)))) {
+//                    return true;
+//                }
+//            }
+//            break;
+//        }
+//    }
+//    
+//    /* go right up */
+//    for (auto y = pos - 7; y >= 0 && getColumn(y) != 0; y -= 7) {
+//        auto piece = getPiece(y);
+//        if (!piece.isEmpty()) {
+//            if (piece.side == attackerSide) {
+//                if (piece.type == PieceType::queen || piece.type == PieceType::bishop ||
+//                    (y == pos - 7 && (piece.type == PieceType::king || (piece.type == PieceType::pawn && piece.side == Side::black)))) {
+//                    return true;
+//                }
+//            }
+//            break;
+//        }
+//    }
+//    
+//    return false;
+//}
+
+////////////////////////////////////////////////////////////////////////
 bool ChessBoard::beAttacked(int pos, Side attackerSide) const
 {
     int row = getRank(pos), col = getColumn(pos);
@@ -765,116 +1112,49 @@ bool ChessBoard::beAttacked(int pos, Side attackerSide) const
         return true;
     
     /* Check horizontal and vertical lines for attacking of Queen, Rook, King */
-    /* go down */
-    for (auto y = pos + 8; y < 64; y += 8) {
-        auto piece = getPiece(y);
-        if (!piece.isEmpty()) {
-            if (piece.side == attackerSide) {
-                if (piece.type == PieceType::queen || piece.type == PieceType::rook ||
-                    (piece.type == PieceType::king && y == pos + 8)) {
-                    return true;
+    for(auto i = 0; i < gendata[pos][ROOK].size(); ++i) {
+        for (auto && y : gendata[pos][ROOK][i]) {
+            auto piece = getPiece(y);
+            if (!piece.isEmpty()) {
+                if (piece.side == attackerSide) {
+                    if (piece.type == PieceType::queen 
+                        || piece.type == PieceType::rook
+                        || (piece.type == PieceType::king && (abs(pos - y) == 1 || abs(pos - y) == 8))
+                        ) {
+                        return true;
+                    }
                 }
+                break;
             }
-            break;
         }
     }
-    
-    /* go up */
-    for (auto y = pos - 8; y >= 0; y -= 8) {
-        auto piece = getPiece(y);
-        if (!piece.isEmpty()) {
-            if (piece.side == attackerSide) {
-                if (piece.type == PieceType::queen || piece.type == PieceType::rook ||
-                    (piece.type == PieceType::king && y == pos - 8)) {
-                    return true;
-                }
-            }
-            break;
-        }
-    }
-    
-    /* go left */
-    for (auto y = pos - 1; y >= pos - col; y--) {
-        auto piece = getPiece(y);
-        if (!piece.isEmpty()) {
-            if (piece.side == attackerSide) {
-                if (piece.type == PieceType::queen || piece.type == PieceType::rook ||
-                    (piece.type == PieceType::king && y == pos - 1)) {
-                    return true;
-                }
-            }
-            break;
-        }
-    }
-    
-    /* go right */
-    for (auto y = pos + 1; y < pos - col + 8; y++) {
-        auto piece = getPiece(y);
-        if (!piece.isEmpty()) {
-            if (piece.side == attackerSide) {
-                if (piece.type == PieceType::queen || piece.type == PieceType::rook ||
-                    (piece.type == PieceType::king && y == pos + 1)) {
-                    return true;
-                }
-            }
-            break;
-        }
-    }
-    
+
     /* Check diagonal lines for attacking of Queen, Bishop, King, Pawn */
-    /* go right down */
-    for (auto y = pos + 9; y < 64 && getColumn(y) != 0; y += 9) {
-        auto piece = getPiece(y);
-        if (!piece.isEmpty()) {
-            if (piece.side == attackerSide) {
-                if (piece.type == PieceType::queen || piece.type == PieceType::bishop ||
-                    (y == pos + 9 && (piece.type == PieceType::king || (piece.type == PieceType::pawn && piece.side == Side::white)))) {
-                    return true;
+    for(auto i = 0; i < gendata[pos][BISHOP].size(); ++i) {
+        for (auto && y : gendata[pos][BISHOP][i]) {
+            auto piece = getPiece(y);
+            if (!piece.isEmpty()) {
+                if (piece.side == attackerSide) {
+                    if (piece.type == PieceType::queen || piece.type == PieceType::bishop) {
+                        return true;
+                    }
+                    if (piece.type == PieceType::king) {
+                        auto d = abs(pos - y);
+                        if (d == 7 || d == 9) {
+                            return true;
+                        }
+                    }
+                    if (piece.type == PieceType::pawn
+                        && ((attackerSide == Side::white && pos < y) || (attackerSide == Side::black && pos > y))
+                        ) {
+                        auto d = abs(pos - y);
+                        if (d == 7 || d == 9) {
+                            return true;
+                        }
+                    }
                 }
+                break;
             }
-            break;
-        }
-    }
-    
-    /* go left down */
-    for (auto y = pos + 7; y < 64 && getColumn(y) != 7; y += 7) {
-        auto piece = getPiece(y);
-        if (!piece.isEmpty()) {
-            if (piece.side == attackerSide) {
-                if (piece.type == PieceType::queen || piece.type == PieceType::bishop ||
-                    (y == pos + 7 && (piece.type == PieceType::king || (piece.type == PieceType::pawn && piece.side == Side::white)))) {
-                    return true;
-                }
-            }
-            break;
-        }
-    }
-    
-    /* go left up */
-    for (auto y = pos - 9; y >= 0 && getColumn(y) != 7; y -= 9) {
-        auto piece = getPiece(y);
-        if (!piece.isEmpty()) {
-            if (piece.side == attackerSide) {
-                if (piece.type == PieceType::queen || piece.type == PieceType::bishop ||
-                    (y == pos - 9 && (piece.type == PieceType::king || (piece.type == PieceType::pawn && piece.side == Side::black)))) {
-                    return true;
-                }
-            }
-            break;
-        }
-    }
-    
-    /* go right up */
-    for (auto y = pos - 7; y >= 0 && getColumn(y) != 0; y -= 7) {
-        auto piece = getPiece(y);
-        if (!piece.isEmpty()) {
-            if (piece.side == attackerSide) {
-                if (piece.type == PieceType::queen || piece.type == PieceType::bishop ||
-                    (y == pos - 7 && (piece.type == PieceType::king || (piece.type == PieceType::pawn && piece.side == Side::black)))) {
-                    return true;
-                }
-            }
-            break;
         }
     }
     

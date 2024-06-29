@@ -30,13 +30,13 @@
             filePath = "src/chess/chess.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "151"
-            endingLineNumber = "151"
+            startingLineNumber = "322"
+            endingLineNumber = "322"
             landmarkName = "ChessBoard::isValid()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "004B6D21-EE3D-4715-9358-7E6DF0442E38 - cc864ba56a207ad3"
+                  uuid = "004B6D21-EE3D-4715-9358-7E6DF0442E38 - cc864ba56a21923c"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -46,12 +46,12 @@
                   urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "146"
-                  endingLineNumber = "146"
-                  offsetFromSymbolStart = "210">
+                  startingLineNumber = "329"
+                  endingLineNumber = "329"
+                  offsetFromSymbolStart = "874">
                </Location>
                <Location
-                  uuid = "004B6D21-EE3D-4715-9358-7E6DF0442E38 - cc864ba56a207af4"
+                  uuid = "004B6D21-EE3D-4715-9358-7E6DF0442E38 - cc864ba56a21923c"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -61,12 +61,12 @@
                   urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "145"
-                  endingLineNumber = "145"
-                  offsetFromSymbolStart = "261">
+                  startingLineNumber = "329"
+                  endingLineNumber = "329"
+                  offsetFromSymbolStart = "247">
                </Location>
                <Location
-                  uuid = "004B6D21-EE3D-4715-9358-7E6DF0442E38 - cc864ba56a207b4f"
+                  uuid = "004B6D21-EE3D-4715-9358-7E6DF0442E38 - cc864ba56a219123"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -76,53 +76,8 @@
                   urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "150"
-                  endingLineNumber = "150"
-                  offsetFromSymbolStart = "261">
-               </Location>
-               <Location
-                  uuid = "004B6D21-EE3D-4715-9358-7E6DF0442E38 - cc864ba56a207b0d"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::ChessBoard::isValid() const"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "152"
-                  endingLineNumber = "152"
-                  offsetFromSymbolStart = "283">
-               </Location>
-               <Location
-                  uuid = "004B6D21-EE3D-4715-9358-7E6DF0442E38 - cc864ba56a207b2e"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::ChessBoard::isValid() const"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "151"
-                  endingLineNumber = "151"
-                  offsetFromSymbolStart = "283">
-               </Location>
-               <Location
-                  uuid = "004B6D21-EE3D-4715-9358-7E6DF0442E38 - cc864ba56a207b2e"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::ChessBoard::isValid() const"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "151"
-                  endingLineNumber = "151"
+                  startingLineNumber = "322"
+                  endingLineNumber = "322"
                   offsetFromSymbolStart = "247">
                </Location>
             </Locations>
@@ -132,154 +87,62 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "8E8F836A-CDA2-4EF1-84AD-B0DE15EF5018"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/chess/chess.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "158"
-            endingLineNumber = "158"
+            startingLineNumber = "329"
+            endingLineNumber = "329"
             landmarkName = "ChessBoard::isValid()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "8E8F836A-CDA2-4EF1-84AD-B0DE15EF5018 - cc864ba56a2064e4"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::ChessBoard::isValid() const"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "161"
-                  endingLineNumber = "161"
-                  offsetFromSymbolStart = "379">
-               </Location>
-               <Location
-                  uuid = "8E8F836A-CDA2-4EF1-84AD-B0DE15EF5018 - cc864ba56a206426"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::ChessBoard::isValid() const"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "159"
-                  endingLineNumber = "159"
-                  offsetFromSymbolStart = "376">
-               </Location>
-               <Location
-                  uuid = "8E8F836A-CDA2-4EF1-84AD-B0DE15EF5018 - cc864ba56a206447"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::ChessBoard::isValid() const"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "158"
-                  endingLineNumber = "158"
-                  offsetFromSymbolStart = "376">
-               </Location>
-               <Location
-                  uuid = "8E8F836A-CDA2-4EF1-84AD-B0DE15EF5018 - cc864ba56a206447"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::ChessBoard::isValid() const"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "158"
-                  endingLineNumber = "158"
-                  offsetFromSymbolStart = "340">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "71FE3C56-7342-456E-A729-39EBAC978DBC"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/chess/chess.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "164"
-            endingLineNumber = "164"
+            startingLineNumber = "335"
+            endingLineNumber = "335"
             landmarkName = "ChessBoard::isValid()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "71FE3C56-7342-456E-A729-39EBAC978DBC - cc864ba56a20653f"
+                  uuid = "71FE3C56-7342-456E-A729-39EBAC978DBC - fa6b76e16b0b83f3"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "bslib::ChessBoard::isValid() const"
+                  symbolName = "bslib::ChessBoard::toString() const"
                   moduleName = "FelicityEgtb"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "166"
-                  endingLineNumber = "166"
-                  offsetFromSymbolStart = "440">
+                  startingLineNumber = "305"
+                  endingLineNumber = "305"
+                  offsetFromSymbolStart = "563">
                </Location>
                <Location
-                  uuid = "71FE3C56-7342-456E-A729-39EBAC978DBC - cc864ba56a206560"
+                  uuid = "71FE3C56-7342-456E-A729-39EBAC978DBC - fa6b76e16b0b83f3"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "bslib::ChessBoard::isValid() const"
+                  symbolName = "bslib::ChessBoard::toString() const"
                   moduleName = "FelicityEgtb"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "165"
-                  endingLineNumber = "165"
-                  offsetFromSymbolStart = "441">
-               </Location>
-               <Location
-                  uuid = "71FE3C56-7342-456E-A729-39EBAC978DBC - cc864ba56a206481"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::ChessBoard::isValid() const"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "164"
-                  endingLineNumber = "164"
-                  offsetFromSymbolStart = "441">
-               </Location>
-               <Location
-                  uuid = "71FE3C56-7342-456E-A729-39EBAC978DBC - cc864ba56a206481"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::ChessBoard::isValid() const"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "164"
-                  endingLineNumber = "164"
-                  offsetFromSymbolStart = "405">
+                  startingLineNumber = "305"
+                  endingLineNumber = "305"
+                  offsetFromSymbolStart = "621">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -288,78 +151,16 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "4AD07992-D933-4811-9E71-A75F025D1EAE"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/chess/chess.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "168"
-            endingLineNumber = "168"
+            startingLineNumber = "339"
+            endingLineNumber = "339"
             landmarkName = "ChessBoard::isValid()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "4AD07992-D933-4811-9E71-A75F025D1EAE - cc864ba56a2065bb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::ChessBoard::isValid() const"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "170"
-                  endingLineNumber = "170"
-                  offsetFromSymbolStart = "552">
-               </Location>
-               <Location
-                  uuid = "4AD07992-D933-4811-9E71-A75F025D1EAE - cc864ba56a2065dc"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::ChessBoard::isValid() const"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "169"
-                  endingLineNumber = "169"
-                  offsetFromSymbolStart = "553">
-               </Location>
-               <Location
-                  uuid = "4AD07992-D933-4811-9E71-A75F025D1EAE - cc864ba56a2065fd"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::ChessBoard::isValid() const"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "168"
-                  endingLineNumber = "168"
-                  offsetFromSymbolStart = "553">
-               </Location>
-               <Location
-                  uuid = "4AD07992-D933-4811-9E71-A75F025D1EAE - cc864ba56a2065fd"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::ChessBoard::isValid() const"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/chess/chess.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "168"
-                  endingLineNumber = "168"
-                  offsetFromSymbolStart = "517">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -372,8 +173,8 @@
             filePath = "src/chess/chess.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "198"
-            endingLineNumber = "198"
+            startingLineNumber = "369"
+            endingLineNumber = "369"
             landmarkName = "ChessBoard::isValid()"
             landmarkType = "7">
             <Locations>
@@ -420,8 +221,8 @@
             filePath = "src/chess/chess.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "143"
-            endingLineNumber = "143"
+            startingLineNumber = "314"
+            endingLineNumber = "314"
             landmarkName = "ChessBoard::isValid()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1419,9 +1220,9 @@
             filePath = "src/chess/chess.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1091"
-            endingLineNumber = "1091"
-            landmarkName = "ChessBoard::createFullMoves(moveList, m)"
+            startingLineNumber = "1371"
+            endingLineNumber = "1371"
+            landmarkName = "ChessBoard::flip(flipMode)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1435,9 +1236,9 @@
             filePath = "src/chess/chess.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1101"
-            endingLineNumber = "1101"
-            landmarkName = "ChessBoard::pieceList_setPiece(pieceList, pos, type, side)"
+            startingLineNumber = "1381"
+            endingLineNumber = "1381"
+            landmarkName = "ChessBoard::toPieceCount(pieceCnt)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1451,9 +1252,9 @@
             filePath = "src/chess/chess.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1095"
-            endingLineNumber = "1095"
-            landmarkName = "ChessBoard::pieceList_setPiece(pieceList, pos, type, side)"
+            startingLineNumber = "1375"
+            endingLineNumber = "1375"
+            landmarkName = "ChessBoard::flip(flipMode)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1578,7 +1379,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "357"
             endingLineNumber = "357"
-            landmarkName = "EgtbKey::createKingKeys()"
+            landmarkName = "EgtbKey::getKey(board, egtbIdxRecord, order)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
