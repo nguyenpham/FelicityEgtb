@@ -94,3 +94,10 @@ When making a move, whole board data is copied into Hist record, thus the takeba
 - Chess perft 5 took 523 ms, 161% longer (slower) than Attempt 7
 
 The code is in the branch "wholeboardinhist".
+
+
+Attempt 17
+----------
+Use table move generator. It could speed up Perft to 10%. If using table move data for isInCheck function, the speed up is about 5% (slower).
+
+The code is in the branch "tablemovegen".

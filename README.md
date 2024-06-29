@@ -50,7 +50,7 @@ Attempt 10: Calculate position indexes for Xiangqi/Jeiqi.
 
 Attempt 11: calculate 5-men Index space for chess.
 
-Attempt 12: generating all 5-men engames for chess, using the forward method. Total time: 3 days 15 hours (generating time only). Total size: 8.88 GB, endgames: 145, files: 190.
+Attempt 12: generating all 5-men engames for chess, using the forward method. Total time: 3 days 15 hours (generating time only). Total size: 8.88 GB, endgames: 145, files: 190. Hardware: AMD Ryzen 7 1700 8-Core 16 threads, 16 GB RAM, ran with 12 threads and took about 85% of the computer's power.
 
 Attempt 13: generate all 5-men endgames for chess using the backward method. Total time: 21 hours (generating time only), 4 times faster than Attempt 12.
 
@@ -60,11 +60,13 @@ Attempt 15: calculate index spaces for more men for chess. Some code has been ad
 
 Attempt 16: Store whole board data in Hist record when making a move, thus the takeback function could be simplified by copying back stored board. Chess perft 5 took 523 ms, 161% longer (slower) than Attempt 7. The code is in the branch "wholeboardinhist".
 
+Attempt 17: Use table move generator. It could speed up Perft to 10%. If using table move data for isInCheck function, the speed up is about 5% (slower).
+    The code is in the branch "tablemovegen".
 
 Status
 ======
 
-In development: All code has been still being written. You may use them for studying, trying to integrate into your code, generating some small EGTBs. However, you should not use them to generate EGTBs seriously nor contribute them since the code has been in checking process and all could be changed, from algorithms to file structures.
+In development: All code has been still being written. You may use them for studying, trying to integrate into your code, generating some small EGTBs. However, you are suggested to not generate EGTBs seriously nor contribute them since everything could be changed, from algorithms to file structures.
 
 - Chess: it could generate all 5 men with forward/backward method. 6 men is possible but not verified yet
 - Xiangqi: it could calculate index spaces
