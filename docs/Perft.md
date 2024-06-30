@@ -69,7 +69,7 @@ Attempt 7
 
 Our code for basic functions such as board representations, move generators, move makes, take back, check in-check… is simple and straightforward. Logically, it should be fast, their speed should be comparable with the fastest chess engines such as Stockfish, not the big gaps as in previous attempts. Thus we doubt the way to calculate perfts. Stockfish and Pikafish use a method named "Bulk-counting", to ignore making/taking back leaf nodes, and save a lot of time. In contrast, our code uses a different method and has to make/take back all nodes, including leaf nodes, which cannot save as much time as Stockfish. Since we need to compare the speed of basic functions it’s better to use the same method for perfts.
 
-We have modified code of Stockfish/Pikafish to calculate perfts similar to our code and got new statistics:
+We have modified the code of Stockfish/Pikafish to calculate perfts similar to our code and got new statistics:
 
 - Stockfish perft 5 took 187 ms
 - Pikafish perft 5 took 8023 ms
@@ -94,3 +94,10 @@ When making a move, whole board data is copied into Hist record, thus the takeba
 - Chess perft 5 took 523 ms, 161% longer (slower) than Attempt 7
 
 The code is in the branch "wholeboardinhist".
+
+
+Attempt 17
+----------
+Use table move generator. It could speed up Perft to 10%. If using table move data for isInCheck function, the speed up is about 5% (slower).
+
+The code is in the branch "tablemovegen".

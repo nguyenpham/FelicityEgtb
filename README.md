@@ -6,10 +6,11 @@ Overview
 
 Felicity EGTB (Endgame database/tablebase) is an open source for generating and probing EGTB. All code is written in C++ (using the standard C++17 library). It supports some chess variants: chess, Xiangqi, and Jeiqi.
 
-From testing, EGTB doesn't help chess engines much, in terms of strength/Elo gaining. 6 men-Syzygy EGTB can help Stockfish to gain < 13 Elo. However, we believe EGTB can help much more for Xiangqi/Jeiqi engines because the endgames of those chess variants are much more complicated, with a lot of exceptions/tricky wins, which are much harder for humans/programs to learn. However, we don't have real statistics. We need to build some good EGTB first before measuring.
+From testing, EGTB doesn't help chess engines much, in terms of strength/Elo gaining. 6 men-Syzygy EGTB can help Stockfish to gain smaller than 13 Elo. However, we believe EGTB can help much more for Xiangqi/Jeiqi engines because the endgames of those chess variants are much more complicated, with a lot of exceptions/tricky wins, which are much harder for humans/programs to learn. However, we don't have real statistics. We need to build some good EGTB first before measuring.
 
-This project focuses on Xiaqqi and Jeiqi. But we will support chess too, for testing, learning and comparing.
+This project focuses on Xiaqqi and Jeiqi. But we support chess too, for testing, learning and comparing.
 
+The name Felicity is inspired by the song Felicità by Al Bano & Romina Power.
 
 Restart
 =======
@@ -17,14 +18,14 @@ Restart
 April 2024: restart the project. Plan to rewrite all. Support chess, Xiangqi, Jeiqi
 
 
-Study
-=====
-This is a long journey, to find good code, algorithmns.
+Progress reports
+================
+It is not a ready-to-use EGTB but a work in progress for studying/researching. It is not stuck immediately to specific things such as metrics, board presentations, algorithms for compressing, or backward/forward generators. Instead, it tries testing as much as possible with multiple options to find the best ones. Not every attempt/work is successful. The project creates reports on some forums to report all attempts, works and results.
 
 
 Info
 ====
-All info will be updated in this github and in forum:
+All info will be updated in this repository and forum:
 
 https://banksiagui.com/forums/viewforum.php?f=20
 
@@ -50,23 +51,24 @@ Attempt 10: Calculate position indexes for Xiangqi/Jeiqi.
 
 Attempt 11: calculate 5-men Index space for chess.
 
-Attempt 12: generating all 5-men engames for chess, using the forward method. Total time: 3 days 15 hours (generating time only). Total size: 8.88 GB, endgames: 145, files: 190.
+Attempt 12: generating all 5-men endgames for chess, using the forward method. Total time: 3 days 15 hours (generating time only). Total size: 8.88 GB, endgames: 145, files: 190. Hardware: AMD Ryzen 7 1700 8-Core 16 threads, 16 GB RAM, ran with 12 threads and took about 85% of the computer's power.
 
 Attempt 13: generate all 5-men endgames for chess using the backward method. Total time: 21 hours (generating time only), 4 times faster than Attempt 12.
 
-Attempt 14: Improve the speed of generating all 5-men endgames for chess with the backward method. Total time: 17 hours (generating time only), 5 times faster than Attempt 12.
+Attempt 14: Improve the speed of generating all 5-man endgames for chess with the backward method. Total time: 17 hours (generating time only), 5 times faster than Attempt 12.
 
-Attempt 15: calculate index spaces for more men for chess. Some code has been added to make sure the generator can generate 7 men and get information till 9 men. Some variants (unsigned 64-bit) starts being overflowed when working with 10 and 11 men.
+Attempt 15: calculate index spaces for more men for chess. Some code has been added to make sure the generator can generate 7 men and get information to 9-man. Some variants (unsigned 64-bit) starts being overflowed when working with 10 and 11 men.
 
-Attempt 16: Store whole board data in Hist record when making a move, thus the takeback function could be simplified by copying back stored board. Chess perft 5 took 523 ms, 161% longer (slower) than Attempt 7. The code is in the branch "wholeboardinhist".
+Attempt 16: Store whole board data in Hist record when making a move, thus the takeback function could be simplified by copying back the stored board. Chess perft 5 took 523 ms, 161% longer (slower) than Attempt 7. The code is in the branch "wholeboardinhist".
 
+Attempt 17: Use the table move generator. It could speed up Perft to 10%. If using table move data for incheck function, the speed up is about 5% (slower). The code is in the branch "tablemovegen".
 
 Status
 ======
 
-In development: All code has been still being written. You may use them for studying, trying to integrate into your code, generating some small EGTBs. However, you should not use them to generate EGTBs seriously nor contribute them since the code has been in checking process and all could be changed, from algorithms to file structures.
+In development: All code has been still being written. You may use them for studying, trying to integrate them into your code, or generating some small EGTBs. However, you are suggested to not generate EGTBs seriously nor contribute to them since everything could be changed, from algorithms to file structures.
 
-- Chess: it could generate all 5 men with forward/backward method. 6 men is possible but not verified yet
+- Chess: it could generate all 5 men with forward/backward methods. 6-man is possible but not verified yet
 - Xiangqi: it could calculate index spaces
 - Jeiqi: no code yet
 
@@ -74,7 +76,7 @@ In development: All code has been still being written. You may use them for stud
 Terms of use
 ============
 
-Our code and data (egtb files) are released under the liberal [MIT license](http://en.wikipedia.org/wiki/MIT_License), so basically you can use it with almost no restrictions.
+Our code and data (endgame files) are released under the liberal [MIT license](http://en.wikipedia.org/wiki/MIT_License), so basically you can use it with almost no restrictions.
 
 
 Credits
