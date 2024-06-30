@@ -32,7 +32,7 @@ https://banksiagui.com/forums/viewforum.php?f=20
 
 Attempts
 ========
-Attempts 1-7: test speeds of some basic functions move generator, make, takaback, incheck and compare with Stockfish family.
+Attempts 1-7: Test speeds of some basic functions move generator, make, takaback, incheck and compare with Stockfish family.
 
 Concluded for current mailbox board representation:
 - simple: all code is short, clear, easy to understand and maintenance
@@ -49,21 +49,21 @@ Attempt 9: Position indexes work for both Chess and Xiangqi/Jeiqi.
 
 Attempt 10: Calculate position indexes for Xiangqi/Jeiqi.
 
-Attempt 11: calculate 5-men Index space for chess.
+Attempt 11: Calculate 5-men Index space for chess.
 
-Attempt 12: generating all 5-men endgames for chess, using the forward method. Total time: 3 days 15 hours (generating time only). Total size: 8.88 GB, endgames: 145, files: 190. Hardware: AMD Ryzen 7 1700 8-Core 16 threads, 16 GB RAM, ran with 12 threads and took about 85% of the computer's power.
+Attempt 12: Generating all 5-men endgames for chess, using the forward method. Total time: 3 days 15 hours (generating time only). Total size: 8.88 GB, endgames: 145, files: 190. Hardware: AMD Ryzen 7 1700 8-Core 16 threads, 16 GB RAM, ran with 12 threads and took about 85% of the computer's power.
 
-Attempt 13: generate all 5-men endgames for chess using the backward method. Total time: 21 hours (generating time only), 4 times faster than Attempt 12.
+Attempt 13: Generate all 5-men endgames for chess using the backward method. Total time: 21 hours (generating time only), 4 times faster than Attempt 12.
 
 Attempt 14: Improve the speed of generating all 5-man endgames for chess with the backward method. Total time: 17 hours (generating time only), 5 times faster than Attempt 12.
 
-Attempt 15: calculate index spaces for more men for chess. Some code has been added to make sure the generator can generate 7 men and get information to 9-man. Some variants (unsigned 64-bit) starts being overflowed when working with 10 and 11 men.
+Attempt 15: Calculate index spaces for more men for chess. Some code has been added to make sure the generator can generate 7 men and get information to 9-man. Some variants (unsigned 64-bit) starts being overflowed when working with 10 and 11 men.
 
 Attempt 16: Store whole board data in Hist record when making a move, thus the takeback function could be simplified by copying back the stored board. Chess perft 5 took 523 ms, 161% longer (slower) than Attempt 7. The code is in the branch "wholeboardinhist".
 
-Attempt 17: Use the table move generator. It could speed up Perft to 10%. If using table move data for incheck function, the speed up is about 5% (slower). The code is in the branch "tablemovegen".
+Attempt 17: Use the table move generator. It could speed up Perft to 10%. If using table move data for incheck function, the speed up is about 5% (slower). The result is good but not enough to use immediately. The code is in the branch "tablemovegen".
 
-Attempt 18: create a test EPD file from all existent endgames. The test file will be used to verify the correctness of an EGTB later.
+Attempt 18: Create a test EPD file from all existent endgames. The test file will be used to verify the correctness of an EGTB later.
 
 
 Status
