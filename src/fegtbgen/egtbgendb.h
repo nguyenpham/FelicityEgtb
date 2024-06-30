@@ -114,6 +114,9 @@ public:
     bool compare(EgtbFile* egtbFile0, EgtbFile* egtbFile1) const;
     void compare(EgtbGenDb& otherEgtbGenFileMng, std::string endgameName, bool isExact);
     
+    void createTestEPD(const std::string& path, int countPerEndgame = 10);
+    void testEPD(const std::string& path);
+
 protected:
 
     void writeLog();

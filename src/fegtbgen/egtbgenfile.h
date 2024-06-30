@@ -105,28 +105,6 @@ namespace fegtb {
         }
    
     public:
-//        u32     checksum(void* data, i64 len) const;
-//
-//        bool    readFromTmpFiles(const std::string& folder, int& ply, int& mPly);
-//        bool    writeTmpFiles(const std::string& folder, int ply, int mPly);
-//        void    removeTmpFiles(const std::string& folder) const;
-//
-//        int     readFromTmpFile(const std::string& folder, bslib::Side side);
-//        int     readFromTmpFile(const std::string& folder, bslib::Side side, i64 fromIdx, i64 toIdx, char * toBuf);
-//        bool    writeTmpFile(const std::string& folder, bslib::Side side, int loop);
-//
-//    private:
-//        bool readFlagTmpFile(const std::string& folder);
-//        bool writeFlagTmpFile(const std::string& folder);
-//
-//        std::string getTmpFileName(const std::string& folder, bslib::Side side) const;
-//        std::string getFlagTmpFileName(const std::string& folder) const;
-
-    public:
-//        std::string getLogFileName() const;
-//        int     readFromLogFile() const;
-//        void    writeLogFile(int completedPly) const;
-
         void    createFlagBuffer();
         void    removeFlagBuffer();
         void    clearFlagBuffer();

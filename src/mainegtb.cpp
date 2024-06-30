@@ -210,7 +210,10 @@ int main(int argc, char* argv[])
         std::string str = arg;
         auto ok = true;
 
-        if (arg == "-core" || arg == "-ram" || arg == "-n" || arg == "-fen" || arg == "-fenfile" || arg == "-d" || arg == "-d2" || arg == "-maxsize" || arg == "-perft") {
+        if (arg == "-core" || arg == "-ram" || arg == "-n" || arg == "-fen" || arg == "-fenfile" 
+            || arg == "-d" || arg == "-d2" || arg == "-epd"
+            || arg == "-test"
+            || arg == "-maxsize" || arg == "-perft") {
             if (i + 1 < argc) {
                 i++;
                 str = argv[i];
@@ -276,6 +279,27 @@ int main(int argc, char* argv[])
 
     if (argmap.find("-d2") != argmap.end()) {
         egtbFolder2 = argmap["-d2"];
+    }
+    
+    if (argmap.find("-test") != argmap.end()) {
+        if (argmap.find("-epd") != argmap.end()) {
+            auto epdPath = argmap["-epd"];
+            
+            EgtbGenDb egtbGenDb;
+            egtbGenDb.preload(egtbFolder, EgtbMemMode::tiny);
+            
+            auto test = argmap["-test"];
+            if (test == "create") {
+                auto countPerEndgame = 10000;
+                egtbGenDb.createTestEPD(epdPath, countPerEndgame);
+            } else
+            if (test == "test") {
+                egtbGenDb.testEPD(epdPath);
+            } else {
+                std::cerr << "Unknown test command " << test << std::endl;
+            }
+        }
+        return 0;
     }
     
     egtbVerbose = argmap.find("-verbose") != argmap.end();

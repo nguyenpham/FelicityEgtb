@@ -63,6 +63,9 @@ Attempt 16: Store whole board data in Hist record when making a move, thus the t
 
 Attempt 17: Use the table move generator. It could speed up Perft to 10%. If using table move data for incheck function, the speed up is about 5% (slower). The code is in the branch "tablemovegen".
 
+Attempt 18: create a test EPD file from all existent endgames. The test file will be used to verify the correctness of an EGTB later.
+
+
 Status
 ======
 

@@ -35,6 +35,8 @@ public:
     
     static void removeSubstrs(std::string& s, const std::string& p);
         
+    static std::string extractBetweenString(const std::string& string, const std::string& s0 = "\"", const std::string& s1 = "\"");
+
     /// File
     static int existFile(const char * filename);
     static std::string loadFile(const std::string& fileName);

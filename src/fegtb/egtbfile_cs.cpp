@@ -134,8 +134,6 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
 {
     board.reset();
 
-    auto order = header ? header->getOrder() : 0;
-    
     i64 rest = idx;
 
     for(auto i = 0; ; i++) {

@@ -101,3 +101,4 @@ Attempt 17
 Use table move generator. It could speed up Perft to 10%. If using table move data for isInCheck function, the speed up is about 5% (slower).
 
 The code is in the branch "tablemovegen".
+It is good but not enough to apply but maybe later.

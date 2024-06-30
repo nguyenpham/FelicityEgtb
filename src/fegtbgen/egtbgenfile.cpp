@@ -829,3 +829,4 @@ void EgtbGenFile::clearFlagBuffer() {
         memset(flags, 0, flagLen);
     }
 }
+

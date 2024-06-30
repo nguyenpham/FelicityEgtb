@@ -117,7 +117,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-d /Users/nguyenpham/Downloads/chess5men"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-g"
@@ -149,6 +149,18 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-perft 5"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-epd /Users/nguyenpham/Downloads/testchess.epd"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-test create"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-test test"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

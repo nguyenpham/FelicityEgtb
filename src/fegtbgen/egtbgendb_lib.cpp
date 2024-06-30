@@ -29,37 +29,6 @@ using namespace fegtb;
 using namespace bslib;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//void createSubName(const std::string& aName, std::map<std::string, NameRecord>& allNameMap) {
-//    if (allNameMap.find(aName) != allNameMap.end()) {
-//        return;
-//    }
-//    NameRecord record(aName);
-//    if (!record.isValid()) {
-//        return;
-//    }
-//
-//    allNameMap[aName] = record;
-//
-//    auto k = aName.find_last_of("k");
-//    std::string ss[2];
-//    ss[0] = aName.substr(0, k);
-//    ss[1] = aName.substr(k);
-//    
-//    for(auto sd = 0; sd < 2; sd++) {
-//        auto s = ss[sd];
-//        auto xs = ss[1 - sd];
-//        assert(std::count(s.begin(), s.end(), 'k') == 1);
-//        
-//        for(auto i = 1; i < s.length(); i++) {
-//            std::string ss = s.substr(0, i) + (i + 1 < s.length() ? s.substr(i + 1) : "");
-//
-//            createSubName(ss + xs, allNameMap);
-//            createSubName(xs + ss, allNameMap);
-//        }
-//    }
-//}
-
 void createSubName(const std::string& aName, std::set<std::string>& allNameSet) {
     if (allNameSet.find(aName) != allNameSet.end() || !NameRecord::isValid(aName)) {
         return;
@@ -139,29 +108,6 @@ std::vector<std::string> EgtbGenDb::parseName(const std::string& name, bool incl
 
 std::vector<std::string> EgtbGenDb::parseNames(const std::vector<std::string>& names)
 {
-//    std::map<std::string, NameRecord> allNameMap;
-//    for(auto && name : names) {
-//        createSubName(name, allNameMap);
-//    }
-//
-//    std::vector<NameRecord> recordVec;
-//    
-//    for(auto && x : allNameMap) {
-//        recordVec.push_back(x.second);
-//    }
-//    
-//    sort(recordVec.begin(), recordVec.end(), [ ]( const NameRecord& left, const NameRecord& right) {
-//        return left.isSmaller(right);
-//    });
-//    
-//    std::vector<std::string> resultVec;
-//    for(auto && x : recordVec) {
-//        resultVec.push_back(x.name);
-//    }
-//    
-//    
-//    return resultVec;
-    
     std::set<std::string> allNameSet;
     for(auto && name : names) {
         createSubName(name, allNameSet);

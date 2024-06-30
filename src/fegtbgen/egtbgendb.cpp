@@ -447,3 +447,151 @@ bool EgtbGenDb::gen_all(std::string folder, const std::string& name, EgtbType eg
 }
 
 
+std::vector<std::string> createTestEPDVec(EgtbFile* egtbFile, int countPerEndgame)
+{
+    std::vector<std::string> epdVec;
+    std::set<u64> idSet;
+    
+    /// for loading data
+    egtbFile->getScore(1, Side::white, false);
+    
+    std::cout << "name: " << egtbFile->getName() << ", sz: " << egtbFile->getSize() << std::endl;
+    
+    EgtbBoard board;
+    
+    while(epdVec.size() < countPerEndgame) {
+
+        /// generate idx randomly
+        i64 idx = -1;
+        while (true) {
+            idx = random() % egtbFile->getSize();
+            if (idSet.find(idx) == idSet.end()) {
+                idSet.insert(idx);
+                break;
+            }
+        }
+        
+        assert(idx >= 0);
+        if (egtbFile->setupBoard(board, idx, FlipMode::none, Side::white)) {
+            
+            auto r = egtbFile->getKey(board);
+            auto scoreW = egtbFile->getScore(r.key, Side::white, false);
+            auto scoreB = egtbFile->getScore(r.key, Side::black, false);
+            
+            if (scoreW > EGTB_SCORE_MATE || scoreB > EGTB_SCORE_MATE) {
+                continue;
+            }
+
+            
+            auto epdString = board.getFen(false, -1, -1)
+            + " id " + std::to_string(r.key)
+            + "; c0 \"" + egtbFile->getName()
+            + "\"; c1 \"scores=" + std::to_string(scoreW)
+            + "," + std::to_string(scoreB)
+            + "\""
+            ;
+            epdVec.push_back(epdString);
+        }
+        
+    }
+    
+    egtbFile->removeBuffers();
+    
+    return epdVec;
+}
+
+void EgtbGenDb::createTestEPD(const std::string& path, int countPerEndgame)
+{
+    std::cout << "Create samples and save to epd file " << path << std::endl;
+
+    std::ofstream file;
+    file.open(path, std::ios::out | std::ios::app);
+
+    for(auto && egtbFile : egtbFileVec) {
+        auto vec = createTestEPDVec(egtbFile, countPerEndgame);
+        for(auto && s : vec) {
+            file << s << "\n";
+        }
+    }
+
+    file.close();
+}
+
+void EgtbGenDb::testEPD(const std::string& path)
+{
+    std::ifstream file (path); //file just has some sentences
+    if (!file) {
+        std::cout << "unable to open file" << std::endl;
+        return;
+    }
+    
+    std::cout << "Load and test with epd file " << path << std::endl;
+    
+    EgtbBoard board;
+    std::string line;
+    int sucCnt = 0, wrongCnt = 0;
+    while (getline (file, line))
+    {
+        auto vec = Funcs::splitString(line, ';');
+        if (vec.size() < 3 || vec[2].find("c1") == std::string::npos) {
+            continue;
+        }
+//        auto ss = Funcs::splitString(vec[0], ' ');
+//        if (ss.size() < 3 || ss[ss.size() - 2] != "id") {
+//            continue;
+//        }
+//        auto egtbName = ss[ss.size() - 1];
+//        
+//        auto it = nameMap.find(egtbName);
+//        if (it == nameMap.end()) {
+//            continue;
+//        }
+//        auto egtbFile = it->second; assert(egtbFile);
+        
+        board.setFen(vec[0]);
+        if (!board.isValid()) {
+            continue;
+        }
+        
+        auto egtbFile = getEgtbFile(board);
+        if (!egtbFile) {
+            continue;
+        }
+
+        egtbFile->checkToLoadHeaderAndTables(Side::none);
+
+        auto r = egtbFile->getKey(board);
+
+        auto scoreW = egtbFile->getScore(r.key, Side::white, false);
+        auto scoreB = egtbFile->getScore(r.key, Side::black, false);
+        
+        auto name = GenLib::extractBetweenString(vec[1]); /// name of endgame
+        auto scores = GenLib::extractBetweenString(vec[2]); /// scores=21,0 (white, black scores)
+        
+        auto sss = Funcs::splitString(scores, '=');
+        if (sss.size() != 2) {
+            continue;
+        }
+        
+        sss = Funcs::splitString(sss[1], ',');
+        if (sss.size() != 2) {
+            continue;
+        }
+        
+        auto scoreW_ = std::stoi(sss[0]);
+        auto scoreB_ = std::stoi(sss[1]);
+
+        if (scoreW == scoreW_ && scoreB == scoreB_) {
+            sucCnt++;
+        } else {
+            wrongCnt++;
+            std::cerr << "Wrong " << line << std::endl;
+            
+            if (wrongCnt > 5000) {
+                std::cerr << "Too many error, stopped!" << std::endl;
+                return;
+            }
+        }
+    }
+    std::cout << "Test DONE! successful count: " << sucCnt << ", fail Count: " << wrongCnt << std::endl;
+}

@@ -62,6 +62,23 @@ void GenLib::removeSubstrs(std::string& s, const std::string& p) {
     }
 }
 
+std::string GenLib::extractBetweenString(const std::string& string, const std::string& s0, const std::string& s1)
+{
+    std::string found_text;
+    
+    auto start_position = string.find(s0);
+    if (start_position != std::string::npos) {
+        ++start_position; // start after the double quotes.
+        // look for end position;
+        auto end_position = string.find(s1);
+        if (end_position != std::string::npos) {
+            found_text = string.substr(start_position, end_position - start_position);
+        }
+    }
+
+    return found_text;
+}
+
 //////////////////////////////////////////////////////////
 int GenLib::existFile(const char * filename)
 {
