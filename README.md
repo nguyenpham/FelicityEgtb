@@ -69,7 +69,7 @@ Attempt 18: Create a test EPD file from all existent endgames. The test file wil
 Status
 ======
 
-In development: All code has been still being written. You may use them for studying, trying to integrate them into your code, or generating some small EGTBs. However, you are suggested to not generate EGTBs seriously nor contribute to them since everything could be changed, from algorithms to file structures.
+In development: All code has been still being written. You may use them for studying, trying to integrate them into your code, or generating some small EGTBs. However, you are suggested to not generate EGTBs seriously nor contribute them since everything could be changed, from algorithms to file structures.
 
 - Chess: it could generate all 5 men with forward/backward methods. 6-man is possible but not verified yet
 - Xiangqi: it could calculate index spaces
