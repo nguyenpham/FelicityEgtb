@@ -42,18 +42,18 @@ static const int tb_flipMode[64] = {
     2, 2, 2, 2, 6, 6, 6, 6
 };
 
-/// Convert King position (1/8) into index 0-9
-static const int tb_kIdx[64] = {
-     0, 1, 2, 3, -1,-1,-1,-1,
-    -1, 4, 5, 6, -1,-1,-1,-1,
-    -1,-1, 7, 8, -1,-1,-1,-1,
-    -1,-1,-1, 9, -1,-1,-1,-1,
-
-    -1,-1,-1,-1, -1,-1,-1,-1,
-    -1,-1,-1,-1, -1,-1,-1,-1,
-    -1,-1,-1,-1, -1,-1,-1,-1,
-    -1,-1,-1,-1, -1,-1,-1,-1
-};
+///// Convert King position (1/8) into index 0-9
+//static const int tb_kIdx[64] = {
+//     0, 1, 2, 3, -1,-1,-1,-1,
+//    -1, 4, 5, 6, -1,-1,-1,-1,
+//    -1,-1, 7, 8, -1,-1,-1,-1,
+//    -1,-1,-1, 9, -1,-1,-1,-1,
+//
+//    -1,-1,-1,-1, -1,-1,-1,-1,
+//    -1,-1,-1,-1, -1,-1,-1,-1,
+//    -1,-1,-1,-1, -1,-1,-1,-1,
+//    -1,-1,-1,-1, -1,-1,-1,-1
+//};
 
 static int *tb_xx, *tb_xxx, *tb_xxxx;
 static int *tb_pp, *tb_ppp, *tb_pppp;
@@ -79,11 +79,12 @@ void EgtbKey::createKingKeys() {
     auto x = 0;
 
     for(auto i = 0; i < sizeof(tb_kIdxToPos) / sizeof(int); i++) {
-        auto k0 = tb_kIdxToPos[i];
+        auto k0 = tb_kIdxToPos[i];          /// white King
         auto r0 = ROW(k0), f0 = COL(k0);
-        for(auto k1 = 0; k1 < 64; k1++) {
-            if (k0 == k1 
+        for(auto k1 = 0; k1 < 64; k1++) {   /// black King
+            if (k0 == k1
                 || (abs(ROW(k1) - r0) <= 1 && abs(COL(k1) - f0) <= 1) /// can capture other King
+                || (r0 == f0 && ROW(k1) > COL(k1))
             ) {
                 continue;
             }
@@ -138,7 +139,7 @@ void EgtbKey::createXXKeys() {
                     for(auto i4 = i3 + 1; i4 < 64; i4++) {
                         tb_xxxxx[k3++] = i0 << 32 | i1 << 24 | i2 << 16 | i3 << 8 | i4;
                     }
-#endif /// _LARGE_CHESS_
+#endif
                 }
             }
         }
@@ -169,7 +170,7 @@ void EgtbKey::createXXKeys() {
                             tb_ppppp[k4++] = i0 << 40 | i1 << 32 | i2 << 24 | i3 << 16 | i4 << 8 | i5;
                         }
                     }
-#endif // _LARGE_CHESS_
+#endif
                 }
             }
         }
@@ -415,6 +416,13 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
                     pos0 = Funcs::flip(pos0, FlipMode::vertical);
                     pos1 = Funcs::flip(pos1, FlipMode::vertical);
                     flipMode = FlipMode::vertical;
+                }
+                
+                if (ROW(pos0) == COL(pos0) && ROW(pos1) > COL(pos1)) {
+                    pos1 = Funcs::flip(pos1, FlipMode::flipVH);
+                    if (flipMode == FlipMode::vertical) {
+                        flipMode = FlipMode::flipHV;
+                    }
                 }
 
                 auto flip = tb_flipMode[pos0];

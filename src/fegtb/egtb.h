@@ -154,7 +154,8 @@ const int EGTB_SIZE_K2            = 32;
 const int EGTB_SIZE_K8            = 10;
 const int EGTB_SIZE_K             = 64;
 
-const int EGTB_SIZE_KK8           = 564;
+//const int EGTB_SIZE_KK8           = 564;
+const int EGTB_SIZE_KK8           = 462;
 
 const int EGTB_SIZE_KK2           = 1806;
 

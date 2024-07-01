@@ -68,8 +68,8 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n 2"
-            isEnabled = "NO">
+            argument = "-n 3"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n 7"
@@ -125,7 +125,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-subinfo"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-verbose"
@@ -153,7 +153,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-epd /Users/nguyenpham/Downloads/testchess.epd"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-test create"
@@ -161,7 +161,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-test test"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>
