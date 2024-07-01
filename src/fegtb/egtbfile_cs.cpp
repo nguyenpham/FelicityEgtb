@@ -44,7 +44,7 @@ u64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
 
     u64 sz = 1;
     auto side = Side::white;
-    auto k = 0;
+    auto k = 0, pieceCnt = 2; /// two Kings
     for (auto i = 0, atkCnt = 0, d = 10; i < (int)name.size(); i++) {
         auto ch = name[i];
         auto type = Funcs::charactorToPieceType(ch);
@@ -102,6 +102,13 @@ u64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
                 egtbIdxArray[k].side = side;
 
                 auto h = type == PieceType::pawn ? sizeArrP[t - 1] : sizeArrX[t - 1];
+                
+                if (h == EGTB_SIZE_X) {
+                    assert(t == 1 && type != PieceType::pawn);
+                    h -= pieceCnt;
+                }
+                pieceCnt += t;
+
                 sz *= u64(h);
                 assert(h > 0);
                 assert(sz > 0);
@@ -136,6 +143,8 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
 
     i64 rest = idx;
 
+    std::vector<int> piecePosVec;
+
     for(auto i = 0; ; i++) {
         assert(i < 16);
         auto rec = egtbIdxArray[i];
@@ -158,6 +167,8 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
                 int k0 = kk >> 8, k1 = kk & 0xff;
                 board.setPiece(k0, Piece(PieceType::king, side));
                 board.setPiece(k1, Piece(PieceType::king, getXSide(side)));
+                piecePosVec.push_back(k0);
+                piecePosVec.push_back(k1);
                 break;
             }
 
@@ -168,6 +179,8 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
                 assert(k0 != k1 && board.isPositionValid(k0) && board.isPositionValid(k1));
                 board.setPiece(k0, Piece(PieceType::king, side));
                 board.setPiece(k1, Piece(PieceType::king, getXSide(side)));
+                piecePosVec.push_back(k0);
+                piecePosVec.push_back(k1);
                 break;
             }
 
@@ -178,9 +191,24 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
             case EGTB_IDX_P:
             {
                 auto type = static_cast<PieceType>(rec.idx - EGTB_IDX_Q + QUEEN);
-                if (!egtbKey.setupBoard_x(board, key, type, side)) {
+                
+                if (type != PieceType::pawn) {
+                    std::sort(piecePosVec.begin(), piecePosVec.end());
+
+                    for(auto && p : piecePosVec) {
+                        if (p <= key) {
+                            key++;
+                        }
+                    }
+                }
+                
+                auto pos = egtbKey.setupBoard_x(board, key, type, side);
+                if (pos < 0) {
                     return false;
                 }
+                
+                piecePosVec.push_back(pos);
+
                 break;
             }
 
@@ -191,9 +219,12 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
             case EGTB_IDX_PP:
             {
                 auto type = static_cast<PieceType>(rec.idx - EGTB_IDX_QQ + QUEEN);
-                if (!egtbKey.setupBoard_xx(board, key, type, side)) {
+                auto vec = egtbKey.setupBoard_xx(board, key, type, side);
+                if (vec.empty()) {
                     return false;
                 }
+                assert(vec.size() == 2);
+                piecePosVec.insert(piecePosVec.end(), vec.begin(), vec.end());
                 break;
             }
 
@@ -204,9 +235,12 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
             case EGTB_IDX_PPP:
             {
                 auto type = static_cast<PieceType>(rec.idx - EGTB_IDX_QQQ + QUEEN);
-                if (!egtbKey.setupBoard_xxx(board, key, type, side)) {
+                auto vec = egtbKey.setupBoard_xxx(board, key, type, side);
+                if (vec.empty()) {
                     return false;
                 }
+                assert(vec.size() == 3);
+                piecePosVec.insert(piecePosVec.end(), vec.begin(), vec.end());
                 break;
             }
 
@@ -217,9 +251,12 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
             case EGTB_IDX_PPPP:
             {
                 auto type = static_cast<PieceType>(rec.idx - EGTB_IDX_QQQQ + QUEEN);
-                if (!egtbKey.setupBoard_xxxx(board, key, type, side)) {
+                auto vec = egtbKey.setupBoard_xxxx(board, key, type, side);
+                if (vec.empty()) {
                     return false;
                 }
+                assert(vec.size() == 4);
+                piecePosVec.insert(piecePosVec.end(), vec.begin(), vec.end());
                 break;
             }
 

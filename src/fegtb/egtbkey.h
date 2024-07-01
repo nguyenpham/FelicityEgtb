@@ -37,11 +37,12 @@ namespace fegtb {
 
         static EgtbKeyRec getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxRecord, u32 order);
 
-        bool setupBoard_x(bslib::BoardCore& board, int pos, bslib::PieceType type, bslib::Side side) const;
-        bool setupBoard_xx(bslib::BoardCore& board, int key, bslib::PieceType type, bslib::Side side) const;
+        /// return position of piece
+        int setupBoard_x(bslib::BoardCore& board, int pos, bslib::PieceType type, bslib::Side side) const;
+        std::vector<int> setupBoard_xx(bslib::BoardCore& board, int key, bslib::PieceType type, bslib::Side side) const;
         
-        bool setupBoard_xxx(bslib::BoardCore& board, int key, bslib::PieceType type, bslib::Side side) const;
-        bool setupBoard_xxxx(bslib::BoardCore& board, int key, bslib::PieceType type, bslib::Side side) const;
+        std::vector<int> setupBoard_xxx(bslib::BoardCore& board, int key, bslib::PieceType type, bslib::Side side) const;
+        std::vector<int> setupBoard_xxxx(bslib::BoardCore& board, int key, bslib::PieceType type, bslib::Side side) const;
 
     private:
         static int getKey_x(int pos0);
