@@ -596,8 +596,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "379"
-            endingLineNumber = "379"
+            startingLineNumber = "381"
+            endingLineNumber = "381"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1277,8 +1277,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "356"
-            endingLineNumber = "356"
+            startingLineNumber = "358"
+            endingLineNumber = "358"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1386,8 +1386,8 @@
             filePath = "src/fegtb/egtbkey_cs.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "357"
-            endingLineNumber = "357"
+            startingLineNumber = "401"
+            endingLineNumber = "401"
             landmarkName = "EgtbKey::getKey(board, egtbIdxRecord, order)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2020,8 +2020,8 @@
             filePath = "src/fegtbgen/genlib.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "240"
-            endingLineNumber = "240"
+            startingLineNumber = "243"
+            endingLineNumber = "243"
             landmarkName = "GenLib::formatString(num, format)"
             landmarkType = "7">
             <Locations>
@@ -2196,8 +2196,8 @@
             filePath = "src/fegtbgen/egtbgendb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "534"
-            endingLineNumber = "534"
+            startingLineNumber = "543"
+            endingLineNumber = "543"
             landmarkName = "EgtbGenDb::testEPD(path)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2212,8 +2212,8 @@
             filePath = "src/fegtbgen/egtbgendb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "510"
-            endingLineNumber = "510"
+            startingLineNumber = "519"
+            endingLineNumber = "519"
             landmarkName = "EgtbGenDb::createTestEPD(path, countPerEndgame)"
             landmarkType = "7">
             <Locations>

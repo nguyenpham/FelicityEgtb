@@ -68,7 +68,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n 2"
+            argument = "-n 3"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -157,11 +157,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-test create"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-test test"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>

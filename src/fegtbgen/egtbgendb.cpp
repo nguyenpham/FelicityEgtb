@@ -455,6 +455,8 @@ std::vector<std::string> createTestEPDVec(EgtbFile* egtbFile, int countPerEndgam
     /// for loading data
     egtbFile->getScore(1, Side::white, false);
     
+    countPerEndgame = (int)std::min<i64>((i64)countPerEndgame, egtbFile->getSize() / 10);
+    
     std::cout << "name: " << egtbFile->getName() << ", sz: " << egtbFile->getSize() << std::endl;
     
     EgtbBoard board;
@@ -463,15 +465,18 @@ std::vector<std::string> createTestEPDVec(EgtbFile* egtbFile, int countPerEndgam
 
         /// generate idx randomly
         i64 idx = -1;
-        while (true) {
-            idx = random() % egtbFile->getSize();
-            if (idSet.find(idx) == idSet.end()) {
-                idSet.insert(idx);
+        for (auto i = 0; i < 1000; i++) {
+            auto idx2 = GenLib::rand64() % egtbFile->getSize();
+            if (idSet.find(idx2) == idSet.end()) {
+                idSet.insert(idx2);
+                idx = idx2;
                 break;
             }
         }
         
-        assert(idx >= 0);
+        if (idx < 0) {
+            break;
+        }
         if (egtbFile->setupBoard(board, idx, FlipMode::none, Side::white)) {
             
             auto r = egtbFile->getKey(board);
@@ -496,6 +501,10 @@ std::vector<std::string> createTestEPDVec(EgtbFile* egtbFile, int countPerEndgam
     }
     
     egtbFile->removeBuffers();
+
+    if (epdVec.size() < countPerEndgame) {
+        std::cout << " -> smaller than the request: " << epdVec.size() << std::endl;
+    }
     
     return epdVec;
 }
