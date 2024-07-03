@@ -44,6 +44,13 @@ namespace fegtb {
         std::vector<int> setupBoard_xxx(bslib::BoardCore& board, int key, bslib::PieceType type, bslib::Side side) const;
         std::vector<int> setupBoard_xxxx(bslib::BoardCore& board, int key, bslib::PieceType type, bslib::Side side) const;
 
+        static std::unordered_map<int, int> tb_kk_2_map;
+        static std::unordered_map<int, int> tb_kk_2_key_map;
+        static std::unordered_map<int, int> tb_kk_8_map;
+        static std::unordered_map<int, int> tb_kk_8_key_map;
+
+        static void initOnce();
+
     private:
         static int getKey_x(int pos0);
         static int getKey_xx(int p0, int p1);
@@ -56,13 +63,14 @@ namespace fegtb {
         static int getKey_pppp(int p0, int p1, int p2, int p3);
 
         
-        void initOnce();
 
-        void createXXKeys();
-        void createKingKeys();
+        static void createXXKeys();
+        static void createKingKeys();
     };
 
-    extern int *tb_kk_2, *tb_kk_8;
+//    extern int *tb_kk_2, *tb_kk_8;
+
+
 
 #endif // _FELICITY_CHESS_
 

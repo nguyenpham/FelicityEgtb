@@ -113,7 +113,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-vkey"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-d /Users/nguyenpham/Downloads/chess5men"
@@ -125,7 +125,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-subinfo"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-verbose"

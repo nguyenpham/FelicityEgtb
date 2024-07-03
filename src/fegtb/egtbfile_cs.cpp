@@ -32,6 +32,7 @@ using namespace bslib;
 
 #ifdef _FELICITY_CHESS_
 
+
 u64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, int* pieceCount, u16 order)
 {
     if (pieceCount) {
@@ -44,7 +45,7 @@ u64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
 
     u64 sz = 1;
     auto side = Side::white;
-    auto k = 0, pieceCnt = 2; /// two Kings
+    auto k = 0, pCnt = 2; /// two Kings
     for (auto i = 0, atkCnt = 0, d = 10; i < (int)name.size(); i++) {
         auto ch = name[i];
         auto type = Funcs::charactorToPieceType(ch);
@@ -105,9 +106,9 @@ u64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
                 
                 if (h == EGTB_SIZE_X) {
                     assert(t == 1 && type != PieceType::pawn);
-                    h -= pieceCnt;
+                    h -= pCnt;
                 }
-                pieceCnt += t;
+                pCnt += t;
 
                 sz *= u64(h);
                 assert(h > 0);
@@ -163,8 +164,9 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
         switch (rec.idx) {
             case EGTB_IDX_KK_2:
             {
-                int kk = tb_kk_2[key];
-                int k0 = kk >> 8, k1 = kk & 0xff;
+//                int kk = tb_kk_2[key];
+                auto kk = EgtbKey::tb_kk_2_key_map[key];
+                auto k0 = kk >> 8, k1 = kk & 0xff;
                 board.setPiece(k0, Piece(PieceType::king, side));
                 board.setPiece(k1, Piece(PieceType::king, getXSide(side)));
                 piecePosVec.push_back(k0);
@@ -174,7 +176,9 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
 
             case EGTB_IDX_KK_8:
             {
-                auto kk = tb_kk_8[key];
+//                auto kk = tb_kk_8[key];
+                assert(EgtbKey::tb_kk_8_key_map.find(key) != EgtbKey::tb_kk_8_key_map.end());
+                auto kk = EgtbKey::tb_kk_8_key_map[key];
                 auto k0 = kk >> 8, k1 = kk & 0xff;
                 assert(k0 != k1 && board.isPositionValid(k0) && board.isPositionValid(k1));
                 board.setPiece(k0, Piece(PieceType::king, side));
@@ -224,7 +228,9 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
                     return false;
                 }
                 assert(vec.size() == 2);
-                piecePosVec.insert(piecePosVec.end(), vec.begin(), vec.end());
+                //piecePosVec.insert(piecePosVec.end(), vec.begin(), vec.end());
+                piecePosVec.push_back(vec[0]);
+                piecePosVec.push_back(vec[1]);
                 break;
             }
 

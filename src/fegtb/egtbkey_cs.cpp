@@ -26,8 +26,13 @@ using namespace bslib;
 #ifdef _FELICITY_CHESS_
 
 namespace fegtb {
-int *tb_kk_2, *tb_kk_8;
+//int *tb_kk_2, *tb_kk_8;
+
+//std::unordered_map<int, int> tb_kk_2_map, tb_kk_2_key_map;
+//std::unordered_map<int, int> tb_kk_8_map, tb_kk_8_key_map;
+
 };
+
 
 
 /// Flip board into 1/8
@@ -74,8 +79,12 @@ void EgtbKey::initOnce() {
 }
 
 
+std::unordered_map<int, int> EgtbKey::tb_kk_2_map, EgtbKey::tb_kk_2_key_map;
+std::unordered_map<int, int> EgtbKey::tb_kk_8_map, EgtbKey::tb_kk_8_key_map;
+
 void EgtbKey::createKingKeys() {
-    tb_kk_8 = new int[EGTB_SIZE_KK8];
+    //tb_kk_8 = new int[EGTB_SIZE_KK8];
+    assert(tb_kk_8_map.empty());
     auto x = 0;
 
     for(auto i = 0; i < sizeof(tb_kIdxToPos) / sizeof(int); i++) {
@@ -89,12 +98,18 @@ void EgtbKey::createKingKeys() {
                 continue;
             }
 
-            tb_kk_8[x++] = k0 << 8 | k1;
+//            tb_kk_8[x++] = k0 << 8 | k1;
+            auto kk = k0 << 8 | k1;
+            tb_kk_8_map[kk] = x;
+            tb_kk_8_key_map[x] = kk;
+            x++;
         }
     }
     assert(x == EGTB_SIZE_KK8);
+    assert(tb_kk_8_map.size() == EGTB_SIZE_KK8);
+    assert(tb_kk_8_map.size() == tb_kk_8_key_map.size());
 
-    tb_kk_2 = new int[EGTB_SIZE_KK2];
+//    tb_kk_2 = new int[EGTB_SIZE_KK2];
     x = 0;
 
     for(auto k0 = 0; k0 < 64; k0++) {
@@ -109,10 +124,19 @@ void EgtbKey::createKingKeys() {
                 continue;
             }
 
-            tb_kk_2[x++] = k0 << 8 | k1;
+            //tb_kk_2[x++] = k0 << 8 | k1;
+            
+//            tb_kk_2_map[k0 << 8 | k1] = x++;
+            auto kk = k0 << 8 | k1;
+            tb_kk_2_map[kk] = x;
+            tb_kk_2_key_map[x] = kk;
+            x++;
+
         }
     }
     assert(x == EGTB_SIZE_KK2);
+    assert(tb_kk_2_map.size() == EGTB_SIZE_KK2);
+    assert(tb_kk_2_map.size() == tb_kk_2_key_map.size());
 }
 
 void EgtbKey::createXXKeys() {
@@ -272,18 +296,19 @@ std::vector<int> EgtbKey::setupBoard_xx(BoardCore& board, int key, PieceType typ
 
     auto pos0 = xx >> 8, pos1 = xx & 0xff;
     
-    std::vector<int> vec;
     if (!board.isEmpty(pos0) || !board.isEmpty(pos1)) {
-        return vec;
+        return std::vector<int>();
     }
 
     auto piece = Piece(type, side);
     board.setPiece(pos0, piece);
     board.setPiece(pos1, piece);
     
-    vec.push_back(pos0);
-    vec.push_back(pos1);
-    return vec;
+//    vec.push_back(pos0);
+//    vec.push_back(pos1);
+//    vec = { pos0, pos1 };
+//    return vec;
+    return std::vector<int>{ pos0, pos1 };
 }
 
 std::vector<int> EgtbKey::setupBoard_xxx(BoardCore& board, int key, PieceType type, Side side) const
@@ -297,9 +322,8 @@ std::vector<int> EgtbKey::setupBoard_xxx(BoardCore& board, int key, PieceType ty
     }
     auto pos0 = xx >> 16, pos1 = (xx >> 8) & 0xff, pos2 = xx & 0xff;
 
-    std::vector<int> vec;
     if (!board.isEmpty(pos0) || !board.isEmpty(pos1) || !board.isEmpty(pos2)) {
-        return vec;
+        return std::vector<int>();
     }
 
     auto piece = Piece(type, side);
@@ -307,10 +331,11 @@ std::vector<int> EgtbKey::setupBoard_xxx(BoardCore& board, int key, PieceType ty
     board.setPiece(pos1, piece);
     board.setPiece(pos2, piece);
 
-    vec.push_back(pos0);
-    vec.push_back(pos1);
-    vec.push_back(pos2);
-    return vec;
+//    vec.push_back(pos0);
+//    vec.push_back(pos1);
+//    vec.push_back(pos2);
+//    return vec;
+    return std::vector<int>{ pos0, pos1, pos2 };
 }
 
 std::vector<int> EgtbKey::setupBoard_xxxx(BoardCore& board, int key, PieceType type, Side side) const
@@ -325,9 +350,9 @@ std::vector<int> EgtbKey::setupBoard_xxxx(BoardCore& board, int key, PieceType t
 
     auto pos0 = xx >> 24, pos1 = (xx >> 16) & 0xff, pos2 = (xx >> 8) & 0xff, pos3 = xx & 0xff;
 
-    std::vector<int> vec;
+//    std::vector<int> vec;
     if (!board.isEmpty(pos0) || !board.isEmpty(pos1) || !board.isEmpty(pos2) || !board.isEmpty(pos3)) {
-        return vec;
+        return std::vector<int>();
     }
 
     auto piece = Piece(type, side);
@@ -336,11 +361,14 @@ std::vector<int> EgtbKey::setupBoard_xxxx(BoardCore& board, int key, PieceType t
     board.setPiece(pos2, piece);
     board.setPiece(pos3, piece);
     
-    vec.push_back(pos0);
-    vec.push_back(pos1);
-    vec.push_back(pos2);
-    vec.push_back(pos3);
-    return vec;
+//    vec.push_back(pos0);
+//    vec.push_back(pos1);
+//    vec.push_back(pos2);
+//    vec.push_back(pos3);
+//    return vec;
+    
+    return std::vector<int>{ pos0, pos1, pos2, pos3 };
+
 }
 
 EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxRecord, u32 order)
@@ -418,7 +446,10 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
                 piecePosVec.push_back(pos1);
 
                 auto kk = pos0 << 8 | pos1;
-                auto subKey = Funcs::bSearch(tb_kk_2, EGTB_SIZE_KK2, kk);
+//                auto subKey = Funcs::bSearch(tb_kk_2, EGTB_SIZE_KK2, kk);
+                
+                assert(tb_kk_2_map.find(kk) != tb_kk_2_map.end());
+                auto subKey = tb_kk_2_map[kk];
                 assert(subKey >= 0 && subKey < EGTB_SIZE_KK2);
 
                 key += subKey * mul;
@@ -456,7 +487,11 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
 
                 assert(pos0 >= 0 && pos0 <= tb_kIdxToPos[9]);
                 auto kk = pos0 << 8 | pos1;
-                auto subKey = Funcs::bSearch(tb_kk_8, EGTB_SIZE_KK8, kk);
+//                auto subKey = Funcs::bSearch(tb_kk_8, EGTB_SIZE_KK8, kk);
+                
+                assert(tb_kk_8_map.find(kk) != tb_kk_8_map.end());
+                auto subKey = tb_kk_8_map[kk];
+
                 assert(subKey >= 0);
                 key += subKey * mul;
                 assert(key >= 0);

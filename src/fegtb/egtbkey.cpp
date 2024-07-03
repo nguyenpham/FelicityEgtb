@@ -23,6 +23,5 @@ namespace fegtb {
 
 using namespace fegtb;
 
-EgtbKey::EgtbKey() {
-    initOnce();
+EgtbKey::EgtbKey() {    
 }
