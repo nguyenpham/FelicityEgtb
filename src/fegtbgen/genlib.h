@@ -63,7 +63,8 @@ public:
     static int encodeRL(char* buf, int size, char* toBuf);
     
     static void appendStringToFile(const std::string& filepath, const std::string& string);
-
+    
+    static uint64_t rand64();
 };
 
 extern const std::string originalFen;

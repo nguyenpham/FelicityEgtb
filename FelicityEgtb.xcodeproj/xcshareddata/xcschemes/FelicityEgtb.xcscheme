@@ -69,7 +69,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n 3"
+<<<<<<< HEAD
             isEnabled = "YES">
+=======
+            isEnabled = "NO">
+>>>>>>> master
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n 7"
@@ -157,7 +161,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-test create"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-test test"

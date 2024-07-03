@@ -25,6 +25,9 @@
 #include <ctime>
 #include <chrono>
 
+#include <random>
+#include <cmath>
+
 // for scaning files from a given path
 #ifdef _WIN32
 
@@ -350,4 +353,12 @@ void GenLib::appendStringToFile(const std::string& filepath, const std::string& 
     }
 
     file << string << std::endl;
+}
+
+
+
+uint64_t GenLib::rand64()
+{
+    uint64_t n = ((uint64_t)rand() << 32) | (uint64_t)rand();
+    return n;
 }
