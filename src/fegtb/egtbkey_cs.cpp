@@ -303,11 +303,6 @@ std::vector<int> EgtbKey::setupBoard_xx(BoardCore& board, int key, PieceType typ
     auto piece = Piece(type, side);
     board.setPiece(pos0, piece);
     board.setPiece(pos1, piece);
-    
-//    vec.push_back(pos0);
-//    vec.push_back(pos1);
-//    vec = { pos0, pos1 };
-//    return vec;
     return std::vector<int>{ pos0, pos1 };
 }
 
@@ -331,10 +326,6 @@ std::vector<int> EgtbKey::setupBoard_xxx(BoardCore& board, int key, PieceType ty
     board.setPiece(pos1, piece);
     board.setPiece(pos2, piece);
 
-//    vec.push_back(pos0);
-//    vec.push_back(pos1);
-//    vec.push_back(pos2);
-//    return vec;
     return std::vector<int>{ pos0, pos1, pos2 };
 }
 
@@ -350,7 +341,6 @@ std::vector<int> EgtbKey::setupBoard_xxxx(BoardCore& board, int key, PieceType t
 
     auto pos0 = xx >> 24, pos1 = (xx >> 16) & 0xff, pos2 = (xx >> 8) & 0xff, pos3 = xx & 0xff;
 
-//    std::vector<int> vec;
     if (!board.isEmpty(pos0) || !board.isEmpty(pos1) || !board.isEmpty(pos2) || !board.isEmpty(pos3)) {
         return std::vector<int>();
     }
@@ -360,12 +350,6 @@ std::vector<int> EgtbKey::setupBoard_xxxx(BoardCore& board, int key, PieceType t
     board.setPiece(pos1, piece);
     board.setPiece(pos2, piece);
     board.setPiece(pos3, piece);
-    
-//    vec.push_back(pos0);
-//    vec.push_back(pos1);
-//    vec.push_back(pos2);
-//    vec.push_back(pos3);
-//    return vec;
     
     return std::vector<int>{ pos0, pos1, pos2, pos3 };
 

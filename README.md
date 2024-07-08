@@ -65,6 +65,7 @@ Attempt 17: Use the table move generator. It could speed up Perft to 10%. If usi
 
 Attempt 18: Create a test EPD file from all existent endgames. The test file will be used to verify the correctness of an EGTB later.
 
+Attempt 19: more compact for chess index space. For 5 men chess EGTB, the index space sank about 13%. The size becomes 7.5 GB, a 15.5% reduction (compared with the previous size of 8.88 GB). However, the time to generate is about 29% longer (22 hours vs 17 hours). We are still not clear yet why/where the speed was lost.
 
 Status
 ======
