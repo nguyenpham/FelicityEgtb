@@ -482,6 +482,7 @@ std::vector<std::string> createTestEPDVec(EgtbFile* egtbFile, int countPerEndgam
         if (idx < 0) {
             break;
         }
+
         if (egtbFile->setupBoard(board, idx, FlipMode::none, Side::white)) {
             
             auto r = egtbFile->getKey(board);

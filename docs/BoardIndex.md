@@ -59,7 +59,7 @@ The simple way to calculate index space creates huge numbers. To reduce index sp
 
 8 fold
 ------
-In chess, for non-Pawn endgames, we can use 8-fold symmetry. The chess positions will apply some flips/rotates to make sure the first (stronger or white side) King stays on a specific triangle and will be indexed from 0 to 9 (10 numbers) as below:
+In chess, for non-Pawn endgames, we can use 8-fold symmetry with triangle a8-d8-d5. The chess positions will apply some flips/rotates to make sure the first (stronger or white side) King stays on a specific triangle and will be indexed from 0 to 9 (10 numbers) as below:
 
 ```
      0, 1, 2, 3, -1,-1,-1,-1,
@@ -81,7 +81,7 @@ For Pawn-endgame we will use a horizontal flip to make sure the strong King is a
 
 King combinations
 -----------------
-In 8-fold symmetry as above, two Kings create a range = 10 * 64 = 640. We may reduce further by combining them, considering that they should be not overlapped nor close (attackable) to each other. The size of their index space now is 564.
+In 8-fold symmetry as above, two Kings create a range = 10 * 64 = 640. We may reduce further by combining them, considering that they should be not overlapped nor close (attackable) to each other. When the white King is on the line a8-h1 and the black King on the below half of that line, the board will be flip by that line too. The size of their index space now is 462.
 
 Similar pieces
 --------------

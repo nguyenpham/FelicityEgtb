@@ -473,10 +473,10 @@ void XqBoard::gen(std::vector<MoveFull>& moves, Side side) const
             case PieceType::king:
             {
                 auto col = pos % 9;
-                if (col != 3) { // go left
+                if (col != 3) { /// go left
                     gen_addMove(moves, pos, pos - 1);
                 }
-                if (col != 5) { // right
+                if (col != 5) { /// right
                     gen_addMove(moves, pos, pos + 1);
                 }
                 if (pos > 72 || (pos > 8 && pos < 27)) { // up
@@ -511,7 +511,7 @@ void XqBoard::gen(std::vector<MoveFull>& moves, Side side) const
 
             case PieceType::elephant:
             {
-                int y = pos - 20; /* go left up */
+                auto y = pos - 20; /* go left up */
                 if ((y == 2 || y == 6 || y == 18 || y == 22 || y == 47 || y == 51 || y == 63 || y == 67) && isEmpty(pos - 10)) {
                     gen_addMove(moves, pos, y);
                 }
@@ -535,9 +535,9 @@ void XqBoard::gen(std::vector<MoveFull>& moves, Side side) const
                 /*
                  * go left
                  */
-                int f = 0;
+                auto f = 0;
 
-                for (int y=pos - 1; y >= pos - col; y--) {
+                for (auto y = pos - 1; y >= pos - col; y--) {
                     if (isEmpty(y)) {
                         if (f == 0) {
                             gen_addMove(moves, pos, y);
@@ -554,7 +554,7 @@ void XqBoard::gen(std::vector<MoveFull>& moves, Side side) const
                  * go right
                  */
                 f = 0;
-                for (int y=pos + 1; y < pos - col + 9; y++) {
+                for (auto y = pos + 1; y < pos - col + 9; y++) {
                     if (isEmpty(y)) {
                         if (f == 0) {
                             gen_addMove(moves, pos, y);
@@ -569,7 +569,7 @@ void XqBoard::gen(std::vector<MoveFull>& moves, Side side) const
                 }
 
                 f = 0;
-                for (int y=pos - 9; y >= 0; y -= 9) { /* go up */
+                for (auto y = pos - 9; y >= 0; y -= 9) { /* go up */
                     if (isEmpty(y)) {
                         if (f == 0) {
                             gen_addMove(moves, pos, y);
@@ -584,7 +584,7 @@ void XqBoard::gen(std::vector<MoveFull>& moves, Side side) const
                 }
 
                 f = 0;
-                for (int y=pos + 9; y < 90; y += 9) { /* go down */
+                for (auto y = pos + 9; y < 90; y += 9) { /* go down */
                     if (isEmpty(y)) {
                         if (f == 0) {
                             gen_addMove(moves, pos, y);
@@ -603,22 +603,22 @@ void XqBoard::gen(std::vector<MoveFull>& moves, Side side) const
 
             case PieceType::rook:
             {
-                int col = pos % 9;
-                for (int y=pos - 1; y >= pos - col; y--) { /* go left */
+                auto col = pos % 9;
+                for (auto y = pos - 1; y >= pos - col; y--) { /* go left */
                     gen_addMove(moves, pos, y);
                     if (!isEmpty(y)) {
                         break;
                     }
                 }
 
-                for (int y=pos + 1; y < pos - col + 9; y++) { /* go right */
+                for (auto y = pos + 1; y < pos - col + 9; y++) { /* go right */
                     gen_addMove(moves, pos, y);
                     if (!isEmpty(y)) {
                         break;
                     }
                 }
 
-                for (int y=pos - 9; y >= 0; y -= 9) { /* go up */
+                for (auto y = pos - 9; y >= 0; y -= 9) { /* go up */
                     gen_addMove(moves, pos, y);
                     if (!isEmpty(y)) {
                         break;
@@ -626,7 +626,7 @@ void XqBoard::gen(std::vector<MoveFull>& moves, Side side) const
 
                 }
 
-                for (int y=pos + 9; y < 90; y += 9) { /* go down */
+                for (auto y = pos + 9; y < 90; y += 9) { /* go down */
                     gen_addMove(moves, pos, y);
                     if (!isEmpty(y)) {
                         break;
@@ -638,9 +638,9 @@ void XqBoard::gen(std::vector<MoveFull>& moves, Side side) const
 
             case PieceType::horse:
             {
-                int col = pos % 9;
-                int y = pos - 11;
-                int z = pos - 1;
+                auto col = pos % 9;
+                auto y = pos - 11;
+                auto z = pos - 1;
                 if (y >= 0 && col > 1 && isEmpty(z)) {
                     gen_addMove(moves, pos, y);
                 }
@@ -686,7 +686,7 @@ void XqBoard::gen(std::vector<MoveFull>& moves, Side side) const
             case PieceType::pawn:
             {
                 if ((side == Side::black && pos > 44) || (side == Side::white && pos < 45)) {
-                    int col = pos % 9;
+                    auto col = pos % 9;
                     /* go left */
                     if (col > 0) {
                         gen_addMove(moves, pos, pos - 1);
@@ -854,7 +854,7 @@ bool XqBoard::pieceList_isValid() const {
 
 bool XqBoard::pieceList_setEmpty(int *pieceList, int pos, PieceType type, Side side) {
     auto k = type == PieceType::king ? 1 : type == PieceType::pawn ? 5 : 2;
-    int d = side == Side::white ? 16 : 0;
+    auto d = side == Side::white ? 16 : 0;
     for (auto t = pieceListStartIdxByType[static_cast<int>(type)]; k > 0; t++, k--) {
         assert (t >= 0 && t < 16);
         if (pieceList[d + t] == pos) {

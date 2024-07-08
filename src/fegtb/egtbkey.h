@@ -37,11 +37,19 @@ namespace fegtb {
 
         static EgtbKeyRec getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxRecord, u32 order);
 
-        bool setupBoard_x(bslib::BoardCore& board, int pos, bslib::PieceType type, bslib::Side side) const;
-        bool setupBoard_xx(bslib::BoardCore& board, int key, bslib::PieceType type, bslib::Side side) const;
+        /// return position of piece
+        int setupBoard_x(bslib::BoardCore& board, int pos, bslib::PieceType type, bslib::Side side) const;
+        std::vector<int> setupBoard_xx(bslib::BoardCore& board, int key, bslib::PieceType type, bslib::Side side) const;
         
-        bool setupBoard_xxx(bslib::BoardCore& board, int key, bslib::PieceType type, bslib::Side side) const;
-        bool setupBoard_xxxx(bslib::BoardCore& board, int key, bslib::PieceType type, bslib::Side side) const;
+        std::vector<int> setupBoard_xxx(bslib::BoardCore& board, int key, bslib::PieceType type, bslib::Side side) const;
+        std::vector<int> setupBoard_xxxx(bslib::BoardCore& board, int key, bslib::PieceType type, bslib::Side side) const;
+
+        static std::unordered_map<int, int> tb_kk_2_map;
+        static std::unordered_map<int, int> tb_kk_2_key_map;
+        static std::unordered_map<int, int> tb_kk_8_map;
+        static std::unordered_map<int, int> tb_kk_8_key_map;
+
+        static void initOnce();
 
     private:
         static int getKey_x(int pos0);
@@ -55,13 +63,14 @@ namespace fegtb {
         static int getKey_pppp(int p0, int p1, int p2, int p3);
 
         
-        void initOnce();
 
-        void createXXKeys();
-        void createKingKeys();
+        static void createXXKeys();
+        static void createKingKeys();
     };
 
-    extern int *tb_kk_2, *tb_kk_8;
+//    extern int *tb_kk_2, *tb_kk_8;
+
+
 
 #endif // _FELICITY_CHESS_
 

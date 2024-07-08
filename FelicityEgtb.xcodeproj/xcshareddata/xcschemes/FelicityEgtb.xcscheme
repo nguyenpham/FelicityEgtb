@@ -69,7 +69,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n 3"
+<<<<<<< HEAD
+            isEnabled = "YES">
+=======
             isEnabled = "NO">
+>>>>>>> master
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n 7"
@@ -113,7 +117,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-vkey"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-d /Users/nguyenpham/Downloads/chess5men"
@@ -153,7 +157,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-epd /Users/nguyenpham/Downloads/testchess.epd"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-test create"

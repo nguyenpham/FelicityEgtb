@@ -202,6 +202,8 @@ int main(int argc, char* argv[])
         return 1;
     }
     
+    EgtbKey::initOnce();
+    
     std::map <std::string, std::string> argmap;
 
     for (auto i = 1; i < argc; ++i) {
