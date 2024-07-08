@@ -414,35 +414,35 @@ static auto boardSz = 64;
 
 int Funcs::flip(int pos, FlipMode flipMode)
 {
-    
-    switch (flipMode) {
-        case FlipMode::none:
-            return pos;
-        case FlipMode::horizontal: {
-            auto f = pos % columnCount;
-            return pos - 2 * f + columnCount - 1;
+    if (pos >= 0) {
+        switch (flipMode) {
+            case FlipMode::none:
+                return pos;
+            case FlipMode::horizontal: {
+                auto f = pos % columnCount;
+                return pos - 2 * f + columnCount - 1;
+            }
+                
+            case FlipMode::vertical: {
+                auto r = pos / columnCount, c = pos % columnCount;
+                return (rankCount - r - 1) * columnCount + c;
+            }
+            case FlipMode::rotate: {
+                return boardSz - pos - 1;
+            }
+                
+                /// For chess only since it has a square board
+            case FlipMode::flipVH: return flip_vh[pos];
+            case FlipMode::flipHV: return flip_hv[pos];
+            case FlipMode::rotate90: return flip_r90[pos];
+            case FlipMode::rotate270: return flip_r270[pos];
+                
+            default:
+                assert(false);
+                return pos;
         }
-            
-        case FlipMode::vertical: {
-            auto r = pos / columnCount, c = pos % columnCount;
-            return (rankCount - r - 1) * columnCount + c;
-        }
-        case FlipMode::rotate: {
-            return boardSz - pos - 1;
-        }
-
-            /// For chess only since it has a square board
-        case FlipMode::flipVH: return flip_vh[pos];
-        case FlipMode::flipHV: return flip_hv[pos];
-        case FlipMode::rotate90: return flip_r90[pos];
-        case FlipMode::rotate270: return flip_r270[pos];
-
-        default:
-            assert(false);
-            return pos;
     }
-    
-//    return pos;
+    return pos;
 }
 
 static const FlipMode flipflip_h[] = { FlipMode::horizontal, FlipMode::none, FlipMode::rotate, FlipMode::rotate90, FlipMode::rotate270, FlipMode::flipHV, FlipMode::vertical, FlipMode::flipVH };
@@ -491,29 +491,30 @@ static auto boardSz = 90;
 
 int Funcs::flip(int pos, FlipMode flipMode)
 {
-    
-    switch (flipMode) {
-        case FlipMode::none:
-            return pos;
-        case FlipMode::horizontal: {
-            auto f = pos % columnCount;
-            return pos - 2 * f + columnCount - 1;
+    if (pos >= 0) {
+        switch (flipMode) {
+            case FlipMode::none:
+                return pos;
+            case FlipMode::horizontal: {
+                auto f = pos % columnCount;
+                return pos - 2 * f + columnCount - 1;
+            }
+                
+            case FlipMode::vertical: {
+                auto r = pos / columnCount, c = pos % columnCount;
+                return (rankCount - r - 1) * columnCount + c;
+            }
+            case FlipMode::rotate: {
+                return boardSz - pos - 1;
+            }
+                
+            default:
+                assert(false);
+                return pos;
         }
-            
-        case FlipMode::vertical: {
-            auto r = pos / columnCount, c = pos % columnCount;
-            return (rankCount - r - 1) * columnCount + c;
-        }
-        case FlipMode::rotate: {
-            return boardSz - pos - 1;
-        }
-
-        default:
-            assert(false);
-            return pos;
     }
     
-//    return pos;
+    return pos;
 }
 
 static const FlipMode flipflip_h[] = { FlipMode::horizontal, FlipMode::none, FlipMode::rotate, FlipMode::vertical };

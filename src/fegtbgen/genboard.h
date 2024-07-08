@@ -39,10 +39,10 @@ namespace fegtb {
         bslib::FlipMode needSymmetryFlip() const;
         
 #ifdef _FELICITY_CHESS_
-#endif
-
     private:
         void genPawn_backward_quiet(std::vector<bslib::MoveFull>& moves, bslib::Side side, int pos) const;
+#endif
+
         
     };
 

@@ -44,6 +44,13 @@ void EgtbGenDb::gen_backward_thread_init(int threadIdx)
 
         assert(rcd.board->isValid());
         
+//        if (idx == 3129) {
+//            auto b0 = rcd.board->isIncheck(Side::black);
+//            auto b1 = rcd.board->isIncheck(Side::white);
+//            rcd.board->printOut();
+//            b0 = b1;
+//        }
+        
         bool inchecks[] = {
             rcd.board->isIncheck(Side::black),
             rcd.board->isIncheck(Side::white)
@@ -82,6 +89,7 @@ void EgtbGenDb::gen_backward_thread_init(int threadIdx)
                                 if (cScore == EGTB_SCORE_MISSING) {
                                     std::lock_guard<std::mutex> thelock(printMutex);
                                     rcd.board->printOut("Error: missing endagme for probing below board:");
+                                    cScore = getScore(*rcd.board, xside);
                                     exit(-1);
                                 }
                                 
@@ -191,11 +199,12 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
     auto fillScore = -curMate + (curMate > 0 ? +1 : -1);
     
     auto side = static_cast<Side>(sd), xside = getXSide(side);
-    
+
+
     for (auto idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
         
         auto oScore = egtbFile->getBufScore(idx, side);
-        
+        auto d = false; //idx == 36671;
         if (phase == 0) {
             /// The position has capture values, not last one
             auto is_cap = egtbFile->flag_is_cap(idx, side);
@@ -224,6 +233,10 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
             auto ok = egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white);
             assert(ok);
             
+            if (d) {
+                rcd.board->printOut("idx = " + std::to_string(idx));
+            }
+
             /// Retrive the parents' positions of the current board, using quiet-backward move generator
             Hist hist;
             for(auto && move : rcd.board->gen_backward_quiet(xside)) {
@@ -241,13 +254,25 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
                     auto rIdx = egtbFile->getKey(*rcd.board).key; assert(rIdx >= 0);
                     auto rScore = egtbFile->getBufScore(rIdx, xside);
 
+                    if (d) {
+                        rcd.board->printOut("idx = " + std::to_string(idx));
+                        std::cout << "" << rIdx << std::endl;
+                    }
+
                     i64 sIdx = -1;
                     if (check2Flip) {
                         auto flip = rcd.board->needSymmetryFlip();
                         if (flip != FlipMode::none) {
                             rcd.board2->clone(rcd.board);
                             rcd.board2->flip(flip);
+                            assert(rcd.board2->isValid());
                             sIdx = egtbFile->getKey(*rcd.board2).key;
+                            
+                            if (d) {
+                                rcd.board2->printOut("idx = " + std::to_string(idx));
+                                std::cout << "sIdx=" << sIdx << std::endl;
+                            }
+
                             if (rIdx == sIdx) {
                                 sIdx = -1;
                             }
@@ -256,6 +281,16 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
                     
                     /// Winning score will be filled right now (they are parents's positions of the given one)
                     if (fillScore > 0) {
+                        if(rScore == EGTB_SCORE_ILLEGAL) {
+                            rcd.board->printOut("rIdx = " + std::to_string(rIdx));
+                            auto rIdx2 = egtbFile->getKey(*rcd.board).key;
+                            
+                            auto ok = egtbFile->setupBoard(*rcd.board2, rIdx, FlipMode::none, Side::white);
+                            
+                            rcd.board2->printOut("rIdx = " + std::to_string(rIdx));
+                            assert(ok);
+                        }
+                        
                         assert(rScore != EGTB_SCORE_ILLEGAL);
                         if (rScore > EGTB_SCORE_MATE || rScore <= fillScore) {
                             egtbFile->setBufScore(rIdx, fillScore, xside);
@@ -377,10 +412,16 @@ void EgtbGenDb::gen_backward(const std::string& folder) {
     i64 totalChangeCnt = 0;
     
     for(auto tryCnt = 2; tryCnt > 0; ply++, side = getXSide(side)) {
+        assert(ply < 1000);
+        
+        if (ply > 300) {
+            ply = ply;
+        }
+        
         resetAllThreadRecordCounters();
         
         /// Clear all side-marks
-        for(i64 idx = 0; idx < egtbFile->getSize() / 2; idx++) {
+        for(i64 idx = 0; idx < egtbFile->getSize() / 2 + 1; idx++) {
             egtbFile->flags[idx] &= ~(3 | 3 << 4);
         }
         

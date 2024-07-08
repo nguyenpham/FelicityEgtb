@@ -48,8 +48,11 @@ const int egtbPieceListStartIdxByType[8] = { -1, 0, 1, 3, 5, 7, 9, 11 };
 
 } // namespace
 
-//extern const int exchangePieceValue[8];
-static const int exchangePieceValue[8] = { -1, 10000, 200, 200, 1000, 500, 500, 200 };
+extern const int egtbOrderPieceValue[8];
+//static const int exchangePieceValue[8] = { -1, 10000, 200, 200, 1000, 500, 500, 200 };
+
+/// Order: Rook, Cannon, Horse, Pawn, Advisor, Elephant
+const int egtbOrderPieceValue[8] = { -1, 10000, 3, 1, 2000, 500, 100, 10 };
 
 
 extern const PieceType egtbPieceListIdxToType[16];
@@ -73,7 +76,7 @@ static int tbkey_kaabb[1410];
 //static int tbkey_kam[40 + 35];
 //static int tbkey_kaam[70 + 60];
 
-static int tbkey_xx[EGTB_SIZE_XX_HALF];
+static int tbkey_xx_half[EGTB_SIZE_XX_HALF];
 static int tbkey_xx_full[EGTB_SIZE_XX];
 
 static int tbkey_pp[EGTB_SIZE_PP_HALF];
@@ -168,28 +171,28 @@ static int halfBoard_PawnIdxToPos[] = {
 
 
 static int pppSearchKey(int pos0, int pos1, int pos2) {
-    int x0 = std::min(pos0, std::min(pos1, pos2));
-    int x2 = std::max(pos0, std::max(pos1, pos2));
-    int x1 = pos0 != x0 && pos0 != x2 ? pos0 : pos1 != x0 && pos1 != x2 ? pos1 : pos2;
+    auto x0 = std::min(pos0, std::min(pos1, pos2));
+    auto x2 = std::max(pos0, std::max(pos1, pos2));
+    auto x1 = pos0 != x0 && pos0 != x2 ? pos0 : pos1 != x0 && pos1 != x2 ? pos1 : pos2;
 
-    int ppp = x0 << 16 | x1 << 8 | x2;
+    auto ppp = x0 << 16 | x1 << 8 | x2;
     return ppp;
 }
 
 
 void EgtbKey::createPawnKeys() {
-    int pppIdx = 0;
+    auto pppIdx = 0;
 
     auto k = 0, previousppp = -1;
-    for (int i = 0; ; i++) {
+    for (auto i = 0; ; i++) {
         auto p0 = halfBoard_PawnIdxToPos[i];
         if (p0 < 0) {
             break;
         }
         
-        int x0 = Funcs::flip(p0, FlipMode::horizontal);
+        auto x0 = Funcs::flip(p0, FlipMode::horizontal);
 
-        int r = getRow(p0), c0 = getCol(p0), f4 = 4 - c0;
+        auto r = getRow(p0), c0 = getCol(p0), f4 = 4 - c0;
 
         for (int p1 = p0 + 1; p1 <= 62; p1++) {
             if (pawnPosToIdx[p1] < 0) { // || (p0 > 44 && p1 - p0 == 9)) {
@@ -200,7 +203,7 @@ void EgtbKey::createPawnKeys() {
                 continue;
             }
 
-            int x1 = Funcs::flip(p1, FlipMode::horizontal);
+            auto x1 = Funcs::flip(p1, FlipMode::horizontal);
 
             tbkey_pp[k] = p0 << 8 | p1;
             k++;
@@ -209,15 +212,15 @@ void EgtbKey::createPawnKeys() {
                 continue;
             }
 
-            for (int p2 = p1 + 1; p2 <= 62; p2++) {
+            for (auto p2 = p1 + 1; p2 <= 62; p2++) {
                 if (pawnPosToIdx[p2] < 0 || (p0 > 44 && p2 - p0 == 9) || (p1 > 44 && p2 - p1 == 9)) {
                     continue;
                 }
 
-                int x2 = Funcs::flip(p2, FlipMode::horizontal);
+                auto x2 = Funcs::flip(p2, FlipMode::horizontal);
 
-                int ppp = p0 << 16 | p1 << 8 | p2;
-                int yyy = pppSearchKey(x0, x1, x2);
+                auto ppp = p0 << 16 | p1 << 8 | p2;
+                auto yyy = pppSearchKey(x0, x1, x2);
                 
                 auto a = pppPos2KeyMap.find(ppp);
                 if (a == pppPos2KeyMap.end()) {
@@ -239,8 +242,8 @@ void EgtbKey::createPawnKeys() {
         }
     }
     
-    int ppIdx = 0;
-    for (int i = 0; i < 9 * 7; i++) {
+    auto ppIdx = 0;
+    for (auto i = 0; i < 9 * 7; i++) {
         if (halfBoard_PawnPosToIdx[i] < 0) {
             continue;
         }
@@ -254,24 +257,24 @@ void EgtbKey::createPawnKeys() {
 }
 
 static void createXXKeys() {
-    int k = 0;
-    for (int i = 0; i < 50; i++) {
+    auto k = 0;
+    for (auto i = 0; i < 50; i++) {
         auto p0 = halfBoard_IdxToPos[i];
-        int r = getRow(p0), f4 = 4 - getCol(p0);
+        auto r = getRow(p0), f4 = 4 - getCol(p0);
 
-        for (int p1 = p0 + 1; p1 < 90; p1++) {
+        for (auto p1 = p0 + 1; p1 < 90; p1++) {
             auto c = getCol(p1);
             if ((r == getRow(p1) && f4 < abs(c - 4)) || (f4 == 0 && c > 4)) {
                 continue;
             }
 
-            tbkey_xx[k++] = p0 << 8 | p1;
+            tbkey_xx_half[k++] = p0 << 8 | p1;
         }
     }
 
     k = 0;
-    for (int p0 = 0; p0 < 90; p0++) {
-        for (int p1 = p0 + 1; p1 < 90; p1++) {
+    for (auto p0 = 0; p0 < 90; p0++) {
+        for (auto p1 = p0 + 1; p1 < 90; p1++) {
             tbkey_xx_full[k++] = p0 << 8 | p1;
         }
     }
@@ -279,21 +282,21 @@ static void createXXKeys() {
 
 int EgtbKey::getKey_pp(int pos0, int pos1) const
 {
-    int r0 = getRow(pos0), r1 = getRow(pos1);
+    auto r0 = getRow(pos0), r1 = getRow(pos1);
 
     if (r0 > r1 || (r0 == r1 && abs(getCol(pos0) - 4) < abs(getCol(pos1) - 4) )) {
         int x = pos0; pos0 = pos1; pos1 = x;
     }
 
-    int c0 = getCol(pos0);
+    auto c0 = getCol(pos0);
     if (c0 > 4 || (c0 == 4 && getCol(pos1) > 4)) {
         pos0 = Funcs::flip(pos0, FlipMode::horizontal);
         pos1 = Funcs::flip(pos1, FlipMode::horizontal);
     }
 
-    int x = pos0 << 8 | pos1;
-    int sz = sizeof(tbkey_pp) / sizeof(int);
-    int key = Funcs::bSearch(tbkey_pp, sz, x);
+    auto x = pos0 << 8 | pos1;
+    auto sz = int(sizeof(tbkey_pp) / sizeof(int));
+    auto key = Funcs::bSearch(tbkey_pp, sz, x);
     return key;
 }
 
@@ -303,8 +306,8 @@ int EgtbKey::getKey_pp_full(int pos0, int pos1) const
         std::swap(pos0, pos1);
     }
 
-    int x = pos0 << 8 | pos1;
-    int key = Funcs::bSearch(tbkey_pp_full, EGTB_SIZE_PP, x); assert(key >= 0 && key < EGTB_SIZE_PP);
+    auto x = pos0 << 8 | pos1;
+    auto key = Funcs::bSearch(tbkey_pp_full, EGTB_SIZE_PP, x); assert(key >= 0 && key < EGTB_SIZE_PP);
     return key;
 
 }
@@ -324,23 +327,22 @@ int EgtbKey::getKeyFlip_ppp_full(int pos0, int pos1, int pos2) const
     return 0;
 }
 
-
 int EgtbKey::getKey_xx(int pos0, int pos1)
 {
-    int r0 = getRow(pos0), r1 = getRow(pos1);
+    auto r0 = getRow(pos0), r1 = getRow(pos1);
 
     if (r0 > r1 || (r0 == r1 && abs(getCol(pos0) - 4) < abs(getCol(pos1) - 4) )) {
-        int x = pos0; pos0 = pos1; pos1 = x;
+        std::swap(pos0, pos1);
     }
 
-    int c0 = getCol(pos0);
+    auto c0 = getCol(pos0);
     if (c0 > 4 || (c0 == 4 && getCol(pos1) > 4)) {
         pos0 = Funcs::flip(pos0, FlipMode::horizontal);
         pos1 = Funcs::flip(pos1, FlipMode::horizontal);
     }
 
-    int x = pos0 << 8 | pos1;
-    int key = Funcs::bSearch(tbkey_xx, EGTB_SIZE_XX_HALF, x);
+    auto x = pos0 << 8 | pos1;
+    auto key = Funcs::bSearch(tbkey_xx_half, EGTB_SIZE_XX_HALF, x);
     return key;
 }
 
@@ -350,47 +352,35 @@ int EgtbKey::getKey_xx_full(int pos0, int pos1)
         std::swap(pos0, pos1);
     }
     
-    int x = pos0 << 8 | pos1;
-    int key = Funcs::bSearch(tbkey_xx_full, EGTB_SIZE_XX, x);
+    auto x = pos0 << 8 | pos1;
+    auto key = Funcs::bSearch(tbkey_xx_full, EGTB_SIZE_XX, x);
     return key;
 }
 
-int EgtbKey::getKey_xy(int pos0, int pos1)
+/// above half / black view
+int EgtbKey::getKey_defence(int k, int a1, int a2, int e1, int e2, FlipMode flipMode)
 {
-    int c0 = getCol(pos0);
-    if (c0 > 4) {
-        pos0 = Funcs::flip(pos0, FlipMode::horizontal);
-        pos1 = Funcs::flip(pos1, FlipMode::horizontal);
+    if (a1 < 0 && a2 > 0) {
+        a1 = a2; a2 = -1;
+    }
+    if (e1 < 0 && e2 > 0) {
+        e1 = e2; e2 = -1;
     }
 
-    int idx0 = egtbHalfBoard_PosToIdx[pos0];
-    int key = idx0 * EGTB_SIZE_X + pos1;
-    return key;
-}
+    auto key = Funcs::flip(k, flipMode);
+    e1 = Funcs::flip(e1, flipMode);
+    e2 = Funcs::flip(e2, flipMode);
 
-int EgtbKey::getKey_xp(int pos0, int pos1)
-{
-    int c0 = getCol(pos0);
-    if (c0 > 4) {
-        pos0 = Funcs::flip(pos0, FlipMode::horizontal);
-        pos1 = Funcs::flip(pos1, FlipMode::horizontal);
-    }
+    assert(key < 45 && e1 < 45 && e2 < 45);
 
-    int idx0 = egtbHalfBoard_PosToIdx[pos0];
-    int idx1 = pawnPosToIdx[pos1];
-    int key = idx0 * EGTB_SIZE_P + idx1;
-    return key;
-}
-
-int EgtbKey::getKey_defence(int k, int a1, int a2, int e1, int e2)
-{
-    assert(k < 45 && a1 < 45 && a2 < 45 && e1 < 45 && e2 < 45);
     const int* array;
     int sz;
-    int key = k;
 
     if (a1 > 0) {
+        a1 = Funcs::flip(a1, flipMode);
+
         if (a2 > 0) {
+            a2 = Funcs::flip(a2, flipMode);
             key |= a1 < a2 ? (a1 << 18 | a2 << 24) : (a2 << 18 | a1 << 24);
             if (e1 > 0) {
                 if (e2 > 0) {
@@ -425,6 +415,8 @@ int EgtbKey::getKey_defence(int k, int a1, int a2, int e1, int e2)
             array = tbkey_k; sz = sizeof(tbkey_k)/sizeof(int);
         }
     }
+
+    assert(a1 < 45 && a2 < 45);
 
     if (e1 > 0) {
             if (e2 > 0) {
@@ -550,7 +542,6 @@ void EgtbKey::initOnce() {
 
 
 /// Convert board into key
-
 EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxRecord, u32 order)
 {
     EgtbKeyRec rec;
@@ -563,7 +554,7 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
             auto pos = board.pieceList[sd][i];
             if (pos >= 0) {
                 auto piece = board.getPiece(pos);
-                auto v = exchangePieceValue[static_cast<int>(piece.type)];
+                auto v = egtbOrderPieceValue[static_cast<int>(piece.type)];
                 mat[sd] += v;
                 if (piece.type >= PieceType::rook) {
                     strongmat[sd] += v;
@@ -580,6 +571,97 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
     }
     
     rec.flipSide = strongSd == B;
+    
+    /// Detect flipMode
+    for(auto i = 0, found = 0; !found; i++) {
+        auto attr = egtbIdxRecord[i].idx;
+        if (attr == EGTB_IDX_NONE) {
+            break;
+        }
+
+        auto side = egtbIdxRecord[i].side;
+        if (rec.flipSide) {
+            side = getXSide(side);
+        }
+        auto sd = static_cast<int>(side);
+        
+        switch (attr) {
+            case EGTB_IDX_R_HALF:
+            case EGTB_IDX_C_HALF:
+            case EGTB_IDX_N_HALF:
+            case EGTB_IDX_P_HALF:
+            {
+                auto c = ROOK + attr - EGTB_IDX_R_HALF;
+                
+                auto d = egtbPieceListStartIdxByType[c];
+                
+                for(auto t = 0, n = c == PAWN ? 5 : 2; t < n; t++) {
+                    auto pos = board.pieceList[sd][d + t];
+                    if (pos < 0) {
+                        continue;
+                    }
+                    assert(static_cast<int>(board.getPiece(pos).type) == c);
+                    found = 1;
+                    pos = Funcs::flip(pos, flipMode);
+                    assert(board.isPositionValid(pos));
+                    if (getCol(pos) > 4) {
+                        flipMode = Funcs::flip(flipMode, FlipMode::horizontal);
+                    }
+                }
+                
+                break;
+            }
+                
+            case EGTB_IDX_RR_HALF:
+            case EGTB_IDX_CC_HALF:
+            case EGTB_IDX_NN_HALF:
+            case EGTB_IDX_PP_HALF:
+            {
+                auto c = ROOK + attr - EGTB_IDX_RR_HALF;
+                
+                auto d = egtbPieceListStartIdxByType[c];
+                
+                auto pos0 = -1, pos1 = -1;
+                for(auto t = 0, n = c == PAWN ? 5 : 2; t < n; t++) {
+                    auto pos = board.pieceList[sd][d + t];
+                    if (pos < 0) {
+                        continue;
+                    }
+                    assert(board.isPositionValid(pos));
+                    assert(static_cast<int>(board.getPiece(pos).type) == c);
+                    pos = Funcs::flip(pos, flipMode);
+                    if (pos0 < 0) pos0 = pos;
+                    else {
+                        pos1 = pos;
+                        break;
+                    }
+                }
+                
+                assert(board.isPositionValid(pos0) && board.isPositionValid(pos1));
+                
+                auto r0 = getRow(pos0), r1 = getRow(pos1);
+                auto f0 = getCol(pos0), f1 = getCol(pos1);
+
+                if (r0 == r1) {
+                    auto a0 = abs(f0 - 4), a1 = abs(f1 - 4);
+                    if (a0 < a1 || (a0 == a1 && f1 < 4)) {
+                        f0 = f1;
+                    }
+                } else if (f0 == 4 || (f1 != 4 && r0 > r1)) {
+                    f0 = f1;
+                }
+                
+                if (f0 > 4) {
+                    flipMode = Funcs::flip(flipMode, FlipMode::horizontal);
+                }
+                break;
+            }
+                
+            default:
+                break;
+        }
+    }
+    
     
     /// Calculate key
     i64 key = 0;
@@ -609,7 +691,7 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
             {
                 /// King
                 auto king = board.pieceList[sd][0];
-                assert(board.isPositionValid(king)); // king
+                assert(board.isPositionValid(king));
                 
                 auto d = egtbPieceListStartIdxByType[ADVISOR];
                 
@@ -618,26 +700,14 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
                 auto a1 = board.pieceList[sd][d + 1];
                 auto e0 = board.pieceList[sd][d + 2];
                 auto e1 = board.pieceList[sd][d + 3];
+                                
+//                auto dFlip = side == Side::black ? flipMode :
+//                Funcs::flip(flipMode, FlipMode::rotate);
                 
-                
-                auto dFlip = side == Side::black ? flipMode :
+                auto dFlip = sd != strongSd ? flipMode :
                 Funcs::flip(flipMode, FlipMode::rotate);
                 
-                king = Funcs::flip(king, dFlip);
-                if (a0 > 0) {
-                    a0 = Funcs::flip(a0, dFlip);
-                }
-                if (a1 > 0) {
-                    a1 = Funcs::flip(a1, dFlip);
-                }
-                if (e0 > 0) {
-                    e0 = Funcs::flip(e0, dFlip);
-                }
-                if (e1 > 0) {
-                    e1 = Funcs::flip(e1, dFlip);
-                }
-                
-                auto h = getKey_defence(king, a0, a1, e0, e1);
+                auto h = getKey_defence(king, a0, a1, e0, e1, dFlip);
                 assert(h >= 0);
                 key += h * mul;
                 break;
@@ -654,31 +724,28 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
             case EGTB_IDX_P_FULL:
             {
                 auto isHalf = attr < EGTB_IDX_R_FULL;
-                int c = attr - (isHalf ? EGTB_IDX_R_HALF : EGTB_IDX_R_FULL) + ROOK;
-                
-                auto type = static_cast<PieceType>(c);
-                assert(type >= PieceType::rook && type <= PieceType::pawn);
+                auto c = attr - (isHalf ? EGTB_IDX_R_HALF : EGTB_IDX_R_FULL) + ROOK;
                 
                 auto d = egtbPieceListStartIdxByType[c];
                 
-                for(auto t = 0, n = type == PieceType::pawn ? 5 : 2; t < n; t++) {
+                for(auto t = 0, n = c == PAWN ? 5 : 2; t < n; t++) {
                     auto pos = board.pieceList[sd][d + t];
                     if (pos < 0) {
                         continue;
                     }
-                    assert(board.getPiece(pos).type == type);
+                    assert(static_cast<int>(board.getPiece(pos).type) == c);
                     
                     pos = Funcs::flip(pos, flipMode);
                     assert(pos >= 0 && pos < 90);
                     
-                    if (type == PieceType::pawn) {
-                        pos = isHalf ? halfBoard_PawnPosToIdx[pos] : pawnPosToIdx[pos];
+                    i64 h;
+                    if (c == PAWN) {
+                        h = isHalf ? halfBoard_PawnPosToIdx[pos] : pawnPosToIdx[pos];
                     } else {
-                        if (isHalf) {
-                            pos = egtbHalfBoard_PosToIdx[pos];
-                        }
+                        h = isHalf ? egtbHalfBoard_PosToIdx[pos] : pos;
                     }
-                    key += pos * mul;
+
+                    key += h * mul;
                     break;
                 }
                 break;
@@ -736,7 +803,6 @@ EgtbKeyRec EgtbKey::getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxR
             case EGTB_IDX_PPP_HALF:
             case EGTB_IDX_PPP_FULL:
             {
-                
                 auto d = egtbPieceListStartIdxByType[PAWN];
                 
                 auto k = 0;
@@ -842,18 +908,18 @@ bool EgtbKey::setupBoard_defence(EgtbBoard& board, int attr, int idx, Side side,
     }
     auto key = array[idx];
 
-    int k = key & 0x3f;
+    auto k = key & 0x3f;
     if (k <= 0) {
         return false;
     }
 
 
-    int e1 = (key >> 6) & 0x3f;
-    int e2 = (key >> 12) & 0x3f;
+    auto e1 = (key >> 6) & 0x3f;
+    auto e2 = (key >> 12) & 0x3f;
 
-    // advisor
-    int a1 = (key >> 18) & 0x3f;
-    int a2 = (key >> 24) & 0x3f;
+    /// advisor
+    auto a1 = (key >> 18) & 0x3f;
+    auto a2 = (key >> 24) & 0x3f;
 
     /// Black Defenders may be pushed over a White piece
     k = Funcs::flip(k, flip);
@@ -875,7 +941,7 @@ bool EgtbKey::setupBoard_defence(EgtbBoard& board, int attr, int idx, Side side,
         }
     }
 
-    // elephant
+    /// elephant
     if (e1 > 0) {
         e1 = Funcs::flip(e1, flip);
         if (!setupBoard_x(board, e1, PieceType::elephant, side)) {
@@ -894,7 +960,7 @@ bool EgtbKey::setupBoard_defence(EgtbBoard& board, int attr, int idx, Side side,
 }
 
 bool EgtbKey::setupBoard_oneStrongPiece(EgtbBoard& board, int attr, int key, bslib::Side side, FlipMode flip) {
-    int pos = key;
+    auto pos = key;
     PieceType type;
     switch (attr) {
         case EGTB_IDX_R_HALF:
@@ -936,7 +1002,7 @@ bool EgtbKey::setupBoard_oneStrongPiece(EgtbBoard& board, int attr, int key, bsl
 
 bool EgtbKey::setupBoard_twoStrongPieces(EgtbBoard& board, int attr, int key, bslib::Side side, FlipMode flip)
 {
-    int pos0 = -1, pos1 = -1, pos2 = -1;
+    auto pos0 = -1, pos1 = -1, pos2 = -1;
     PieceType type, second;
     switch (attr) {
             
@@ -976,7 +1042,7 @@ bool EgtbKey::setupBoard_twoStrongPieces(EgtbBoard& board, int attr, int key, bs
         case EGTB_IDX_CC_HALF:
         case EGTB_IDX_NN_HALF:
         {
-            int x = tbkey_xx[key];
+            auto x = tbkey_xx_half[key];
             pos0 = x >> 8;
             pos1 = x & 0xff;
             break;
@@ -987,7 +1053,7 @@ bool EgtbKey::setupBoard_twoStrongPieces(EgtbBoard& board, int attr, int key, bs
         case EGTB_IDX_NN_FULL:
         {
             assert(key >= 0 && key < EGTB_SIZE_XX);
-            int x = tbkey_xx_full[key];
+            auto x = tbkey_xx_full[key];
             pos0 = x >> 8;
             pos1 = x & 0xff;
             break;
@@ -995,7 +1061,7 @@ bool EgtbKey::setupBoard_twoStrongPieces(EgtbBoard& board, int attr, int key, bs
             
         case EGTB_IDX_PP_HALF:
         {
-            int x = tbkey_pp[key];
+            auto x = tbkey_pp[key];
             pos0 = x >> 8;
             pos1 = x & 0xff;
             break;
@@ -1003,7 +1069,7 @@ bool EgtbKey::setupBoard_twoStrongPieces(EgtbBoard& board, int attr, int key, bs
 
         case EGTB_IDX_PP_FULL:
         {
-            int x = tbkey_pp_full[key];
+            auto x = tbkey_pp_full[key];
             pos0 = x >> 8;
             pos1 = x & 0xff;
             assert(pos0 < pos1 && pos0 >= 0 && pos0 < 90 && pos1 >= 0 && pos1 < 90);
@@ -1012,7 +1078,7 @@ bool EgtbKey::setupBoard_twoStrongPieces(EgtbBoard& board, int attr, int key, bs
             
         case EGTB_IDX_PPP_HALF:
         {
-            int ppp = pppKeyToPos[key];
+            auto ppp = pppKeyToPos[key];
             pos0 = ppp & 0xff;
             pos1 = (ppp >> 8) & 0xff;
             pos2 = (ppp >> 16) & 0xff;
@@ -1022,7 +1088,7 @@ bool EgtbKey::setupBoard_twoStrongPieces(EgtbBoard& board, int attr, int key, bs
 
         default:
         {
-            int idx0 = key / EGTB_SIZE_X;
+            auto idx0 = key / EGTB_SIZE_X;
             pos0 = halfBoard_IdxToPos[idx0];
             pos1 = key % EGTB_SIZE_X;
             
@@ -1034,13 +1100,13 @@ bool EgtbKey::setupBoard_twoStrongPieces(EgtbBoard& board, int attr, int key, bs
 
     }
 
+    assert(pos0 >= 0 && pos0 < pos1 && pos1 < 90);
+
     pos0 = Funcs::flip(pos0, flip);
     pos1 = Funcs::flip(pos1, flip);
     
-    if (!setupBoard_x(board, pos0, type, side)) {
-        return false;
-    }
-    if (!setupBoard_x(board, pos1, second, side)) {
+    if (!setupBoard_x(board, pos0, type, side) 
+        || !setupBoard_x(board, pos1, second, side)) {
         return false;
     }
 

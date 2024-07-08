@@ -72,7 +72,7 @@ public:
 
     static EgtbKeyRec getKey(const EgtbBoard& board, const EgtbIdxRecord* egtbIdxRecord, u32 order);
 
-    static int getKey_defence(int k, int a1, int a2, int e1, int e2);
+    static int getKey_defence(int k, int a1, int a2, int e1, int e2, bslib::FlipMode flipMode);
 
     bool setupBoard_twoStrongPieces(EgtbBoard& board, int attr, int key, bslib::Side side, bslib::FlipMode flip);
     bool setupBoard_oneStrongPiece(EgtbBoard& board, int attr, int key, bslib::Side side, bslib::FlipMode flip);
@@ -88,9 +88,6 @@ private:
 
     static int getKey_xx(int p0, int p1);
     static int getKey_xx_full(int p0, int p1);
-
-    static int getKey_xy(int p0, int p1);
-    static int getKey_xp(int p0, int p1);
 
     void initOnce();
     void createPawnKeys();

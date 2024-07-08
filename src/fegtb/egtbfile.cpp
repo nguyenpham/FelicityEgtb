@@ -626,7 +626,7 @@ int EgtbFile::_cellToScore(char cell) {
             return EGTB_SCORE_DRAW;
         }
 
-        /// winning score, score should be positive 1 -> 1000
+        /// winning score, score should be positive 1 -> 1000, positive odd number
         if (s < TB_START_LOSING) {
             auto mi = int(s - TB_START_MATING) * 2 + 1;
             auto k = EGTB_SCORE_MATE - mi;
@@ -634,10 +634,10 @@ int EgtbFile::_cellToScore(char cell) {
             return k;
         }
 
-        /// lossing, score should be negative -1000 -> -870
+        /// lossing, score should be negative -1000 -> -870, negative even number
         auto mi = int(s - TB_START_LOSING) * 2;
         auto k = -EGTB_SCORE_MATE + mi;
-        assert(k >= -EGTB_SCORE_MATE && k <= -EGTB_SCORE_MATE + TB_START_LOSING);
+        assert(k >= -EGTB_SCORE_MATE && k <= -EGTB_SCORE_MATE + 2 * TB_START_LOSING);
         return k;
     }
 
@@ -662,6 +662,13 @@ int EgtbFile::verifyAKey(EgtbBoard& board, i64 idx) const
     if (!setupBoard(board, idx, FlipMode::none, Side::white)) {
         return 0;
     }
+    
+//    auto d = idx == 36696 || idx == 36698;
+//    if (d) {
+//        board.printOut("idx=" + std::to_string(idx));
+//        auto idx2 = getKey(board).key;
+//        std::cout << "idx=" + std::to_string(idx) + ", idx2=" + std::to_string(idx2) << std::endl;
+//    }
     
     auto bit = Verify_bit_setupOK;
     if (board.isValid() && getKey(board).key == idx) {

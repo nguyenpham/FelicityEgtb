@@ -23,6 +23,8 @@
 using namespace fegtb;
 using namespace bslib;
 
+extern const int egtbOrderPieceValue[8];
+
 EgtbDb::EgtbDb() {
 }
 
@@ -195,8 +197,10 @@ int EgtbDb::getScoreOnePly(EgtbBoard& board, Side side) {
     return board.isIncheck(side) ? -EGTB_SCORE_MATE : EGTB_SCORE_DRAW;
 }
 
+
 std::string EgtbDb::getEgtbFileName(const BoardCore& board)
 {
+#ifdef _FELICITY_CHESS_
     std::string names[2][8], wname, bname;
     
     for(auto sd = 0; sd < 2; sd++) {
@@ -219,6 +223,33 @@ std::string EgtbDb::getEgtbFileName(const BoardCore& board)
     assert(wname.find('k') != std::string::npos);
     assert(bname.find('k') != std::string::npos);
     return wname + bname;
+
+#else
+    std::string names[2];
+    int mats[2] = { 0, 0 };
+    
+    for(auto sd = 0; sd < 2; sd++) {
+        for(auto i = 0; i < 16; i++) {
+            /// king, rook, cannon, horse, pawn, advisor, elephant
+            static int nameOrder[] = { 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 1, 2, 3, 4 };
+            auto j = nameOrder[i];
+            auto pos = board.pieceList[sd][j];
+
+            if (pos >= 0) {
+                auto piece = board.getPiece(pos);
+                assert(piece.isValid() && !piece.isEmpty());
+                auto t = static_cast<int>(piece.type);
+                names[sd] += Funcs::pieceTypeName[t];
+                
+                mats[sd] += t * egtbOrderPieceValue[t];
+            }
+        }
+    }
+    
+    return mats[W] >= mats[B] ? names[W] + names[B] : names[B] + names[W];
+
+#endif
+
 }
 
 EgtbFile* EgtbDb::getEgtbFile(const BoardCore& board) const {

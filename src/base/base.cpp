@@ -215,30 +215,58 @@ void BoardCore::flip(FlipMode flipMode)
         case FlipMode::none:
             return;
         case FlipMode::horizontal: {
-            auto mr = size() / columnCount();
-            auto halfc = columnCount() / 2;
+            pieceList_reset((int *)pieceList);
+            auto mr = rankCount();
+#ifdef _FELICITY_CHESS_
+            auto halfc = 4;
+#else
+            auto halfc = 5;
+#endif
             for(auto r = 0; r < mr; r++) {
                 auto pos = r * columnCount();
                 for(auto f = 0; f < halfc; f++) {
-                    std::swap(pieces[pos + f], pieces[pos + columnCount() - 1 - f]);
+                    auto pos0 = pos + f, pos1 = pos + columnCount() - 1 - f;
+                    auto piece0 = pieces[pos0];
+                    auto piece1 = pieces[pos1];
+                    
+                    if (piece0.isEmpty() && piece1.isEmpty()) {
+                        continue;
+                    }
+//                    if (piece0.type == PieceType::king || piece1.type == PieceType::king) {
+//                        printOut();
+//                    }
+                    setPiece(pos1, piece0);
+
+                    if (pos0 != pos1) {
+                        setPiece(pos0, piece1);
+                    }
                 }
             }
+            assert(pieceList[0][0] >= 0 && pieceList[1][0] >= 0);
             return;
         }
-            
+
         case FlipMode::vertical:
         case FlipMode::rotate: {
+            assert(false);
+            pieceList_reset((int *)pieceList);
             auto halfsz = size() / 2;
             auto mr = size() / columnCount();
             for(auto r0 = 0; r0 < halfsz; r0++) {
                 auto r1 = flipMode == FlipMode::vertical ? (mr - 1 - r0 / columnCount()) * columnCount() + r0 % columnCount() : size() - 1 - r0;
-                std::swap(pieces[r0], pieces[r1]);
-                if (!pieces[r0].isEmpty()) {
-                    pieces[r0].side = xSide(pieces[r0].side);
-                }
-                if (!pieces[r1].isEmpty()) {
-                    pieces[r1].side = xSide(pieces[r1].side);
-                }
+//                std::swap(pieces[r0], pieces[r1]);
+//                if (!pieces[r0].isEmpty()) {
+//                    pieces[r0].side = xSide(pieces[r0].side);
+//                }
+//                if (!pieces[r1].isEmpty()) {
+//                    pieces[r1].side = xSide(pieces[r1].side);
+//                }
+                
+                auto piece0 = pieces[r0];
+                auto piece1 = pieces[r1];
+                setPiece(r0, piece1);
+                setPiece(r1, piece0);
+
             }
             
             side = xSide(side);

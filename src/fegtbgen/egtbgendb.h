@@ -39,6 +39,10 @@ public:
     std::string sortingSides[2];
     std::string attackerSides[2];
 
+#ifdef _FELICITY_XQ_
+    std::string allSides[2];
+#endif
+    
     int pieceCount[2][10], pawnCount[2];
     
     EgtbType type = EgtbType::dtm;

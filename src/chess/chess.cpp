@@ -1093,6 +1093,7 @@ void ChessBoard::flip(FlipMode flipMode)
         }
 
         default:
+            setFenCastleRights_clear();
             BoardCore::flip(flipMode);
     }
 }

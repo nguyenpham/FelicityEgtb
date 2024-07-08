@@ -36,6 +36,7 @@ namespace bslib {
         Side side;
         int quietCnt, fullMoveCnt = 1;
         int pieceList[2][16];
+
     protected:
         Piece pieces[BOARD_SZ];
         
@@ -154,8 +155,8 @@ namespace bslib {
 
             histList.clear();
             quietCnt = 0;
-            pieceList_reset((int *)pieceList);
             side = Side::none;
+            pieceList_reset((int *)pieceList);
         }
 
         

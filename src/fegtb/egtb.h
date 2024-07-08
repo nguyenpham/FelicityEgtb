@@ -318,8 +318,15 @@ enum EgtbIdx {
     EGTB_IDX_NN_FULL,
     EGTB_IDX_PP_FULL,
 
+    /// not supported yet
     EGTB_IDX_PPP_HALF,
     EGTB_IDX_PPP_FULL,
+
+    EGTB_IDX_PPPP_HALF,
+    EGTB_IDX_PPPP_FULL,
+
+    EGTB_IDX_PPPPP_HALF,
+    EGTB_IDX_PPPPP_FULL,
 
     EGTB_IDX_NONE = 254
 };

@@ -112,7 +112,7 @@ bool XqBoard::isValid() const
 {
     int pieceCout[2][8] = { { 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0} };
     
-    for (int i = 0; i < BOARD_SZ; i++) {
+    for (auto i = 0; i < BOARD_SZ; i++) {
         auto piece = getPiece(i);
         if (piece.isEmpty()) {
             continue;
@@ -141,16 +141,16 @@ bool XqBoard::isLegal() const
     
     auto f = bK % 9;
     if (f != wK % 9) {
-        return false;
+        return true;
     }
     
     for(auto x = bK + 9; x < wK; x += 9) {
         if (!isEmpty(x)) {
-            return false;
+            return true;
         }
     }
     
-    return true;
+    return false;
 }
 
 
@@ -182,7 +182,7 @@ std::string XqBoard::toString() const
 void XqBoard::setFen(const std::string& fen)
 {
     reset();
-    pieceList_reset((int *)pieceList);
+//    pieceList_reset((int *)pieceList);
 
     std::string str = fen;
     startFen = fen;
@@ -205,10 +205,10 @@ void XqBoard::setFen(const std::string& fen)
         thefen = originalFen;
     }
 
-    bool last = false;
+    auto last = false;
     side = Side::white;
 
-    for (int i=0, pos=0; i < (int)thefen.length(); i++) {
+    for (auto i=0, pos=0; i < (int)thefen.length(); i++) {
         char ch = thefen.at(i);
 
         if (ch==' ') {
@@ -461,7 +461,7 @@ void XqBoard::gen(std::vector<MoveFull>& moves, Side side) const
 
     const int* pl = pieceList[static_cast<int>(side)];
 
-    for (int l = 0; l < 16; l++) {
+    for (auto l = 0; l < 16; l++) {
         auto pos = pl[l];
         if (pos < 0) {
             continue;
@@ -490,7 +490,7 @@ void XqBoard::gen(std::vector<MoveFull>& moves, Side side) const
 
             case PieceType::advisor:
             {
-                int y = pos - 10;   /* go left up */
+                auto y = pos - 10;   /* go left up */
                 if (y == 3 || y == 13 || y == 66 || y == 76) {
                     gen_addMove(moves, pos, y);
                 }
@@ -804,14 +804,16 @@ void XqBoard::createFullMoves(std::vector<MoveFull>& moveList, MoveFull m) const
 }
 
 bool XqBoard::pieceList_setPiece(int *pieceList, int pos, PieceType type, Side side) {
-    auto d = side == Side::white ? 16 : 0;
-    
-    auto k = type == PieceType::king ? 1 : type == PieceType::pawn ? 5 : 2;
-    for (auto t = pieceListStartIdxByType[static_cast<int>(type)]; k > 0; t++, k--) {
-        assert (t >= 0 && t < 16);
-        if (pieceList[d + t] < 0 || pieceList[d + t] == pos) {
-            pieceList[d + t] = pos;
-            return true;
+    if (type != PieceType::empty) {
+        auto d = side == Side::white ? 16 : 0;
+        
+        auto k = type == PieceType::king ? 1 : type == PieceType::pawn ? 5 : 2;
+        for (auto t = pieceListStartIdxByType[static_cast<int>(type)]; k > 0; t++, k--) {
+            assert (t >= 0 && t < 16);
+            if (pieceList[d + t] < 0 || pieceList[d + t] == pos) {
+                pieceList[d + t] = pos;
+                return true;
+            }
         }
     }
     

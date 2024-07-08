@@ -55,41 +55,100 @@ void createSubName(const std::string& aName, std::set<std::string>& allNameSet) 
     }
 }
 
-void addName(std::vector<std::string>& names, int n, std::string l, std::string r)
+void addName(std::vector<std::string>& names, std::string l, std::string r)
 {
-    auto l0 = l.size(), l1 = r.size();
-    if (l0 + l1 >= n) {
-        if (l0 + l1 == n) {
 #ifdef _FELICITY_CHESS_
-            names.push_back("k" + l + "k" + r);
+    names.push_back("k" + l + "k" + r);
 #else
-            names.push_back("k" + l + "aabbk" + r + "aabb");
+    names.push_back("k" + l + "aabbk" + r + "aabb");
 #endif
-        }
+}
+
+void createNameByAttackerNumber(std::vector<std::string>& names, const std::string& s, int fromType, int len) {
+    if (s.size() >= len) {
         return;
     }
-
+    
 #ifdef _FELICITY_CHESS_
-    auto from = QUEEN;
+    auto n = fromType == QUEEN ? 9 : fromType == PAWN ? 8 : 10;
 #else
-    auto from = ROOK;
+    auto n = fromType == PAWN ? 5 : 2;
 #endif
-
-    for(auto t = from; t <= PAWN; t++) {
+    
+    for(auto t = fromType; t <= PAWN; t++) {
         auto c = Funcs::pieceTypeName[t];
-        addName(names, n, l + c, r);
-        addName(names, n, l, r + c);
-        addName(names, n, l + c, r + c);
+        auto ss = s;
+        for(auto i = 0; i < n; i++) {
+            ss += c;
+            if (ss.size() == len) {
+                names.push_back(ss);
+                break;
+            }
+            createNameByAttackerNumber(names, ss, t + 1, len);
+        }
+    }
+}
+
+void addName(std::vector<std::string>& names, int ln, int rn)
+{
+    if (ln + rn == 0) {
+        return;
+    }
+#ifdef _FELICITY_CHESS_
+    auto fromType = QUEEN;
+#else
+    auto fromType = ROOK;
+#endif
+    
+    std::vector<std::string> lvec, rvec;
+    createNameByAttackerNumber(lvec, "", fromType, ln);
+    if (rn == 0) {
+        rvec.push_back("");
+    } else {
+        createNameByAttackerNumber(rvec, "", fromType, rn);
+    }
+    
+    for(auto && l : lvec) {
+        for(auto && r : rvec) {
+#ifdef _FELICITY_CHESS_
+            auto s = "k" + l + "k" + r;
+#else
+            auto s = "k" + l + "aabbk" + r + "aabb";
+#endif
+            names.push_back(s);
+        }
     }
 }
 
 /// from a given names, get all sub-endgames
 std::vector<std::string> EgtbGenDb::parseName(const std::string& name, bool includeSubs)
 {
+    auto p = name.find('-');
+    if (p != std::string::npos) {
+        auto s0 = name.substr(0, p);
+        auto s1 = name.substr(p + 1);
+        
+        if (Funcs::is_integer(s0) && Funcs::is_integer(s1)) {
+            auto n0 = std::stoi(s0);
+            auto n1 = std::stoi(s1);
+            std::vector<std::string> names;
+            addName(names, n0, n1);
+            return parseNames(names);
+        }
+        return std::vector<std::string>();
+    }
+
     if (Funcs::is_integer(name)) {
         auto n = std::stoi(name);
         std::vector<std::string> names;
-        addName(names, n, "", "");
+        
+        for (auto n0 = 1; n0 <= n; n0++) {
+            for (auto n1 = 0; n0 + n1 <= n; n1++) {
+                if (n0 + n1 == n) {
+                    addName(names, n0, n1);
+                }
+            }
+        }
         return parseNames(names);
     }
 

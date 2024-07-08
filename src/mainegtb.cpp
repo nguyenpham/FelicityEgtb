@@ -136,7 +136,7 @@ std::string explainScore(int score) {
     return str;
 }
 
-static void processName(std::string& endgameName, bool& isExactName)
+static void prePocessName(std::string& endgameName, bool& isExactName)
 {
     if (endgameName.empty()) {
         return;
@@ -170,7 +170,10 @@ static void processName(std::string& endgameName, bool& isExactName)
         } else {
             auto s0 = endgameName.substr(0, p);
             auto s1 = endgameName.substr(p + 1);
-            endgameName = "k" + s0 + "aabbk" + s1 + "aabb";
+            
+            if (!Funcs::is_integer(s0) && !Funcs::is_integer(s1)) {
+                endgameName = "k" + s0 + "aabbk" + s1 + "aabb";
+            }
         }
     }
 
@@ -383,7 +386,7 @@ int main(int argc, char* argv[])
             return 1;
         }
     } else {
-        processName(endgameName, isExactName);
+        prePocessName(endgameName, isExactName);
     }
         
     auto subinfo = argmap.find("-subinfo") != argmap.end();

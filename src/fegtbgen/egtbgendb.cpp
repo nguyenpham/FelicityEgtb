@@ -98,6 +98,7 @@ bool NameRecord::parse(const std::string& _name)
         if (t >= ROOK) {
             attackerSides[sd] += c;
         }
+        allSides[sd] += c;
 #endif
     }
     
@@ -173,6 +174,14 @@ bool NameRecord::hasAttackers() const
 
 bool NameRecord::isSmaller(const NameRecord& other) const
 {
+#ifdef _FELICITY_XQ_
+    auto all = allSides[W].size() + allSides[B].size();
+    auto all_o = other.allSides[W].size() + other.allSides[B].size();
+    
+    if (all != all_o) {
+        return all < all_o;
+    }
+#endif
     
     auto attackers = attackerSides[W].size() + attackerSides[B].size();
     auto attackers_o = other.attackerSides[W].size() + other.attackerSides[B].size();
@@ -181,10 +190,6 @@ bool NameRecord::isSmaller(const NameRecord& other) const
         return attackers < attackers_o;
     }
     
-    //if (attackerSides[W].size() != other.attackerSides[W].size()) {
-    //    return attackerSides[W].size() < other.attackerSides[W].size();
-    //}
-
 #ifdef _FELICITY_CHESS_
     auto pawns1 = pawnCount[0] + pawnCount[1];
     auto pawns2 = other.pawnCount[0] + other.pawnCount[1];
@@ -233,10 +238,10 @@ bool NameRecord::isSmaller(const NameRecord& other) const
 
 std::string NameRecord::getSubfolder() const
 {
-    if (sortingSides[0].empty() || sortingSides[1].empty()) {
-        return std::to_string(sortingSides[0].size() + sortingSides[1].size());
+    if (attackerSides[0].empty() || attackerSides[1].empty()) {
+        return std::to_string(attackerSides[0].size() + attackerSides[1].size());
     }
-    return std::to_string(sortingSides[W].size()) + "-" + std::to_string(sortingSides[B].size());
+    return std::to_string(attackerSides[W].size()) + "-" + std::to_string(attackerSides[B].size());
 }
 
 /// Gen a single endgame
