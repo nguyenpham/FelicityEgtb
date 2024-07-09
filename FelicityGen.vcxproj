@@ -175,7 +175,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalOptions>-D_FELICITY_CHESS_ -D_7ZIP_ST %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-D_FELICITY_XQ_ -D_7ZIP_ST %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Full</Optimization>
     </ClCompile>
     <Link>

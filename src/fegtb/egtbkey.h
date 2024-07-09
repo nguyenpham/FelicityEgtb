@@ -89,6 +89,8 @@ public:
 
     bool setupBoard_x(bslib::XqBoard& board, int key, bslib::PieceType type, bslib::Side side) const;
 
+    static void initOnce();
+
 private:
     int getKey_pp(int p0, int p1) const;
     int getKey_pp_full(int p0, int p1) const;
@@ -98,12 +100,11 @@ private:
     static int getKey_xx(int p0, int p1);
     static int getKey_xx_full(int p0, int p1);
 
-    void initOnce();
-    void createPawnKeys();
+    static void createPawnKeys();
 
 private:
-    std::map<int, int> pppPos2KeyMap;
-    int pppKeyToPos[EGTB_SIZE_PPP_HALF];
+    static std::map<int, int> pppPos2KeyMap;
+    static int pppKeyToPos[EGTB_SIZE_PPP_HALF];
 
 };
 

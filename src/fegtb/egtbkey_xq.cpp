@@ -168,6 +168,8 @@ static int halfBoard_PawnIdxToPos[] = {
     -1,-1,-1,-1,-1,
 };
 
+std::map<int, int> EgtbKey::pppPos2KeyMap;
+int EgtbKey::pppKeyToPos[EGTB_SIZE_PPP_HALF];
 
 
 static int pppSearchKey(int pos0, int pos1, int pos2) {
