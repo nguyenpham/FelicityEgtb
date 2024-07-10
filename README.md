@@ -67,14 +67,15 @@ Attempt 18: Create a test EPD file from all existent endgames. The test file wil
 
 Attempt 19: more compact for chess index space. For 5 men chess EGTB, the index space sank about 13%. The size becomes 7.5 GB, a 15.5% reduction (compared with the previous size of 8.88 GB). However, the time to generate is about 29% longer (22 hours vs 17 hours). We are still not clear yet why/where the speed was lost.
 
+Attempt 20: Xiangqi generator has been added. It can generate endgames with a side has up to 2 attackers and one side has no attacker (armless). E.g., kraabkaabb, kcnaabbkaabb, kcpakaab.
 
 Status
 ======
 
 In development: All code has been still being written. You may use them for studying, trying to integrate them into your code, or generating some small EGTBs. However, you are suggested to not generate EGTBs seriously nor contribute them since everything could be changed, from algorithms to file structures.
 
-- Chess: it could generate all 5 men with forward/backward methods. 6-man is possible but not verified yet
-- Xiangqi: it could calculate index spaces
+- Chess: it could generate all 5 men. 6-man is possible but not verified yet
+- Xiangqi: it could generate endgames when one side armless, other side has 1 or 2 attackers
 - Jeiqi: no code yet
 
 
