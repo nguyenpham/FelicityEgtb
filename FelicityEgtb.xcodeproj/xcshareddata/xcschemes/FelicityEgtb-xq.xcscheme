@@ -60,56 +60,24 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n 1-1"
+            argument = "-n 2"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n kcnabkaabb"
+            argument = "-n rn-n"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n krakra"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-n kcck"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-n 2-0"
+            argument = "-n krckr"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n kpk"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-n kraabbkaabb"
+            argument = "-n rc-r"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-subinfo"
             isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-d /Users/nguyenpham/Downloads/xqtb"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-core 5"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-g"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-vkey"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-genforward"
-            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-h"

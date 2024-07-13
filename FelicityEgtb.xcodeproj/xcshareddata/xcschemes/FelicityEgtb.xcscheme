@@ -30,9 +30,9 @@
       shouldAutocreateTestPlan = "YES">
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      buildConfiguration = "Release"
+      selectedDebuggerIdentifier = ""
+      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -61,19 +61,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-core 5"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-v"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n 3"
-<<<<<<< HEAD
-            isEnabled = "YES">
-=======
+            argument = "-n 2"
             isEnabled = "NO">
->>>>>>> master
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n 7"
@@ -93,7 +89,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n 3"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n krk"
@@ -117,15 +113,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-vkey"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-d /Users/nguyenpham/Downloads/chess5men"
+            argument = "-d /Users/nguyenpham/workspace/chessegtb"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-g"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-subinfo"
@@ -153,18 +149,6 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-perft 5"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-epd /Users/nguyenpham/Downloads/testchess.epd"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-test create"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-test test"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
