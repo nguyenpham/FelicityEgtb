@@ -82,7 +82,6 @@ const static int COPYRIGHT_BUFSZ = 64;
 #define TB_UNSET                            1
 #define TB_MISSING                          2
 
-#define TB_UNKNOWN                          4
 #define TB_DRAW                             5
 
 #define TB_START_MATING                     (TB_DRAW + 1)
@@ -92,14 +91,22 @@ const static int COPYRIGHT_BUFSZ = 64;
 
 //////////////////////////////////////////////////////////////////////
 
-#define EGTB_SCORE_DRAW                         0
-#define EGTB_SCORE_MATE                         1000
+#define EGTB_SCORE_DRAW                     0
+#define EGTB_SCORE_MATE                     1000
 
-#define EGTB_SCORE_ILLEGAL                      1004
-#define EGTB_SCORE_UNKNOWN                      1005
-#define EGTB_SCORE_MISSING                      1006
-#define EGTB_SCORE_UNSET                        1007
+#define EGTB_SCORE_ILLEGAL                  1004
 
+#define EGTB_SCORE_MISSING                  1006
+#define EGTB_SCORE_UNSET                    1007
+
+#ifdef _FELICITY_XQ_
+
+#define TB_PERPETUATION_WIN                 3
+#define TB_PERPETUATION_LOSE                4
+
+#define EGTB_SCORE_PERPETUATION_WIN         1002
+#define EGTB_SCORE_PERPETUATION_LOSE        1003
+#endif
 
 //////////////////////////////////////////////////////////////////////
 

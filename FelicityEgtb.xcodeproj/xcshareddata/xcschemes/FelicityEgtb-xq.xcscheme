@@ -68,8 +68,12 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n krckr"
+            argument = "-n krakra"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-n krkr"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n rc-r"
@@ -77,10 +81,26 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-subinfo"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-core 5"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-h"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-d /Users/nguyenpham/Downloads/xqtb"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-g"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-noverify"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>

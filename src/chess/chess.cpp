@@ -909,10 +909,10 @@ void ChessBoard::make(const MoveFull& move, Hist& hist)
     switch (static_cast<PieceType>(p.type)) {
         case PieceType::king: {
             castleRights[static_cast<int>(p.side)] &= ~(CastleRight_long|CastleRight_short);
-            if (abs(move.from - move.dest) == 2) { // castle
+            if (abs(move.from - move.dest) == 2) { /// castle
                 auto rookPos = move.from + (move.from < move.dest ? 3 : -4);
                 assert(pieces[rookPos].type == PieceType::rook);
-                int newRookPos = (move.from + move.dest) / 2;
+                auto newRookPos = (move.from + move.dest) / 2;
                 assert(pieces[newRookPos].isEmpty());
                 
                 pieces[newRookPos] = pieces[rookPos];
@@ -995,10 +995,10 @@ void ChessBoard::takeBack(const Hist& hist)
     if (movep.type == PieceType::king) {
         if (abs(hist.move.from - hist.move.dest) == 2) {
             assert(hist.castled == CastleRight_long || hist.castled == CastleRight_short);
-            int rookPos = hist.move.from + (hist.move.from < hist.move.dest ? 3 : -4);
+            auto rookPos = hist.move.from + (hist.move.from < hist.move.dest ? 3 : -4);
             assert(isEmpty(rookPos));
 
-            int newRookPos = (hist.move.from + hist.move.dest) / 2;
+            auto newRookPos = (hist.move.from + hist.move.dest) / 2;
             pieces[rookPos] = pieces[newRookPos];
             pieces[newRookPos].setEmpty();
         }
@@ -1097,6 +1097,7 @@ void ChessBoard::flip(FlipMode flipMode)
             BoardCore::flip(flipMode);
     }
 }
+
 int ChessBoard::toPieceCount(int* pieceCnt) const
 {
     if (pieceCnt) {
@@ -1226,6 +1227,22 @@ bool ChessBoard::pieceList_make(const Hist& hist)
 
         if (pieceList[sd][t] == hist.move.from) {
             pieceList[sd][t] = hist.move.dest;
+            
+            /// castle rook
+            if (type == PieceType::king && abs(hist.move.from - hist.move.dest) == 2) {
+                auto rookPos = hist.move.from + (hist.move.from < hist.move.dest ? 3 : -4);
+                auto newRookPos = (hist.move.from + hist.move.dest) / 2;
+
+                for (auto v = pieceListStartIdxByType[ROOK]; ; v++) {
+                    assert (v >= 0 && v < 16);
+                    if (pieceList[sd][v] == rookPos) {
+                        pieceList[sd][v] = newRookPos;
+                        return true;
+                    }
+                }
+                assert(false);
+                return false;
+            }
             return true;
         }
     }
@@ -1266,8 +1283,9 @@ bool ChessBoard::pieceList_takeback(const Hist& hist) {
         dest += (hist.cap.side == Side::black ? +8 : -8);
     }
 
+    auto sd = static_cast<int>(hist.cap.side);
     auto k = hist.cap.type == PieceType::queen ? 1 : hist.cap.type == PieceType::pawn ? 8 : 2;
-    for (auto t = pieceListStartIdxByType[static_cast<int>(hist.cap.type)], sd = static_cast<int>(hist.cap.side); k > 0; t++, k--) {
+    for (auto t = pieceListStartIdxByType[static_cast<int>(hist.cap.type)]; k > 0; t++, k--) {
         assert (t >= 0 && t < 16);
 
         if (pieceList[sd][t] < 0) {
@@ -1276,7 +1294,7 @@ bool ChessBoard::pieceList_takeback(const Hist& hist) {
         }
     }
 
-    for (auto t = pieceListStartIdxByType[PAWN], sd = static_cast<int>(hist.cap.side); ; t++) {
+    for (auto t = pieceListStartIdxByType[PAWN]; ; t++) {
         assert (t >= 0 && t < 16);
 
         if (pieceList[sd][t] < 0) {

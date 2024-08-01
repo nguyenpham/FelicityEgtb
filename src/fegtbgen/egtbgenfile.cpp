@@ -158,8 +158,12 @@ char EgtbGenFile::scoreToCell(int score) {
         case EGTB_SCORE_MISSING:
             return TB_MISSING;
 
-        case EGTB_SCORE_UNKNOWN:
-            return TB_UNKNOWN;
+#ifdef _FELICITY_XQ_
+        case EGTB_SCORE_PERPETUATION_WIN:
+            return TB_PERPETUATION_WIN;
+        case EGTB_SCORE_PERPETUATION_LOSE:
+            return TB_PERPETUATION_LOSE;
+#endif
 
         case EGTB_SCORE_ILLEGAL:
             return TB_ILLEGAL;
@@ -440,6 +444,10 @@ std::string EgtbGenFile::createStatsString()
     auto smallestCell = EGTB_SCORE_MATE;
     i64 wdl[2][3] = {{0, 0, 0}, {0, 0, 0}};
 
+#ifdef _FELICITY_XQ_
+    i64 perpetuations_win[2] = { 0, 0 }, perpetuations_lose[2] = { 0, 0 };
+#endif
+    
     for (auto sd = 0; sd < 2; sd++) {
         auto side = static_cast<Side>(sd);
         for(i64 idx = 0; idx < getSize(); idx++) {
@@ -456,34 +464,51 @@ std::string EgtbGenFile::createStatsString()
                 auto absScore = abs(score);
                 smallestCell = std::min(smallestCell, absScore);
             }
+            
+#ifdef _FELICITY_XQ_
+            else if (score == EGTB_SCORE_PERPETUATION_WIN) {
+                perpetuations_win[sd]++;
+            } else if (score == EGTB_SCORE_PERPETUATION_LOSE) {
+                perpetuations_lose[sd]++;
+            }
+#endif
         }
     }
 
-    stringStream << "Total positions:\t" << getSize() << std::endl;
+    stringStream << "Total positions:               " << getSize() << std::endl;
     i64 total = validCnt[0] + validCnt[1];
-    stringStream << "Legal positions:\t" << total << " (" << (total * 50 / getSize()) << "%) (2 sides)" << std::endl;  // count size for both sides, thus x 50 insteal of 100
+    stringStream << "Legal positions:               " << total << " (" << (total * 50 / getSize()) << "%) (2 sides)" << std::endl;  // count size for both sides, thus x 50 insteal of 100
 
-    i64 w = wdl[1][0] * 100 / validCnt[1];
-    stringStream << "White to move,\t\twin: " << w << "%";
-    if (w == 0 &&  wdl[1][0] > 0) {
-        stringStream << " (" << wdl[1][0] << ")";
-    }
-    stringStream << ", draw: " << wdl[1][1] * 100 / validCnt[1] << "%";
-    if (wdl[1][2] || isBothArmed()) {
-        stringStream << ", loss: " << wdl[1][2] * 100 / validCnt[1] << "%";
-    }
-    stringStream << std::endl;
-
-    stringStream << "Black to move,\t\t";
-    if (wdl[0][0] || isBothArmed()) {
-        w = wdl[0][0] * 100 / validCnt[0];
-        stringStream << "win: " << w << "%";
-        if (wdl[0][0] > 0 && (w == 0 || !isBothArmed())) {
-            stringStream << " (" << wdl[0][0] << ")";
+    for(auto sd = 1; sd >= 0; sd--) {
+        i64 w = wdl[sd][0] * 100 / validCnt[sd];
+        stringStream << (sd == W ? "White" : "Black") << " to move (WDL):      " << w << "%";
+        if (w == 0 &&  wdl[sd][0] > 0) {
+            stringStream << " (" << wdl[sd][0] << ")";
         }
-        stringStream << ", ";
+        stringStream << ", " << wdl[sd][1] * 100 / validCnt[sd] << "%";
+        if (wdl[sd][2] || isBothArmed()) {
+            stringStream << ", " << wdl[sd][2] * 100 / validCnt[sd] << "%";
+        }
+        stringStream << std::endl;
+        
+#ifdef _FELICITY_XQ_
+        if (perpetuations_win[sd] + perpetuations_lose[sd] > 0) {
+            stringStream << "Perpetuations (WL):            " << perpetuations_win[sd] << ", " << perpetuations_lose[sd] << std::endl;
+        }
+#endif
+        
     }
-    stringStream << "draw: " << wdl[0][1] * 100 / validCnt[0] << "%, loss: " << wdl[0][2] * 100 / validCnt[0] << "%" << std::endl;
+
+//    stringStream << "Black to move,\t\t";
+//    if (wdl[0][0] || isBothArmed()) {
+//        w = wdl[0][0] * 100 / validCnt[0];
+//        stringStream << "win: " << w << "%";
+//        if (wdl[0][0] > 0 && (w == 0 || !isBothArmed())) {
+//            stringStream << " (" << wdl[0][0] << ")";
+//        }
+//        stringStream << ", ";
+//    }
+//    stringStream << "draw: " << wdl[0][1] * 100 / validCnt[0] << "%, loss: " << wdl[0][2] * 100 / validCnt[0] << "%" << std::endl;
 
     stringStream << "Max distance to mate:\t" << abs(EGTB_SCORE_MATE - smallestCell) << std::endl;
     return stringStream.str();

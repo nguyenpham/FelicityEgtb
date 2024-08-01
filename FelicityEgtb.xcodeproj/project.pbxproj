@@ -55,6 +55,7 @@
 		B18154612BCEB38D00EF7716 /* xq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B181545D2BCEB26700EF7716 /* xq.cpp */; };
 		B18154622BCEB38D00EF7716 /* base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B16CABAD2BCA7DA90001D9B1 /* base.cpp */; };
 		B18154642BCEB38D00EF7716 /* funcs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B16CABAE2BCA7DA90001D9B1 /* funcs.cpp */; };
+		B182CB3E2C44F76F007CD2B4 /* perpetuation_xq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B182CB3D2C44F76F007CD2B4 /* perpetuation_xq.cpp */; };
 		B1B27CB02BF6293D00333F09 /* egtbgendb_backward.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1B27CAF2BF6293D00333F09 /* egtbgendb_backward.cpp */; };
 		B1B27CB12BF6293D00333F09 /* egtbgendb_backward.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1B27CAF2BF6293D00333F09 /* egtbgendb_backward.cpp */; };
 /* End PBXBuildFile section */
@@ -138,6 +139,7 @@
 		B181545C2BCEB26700EF7716 /* xq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xq.h; sourceTree = "<group>"; };
 		B181545D2BCEB26700EF7716 /* xq.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xq.cpp; sourceTree = "<group>"; };
 		B181546B2BCEB38D00EF7716 /* FelicityEgtb-xq */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "FelicityEgtb-xq"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B182CB3D2C44F76F007CD2B4 /* perpetuation_xq.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = perpetuation_xq.cpp; sourceTree = "<group>"; };
 		B1A8BEEB2BEB4C2E0074CE7B /* ChessIndex.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ChessIndex.md; sourceTree = "<group>"; };
 		B1A8BEEC2BEB4C800074CE7B /* Files.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Files.md; sourceTree = "<group>"; };
 		B1B27CAE2BF58B4A00333F09 /* Generation.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Generation.md; sourceTree = "<group>"; };
@@ -258,6 +260,7 @@
 		B180355C2BE3D881007F7F91 /* fegtbgen */ = {
 			isa = PBXGroup;
 			children = (
+				B182CB3D2C44F76F007CD2B4 /* perpetuation_xq.cpp */,
 				B180355E2BE3D881007F7F91 /* defs.h */,
 				B18035642BE3D881007F7F91 /* obj.h */,
 				B180356B2BE3D881007F7F91 /* genlib.h */,
@@ -416,6 +419,7 @@
 				B177117B2BDD395500586C78 /* LzmaDec.c in Sources */,
 				B180354C2BE32F19007F7F91 /* egtbfile_xq.cpp in Sources */,
 				B180358E2BE3D881007F7F91 /* threadmng.cpp in Sources */,
+				B182CB3E2C44F76F007CD2B4 /* perpetuation_xq.cpp in Sources */,
 				B18035882BE3D881007F7F91 /* egtbgenfile.cpp in Sources */,
 				B18035902BE3D881007F7F91 /* egtbgendb_lib.cpp in Sources */,
 				B18035562BE32F19007F7F91 /* egtbkey_xq.cpp in Sources */,

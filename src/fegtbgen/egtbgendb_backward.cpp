@@ -21,7 +21,8 @@
 using namespace fegtb;
 using namespace bslib;
 
-static auto check2Flip = true;
+extern bool check2Flip;
+bool check2Flip = true;
 
 void EgtbGenDb::gen_backward_thread_init(int threadIdx)
 {
@@ -43,13 +44,6 @@ void EgtbGenDb::gen_backward_thread_init(int threadIdx)
         }
 
         assert(rcd.board->isValid());
-        
-//        if (idx == 3129) {
-//            auto b0 = rcd.board->isIncheck(Side::black);
-//            auto b1 = rcd.board->isIncheck(Side::white);
-//            rcd.board->printOut();
-//            b0 = b1;
-//        }
         
         bool inchecks[] = {
             rcd.board->isIncheck(Side::black),

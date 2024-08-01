@@ -300,11 +300,14 @@ bool EgtbGenDb::gen_single(int egtbidx, const std::string& folder, const std::st
         std::cout << "Generated successfully " << name << std::endl << std::endl;
     }
     return r;
-
 }
 
 bool EgtbGenDb::gen_finish(const std::string& folder, CompressMode compressMode, bool needVerify)
 {
+#ifdef _FELICITY_XQ_
+    perpetuation_process();
+#endif
+    
     gen_finish_adjust_scores();
 
     assert(egtbFile->isValidHeader());
@@ -320,7 +323,6 @@ bool EgtbGenDb::gen_finish(const std::string& folder, CompressMode compressMode,
     }
 
     addEgtbFile(egtbFile);
-
 
     /// Verify
     elapsed_verify = 0;

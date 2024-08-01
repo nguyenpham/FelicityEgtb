@@ -121,10 +121,18 @@ std::string explainScore(int score) {
             str = "illegal";
             break;
             
-        case EGTB_SCORE_UNKNOWN:
-            str = "unknown";
+//        case EGTB_SCORE_UNKNOWN:
+//            str = "unknown";
+//            break;
+#ifdef _FELICITY_XQ_
+        case EGTB_SCORE_PERPETUATION_WIN:
+            str = "perpetuation win";
             break;
-            
+        case EGTB_SCORE_PERPETUATION_LOSE:
+            str = "perpetuation lose";
+            break;
+#endif
+
         default: {
             auto mateInPly = EGTB_SCORE_MATE - abs(score);
             auto mateIn = (mateInPly + 1) / 2; // devide 2 for full (not half or ply) moves

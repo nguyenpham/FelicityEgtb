@@ -644,8 +644,14 @@ int EgtbFile::_cellToScore(char cell) {
     switch (s) {
         case TB_MISSING:
             return EGTB_SCORE_MISSING;
-        case TB_UNKNOWN:
-            return EGTB_SCORE_UNKNOWN;
+            
+#ifdef _FELICITY_XQ_
+        case TB_PERPETUATION_WIN:
+            return EGTB_SCORE_PERPETUATION_WIN;
+        case TB_PERPETUATION_LOSE:
+            return EGTB_SCORE_PERPETUATION_LOSE;
+#endif
+            
         case TB_ILLEGAL:
             return EGTB_SCORE_ILLEGAL;
         case TB_UNSET:

@@ -479,7 +479,6 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                 std::lock_guard<std::mutex> thelock(printMutex);
                 std::cerr << "Error: cannot create a board even scores are not illegal. idx: " << idx << " scores: " << curScore[0] << ", " << curScore[1] << std::endl;
                 board.printOut();
-                //                exit(-1);
                 verifyDataOK = false;
                 return false;
             }
@@ -532,6 +531,19 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                                 bestScore = score;
                             }
                         }
+#ifdef _FELICITY_XQ_
+                        else if (score == EGTB_SCORE_PERPETUATION_WIN) {
+                            // EGTB_SCORE_PERPETUATION_LOSE;
+                            if (bestScore == EGTB_SCORE_UNSET || bestScore < EGTB_SCORE_DRAW) {
+                                bestScore = EGTB_SCORE_PERPETUATION_LOSE;
+                            }
+                        } else if (score == EGTB_SCORE_PERPETUATION_LOSE) {
+                            //score = EGTB_SCORE_PERPETUATION_WIN;
+                            if (bestScore <= EGTB_SCORE_DRAW) {
+                                bestScore = EGTB_SCORE_PERPETUATION_WIN;
+                            }
+                        }
+#endif
                     }
                     board.takeBack(hist);
                 }

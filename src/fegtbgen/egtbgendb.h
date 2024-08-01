@@ -153,6 +153,24 @@ protected:
     void gen_backward_thread_init(int threadIdx);
     int  gen_backward_probe(GenBoard& board, i64 idx, bslib::Side side);
 
+#ifdef _FELICITY_XQ_
+private:
+    void perpetuation_process();
+    i64 perpetuation_init();
+    void perpetuation_gen();
+    void perpetuation_thread_init(int threadIdx);
+    void perpetuation_thread_gen(int threadIdx);
+
+    std::pair<int, i64> perpetuation_probe(EgtbGenThreadRecord&, const bslib::Hist&, bool drawIfNotIncheck);
+    
+    static bool perpetuation_score_valid(int score);
+    std::map<i64, bslib::Side> perpetuation_evasion(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, std::set<i64>&, bool evasion_checking);
+
+    std::map<i64, bslib::Side> perpetuation_atk(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, std::set<i64>&, bool evasion_checking);
+    
+    int perpetuation_children_probe(GenBoard& board, bslib::Side side);
+
+#endif
     
 private:
     std::string gen_folder;
