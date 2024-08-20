@@ -167,7 +167,13 @@ private:
     std::map<i64, bslib::Side> perpetuation_evasion(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, std::set<i64>&, bool evasion_checking);
 
     std::map<i64, bslib::Side> perpetuation_atk(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, std::set<i64>&, bool evasion_checking);
+
     
+    
+    std::map<i64, bslib::Side> perpetuation_chase_evasion(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, std::set<i64>&, bool evasion_checking);
+
+    std::map<i64, bslib::Side> perpetuation_chase_atk(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, std::set<i64>&, bool evasion_checking);
+
     int perpetuation_children_probe(GenBoard& board, bslib::Side side);
 
 #endif

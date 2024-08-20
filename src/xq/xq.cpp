@@ -22,6 +22,8 @@
 #include "xq.h"
 #include "../base/funcs.h"
 
+#include "xqchasejudge.h"
+
 #ifdef _FELICITY_XQ_
 
 using namespace bslib;
@@ -42,6 +44,36 @@ const PieceType pieceListIdxToType[16] = {
     PieceType::pawn
 };
 
+static const int8_t legalPosBits [] = {
+    0, 1, 2, 4, 0, 0, 0, 8, 16
+};
+
+static const int8_t legalPositions [90] = {
+    16, 16, 29, 19, 17, 19, 20, 16, 16,
+    0, 0, 0, 1, 3, 1, 0, 0, 0,
+    4, 16, 0, 3, 5, 3, 0, 16, 4,
+    24, 0, 24, 0, 24, 0, 24, 0, 24,
+    8, 0,12, 0, 8, 0,12, 0, 8,
+
+    8, 8, 8, 8, 8, 8, 8, 8, 8,
+    8, 8, 8, 8, 8, 8, 8, 8, 8,
+    8, 8, 8, 8, 8, 8, 8, 8, 8,
+    8, 8, 8, 8, 8, 8, 8, 8, 8,
+    8, 8, 8, 8, 8, 8, 8, 8, 8,
+};
+
+bool canLocatePiece(PieceType type, Side side, int pos)
+{
+    if (pos >= 0 && pos < 90) {
+        auto flag = legalPosBits [static_cast<int>(type)];
+        if (flag) {
+            auto k = side == Side::white ? (89 - pos) : pos;
+            return (flag & legalPositions [k]) != 0;
+        }
+        return true;
+    }
+    return false;
+}
 
 static const std::string originalFen_xq = "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1";
 
@@ -57,32 +89,14 @@ XqBoard::XqBoard(ChessVariant _variant)
 
 XqBoard::XqBoard(const XqBoard& other)
 {
+    variant = other.variant;
+    assert(!Funcs::isChessFamily(variant));
+
     clone(&other);
 }
 
 XqBoard::~XqBoard()
 {
-}
-
-int XqBoard::columnCount() const
-{
-    return 9;
-}
-
-int XqBoard::rankCount() const
-{
-    return 10;
-}
-
-
-int XqBoard::getColumn(int pos) const
-{
-    return pos % 9;
-}
-
-int XqBoard::getRank(int pos) const
-{
-    return pos / 9;
 }
 
 int XqBoard::coordinateStringToPos(const std::string& str) const
@@ -118,6 +132,9 @@ bool XqBoard::isValid() const
             continue;
         }
         
+        if (!canLocatePiece(piece.type, piece.side, i)) {
+            return false;
+        }
         pieceCout[static_cast<int>(piece.side)][static_cast<int>(piece.type)] += 1;
     }
     
@@ -246,11 +263,15 @@ void XqBoard::setFen(const std::string& fen)
 
         if (pieceType != PieceType::empty) {
             setPiece(int(pos), Piece(pieceType, side));
+        } else {
+            assert(0);
         }
         pos ++;
     }
 
     assert(pieceList_isValid());
+
+    setFenComplete();
 }
 
 
@@ -721,10 +742,36 @@ void XqBoard::gen(std::vector<MoveFull>& moves, Side side) const
 void XqBoard::make(const MoveFull& move, Hist& hist)
 {
     hist.move = move;
+    hist.quietCnt = quietCnt;
     hist.cap = pieces[move.dest];
+    
+#ifdef _FELICITY_USE_HASH_
+    assert(isHashKeyValid());
+    hist.hashKey = hashKey;
+    hashKey ^= xorHashKey(move.from);
+#endif
+
+
+    if (!hist.cap.isEmpty() ||
+        (abs(move.from - move.dest) != 1 && move.piece.type == PieceType::pawn) ||
+        move.piece.type == PieceType::jeiqi) {
+        quietCnt = 0;
+        
+        if (!hist.cap.isEmpty()) {
+            hashKey ^= xorHashKey(move.dest);
+        }
+    } else {
+        quietCnt++;
+    }
+
     pieces[move.dest] = pieces[move.from];
     pieces[move.from].setEmpty();
 
+#ifdef _FELICITY_USE_HASH_
+    hashKey ^= xorHashKey(move.dest);
+    assert(isHashKeyValid());
+#endif
+    
     pieceList_make(hist);
 }
 
@@ -734,6 +781,12 @@ void XqBoard::takeBack(const Hist& hist)
     pieces[hist.move.dest] = hist.cap;
 
     pieceList_takeback(hist);
+    
+    
+#ifdef _FELICITY_USE_HASH_
+    hashKey = hist.hashKey;
+#endif
+    quietCnt = hist.quietCnt;
 }
 
 
@@ -916,6 +969,81 @@ bool XqBoard::pieceList_isDraw(const int *pieceList) const {
     }
     
     return true;
+}
+
+
+Result XqBoard::ruleRepetition(int repeatLen)
+{
+    return XqChaseJudge::evaluate(*this, repeatLen);
+}
+
+int repetitionThreatHold = 1;
+
+Result XqBoard::rule()
+{
+    auto result = BoardCore::rule();
+    if (!result.isNone()) {
+        return result;
+    }
+
+//    /// Insufficient mating material
+//    auto attackerCnt = 0;
+//    for(auto t = ROOK; t <= JEIQI; t++) {
+//        attackerCnt += pieceCount[0][t] + pieceCount[1][t];
+//    }
+//
+//    if (attackerCnt == 1) {
+//        // case KCvsK (without Advisor of the C side, with/without Elephant) is a draw
+//        if (pieceCount[0][CANNON] + pieceCount[1][CANNON] == 1) {
+//            auto sd = pieceCount[0][CANNON] ? 0 : 1;
+//            if (pieceCount[sd][ADVISOR] == 0 && pieceCount[1 - sd][ADVISOR] < 2) {
+//                attackerCnt = 0;
+//            }
+//        }
+//        else
+//        // old Pawn is a draw
+//        if (pieceCount[0][PAWNXQ] + pieceCount[1][PAWNXQ] == 1) {
+//            auto sd = pieceCount[0][PAWN] ? 0 : 1;
+//            auto from = 0, to = 9;
+//            if (sd == B) {
+//                from = 81; to = 90;
+//            }
+//
+//            for(int i = from; i < to; ++i) {
+//                if (pieces[i].type == PAWNXQ) {
+//                    attackerCnt = 0;
+//                    break;
+//                }
+//            }
+//        }
+//    }
+//
+//    if (!attackerCnt) {
+//        result.result = ResultType::draw;
+//        result.reason = ReasonType::insufficientmaterial;
+//        return result;
+//    }
+//
+//    if (quietCnt < repetitionThreatHold * 4) {
+//        return result;
+//    }
+
+    // Repetition
+    auto cnt = 0;
+    auto i = int(histList.size()), k = i - quietCnt;
+    for(i -= 2; i >= 0 && i >= k; i -= 2) {
+        auto hist = histList.at(i);
+        if (hist.hashKey == hashKey) {
+            cnt++;
+            if (cnt >= repetitionThreatHold) {
+                auto repeatLen = int(histList.size()) - i;
+                result = XqChaseJudge::evaluate(*this, repeatLen);
+                break;
+            }
+        }
+    }
+
+    return result;
 }
 
 #endif // _FELICITY_XQ_

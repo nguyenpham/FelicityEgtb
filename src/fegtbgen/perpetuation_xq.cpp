@@ -26,12 +26,12 @@ using namespace bslib;
 
 void EgtbGenDb::perpetuation_process()
 {
-//    if (!egtbFile->isBothArmed()) {
-//        //if (egtbVerbose) {
-//            std::cout << "\tOne side is not armed!" << std::endl;
-//        //}
-//        return;
-//    }
+    if (!egtbFile->isBothArmed()) {
+        if (egtbVerbose) {
+            std::cout << "\tOne side is not armed!" << std::endl;
+        }
+        return;
+    }
 
     //if (egtbVerbose) {
         std::cout << "\tPerpetuation_process!" << std::endl;
@@ -44,13 +44,14 @@ void EgtbGenDb::perpetuation_process()
     perpetuation_gen();
 
     
+    /// All done, get some stats
     i64 perpetuation_win = 0, perpetuation_lose = 0;
     for (auto idx = 0; idx < egtbFile->getSize(); idx++) {
         for (auto sd = 0; sd < 2; sd++) {
             auto score = egtbFile->getBufScore(idx, static_cast<Side>(sd));
             
-            if (score == EGTB_SCORE_PERPETUATION_WIN) perpetuation_win++;
-            else if (score == EGTB_SCORE_PERPETUATION_LOSE) perpetuation_lose++;
+            if (score == EGTB_SCORE_PERPETUAL_CHECK_WIN) perpetuation_win++;
+            else if (score == EGTB_SCORE_PERPETUAL_CHECK_LOSE) perpetuation_lose++;
         }
     }
     
@@ -100,7 +101,7 @@ bool EgtbGenDb::perpetuation_score_valid(int score)
         score == EGTB_SCORE_MISSING     /// actually, it is illegal positions
         || score == EGTB_SCORE_UNSET
     
-        || (score == EGTB_SCORE_PERPETUATION_WIN || score == EGTB_SCORE_PERPETUATION_LOSE)
+        || (score == EGTB_SCORE_PERPETUAL_CHECK_WIN || score == EGTB_SCORE_PERPETUAL_CHECK_LOSE)
         /// Losing
         || (score >= EGTB_SCORE_DRAW && score <= EGTB_SCORE_MATE);
 }
@@ -119,45 +120,67 @@ void EgtbGenDb::perpetuation_thread_init(int threadIdx)
             egtbFile->getBufScore(idx, Side::white)
         };
                 
-        if ((scores[0] != EGTB_SCORE_UNSET && scores[1] != EGTB_SCORE_UNSET)
-            || (scores[0] != EGTB_SCORE_ILLEGAL && scores[1] != EGTB_SCORE_ILLEGAL)) {
+        if (scores[0] != EGTB_SCORE_UNSET && scores[1] != EGTB_SCORE_UNSET) {
             continue;
         }
-        
+
         auto ok = egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white); assert(ok);
-        
-        for(auto sd = 0; sd < 2; ++sd) {
-            if (scores[sd] != EGTB_SCORE_UNSET) {
-                continue;
-            }
-            assert(scores[1 - sd] == EGTB_SCORE_ILLEGAL);
+
+        /// Perpetual check
+        if (scores[0] == EGTB_SCORE_ILLEGAL || scores[1] == EGTB_SCORE_ILLEGAL) {
             
-            auto side = static_cast<Side>(sd);
-
-            assert(rcd.board->isIncheck(side));
-
-            std::set<i64> idxSet { idx };
-            auto rMap = perpetuation_evasion(rcd, idx, side, idxSet, true);
-            if (!rMap.empty()) {
-                for(auto && p : rMap) {
-                    auto rIdx = p.first;
-                    auto rSide = p.second;
-                    
-                    auto value = side != rSide ? EGTB_SCORE_PERPETUATION_LOSE : EGTB_SCORE_PERPETUATION_WIN;
-                    egtbFile->setBufScore(rIdx, value, rSide);
-                    egtbFile->flag_set_cap(rIdx, rSide);
-                    
-//                    if (rIdx == 1025443) {
-//                        rcd.board->printOut("starting");
-//                        std::cout << "rIdx=" << rIdx << ", sd=" << static_cast<int>(rSide) << ", val=" << value << std::endl;
-//                    }
+            
+            for(auto sd = 0; sd < 2; ++sd) {
+                if (scores[sd] != EGTB_SCORE_UNSET) {
+                    continue;
                 }
-                rcd.changes++;
-                rcd.board->printOut("\nperpetuation detected!");
-                std::cout << std::endl;
+                assert(scores[1 - sd] == EGTB_SCORE_ILLEGAL);
+                
+                auto side = static_cast<Side>(sd);
+                
+                assert(rcd.board->isIncheck(side));
+                
+                std::set<i64> idxSet { idx };
+                auto rMap = perpetuation_evasion(rcd, idx, side, idxSet, true);
+                if (!rMap.empty()) {
+                    for(auto && p : rMap) {
+                        auto rIdx = p.first;
+                        auto rSide = p.second;
+                        
+                        auto value = side != rSide ? EGTB_SCORE_PERPETUAL_CHECK_LOSE : EGTB_SCORE_PERPETUAL_CHECK_WIN;
+                        egtbFile->setBufScore(rIdx, value, rSide);
+                        egtbFile->flag_set_cap(rIdx, rSide);
+                        
+                        //                    if (rIdx == 1025443) {
+                        //                        rcd.board->printOut("starting");
+                        //                        std::cout << "rIdx=" << rIdx << ", sd=" << static_cast<int>(rSide) << ", val=" << value << std::endl;
+                        //                    }
+                    }
+                    rcd.changes++;
+                    rcd.board->printOut("\nperpetuation detected!");
+                    std::cout << std::endl;
+                }
+                break;
+            } /// for sd
+        } else {
+            /// pepertual chase
+
+            for(auto sd = 0; sd < 2; ++sd) {
+                if (scores[sd] != EGTB_SCORE_UNSET) {
+                    continue;
+                }
+                
+                auto side = static_cast<Side>(sd);
+                
+                assert(!rcd.board->isIncheck(side));
+                
+                std::set<i64> idxSet { idx };
+                auto rMap = perpetuation_chase_atk(rcd, idx, side, idxSet, true);
+                if (!rMap.empty()) {
+                }
             }
-            break;
-        } /// for sd
+
+        }
     } /// for idx
 }
 
@@ -192,7 +215,7 @@ std::map<i64, Side> EgtbGenDb::perpetuation_evasion(EgtbGenThreadRecord& rcd, co
 
         rcd.board->takeBack(hist);
 
-        if (!rMap.empty() || score == EGTB_SCORE_PERPETUATION_LOSE) {
+        if (!rMap.empty() || score == EGTB_SCORE_PERPETUAL_CHECK_LOSE) {
 //            if (idx == 1025443) {
 //                rcd.board->printOut("perpetuation_evasion, idx=" + std::to_string(idx) + ", sd="  + std::to_string(static_cast<int>(side)));
 //            }
@@ -377,14 +400,21 @@ int EgtbGenDb::perpetuation_children_probe(GenBoard& board, Side side)
                     else if (score < 0) score++;
                 }
                 
-                bestScore = bestScore > EGTB_SCORE_MATE ? score : std::max(bestScore, score);
-            } else if (score == EGTB_SCORE_PERPETUATION_LOSE || score == EGTB_SCORE_PERPETUATION_WIN) {
+                if (bestScore == EGTB_SCORE_PERPETUAL_CHECK_WIN || bestScore == EGTB_SCORE_PERPETUAL_CHECK_LOSE) {
+                    if ((bestScore == EGTB_SCORE_PERPETUAL_CHECK_WIN && score > EGTB_SCORE_DRAW)
+                        || (bestScore == EGTB_SCORE_PERPETUAL_CHECK_LOSE && score >= EGTB_SCORE_DRAW)) {
+                        bestScore = score;
+                    }
+                } else {
+                    bestScore = bestScore > EGTB_SCORE_MATE ? score : std::max(bestScore, score);
+                }
+            } else if (score == EGTB_SCORE_PERPETUAL_CHECK_LOSE || score == EGTB_SCORE_PERPETUAL_CHECK_WIN) {
                 
-                score = score == EGTB_SCORE_PERPETUATION_LOSE ? EGTB_SCORE_PERPETUATION_WIN : EGTB_SCORE_PERPETUATION_LOSE;
+                score = score == EGTB_SCORE_PERPETUAL_CHECK_LOSE ? EGTB_SCORE_PERPETUAL_CHECK_WIN : EGTB_SCORE_PERPETUAL_CHECK_LOSE;
                 
                 if (bestScore == EGTB_SCORE_UNSET
-                    || (score == EGTB_SCORE_PERPETUATION_WIN && bestScore <= EGTB_SCORE_DRAW)
-                    || (score == EGTB_SCORE_PERPETUATION_LOSE && bestScore < EGTB_SCORE_DRAW)
+                    || (score == EGTB_SCORE_PERPETUAL_CHECK_WIN && bestScore <= EGTB_SCORE_DRAW)
+                    || (score == EGTB_SCORE_PERPETUAL_CHECK_LOSE && bestScore < EGTB_SCORE_DRAW)
                     ) {
                     bestScore = score;
                 }
@@ -438,14 +468,14 @@ void EgtbGenDb::perpetuation_thread_gen(int threadIdx)
             auto xside = getXSide(side);
             auto oscore = egtbFile->getBufScore(idx, side);
             
-            if (oscore == EGTB_SCORE_PERPETUATION_LOSE
-                || (oscore == EGTB_SCORE_PERPETUATION_WIN && egtbFile->getBufScore(idx, xside) == EGTB_SCORE_ILLEGAL)) {
+            if (oscore == EGTB_SCORE_PERPETUAL_CHECK_LOSE
+                || (oscore == EGTB_SCORE_PERPETUAL_CHECK_WIN && egtbFile->getBufScore(idx, xside) == EGTB_SCORE_ILLEGAL)) {
                 
             } else {
                 rcd.board->printOut("Bug");
             }
-            assert(oscore == EGTB_SCORE_PERPETUATION_LOSE
-                    || (oscore == EGTB_SCORE_PERPETUATION_WIN && egtbFile->getBufScore(idx, xside) == EGTB_SCORE_ILLEGAL));
+//            assert(oscore == EGTB_SCORE_PERPETUATION_LOSE
+//                    || (oscore == EGTB_SCORE_PERPETUATION_WIN && egtbFile->getBufScore(idx, xside) == EGTB_SCORE_ILLEGAL));
             
             egtbFile->flag_clear_cap(idx, side);
 
@@ -466,16 +496,16 @@ void EgtbGenDb::perpetuation_thread_gen(int threadIdx)
                         
 //                        rcd.board->printOut("propagadaring");
                         auto score = perpetuation_children_probe(*rcd.board, xside);
-                        if (score != EGTB_SCORE_UNSET && score != EGTB_SCORE_D9RAW) {
+                        if (score != EGTB_SCORE_UNSET && score != EGTB_SCORE_DRAW) {
                             
                             if (score <= EGTB_SCORE_MATE) {
                                 rcd.board->printOut("problem");
                                 std::cout << "score: " << score << std::endl;
                                 score = perpetuation_children_probe(*rcd.board, xside);
                             }
-                            assert(score == EGTB_SCORE_PERPETUATION_WIN || score == EGTB_SCORE_PERPETUATION_LOSE);
+                            assert(score == EGTB_SCORE_PERPETUAL_CHECK_WIN || score == EGTB_SCORE_PERPETUAL_CHECK_LOSE);
                             
-                            score = score == EGTB_SCORE_PERPETUATION_WIN ? EGTB_SCORE_PERPETUATION_LOSE : score == EGTB_SCORE_PERPETUATION_LOSE ? EGTB_SCORE_PERPETUATION_WIN : score;
+                            score = score == EGTB_SCORE_PERPETUAL_CHECK_WIN ? EGTB_SCORE_PERPETUAL_CHECK_LOSE : score == EGTB_SCORE_PERPETUAL_CHECK_LOSE ? EGTB_SCORE_PERPETUAL_CHECK_WIN : score;
 
                             egtbFile->setBufScore(rIdx, score, xside);
                             egtbFile->flag_set_cap(rIdx, xside);
@@ -506,6 +536,18 @@ void EgtbGenDb::perpetuation_thread_gen(int threadIdx)
             
         } /// for sd
     } /// for idx
+}
+
+std::map<i64, Side> EgtbGenDb::perpetuation_chase_atk(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, std::set<i64>& idxSet, bool evasion_checking)
+{
+    std::map<i64, Side> rMap;
+    return rMap;
+}
+
+std::map<i64, Side> EgtbGenDb::perpetuation_chase_evasion(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, std::set<i64>& idxSet, bool evasion_checking)
+{
+    std::map<i64, Side> rMap;
+    return rMap;
 }
 
 

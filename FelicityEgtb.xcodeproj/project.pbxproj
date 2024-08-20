@@ -18,6 +18,10 @@
 		B17711792BDD395500586C78 /* LzFind.c in Sources */ = {isa = PBXBuildFile; fileRef = B17711662BDD395500586C78 /* LzFind.c */; };
 		B177117A2BDD395500586C78 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B17711682BDD395500586C78 /* LzmaDec.c */; };
 		B177117B2BDD395500586C78 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B17711682BDD395500586C78 /* LzmaDec.c */; };
+		B1771C8D2C7390EF00D1ED96 /* xqchasetest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1771C8C2C7390EF00D1ED96 /* xqchasetest.cpp */; };
+		B177F0112C72393D0086F2B5 /* xqchaselist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B177F00B2C72393D0086F2B5 /* xqchaselist.cpp */; };
+		B177F0122C72393D0086F2B5 /* xqchasejudge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B177F00C2C72393D0086F2B5 /* xqchasejudge.cpp */; };
+		B177F0132C72393D0086F2B5 /* xqchaserecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B177F00F2C72393D0086F2B5 /* xqchaserecord.cpp */; };
 		B17B01E12BFD798C0035254D /* genboard_cs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B17B01DF2BFD798B0035254D /* genboard_cs.cpp */; };
 		B17B01E22BFD798C0035254D /* genboard_cs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B17B01DF2BFD798B0035254D /* genboard_cs.cpp */; };
 		B17B01E42BFD79C50035254D /* genboard_xq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B17B01E32BFD79C50035254D /* genboard_xq.cpp */; };
@@ -104,6 +108,13 @@
 		B17711692BDD395500586C78 /* LzmaEnc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LzmaEnc.h; sourceTree = "<group>"; };
 		B177116A2BDD395500586C78 /* LzFind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LzFind.h; sourceTree = "<group>"; };
 		B177116B2BDD395500586C78 /* LzmaDec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LzmaDec.h; sourceTree = "<group>"; };
+		B1771C8C2C7390EF00D1ED96 /* xqchasetest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = xqchasetest.cpp; sourceTree = "<group>"; };
+		B177F00B2C72393D0086F2B5 /* xqchaselist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xqchaselist.cpp; sourceTree = "<group>"; };
+		B177F00C2C72393D0086F2B5 /* xqchasejudge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xqchasejudge.cpp; sourceTree = "<group>"; };
+		B177F00D2C72393D0086F2B5 /* xqchasejudge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xqchasejudge.h; sourceTree = "<group>"; };
+		B177F00E2C72393D0086F2B5 /* xqchaselist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xqchaselist.h; sourceTree = "<group>"; };
+		B177F00F2C72393D0086F2B5 /* xqchaserecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xqchaserecord.cpp; sourceTree = "<group>"; };
+		B177F0102C72393D0086F2B5 /* xqchaserecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xqchaserecord.h; sourceTree = "<group>"; };
 		B17B01DF2BFD798B0035254D /* genboard_cs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = genboard_cs.cpp; sourceTree = "<group>"; };
 		B17B01E02BFD798C0035254D /* genboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = genboard.h; sourceTree = "<group>"; };
 		B17B01E32BFD79C50035254D /* genboard_xq.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = genboard_xq.cpp; sourceTree = "<group>"; };
@@ -299,6 +310,13 @@
 		B181545B2BCEB26700EF7716 /* xq */ = {
 			isa = PBXGroup;
 			children = (
+				B177F00C2C72393D0086F2B5 /* xqchasejudge.cpp */,
+				B177F00D2C72393D0086F2B5 /* xqchasejudge.h */,
+				B177F00B2C72393D0086F2B5 /* xqchaselist.cpp */,
+				B177F00E2C72393D0086F2B5 /* xqchaselist.h */,
+				B177F00F2C72393D0086F2B5 /* xqchaserecord.cpp */,
+				B177F0102C72393D0086F2B5 /* xqchaserecord.h */,
+				B1771C8C2C7390EF00D1ED96 /* xqchasetest.cpp */,
 				B181545C2BCEB26700EF7716 /* xq.h */,
 				B181545D2BCEB26700EF7716 /* xq.cpp */,
 			);
@@ -416,11 +434,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				B18035542BE32F19007F7F91 /* egtbkey.cpp in Sources */,
+				B1771C8D2C7390EF00D1ED96 /* xqchasetest.cpp in Sources */,
 				B177117B2BDD395500586C78 /* LzmaDec.c in Sources */,
 				B180354C2BE32F19007F7F91 /* egtbfile_xq.cpp in Sources */,
 				B180358E2BE3D881007F7F91 /* threadmng.cpp in Sources */,
 				B182CB3E2C44F76F007CD2B4 /* perpetuation_xq.cpp in Sources */,
 				B18035882BE3D881007F7F91 /* egtbgenfile.cpp in Sources */,
+				B177F0112C72393D0086F2B5 /* xqchaselist.cpp in Sources */,
 				B18035902BE3D881007F7F91 /* egtbgendb_lib.cpp in Sources */,
 				B18035562BE32F19007F7F91 /* egtbkey_xq.cpp in Sources */,
 				B18154612BCEB38D00EF7716 /* xq.cpp in Sources */,
@@ -431,6 +451,7 @@
 				B16C3B492C0323D8006B3EE2 /* egtbgendb_forward.cpp in Sources */,
 				B18154642BCEB38D00EF7716 /* funcs.cpp in Sources */,
 				B17711792BDD395500586C78 /* LzFind.c in Sources */,
+				B177F0122C72393D0086F2B5 /* xqchasejudge.cpp in Sources */,
 				B180354A2BE32F19007F7F91 /* egtbkey_cs.cpp in Sources */,
 				B17B01E22BFD798C0035254D /* genboard_cs.cpp in Sources */,
 				B1B27CB12BF6293D00333F09 /* egtbgendb_backward.cpp in Sources */,
@@ -441,6 +462,7 @@
 				B18035582BE32F19007F7F91 /* egtbdb.cpp in Sources */,
 				B18035842BE3D881007F7F91 /* genlib.cpp in Sources */,
 				B180358A2BE3D881007F7F91 /* compresslib.cpp in Sources */,
+				B177F0132C72393D0086F2B5 /* xqchaserecord.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

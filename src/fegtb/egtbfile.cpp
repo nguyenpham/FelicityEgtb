@@ -646,10 +646,14 @@ int EgtbFile::_cellToScore(char cell) {
             return EGTB_SCORE_MISSING;
             
 #ifdef _FELICITY_XQ_
-        case TB_PERPETUATION_WIN:
-            return EGTB_SCORE_PERPETUATION_WIN;
-        case TB_PERPETUATION_LOSE:
-            return EGTB_SCORE_PERPETUATION_LOSE;
+        case TB_PERPETUAL_CHECK_WIN:
+            return EGTB_SCORE_PERPETUAL_CHECK_WIN;
+        case TB_PERPETUAL_CHECK_LOSE:
+            return EGTB_SCORE_PERPETUAL_CHECK_LOSE;
+        case TB_PERPETUAL_CHASE_WIN:
+            return EGTB_SCORE_PERPETUAL_CHASE_WIN;
+        case TB_PERPETUAL_CHASE_LOSE:
+            return EGTB_SCORE_PERPETUAL_CHASE_LOSE;
 #endif
             
         case TB_ILLEGAL:

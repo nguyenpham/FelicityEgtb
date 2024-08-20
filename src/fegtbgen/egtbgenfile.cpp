@@ -159,10 +159,14 @@ char EgtbGenFile::scoreToCell(int score) {
             return TB_MISSING;
 
 #ifdef _FELICITY_XQ_
-        case EGTB_SCORE_PERPETUATION_WIN:
-            return TB_PERPETUATION_WIN;
-        case EGTB_SCORE_PERPETUATION_LOSE:
-            return TB_PERPETUATION_LOSE;
+        case EGTB_SCORE_PERPETUAL_CHECK_WIN:
+            return TB_PERPETUAL_CHECK_WIN;
+        case EGTB_SCORE_PERPETUAL_CHECK_LOSE:
+            return TB_PERPETUAL_CHECK_LOSE;
+        case EGTB_SCORE_PERPETUAL_CHASE_WIN:
+            return TB_PERPETUAL_CHASE_WIN;
+        case EGTB_SCORE_PERPETUAL_CHASE_LOSE:
+            return TB_PERPETUAL_CHASE_LOSE;
 #endif
 
         case EGTB_SCORE_ILLEGAL:
@@ -466,9 +470,9 @@ std::string EgtbGenFile::createStatsString()
             }
             
 #ifdef _FELICITY_XQ_
-            else if (score == EGTB_SCORE_PERPETUATION_WIN) {
+            else if (score == EGTB_SCORE_PERPETUAL_CHECK_WIN) {
                 perpetuations_win[sd]++;
-            } else if (score == EGTB_SCORE_PERPETUATION_LOSE) {
+            } else if (score == EGTB_SCORE_PERPETUAL_CHECK_LOSE) {
                 perpetuations_lose[sd]++;
             }
 #endif

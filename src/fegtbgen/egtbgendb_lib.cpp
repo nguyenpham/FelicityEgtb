@@ -518,7 +518,7 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                         if (internal) {     /// score from current working buffers
                             auto r = pEgtbFile->getKey(board);
                             auto xs = r.flipSide ? side : xside;
-                            score = egtbFile->getScore(r.key, xs, false);
+                            score = pEgtbFile->getScore(r.key, xs, false);
                         } else if (!board.hasAttackers()) {
                             score = EGTB_SCORE_DRAW;
                         } else {            /// probe from a sub-endgame
@@ -532,15 +532,15 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                             }
                         }
 #ifdef _FELICITY_XQ_
-                        else if (score == EGTB_SCORE_PERPETUATION_WIN) {
+                        else if (score == EGTB_SCORE_PERPETUAL_CHECK_WIN) {
                             // EGTB_SCORE_PERPETUATION_LOSE;
                             if (bestScore == EGTB_SCORE_UNSET || bestScore < EGTB_SCORE_DRAW) {
-                                bestScore = EGTB_SCORE_PERPETUATION_LOSE;
+                                bestScore = EGTB_SCORE_PERPETUAL_CHECK_LOSE;
                             }
-                        } else if (score == EGTB_SCORE_PERPETUATION_LOSE) {
+                        } else if (score == EGTB_SCORE_PERPETUAL_CHECK_LOSE) {
                             //score = EGTB_SCORE_PERPETUATION_WIN;
                             if (bestScore <= EGTB_SCORE_DRAW) {
-                                bestScore = EGTB_SCORE_PERPETUATION_WIN;
+                                bestScore = EGTB_SCORE_PERPETUAL_CHECK_WIN;
                             }
                         }
 #endif

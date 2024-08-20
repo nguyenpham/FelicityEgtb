@@ -299,10 +299,10 @@ void ChessBoard::setFen(const std::string& fen)
         }
     }
     
-//    side = Side::none;
-//    status = 0;
-//    enpassant = -1;
-//    setFenCastleRights_clear();
+    //    side = Side::none;
+    //    status = 0;
+    //    enpassant = -1;
+    //    setFenCastleRights_clear();
     
     auto vec = Funcs::splitString(str, ' ');
     auto thefen = vec.front();
@@ -368,7 +368,7 @@ void ChessBoard::setFen(const std::string& fen)
             if (side == Side::black) quietCnt++;
         }
     }
-
+    
     /// full move
     if (vec.size() >= 6) {
         auto str = vec.at(5);
@@ -377,9 +377,11 @@ void ChessBoard::setFen(const std::string& fen)
             fullMoveCnt = k * 2;
         }
     }
-
-    checkEnpassant();    
+    
+    checkEnpassant();
     assert(pieceList_isValid());
+    
+    setFenComplete();
 }
 
 std::string ChessBoard::getFenCastleRights() const {

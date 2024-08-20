@@ -69,14 +69,22 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n krakra"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n krkr"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n rc-r"
+            argument = "-n krpakcabb"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-n kraakcpaa"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-n 1"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument

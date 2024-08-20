@@ -38,6 +38,8 @@
 #endif
 
 
+#define _FELICITY_USE_HASH_
+
 namespace bslib {
 
 enum class ChessVariant {
@@ -59,11 +61,13 @@ const int FirstAttacker = QUEEN;
 
 #define EgtbBoard bslib::ChessBoard
 
-#define BOARD_SZ 64
+#define BOARD_SZ        64
+#define COLUMN_COUNT    8
+#define ROW_COUNT       8
 
 #else
 enum class PieceType {
-    empty, king, advisor, elephant, rook, cannon, horse, pawn
+    empty, king, advisor, elephant, rook, cannon, horse, pawn, jeiqi
 };
 
 const int ADVISOR = static_cast<int>(PieceType::advisor);
@@ -72,11 +76,15 @@ const int CANNON = static_cast<int>(PieceType::cannon);
 const int HORSE = static_cast<int>(PieceType::horse);
 const int ROOK = static_cast<int>(PieceType::rook);
 
+const int JEIQI = static_cast<int>(PieceType::jeiqi);
+
 const int FirstAttacker = ROOK;
 
 #define EgtbBoard bslib::XqBoard
 
-#define BOARD_SZ 90
+#define BOARD_SZ        90
+#define COLUMN_COUNT    9
+#define ROW_COUNT       10
 
 #endif
 
@@ -95,10 +103,10 @@ enum class Side {
 };
 
 enum class GameResultType { // Based on white side
+    unknown,
     win,    // white wins
-    loss,   // white loses
     draw,
-    unknown
+    loss,   // white loses
 };
 
 #ifdef _FELICITY_CHESS_
@@ -116,11 +124,71 @@ enum class FlipMode {
 #endif
 
 
+enum class ReasonType {
+    noreason,
+    mate,
+    stalemate,
+    repetition,
+    resign,
+    fiftymoves,
+    insufficientmaterial,
+    illegalmove,
+    timeout,
+    adjudication_length,
+    adjudication_egtb,
+    adjudication_egtb_online,
+    adjudication_score,
+    adjudication_manual,
+    perpetualchase,
+    bothperpetualchase,
+    extracomment,
+    crash,
+    abort
+};
+
+
+class Result {
+public:
+    Result() {
+        reset();
+    }
+    Result(GameResultType _result, ReasonType _reason = ReasonType::noreason, std::string _comment = "") {
+        result = _result;
+        reason = _reason;
+        comment = _comment;
+    }
+
+    void reset() {
+        result = GameResultType::unknown;
+        reason = ReasonType::noreason;
+        comment = "";
+    }
+
+    GameResultType result;
+    ReasonType reason;
+    std::string comment;
+
+    bool isNone() const {
+        return result == GameResultType::unknown;
+    }
+
+//    void setReason(const std::string& s) {
+//        reason = string2ReasonType(s);
+//        if (reason == ReasonType::extracomment && comment.empty()) {
+//            comment = s;
+//        }
+//    }
+
+};
 
 class Piece {
 public:
     PieceType type;
     Side side;
+
+#ifdef _FELICITY_XQ_
+    int idx;
+#endif
 
 public:
     Piece() {}
@@ -251,7 +319,10 @@ public:
     int8_t castleRights[2];
 #endif
     
-    
+#ifdef _FELICITY_USE_HASH_
+    uint64_t hashKey;
+#endif
+
     void set(const MoveFull& _move) {
         move = _move;
     }

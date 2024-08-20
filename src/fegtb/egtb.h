@@ -77,17 +77,39 @@ const static int COPYRIGHT_BUFSZ = 64;
 
 
 //////////////////////////////////////////////////////////////////////
+#ifdef _FELICITY_CHESS_
+#define TB_DRAW                             5
+
+#else
+#define TB_DRAW                             7
+
+#define TB_PERPETUAL_CHECK_WIN              3
+#define TB_PERPETUAL_CHECK_LOSE             4
+#define TB_PERPETUAL_CHASE_WIN              5
+#define TB_PERPETUAL_CHASE_LOSE             6
+
+
+#define EGTB_SCORE_PERPETUAL_CHECK_WIN      1008
+#define EGTB_SCORE_PERPETUAL_CHECK_LOSE     1009
+
+#define EGTB_SCORE_PERPETUAL_CHASE_WIN      1010
+#define EGTB_SCORE_PERPETUAL_CHASE_LOSE     1011
+
+#endif
+
+
+/// chess: 130, xq: 131
+#define TB_START_LOSING                     ((255-TB_DRAW)/2+TB_DRAW)
+
+/// chess: 124, xq: 123
+#define TB_RANGE_1_BYTE                     ((255-TB_DRAW)/2-1)
 
 #define TB_ILLEGAL                          0
 #define TB_UNSET                            1
 #define TB_MISSING                          2
 
-#define TB_DRAW                             5
 
 #define TB_START_MATING                     (TB_DRAW + 1)
-#define TB_START_LOSING                     130
-
-#define TB_RANGE_1_BYTE                     124
 
 //////////////////////////////////////////////////////////////////////
 
@@ -99,14 +121,6 @@ const static int COPYRIGHT_BUFSZ = 64;
 #define EGTB_SCORE_MISSING                  1006
 #define EGTB_SCORE_UNSET                    1007
 
-#ifdef _FELICITY_XQ_
-
-#define TB_PERPETUATION_WIN                 3
-#define TB_PERPETUATION_LOSE                4
-
-#define EGTB_SCORE_PERPETUATION_WIN         1002
-#define EGTB_SCORE_PERPETUATION_LOSE        1003
-#endif
 
 //////////////////////////////////////////////////////////////////////
 
@@ -261,9 +275,6 @@ enum EgtbIdx {
 };
 
 #else
-
-#define getRow(pos)                         ((pos)/9)
-#define getCol(pos)                         ((pos)%9)
 
 const int EGTB_SIZE_X_HALF              = 50;
 const int EGTB_SIZE_X                   = 90;

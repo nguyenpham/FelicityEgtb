@@ -28,6 +28,8 @@
 
 #include "fegtbgen/compresslib.h"
 
+#include "xq/xqchasejudge.h"
+
 using namespace fegtb;
 using namespace bslib;
 
@@ -125,11 +127,17 @@ std::string explainScore(int score) {
 //            str = "unknown";
 //            break;
 #ifdef _FELICITY_XQ_
-        case EGTB_SCORE_PERPETUATION_WIN:
-            str = "perpetuation win";
+        case EGTB_SCORE_PERPETUAL_CHECK_WIN:
+            str = "perpetual check win";
             break;
-        case EGTB_SCORE_PERPETUATION_LOSE:
-            str = "perpetuation lose";
+        case EGTB_SCORE_PERPETUAL_CHECK_LOSE:
+            str = "perpetual check lose";
+            break;
+        case EGTB_SCORE_PERPETUAL_CHASE_WIN:
+            str = "perpetual chase win";
+            break;
+        case EGTB_SCORE_PERPETUAL_CHASE_LOSE:
+            str = "perpetual chase lose";
             break;
 #endif
 
@@ -195,10 +203,14 @@ static void prePocessName(std::string& endgameName, bool& isExactName)
 
 int main(int argc, char* argv[])
 {    
-
 #if defined(_MSC_VER)
 	setvbuf(stdout, 0, _IOLBF, 4096);
 #endif
+    
+    {
+        XqChaseJudge::testRules();
+        return 0;
+    }
     
     static const auto programName = "egtbgen";
     std::cout << "Felicity EGTB generator for " << EGTB_MAJOR_VARIANT

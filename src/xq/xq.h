@@ -37,12 +37,6 @@ namespace bslib {
         virtual bool isValid() const override;
         virtual bool isLegal() const override;
 
-        virtual int columnCount() const override;
-        virtual int rankCount() const override;
-
-        virtual int getColumn(int pos) const override;
-        virtual int getRank(int pos) const override;
-
         virtual void setFen(const std::string& fen) override;
 
         using BoardCore::getFen;
@@ -76,6 +70,9 @@ namespace bslib {
         
         using BoardCore::pieceList_isDraw;
         virtual bool pieceList_isDraw(const int *pieceList) const override;
+
+        virtual Result rule() override;
+        virtual Result ruleRepetition(int repeatLen);
 
     protected:
         virtual bool isValidPromotion(int promotion, Side) const override {

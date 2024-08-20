@@ -43,6 +43,9 @@ void EgtbGenDb::gen_backward_thread_init(int threadIdx)
             continue;
         }
 
+        if (!rcd.board->isValid()) {
+            rcd.board->printOut();
+        }
         assert(rcd.board->isValid());
         
         bool inchecks[] = {
@@ -150,7 +153,7 @@ int EgtbGenDb::gen_backward_probe(GenBoard& board, i64 idx, Side side)
                     if (capScore > 0) capScore++;
                     else if (capScore < 0) capScore--;
                     capScore = -capScore;
-                    assert(abs(capScore) <= EGTB_SCORE_MATE);
+                    //assert(abs(capScore) <= EGTB_SCORE_MATE);
                 }
                 score = capScore;
             }

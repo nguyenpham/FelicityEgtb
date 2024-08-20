@@ -64,6 +64,33 @@ void BoardCore::newGame(std::string fen)
     setFen(fen);
 }
 
+#ifdef _FELICITY_XQ_
+void BoardCore::setupPieceIndexes()
+{
+    int idxs[] = { 0, 0};
+    for(auto && piece : pieces) {
+        if (piece.isEmpty()) continue;
+        piece.idx = idxs[static_cast<int>(piece.side)]++;
+    }
+}
+#endif
+
+void BoardCore::setFenComplete()
+{
+#ifdef _FELICITY_XQ_
+    setupPieceIndexes();
+#endif
+
+    setupPieceCount();
+
+#ifdef _FELICITY_USE_HASH_
+    setupHashKey();
+    assert(isHashKeyValid());
+#endif
+    
+
+}
+
 int BoardCore::attackerCnt() const
 {
     auto cnt = 0;
@@ -156,12 +183,21 @@ int BoardCore::findKing(Side side) const
     return kingpos;
 }
 
+#ifdef _FELICITY_USE_HASH_
+extern uint64_t zobristWhite;
+#endif
+
 void BoardCore::make(const MoveFull& move)
 {
     Hist hist;
     make(move, hist);
     histList.push_back(hist);
     side = xSide(side);
+
+#ifdef _FELICITY_USE_HASH_
+    hashKey ^= zobristWhite;
+    assert(isHashKeyValid());
+#endif
 }
 
 void BoardCore::takeBack()
@@ -248,22 +284,24 @@ void BoardCore::flip(FlipMode flipMode)
 
         case FlipMode::vertical:
         case FlipMode::rotate: {
-            assert(false);
             pieceList_reset((int *)pieceList);
             auto halfsz = size() / 2;
             auto mr = size() / columnCount();
             for(auto r0 = 0; r0 < halfsz; r0++) {
                 auto r1 = flipMode == FlipMode::vertical ? (mr - 1 - r0 / columnCount()) * columnCount() + r0 % columnCount() : size() - 1 - r0;
-//                std::swap(pieces[r0], pieces[r1]);
-//                if (!pieces[r0].isEmpty()) {
-//                    pieces[r0].side = xSide(pieces[r0].side);
-//                }
-//                if (!pieces[r1].isEmpty()) {
-//                    pieces[r1].side = xSide(pieces[r1].side);
-//                }
-                
+
                 auto piece0 = pieces[r0];
                 auto piece1 = pieces[r1];
+
+#ifdef _FELICITY_XQ_
+                if (!piece0.isEmpty()) {
+                    piece0.side = xSide(piece0.side);
+                }
+                if (!piece1.isEmpty()) {
+                    piece1.side = xSide(piece1.side);
+                }
+#endif
+
                 setPiece(r0, piece1);
                 setPiece(r1, piece0);
 
@@ -403,3 +441,131 @@ bool BoardCore::pieceList_isDraw() const
     return pieceList_isDraw((const int*) pieceList);
 }
     
+/// Check mate, 50 moves rule
+Result BoardCore::rule()
+{
+    Result result;
+
+    /// 50 moves
+    if (quietCnt >= 50 * 2) {
+        result.result = GameResultType::draw;
+        result.reason = ReasonType::fiftymoves;
+        return result;
+    }
+
+    /// Mated or stalemate
+    auto haveLegalMove = false;
+
+#ifdef _FELICITY_USE_HASH_
+    assert(isHashKeyValid());
+#endif
+    
+    for(auto && move : gen(side)) {
+        Hist hist;
+        make(move, hist);
+        haveLegalMove = !isIncheck(side);
+        takeBack(hist);
+        if (haveLegalMove) break;
+    }
+
+    if (!haveLegalMove) {
+        if (isIncheck(side)) {
+            result.result = side == Side::white ? GameResultType::loss : GameResultType::win;
+            result.reason = ReasonType::mate;
+        } else {
+#if _FELICITY_CHESS_
+            result.result = GameResultType::draw;
+#else
+            result.result = side == Side::white ? GameResultType::loss : GameResultType::win;
+#endif
+            result.reason = ReasonType::stalemate;
+        }
+//        return result;
+    }
+
+//    if (quietCnt < repetitionThreatHold * 4) {
+//        return result;
+//    }
+//
+//    auto cnt = 0;
+//    auto i = int(histList.size()), k = i - quietCnt;
+//    for(i -= 2; i >= 0 && i >= k; i -= 2) {
+//        auto hist = histList.at(i);
+//        if (hist.hashKey == hashKey) {
+//            cnt++;
+//            if (cnt >= repetitionThreatHold) {
+//                auto repeatLen = int(histList.size()) - i;
+//                //result = XqChaseJudge::evaluate(*this, repeatLen);
+//                return ruleRepetition(repeatLen);
+//            }
+//        }
+//    }
+
+    return result;
+}
+
+
+#ifdef _FELICITY_USE_HASH_
+uint64_t zobristWhite = 0, zobristTable[16][BOARD_SZ];
+
+uint64_t rand64() {
+    const uint64_t z = 0x9FB21C651E98DF25;
+    static uint64_t state = 1;
+
+    auto n = state;
+    state++;
+
+    n ^= ((n << 49) | (n >> 15)) ^ ((n << 24) | (n >> 40));
+    n *= z;
+    n ^= n >> 35;
+    n *= z;
+    n ^= n >> 28;
+
+    return n;
+
+}
+
+uint64_t BoardData::xorHashKey(int pos) const
+{
+    assert(isPositionValid(pos));
+    auto piece = pieces[pos]; assert(!piece.isEmpty());
+    
+    auto p = static_cast<int>(piece.type)
+    + static_cast<int>(piece.side) * static_cast<int>(PieceType::pawn);
+    return zobristTable[p][pos];
+}
+
+uint64_t BoardData::initHashKey() const {
+    if (zobristWhite == 0) {
+        zobristWhite = rand64();
+        
+        for(auto p = 0; p < 16; p++) {
+            for(auto i = 0; i < BOARD_SZ; i++) {
+                zobristTable[p][i] = rand64();
+            }
+        }
+    }
+    
+    uint64_t key = 0;
+    for(int i = 0; i < BOARD_SZ; i++) {
+        if (!pieces[i].isEmpty()) {
+            key ^= xorHashKey(i);
+        }
+    }
+
+    if (side == Side::white) {
+        key ^= zobristWhite;
+    }
+    return key;
+}
+
+bool BoardData::isHashKeyValid() {
+    auto hk = initHashKey();
+    if (hashKey == hk) {
+        return true;
+    }
+    std::cout << "BoardCore::isHashKeyValid, hashKey:" << hashKey << ", hk: " << hk << std::endl;
+    return false;
+}
+
+#endif

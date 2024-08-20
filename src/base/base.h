@@ -44,12 +44,41 @@ namespace bslib {
             *this = *oboard;
         }
         
+    public:
+        virtual bool isPositionValid(int pos) const {
+            return pos >= 0 && pos < BOARD_SZ;
+        }
+
 #ifdef _FELICITY_CHESS_
     public:
         int enpassant = -1;
         int8_t castleRights[2];
 #endif
         
+
+#ifdef _FELICITY_USE_HASH_
+    public:
+        virtual uint64_t key() const {
+            return hashKey;
+        }
+        void setHashKey(uint64_t key) {
+            hashKey = key;
+        }
+        void setupHashKey() {
+            hashKey = initHashKey();
+        }
+
+        uint64_t xorHashKey(int pos) const;
+
+        virtual uint64_t initHashKey() const;
+        bool isHashKeyValid();
+
+    protected:
+        uint64_t hashKey;
+#endif
+
+
+
     };
 
     class BoardCore : public BoardData {
@@ -57,7 +86,7 @@ namespace bslib {
         ChessVariant variant;
         std::string startFen;
 
-    protected:
+//    protected:
         std::vector<Hist> histList;
 
     public:
@@ -98,12 +127,24 @@ namespace bslib {
             return idx >= 0 && idx < static_cast<int>(histList.size()) ? histList.at(idx).move : MoveFull();
         }
         
-        int size() const {
+        static int size() {
             return BOARD_SZ;
         }
+        static int columnCount() {
+            return COLUMN_COUNT;
+        }
+        static int rankCount() {
+            return ROW_COUNT;
+        }
 
-        virtual bool isPositionValid(int pos) const {
-            return pos >= 0 && pos < BOARD_SZ;
+        static int getColumn(int pos) {
+            assert(pos >= 0 && pos < BOARD_SZ);
+            return pos % COLUMN_COUNT;
+        }
+
+        static int getRow(int pos) {
+            assert(pos >= 0 && pos < BOARD_SZ);
+            return pos / COLUMN_COUNT;
         }
 
         Piece getPiece(int pos) const {
@@ -172,11 +213,11 @@ namespace bslib {
             return isValid(m);
         }
 
-        virtual int columnCount() const = 0;
-        virtual int rankCount() const = 0;
+//        virtual int columnCount() const = 0;
+//        virtual int rankCount() const = 0;
 
-        virtual int getColumn(int pos) const = 0;
-        virtual int getRank(int pos) const = 0;
+//        virtual int getColumn(int pos) const = 0;
+//        virtual int getRank(int pos) const = 0;
 
         virtual bool isValid() const {
             return false;
@@ -225,6 +266,11 @@ namespace bslib {
         virtual bool hasAttackers() const;
         virtual void setupPieceCount() {}
 
+#ifdef _FELICITY_XQ_
+        void setupPieceIndexes();
+#endif
+        
+
         virtual bool isValidPromotion(int promotion, Side side) const = 0;
 
         int getQuietCnt() const { return quietCnt; }
@@ -239,6 +285,7 @@ namespace bslib {
 
     public:
         virtual void setFen(const std::string& fen) = 0;
+        virtual void setFenComplete();
 
         virtual std::string getFen(bool enpassantLegal = false) const;
         virtual std::string getFen(bool enpassantLegal, int halfCount, int fullMoveCount) const = 0;
@@ -284,6 +331,8 @@ namespace bslib {
         virtual void takeBack(const Hist& hist) = 0;
 
         virtual int findKing(Side side) const;
+
+        virtual Result rule();
 
     protected:
         mutable int incheckCnt = 0;

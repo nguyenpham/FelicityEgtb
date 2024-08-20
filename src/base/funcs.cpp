@@ -108,6 +108,11 @@ PieceType Funcs::charactorToPieceType(char ch)
     if (ch >= 'A' && ch <= 'Z') {
         ch += 'a' - 'A';
     }
+    
+    if (ch == 'e') ch = 'b';
+    else if (ch == 'E') ch = 'B';
+    else if (ch == 'h') ch = 'n';
+    else if (ch == 'H') ch = 'N';
 
     auto p = pieceTypeName.find(ch);
     if (p != std::string::npos) {
