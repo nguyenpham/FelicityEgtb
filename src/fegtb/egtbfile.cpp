@@ -50,7 +50,7 @@ EgtbType EgtbFile::getExtensionType(const std::string& path) {
     auto p = EgtbType::none;
 
     for (int i = 0; egtbFileExtensions[i]; i++) {
-        if (path.find(egtbFileExtensions[i]) != std::string::npos) {
+        if (Funcs::endsWith(path, egtbFileExtensions[i])) {
             p = static_cast<EgtbType>(i);
             break;
         }
@@ -127,7 +127,7 @@ void EgtbFile::setPath(const std::string& s, Side side) {
     path[static_cast<int>(side)] = s;
 }
 
-std::string EgtbFile::getPath(bslib::Side side) const
+std::string EgtbFile::getPath(Side side) const
 {
     return path[static_cast<int>(side)];
 }
@@ -524,7 +524,7 @@ char EgtbFile::getCell(i64 idx, Side side)
 
 int EgtbFile::getScore(const EgtbBoard& board, Side side, bool useLock)
 {
-    auto r = getKey(board);
+    auto r = getIdx(board);
     if (r.flipSide) {
         side = getXSide(side);
     }
@@ -532,7 +532,7 @@ int EgtbFile::getScore(const EgtbBoard& board, Side side, bool useLock)
 }
 
 int EgtbFile::getScoreNoLock(const EgtbBoard& board, Side side) {
-    auto r = getKey(board);
+    auto r = getIdx(board);
     if (r.flipSide) {
         side = getXSide(side);
     }
@@ -608,11 +608,14 @@ u64 EgtbFile::computeSize(const std::string &name)
 
 
 /////////////////////////////////////////////////////////////////////////
-EgtbKeyRec EgtbFile::getKey(const EgtbBoard& board) const
+EgtbKeyRec EgtbFile::getIdx(const EgtbBoard& board) const
 {
     return EgtbKey::getKey(board, egtbIdxArray, 0);
 }
 
+
+
+/////////////////////////////////////////////////////////////////////////
 int EgtbFile::cellToScore(char cell) {
     assert(!isTwoBytes());
     return _cellToScore(cell);
@@ -621,11 +624,33 @@ int EgtbFile::cellToScore(char cell) {
 
 int EgtbFile::_cellToScore(char cell) {
     u8 s = (u8)cell;
-    if (s >= TB_DRAW) {
-        if (s == TB_DRAW) {
+    
+    switch (s) {
+        case TB_DRAW:
             return EGTB_SCORE_DRAW;
-        }
+        case TB_MISSING:
+            return EGTB_SCORE_MISSING;
+        case TB_ILLEGAL:
+            return EGTB_SCORE_ILLEGAL;
+        case TB_UNSET:
+            return EGTB_SCORE_UNSET;
 
+#ifdef _FELICITY_XQ_
+        case TB_PERPETUAL_CHECK_WIN:
+            return EGTB_SCORE_PERPETUAL_CHECK_WIN;
+        case TB_PERPETUAL_CHECK_LOSS:
+            return EGTB_SCORE_PERPETUAL_CHECK_LOSS;
+        case TB_PERPETUAL_CHASE_WIN:
+            return EGTB_SCORE_PERPETUAL_CHASE_WIN;
+        case TB_PERPETUAL_CHASE_LOSS:
+            return EGTB_SCORE_PERPETUAL_CHASE_LOSS;
+#endif
+            
+        default:
+            break;
+    }
+    
+    if (s > TB_DRAW) {
         /// winning score, score should be positive 1 -> 1000, positive odd number
         if (s < TB_START_LOSING) {
             auto mi = int(s - TB_START_MATING) * 2 + 1;
@@ -633,96 +658,140 @@ int EgtbFile::_cellToScore(char cell) {
             assert(k > TB_DRAW && k <= EGTB_SCORE_MATE);
             return k;
         }
-
+        
         /// lossing, score should be negative -1000 -> -870, negative even number
         auto mi = int(s - TB_START_LOSING) * 2;
         auto k = -EGTB_SCORE_MATE + mi;
         assert(k >= -EGTB_SCORE_MATE && k <= -EGTB_SCORE_MATE + 2 * TB_START_LOSING);
         return k;
     }
+    
+    assert(false);
+    return EGTB_SCORE_ILLEGAL;
+}
 
-    switch (s) {
-        case TB_MISSING:
-            return EGTB_SCORE_MISSING;
-            
+/// isSmallerScore(bestScore, score)
+bool EgtbFile::isSmallerScore(int score0, int score1)
+{
+    assert(score1 != EGTB_SCORE_UNSET);
+    return score0 == EGTB_SCORE_UNSET || score0 < score1;
+}
+
+/// Revert score for opposite side view
+int EgtbFile::revertScore(int score, int inc)
+{
+    if (score <= EGTB_SCORE_MATE) {
 #ifdef _FELICITY_XQ_
-        case TB_PERPETUAL_CHECK_WIN:
-            return EGTB_SCORE_PERPETUAL_CHECK_WIN;
-        case TB_PERPETUAL_CHECK_LOSE:
-            return EGTB_SCORE_PERPETUAL_CHECK_LOSE;
-        case TB_PERPETUAL_CHASE_WIN:
-            return EGTB_SCORE_PERPETUAL_CHASE_WIN;
-        case TB_PERPETUAL_CHASE_LOSE:
-            return EGTB_SCORE_PERPETUAL_CHASE_LOSE;
+        switch (score) {
+            case EGTB_SCORE_PERPETUAL_CHECK_WIN:
+                return EGTB_SCORE_PERPETUAL_CHECK_LOSS;
+            case EGTB_SCORE_PERPETUAL_CHECK_LOSS:
+                return EGTB_SCORE_PERPETUAL_CHECK_WIN;
+            case EGTB_SCORE_PERPETUAL_CHASE_WIN:
+                return EGTB_SCORE_PERPETUAL_CHASE_LOSS;
+            case EGTB_SCORE_PERPETUAL_CHASE_LOSS:
+                return EGTB_SCORE_PERPETUAL_CHASE_WIN;
+                
+            default:
+                break;
+        }
 #endif
-            
-        case TB_ILLEGAL:
-            return EGTB_SCORE_ILLEGAL;
-        case TB_UNSET:
-            return EGTB_SCORE_UNSET;
+
+        if (score != EGTB_SCORE_DRAW) {
+            score = -score;
+            if (score > 0) score -= inc;
+            else score += inc;
+        }
+    }
+
+    return score;
+}
+
+#ifdef _FELICITY_XQ_
+bool EgtbFile::isPerpetualScore(int score)
+{
+    return score == EGTB_SCORE_PERPETUAL_CHECK_WIN
+        || score == EGTB_SCORE_PERPETUAL_CHASE_WIN
+        || score == EGTB_SCORE_PERPETUAL_CHECK_LOSS
+        || score == EGTB_SCORE_PERPETUAL_CHASE_LOSS;
+}
+
+int EgtbFile::perpetualScoreToIdx(int score)
+{
+    switch (score) {
+        case EGTB_SCORE_PERPETUAL_CHECK_WIN:
+            return 0;
+        case EGTB_SCORE_PERPETUAL_CHECK_LOSS:
+            return 1;
+        case EGTB_SCORE_PERPETUAL_CHASE_WIN:
+            return 2;
+        case EGTB_SCORE_PERPETUAL_CHASE_LOSS:
+            return 3;
+
         default:
-            assert(false);
-            return EGTB_SCORE_ILLEGAL;
+            break;
     }
+    return -1;
 }
+#endif
 
-int EgtbFile::verifyAKey(EgtbBoard& board, i64 idx) const
+/// return true if score in the valid range
+bool EgtbFile::pickBestFromRivalScore(int& bestScore, int score)
 {
-    /// It is considered OK if it cann't setup the board
-    if (!setupBoard(board, idx, FlipMode::none, Side::white)) {
-        return 0;
+    if (score == EGTB_SCORE_UNSET) {
+        return false;
     }
-    
-//    auto d = idx == 36696 || idx == 36698;
-//    if (d) {
-//        board.printOut("idx=" + std::to_string(idx));
-//        auto idx2 = getKey(board).key;
-//        std::cout << "idx=" + std::to_string(idx) + ", idx2=" + std::to_string(idx2) << std::endl;
-//    }
-    
-    auto bit = Verify_bit_setupOK;
-    if (board.isValid() && getKey(board).key == idx) {
-        bit |= Verify_bit_valid;
+
+    score = revertScore(score);
+    if (isSmallerScore(bestScore, score)) {
+        bestScore = score;
     }
-    
-    return bit;
-}
-
-/**
- Simple function to test the consistancy and correctness of keys, using only one (main) thread
-  For faster, using multi threads, use functions in generator code
- */
-bool EgtbFile::verifyKeys(bool printRandom) const
-{
-    EgtbBoard board;
-    
-    auto sz = getSize();
-    std::cout << "Verifying Keys for " << getName() << ", size: " << sz << std::endl;
-
-    int64_t cnt = 0;
-    
-    for (int64_t idx = 0; idx < sz; ++idx) {
-        auto ok = verifyAKey(board, idx);
-
-        if (ok) {
-            cnt++;
-        }
-        
-        auto prt = !ok || (printRandom && rand() % 500000 == 0);
-        if (prt) {
-            auto msg = std::string("idx: ") + std::to_string(idx);
-            board.printOut(msg);
-        }
-        if (!ok) {
-            std::cout << "The board is invalid or not matched keys, idx = " << idx << std::endl;
-            return false;
-        }
-    }
-    
-    std::cout << " passed. Valid keys: " << cnt << std::endl;
-
     return true;
 }
 
+/// Score to string
+std::string EgtbFile::explainScore(int score)
+{
+    std::string str;
+    
+    switch (score) {
+        case EGTB_SCORE_DRAW:
+            str = "draw";
+            break;
+            
+        case EGTB_SCORE_MISSING:
+            str = "missing (board is incorrect or missing some endgame databases)";
+            break;
+        case EGTB_SCORE_MATE:
+            str = "mate";
+            break;
+            
+        case EGTB_SCORE_ILLEGAL:
+            str = "illegal";
+            break;
+            
+#ifdef _FELICITY_XQ_
+        case EGTB_SCORE_PERPETUAL_CHECK_WIN:
+            str = "perpetual check win";
+            break;
+        case EGTB_SCORE_PERPETUAL_CHECK_LOSS:
+            str = "perpetual check lose";
+            break;
+        case EGTB_SCORE_PERPETUAL_CHASE_WIN:
+            str = "perpetual chase win";
+            break;
+        case EGTB_SCORE_PERPETUAL_CHASE_LOSS:
+            str = "perpetual chase lose";
+            break;
+#endif
 
-
+        default: {
+            auto mateInPly = EGTB_SCORE_MATE - abs(score);
+            auto mateIn = (mateInPly + 1) / 2; /// devide 2 for full (not half or ply) moves
+            if (score < 0) mateIn = -mateIn;
+            str = "mate in " + std::to_string(mateIn) + " (" + std::to_string(mateInPly) + " " + (mateInPly <= 1 ? "ply" : "plies") + ")";
+            break;
+        }
+    }
+    return str;
+}

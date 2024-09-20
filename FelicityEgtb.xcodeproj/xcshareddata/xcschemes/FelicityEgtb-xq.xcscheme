@@ -56,7 +56,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n cn"
+            argument = "-n 1"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -72,7 +72,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n krkr"
+            argument = "-n krakcna"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -81,10 +81,22 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n kraakcpaa"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-n krabkcpab"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-n kcpaknaa"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-n kcpabknaa"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n 1"
+            argument = "-n kcaknp"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -92,11 +104,31 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-core 5"
+            argument = "-core 8"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-core 1"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = " -stats"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-h"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-g"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-v"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-vidx"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -104,12 +136,40 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-g"
+            argument = "-noverify"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-allmovescores"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-fen 3aka3/6R2/7c1/9/9/9/9/9/4A4/3AK1p2 w - - 1 1"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-fen 3aka3/5R3/7c1/9/9/9/9/9/4A4/3AK1p2 w - - 1 1"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-fen 3aka3/9/7c1/9/9/9/9/9/4A4/3AK1R2 b - - 0 1"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-fen R2a5/4k4/9/5c3/9/9/9/9/9/2n2K3 b 0 1"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-bestline "
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-noverify"
+            argument = "-fen R2a5/4k4/9/5c3/9/9/9/9/9/2n2K3 b 0 1"
             isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-fen 3a5/4k4/4c4/4R4/9/9/9/3n5/9/5K3 w - - 2 3"
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>

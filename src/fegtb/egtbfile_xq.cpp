@@ -349,24 +349,24 @@ u64 EgtbFile::parseAttr(const std::string& name, EgtbIdxRecord* egtbIdxArray, in
 bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side firstsider) const
 {
     board.reset();
-
+    
     i64 rest = idx;
-
+    
     for(auto i = 0; ; i++) {
         assert(i < 16);
         auto rec = egtbIdxArray[i];
         if (rec.idx == EGTB_IDX_NONE) {
             break;
         }
-
+        
         auto side = rec.side;
         if (firstsider == Side::black) {
             side = getXSide(side);
         }
-
+        
         auto key = int(rest / rec.mult);
         rest = rest % rec.mult;
-
+        
         switch (rec.idx) {
             case EGTB_IDX_DK:
             case EGTB_IDX_DA:
@@ -383,12 +383,12 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
                 }
                 break;
             }
-
+                
             case EGTB_IDX_R_HALF:
             case EGTB_IDX_C_HALF:
             case EGTB_IDX_N_HALF:
             case EGTB_IDX_P_HALF:
-
+                
             case EGTB_IDX_R_FULL:
             case EGTB_IDX_C_FULL:
             case EGTB_IDX_N_FULL:
@@ -399,7 +399,7 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
                 }
                 break;
             }
-
+                
                 /// WARNING: not yet 3 strong pieces
             default:
             {
@@ -410,9 +410,22 @@ bool EgtbFile::setupBoard(EgtbBoard& board, i64 idx, FlipMode flipMode, Side fir
             }
         }
     }
-
+    
     board.flip(flipMode);
     return true;
+}
+
+
+bool EgtbFile::showBoard(const std::string& msg, i64 idx, Side side, FlipMode flipMode) const
+{
+    EgtbBoard board;
+    if (setupBoard(board, idx, flipMode, side)) {
+        //        board.setFenComplete();
+        board.printOut(msg + " idx: " + std::to_string(idx)
+                       + ", side: " + Funcs::side2String(side, false));
+        return true;
+    }
+    return false;
 }
 
 #endif // _FELICITY_XQ_

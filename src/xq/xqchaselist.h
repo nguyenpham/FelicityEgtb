@@ -15,6 +15,9 @@
  copies or substantial portions of the Software.
  */
 
+/*
+ This code is based on work: Nguyen Hong Pham (2018). A completed implementation for Xiangqi rules. ICGA Journal, Vol. 40, No. 3
+ */
 
 #ifndef bs_xq_chaselist_h
 #define bs_xq_chaselist_h
@@ -45,6 +48,11 @@ public:
 
     bool isEmpty() const { return list.empty(); }
 
+    void reset() {
+        list.clear();
+        isBuilt = false;
+    }
+    
     std::string toString() const;
 
     void sameVictims(const XqChaseList& otherChaseList);
@@ -74,6 +82,11 @@ public:
     
     bool isEmpty() const {
         return pair[0].isEmpty() && pair[1].isEmpty();
+    }
+    
+    void reset() {
+        pair[0].reset();
+        pair[1].reset();
     }
 };
 

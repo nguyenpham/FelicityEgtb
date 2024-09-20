@@ -20,19 +20,32 @@
 #ifdef _FELICITY_XQ_
 using namespace bslib;
 
-namespace bslib {
+//namespace bslib {
+
+extern const char* reasonStrings[];
+extern const std::string resultStrings[];
+
+GameResultType string2ResultType(const std::string& s)
+{
+    for(int i = 0; !resultStrings[i].empty(); i++) {
+        if (resultStrings[i] == s) {
+            return static_cast<GameResultType>(i);
+        }
+    }
+    return GameResultType::unknown;
+}
+
 
 std::vector<std::string> readTextFileToArray(const std::string& path)
 {
-//        std::ifstream inFile;
-//        inFile.open(path);
+//#if (defined (_WIN32) || defined (_WIN64))
+//    std::ifstream inFile(std::filesystem::u8path(path.c_str()));
+//#else
+//    std::ifstream inFile(path);
+//#endif
 
-#if (defined (_WIN32) || defined (_WIN64))
-    std::ifstream inFile(std::filesystem::u8path(path.c_str()));
-#else
     std::ifstream inFile(path);
-#endif
-
+    
     std::string line;
     std::vector<std::string> vec;
 
@@ -570,58 +583,6 @@ bool fromMoveList(XqBoard& board, const std::string& moveText)
     return true;
 }
 
-const char* reasonStrings[] = {
-    "*", "mate", "stalemate", "repetition", "resign", "fifty moves", "insufficient material",
-    "illegal move", "timeout",
-    "adjudication by lengths", "adjudication by egtb", "adjudication by online egtb", "adjudication by engines' scores", "adjudication by human",
-    "perpetual chase",
-    "both perpetual chases", "extra comment", "crash", "abort",
-    nullptr
-};
-
-// noresult, win, draw, loss
-const std::string resultStrings[] = {
-    "*", "1-0", "1/2-1/2", "0-1", "", ""
-};
-
-const std::string resultStrings_short[] = {
-    "*", "1-0", "0.5", "0-1", "", ""
-};
-
-std::string reasonString(ReasonType reason) {
-//    if (reason == ReasonType::extracomment) {
-//        return comment;
-//    }
-    return reasonStrings[static_cast<int>(reason)];
-}
-
-std::string resultType2String(GameResultType type, bool shortFrom) {
-    auto t = static_cast<int>(type);
-    if (t < 0 || t > 3) t = 0;
-    return shortFrom ? resultStrings_short[t] : resultStrings[t];
-}
-
-std::string toResultShortString(GameResultType result) {
-    return resultType2String(result, true);
-}
-
-std::string toResultString(const Result& result) {
-    auto str = toResultShortString(result.result);
-    if (result.reason != ReasonType::noreason) {
-        str += " (" + reasonString(result.reason) + ")";
-    }
-    return str;
-}
-
-GameResultType string2ResultType(const std::string& s) {
-    for(int i = 0; !resultStrings[i].empty(); i++) {
-        if (resultStrings[i] == s) {
-            return static_cast<GameResultType>(i);
-        }
-    }
-    return GameResultType::unknown;
-}
-
 
 bool parsePGN(const std::vector<std::string>& contentVec, std::map<std::string, std::string>& itemMap, std::vector<Hist>& moveVec, XqBoard& board)
 {
@@ -705,6 +666,10 @@ bool XqChaseJudge::testRules(const std::string& path)
 
 bool XqChaseJudge::testRules(const std::vector<std::string>& _contentVec)
 {
+#ifndef _FELICITY_USE_HASH_
+    std::cout << "Must defined _FELICITY_USE_HASH_" << std::endl;
+    assert(false);
+#endif
     std::vector<std::string> contentVec;
 
     /// remove all variations
@@ -743,10 +708,14 @@ bool XqChaseJudge::testRules(const std::vector<std::string>& _contentVec)
     }
     assert(ok && board.quietCnt >= 5 && board.histList.size() >= 5);
 //    board.printOut("after parsePGN");
-    assert(board.isHashKeyValid());
 
     auto p = itemMap.find("result"); assert(p != itemMap.end());
     auto resultType = string2ResultType(p->second);
+
+//    if (itemMap["event"] != "Asia rules 15*" || itemMap["round"] != "18") {
+//        return true;
+//    }
+//    board.printOut("board");
 
     auto result = board.rule();
     auto correct = result.result == resultType;
@@ -780,9 +749,9 @@ bool XqChaseJudge::testRules(const std::vector<std::string>& _contentVec)
         std::cout
                 << "Event: " << itemMap["event"]
                 << "\nRound: " << itemMap["round"]
-                << "\nruled result: " << toResultString(result) << ", pgn result: " << resultType2String(resultType, true) << std::endl;
+                << "\nruled result: " << result.toString() << ", pgn result: " << Result::resultType2String(resultType, true) << std::endl;
         board.printOut("Incorrect XqChaseJudge::testRules");
-        result = board.rule();
+//        result = board.rule();
     }
 
     return correct;
@@ -839,7 +808,49 @@ void XqChaseJudge::testRules()
 }
 
 
-} // namespace Chess
+//} // namespace Chess
 
+void XqChaseJudge::testRules2()
+{
+    XqBoard board;
+    board.setFen("3aka3/1R7/9/9/9/9/1c7/9/4A4/2p1KA3 b 0 1");
+
+//    board.setFenComplete();
+
+    board.printOut();
+
+    XqChaseJudge xqChaseJudge;
+    
+    auto side = Side::black, xside = Side::white;
+    assert(xqChaseJudge.addBoard(board, side));
+
+    board.make(board.createFullMove(55, 60));
+    board.printOut();
+    assert(xqChaseJudge.addBoard(board, xside));
+
+    board.make(board.createFullMove(10, 15));
+    board.printOut();
+    assert(xqChaseJudge.addBoard(board, side));
+
+    board.make(board.createFullMove(60, 55));
+    board.printOut();
+    assert(xqChaseJudge.addBoard(board, xside));
+
+    
+    board.make(board.createFullMove(15, 10));
+    board.printOut();
+    assert(xqChaseJudge.addBoard(board, side));
+
+    auto r = xqChaseJudge.evaluate2();
+    std::cout << "xqChaseJudge.evaluate: " << Result::resultType2String(r.result) << std::endl;
+
+    auto result = xqChaseJudge.evaluate();
+
+    auto result0 = board.rule();
+    
+
+    std::cout << "result: " << result.toString() << std::endl;
+
+}
 
 #endif // _FELICITY_XQ_

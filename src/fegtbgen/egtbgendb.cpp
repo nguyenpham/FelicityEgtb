@@ -297,7 +297,7 @@ bool EgtbGenDb::gen_single(int egtbidx, const std::string& folder, const std::st
 
     auto r = gen_finish(folder, compressMode, verifyMode);
     if (r) {
-        std::cout << "Generated successfully " << name << std::endl << std::endl;
+        std::cout << "\tGenerated successfully " << name << std::endl << std::endl;
     }
     return r;
 }
@@ -339,7 +339,14 @@ bool EgtbGenDb::gen_finish(const std::string& folder, CompressMode compressMode,
     
     egtbFile->checkAndConvert2bytesTo1();
 
-    std::cout << "Total time, generating: " << GenLib::formatPeriod(int(total_elapsed_gen / 1000)) << ", verifying: " << GenLib::formatPeriod(int(total_elapsed_verify / 1000)) << std::endl;
+    std::cout << "Total time, generating: " << GenLib::formatPeriod(int(total_elapsed_gen / 1000));
+    
+#ifdef _FELICITY_XQ_
+    if (total_elapsed_perpetuation > 0) {
+        std::cout << ", perpetuating: " << GenLib::formatPeriod(int(total_elapsed_perpetuation / 1000));
+    }
+#endif
+    std::cout << ", verifying: " << GenLib::formatPeriod(int(total_elapsed_verify / 1000)) << std::endl;
 
     if (egtbFile->saveFile(folder, compressMode)) {
         egtbFile->createStatsFile();
@@ -367,12 +374,29 @@ void EgtbGenDb::writeLog()
     str += "\n" + egtbFile->getName()
     + "\n\tsize: " + std::to_string(egtbFile->getSize())
     + "\n\tstart: " + startTimeString
-    + "\n\tgen elapsed: " + GenLib::formatPeriod(int(elapsed_gen / 1000))
-    + "\n\tverify elapsed: " + GenLib::formatPeriod(int(elapsed_verify / 1000))
-    + "\n\ttotal gen elapsed: " + GenLib::formatPeriod(int(total_elapsed_gen / 1000))
-    + "\n\ttotal verify elapsed: " + GenLib::formatPeriod(int(total_elapsed_verify / 1000))
+    + "\n\tgen elapsed: " + GenLib::formatPeriod(int(elapsed_gen / 1000));
+    
+    
+#ifdef _FELICITY_XQ_
+    if (elapsed_perpetuation > 0) {
+        str += "\n\tperpetuation elapsed: " + GenLib::formatPeriod(int(elapsed_perpetuation / 1000));
+    }
+#endif
+
+    str += "\n\tverify elapsed: " + GenLib::formatPeriod(int(elapsed_verify / 1000))
+    + "\n\ttotal gen elapsed: " + GenLib::formatPeriod(int(total_elapsed_gen / 1000));
+    
+    
+#ifdef _FELICITY_XQ_
+    if (total_elapsed_perpetuation > 0) {
+        str += "\n\ttotal perpetuation elapsed: " + GenLib::formatPeriod(int(total_elapsed_perpetuation / 1000));
+    }
+#endif
+    
+    str += "\n\ttotal verify elapsed: " + GenLib::formatPeriod(int(total_elapsed_verify / 1000))
     ;
     
+
     auto logPath = gen_folder + "gen.log";
     GenLib::appendStringToFile(logPath, str);
 }
@@ -487,7 +511,7 @@ std::vector<std::string> createTestEPDVec(EgtbFile* egtbFile, int countPerEndgam
 
         if (egtbFile->setupBoard(board, idx, FlipMode::none, Side::white)) {
             
-            auto r = egtbFile->getKey(board);
+            auto r = egtbFile->getIdx(board);
             auto scoreW = egtbFile->getScore(r.key, Side::white, false);
             auto scoreB = egtbFile->getScore(r.key, Side::black, false);
             
@@ -553,18 +577,6 @@ void EgtbGenDb::testEPD(const std::string& path)
         if (vec.size() < 3 || vec[2].find("c1") == std::string::npos) {
             continue;
         }
-//        auto ss = Funcs::splitString(vec[0], ' ');
-//        if (ss.size() < 3 || ss[ss.size() - 2] != "id") {
-//            continue;
-//        }
-//        auto egtbName = ss[ss.size() - 1];
-//        
-//        auto it = nameMap.find(egtbName);
-//        if (it == nameMap.end()) {
-//            continue;
-//        }
-//        auto egtbFile = it->second; assert(egtbFile);
-        
         board.setFen(vec[0]);
         if (!board.isValid()) {
             continue;
@@ -577,7 +589,7 @@ void EgtbGenDb::testEPD(const std::string& path)
 
         egtbFile->checkToLoadHeaderAndTables(Side::none);
 
-        auto r = egtbFile->getKey(board);
+        auto r = egtbFile->getIdx(board);
 
         auto scoreW = egtbFile->getScore(r.key, Side::white, false);
         auto scoreB = egtbFile->getScore(r.key, Side::black, false);
@@ -612,3 +624,42 @@ void EgtbGenDb::testEPD(const std::string& path)
     }
     std::cout << "Test DONE! successful count: " << sucCnt << ", fail Count: " << wrongCnt << std::endl;
 }
+
+
+#ifdef _FELICITY_FLIP_MAP_
+i64 EgtbGenDb::getFlipIdx(EgtbGenThreadRecord& rcd, i64 idx) const
+{
+    auto p = flipIdxMap.find(idx);
+    return p == flipIdxMap.end() ? -1 : p->second;
+}
+#else
+
+i64 EgtbGenDb::getFlipIdx(EgtbGenThreadRecord& rcd, i64 idx) const
+{
+    assert(egtbFile);
+    auto flip = rcd.board->needSymmetryFlip();
+    
+//    auto d = idx == 2198 || idx == 51806;
+//    if (d) {
+////        rcd.board->printOut("getFlipIdx = " + std::to_string(idx));
+//    }
+    if (flip != FlipMode::none) {
+        rcd.board2->clone(rcd.board);
+        rcd.board2->flip(flip);
+        assert(rcd.board2->isValid());
+        auto sIdx = egtbFile->getIdx(*rcd.board2).key; assert(sIdx >= 0);
+        
+//        if (d) {
+////            rcd.board2->printOut("getFlipIdx sIdx = " + std::to_string(sIdx));
+////            assert(sIdx != idx && (sIdx == 150693 || sIdx == 200301));
+//            assert(sIdx != idx && (sIdx == 2198 || sIdx == 51806));
+//        }
+
+        if (idx != sIdx) {
+            return sIdx;
+        }
+    }
+
+    return -1;
+}
+#endif

@@ -296,7 +296,7 @@ namespace bslib {
         
         void newGame(std::string fen = "");
 
-        MoveFull createFullMove(int from, int dest, PieceType promote) const;
+        MoveFull createFullMove(int from, int dest, PieceType promote = PieceType::empty) const;
         virtual bool isLegalMove(int from, int dest, PieceType promotion = PieceType::empty);
         
         virtual bool isLegal() const = 0;
@@ -324,6 +324,7 @@ namespace bslib {
 
         virtual std::string posToCoordinateString(int pos) const = 0;
 
+        void flipSide();
         virtual void make(const MoveFull& move);
         virtual void takeBack();
 

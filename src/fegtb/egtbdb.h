@@ -58,18 +58,31 @@ namespace fegtb {
         /// Scores
         int getScore(EgtbBoard& board, bslib::Side side);
         int getScore(EgtbBoard& board);
-        
+        std::pair<int, i64> getScoreAndIdx(EgtbBoard& board, bslib::Side side);
+
+//        int getScore(EgtbFile*, i64 idx, bslib::Side side);
+
         i64 getKey(EgtbBoard& board);
 
         /// Probe (for getting the line of moves to win
         int probe(EgtbBoard& board, std::vector<bslib::MoveFull>& moveList);
         int probe(const std::string& fenString, std::vector<bslib::MoveFull>& moveList);
+        
+        int probeByChildren(EgtbBoard& board, bslib::Side, EgtbFile* mainEgtbFile, bool debugging = false);
 
     public:
         EgtbFile* getEgtbFile(const std::string& name);
         virtual EgtbFile* getEgtbFile(const bslib::BoardCore& board) const;
 
         void closeAll();
+
+    public:
+        std::pair<bslib::Result, std::vector<bslib::Move>> getBestLine(const std::string& fen);
+
+        std::pair<bslib::Result, std::vector<bslib::Move>> getBestLine(EgtbBoard&);
+
+    protected:
+        std::pair<bslib::Result, std::vector<bslib::Move>> getBestLine(EgtbBoard&, std::unordered_map<i64, int>&);
 
     protected:
         static std::string getEgtbFileName(const bslib::BoardCore& board);

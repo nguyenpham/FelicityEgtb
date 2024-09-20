@@ -34,7 +34,7 @@ class Funcs
 public:
     static bool isChessFamily(ChessVariant variant);
 
-    static std::string side2String(Side side, bool shortFrom);
+    static std::string side2String(Side side, bool shortFrom = false);
     static Side string2Side(std::string s);
 
     static std::string chessVariant2String(ChessVariant variant);
@@ -43,7 +43,6 @@ public:
     static const std::string pieceTypeName;
 
     static PieceType charactorToPieceType(char ch);
-
 
     static void toLower(std::string& str);
     static void toLower(char* str);

@@ -122,6 +122,11 @@ PieceType Funcs::charactorToPieceType(char ch)
     return PieceType::empty;
 }
 
+bool Funcs::endsWith(std::string const & value, std::string const & ending)
+{
+    if (ending.size() > value.size()) return false;
+    return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+}
 void Funcs::toLower(std::string& str)
 {
     for (size_t i = 0; i < str.size(); ++i) {
@@ -261,11 +266,6 @@ char* Funcs::trim(char* s)
     }
 
     return s;
-}
-
-bool Funcs::endsWith(const std::string& str, const std::string& suffix)
-{
-    return str.size() >= suffix.size() && 0 == str.compare(str.size()-suffix.size(), suffix.size(), suffix);
 }
 
 bool Funcs::startsWith(const std::string& str, const std::string& prefix)

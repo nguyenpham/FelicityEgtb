@@ -37,6 +37,13 @@ class XqChaseJudge
 public:
     static Result evaluate(XqBoard& board, int repeatLen);
     static void testRules();
+    static void testRules2();
+
+    bool addBoard(XqBoard& board, Side);
+    void removeLastBoard();
+    
+    Result evaluate();
+    Result evaluate2();
 
 private:
     static bool perpetual_check(const XqBoard& board, XqBoard& tmpBoard, int repeatLen, Result&);
@@ -59,10 +66,12 @@ private:
 
 private:
     Result ruleRepetition(const XqBoard& board, XqBoard& tmpBoard, int repeatLen);
-    Result evaluate();
+    Result ruleRepetition2(const XqBoard& board, int repeatLen);
 
     bool areAllChasesLegal(int attackerSd) const;
 
+public:
+    int addingCnt = 0;
 };
 
 

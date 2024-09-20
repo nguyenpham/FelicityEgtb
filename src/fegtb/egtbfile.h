@@ -203,15 +203,15 @@ public:
     void    merge(EgtbFile& otherEgtbFile);
 
     
-    virtual int cellToScore(char cell);
-    static int _cellToScore(char cell);
     bool    isDataReady(i64 pos, bslib::Side side) const {
         int sd = static_cast<int>(side);
         return pos >= startpos[sd] && pos < endpos[sd] && pBuf[sd]; }
 
     bool setupBoard(EgtbBoard& board, i64 idx, bslib::FlipMode flip, bslib::Side firstSide) const;
 
-    virtual EgtbKeyRec getKey(const EgtbBoard& board) const;
+    bool showBoard(const std::string& msg, i64 idx, bslib::Side side = bslib::Side::white, bslib::FlipMode flipMode = bslib::FlipMode::none) const;
+
+    virtual EgtbKeyRec getIdx(const EgtbBoard& board) const;
 
     int     getAttackerCount() const {
         return attackerCount;
@@ -225,12 +225,18 @@ public:
         return (header->getProperty() & EGTB_PROP_2BYTES) != 0;
     }
 
-    bool verifyKeys(bool printRandom = false) const;
-    
-#define Verify_bit_setupOK  1
-#define Verify_bit_valid    (1 << 1)
+    virtual int cellToScore(char cell);
+    static int _cellToScore(char cell);
 
-    int verifyAKey(EgtbBoard& board, i64 idx) const;
+    static bool pickBestFromRivalScore(int& bestScore, int score);
+    static bool isSmallerScore(int score0, int score1);
+    static int revertScore(int score, int inc = 1);
+    static std::string explainScore(int score);
+
+#ifdef _FELICITY_XQ_
+    static bool isPerpetualScore(int score);
+    static int perpetualScoreToIdx(int score);
+#endif
 
 protected:
     EgtbFileHeader  *header = nullptr;

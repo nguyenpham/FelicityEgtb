@@ -757,9 +757,11 @@ void XqBoard::make(const MoveFull& move, Hist& hist)
         move.piece.type == PieceType::jeiqi) {
         quietCnt = 0;
         
+#ifdef _FELICITY_USE_HASH_
         if (!hist.cap.isEmpty()) {
             hashKey ^= xorHashKey(move.dest);
         }
+#endif
     } else {
         quietCnt++;
     }
@@ -1028,11 +1030,15 @@ Result XqBoard::rule()
 //        return result;
 //    }
 
-    // Repetition
+    /// Repetition
+#ifdef _FELICITY_USE_HASH_
+    assert(isHashKeyValid());
+
     auto cnt = 0;
     auto i = int(histList.size()), k = i - quietCnt;
     for(i -= 2; i >= 0 && i >= k; i -= 2) {
         auto hist = histList.at(i);
+        
         if (hist.hashKey == hashKey) {
             cnt++;
             if (cnt >= repetitionThreatHold) {
@@ -1042,6 +1048,7 @@ Result XqBoard::rule()
             }
         }
     }
+#endif
 
     return result;
 }

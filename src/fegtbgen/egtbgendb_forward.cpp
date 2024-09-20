@@ -42,7 +42,7 @@ int EgtbGenDb::gen_forward_probe(GenBoard& board, i64 idx, Side side, bool setup
 
             int score;
             if (internal) {
-                auto r = egtbFile->getKey(board);
+                auto r = egtbFile->getIdx(board);
                 auto xs = r.flipSide ? side : xside;
                 score = egtbFile->getScore(r.key, xs, false);
             } else {

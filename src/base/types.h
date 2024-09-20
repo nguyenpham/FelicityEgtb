@@ -38,7 +38,7 @@
 #endif
 
 
-#define _FELICITY_USE_HASH_
+//#define _FELICITY_USE_HASH_
 
 namespace bslib {
 
@@ -109,6 +109,16 @@ enum class GameResultType { // Based on white side
     loss,   // white loses
 };
 
+//enum class GameReasonType {
+//    draw_repetition,
+//    draw_check_idle,
+//    draw_same_violate,
+//    perpetual_check,
+//    perpetual_chase,
+//    unknown
+//};
+
+
 #ifdef _FELICITY_CHESS_
 enum class FlipMode {
     none, horizontal, vertical,
@@ -170,6 +180,23 @@ public:
 
     bool isNone() const {
         return result == GameResultType::unknown;
+    }
+
+    static std::string reasonString(ReasonType reason);
+    std::string reasonString() {
+        return reasonString(reason);
+    }
+
+    static std::string resultType2String(GameResultType type, bool shortFrom = true);
+
+    std::string resultType2String(bool shortFrom = true) {
+        return resultType2String(result, shortFrom);
+    }
+    
+    static std::string toString(const Result& result);
+    
+    std::string toString() const {
+        return toString(*this);
     }
 
 //    void setReason(const std::string& s) {
@@ -247,7 +274,7 @@ public:
         return promotion > PieceType::king;
     }
 
-    bool hasPromotion() {
+    bool hasPromotion() const {
         return promotion > PieceType::king;
     }
 

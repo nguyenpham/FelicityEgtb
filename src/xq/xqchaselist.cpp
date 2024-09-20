@@ -35,36 +35,30 @@ bool XqChaseList::ignoreSubverstProtection = true; //false;
 
 /*
  * Build the chase list for the given board and side
+ * side will be the side of attackers
  */
 void XqChaseList::build(XqBoard& board, Side side)
 {
-    assert(board.isHashKeyValid());
     isBuilt = true;
-//#ifdef _DEBUG_PRINT_
-//    board.printOut("XqChaseList::build BEGIN");
-//#endif
-
-    // Generate all capture moves only
-    std::vector<MoveFull> moveList;
-    board.gen(moveList, side);
 
     auto xside = BoardCore::xSide(side);
     auto incheck = board.isIncheck(side);
 
-    for (auto && move : moveList) {
+    for (auto && move : board.gen(side)) {
         auto victim = board.getPiece(move.dest);
-//        if (victim.isEmpty() || victim.type == KING) {
-//            continue;
-//        }
+
+        /// Work with capture moves only
         if (victim.isEmpty()) {
             continue;
         }
+        
+        /// checking the opponent -> illegal status -> clear the list
         if (victim.type == PieceType::king) {
             list.clear();
             break;
         }
 
-        // allow to chase pawn at home
+        /// allow to chase pawn at home
         if (victim.type == PieceType::pawn &&
              ( (victim.side == Side::white && move.dest >= 45)
             || (victim.side == Side::black && move.dest < 45))) {
@@ -76,8 +70,9 @@ void XqChaseList::build(XqBoard& board, Side side)
         /// Make a caputure
         Hist hist;
         board.make(move, hist);
+#ifdef _FELICITY_USE_HASH_
         assert(board.isHashKeyValid());
-
+#endif
         /// Make sure if the capture move is legal
         if (!board.isIncheck(side)) {
             auto attacker = board.getPiece(move.dest);
@@ -104,8 +99,6 @@ void XqChaseList::build(XqBoard& board, Side side)
                     && (victim.type != PieceType::rook || attacker.type == PieceType::rook)
                     && attacker.type != PieceType::king
                     ) {
-//                auto piece = board.pieceAt(reCapMove.targetSquare());
-
                 /*
                  * We will check if the being attack side could capture back but count legal ones only. If it could legally, the capture piece is actually protected
                  */
@@ -172,8 +165,11 @@ void XqChaseList::build(XqBoard& board, Side side)
 
         board.takeBack(hist);
     }
-
-//    board.show("XqChaseList::build END");
+    
+    if (!list.empty() && kingPawnChases()) {
+//    if (!list.empty() && (kingPawnChases() || beingProtected())) {
+        list.clear();
+    }
 }
 
 /*
@@ -324,9 +320,6 @@ bool XqChaseList::beingProtected() const {
             return false;
         }
     }
-//    std::string comment = ""; // + list[0].victim.toString() + "(" + posToCoordinateString(list[0].victimPos) + ") is protected";
-//    comments.push_back(comment);
-
     return true;
 }
 

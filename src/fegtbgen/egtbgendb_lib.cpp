@@ -28,6 +28,8 @@
 using namespace fegtb;
 using namespace bslib;
 
+extern bool check2Flip;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void createSubName(const std::string& aName, std::set<std::string>& allNameSet) {
     if (allNameSet.find(aName) != allNameSet.end() || !NameRecord::isValid(aName)) {
@@ -441,18 +443,93 @@ void EgtbGenDb::verifyData(const std::vector<std::string>& nameVec)
     std::cout << "Verify COMPLETED. total: " << count << ", passed: " << succ << ", missing: " << missing << std::endl;
 }
 
+std::vector<i64> EgtbGenDb::setBufScore(EgtbGenThreadRecord& rcd, i64 idx, int score, Side side)
+{
+    std::vector<i64> vec {idx};
+    assert(score == EGTB_SCORE_ILLEGAL || egtbFile->getScore(idx, side) != EGTB_SCORE_ILLEGAL);
+    egtbFile->setBufScore(idx, score, side);
+    
+    auto idx2 = getFlipIdx(rcd, idx);
+    if (idx2 >= 0) {
+        assert(idx != idx2);
+        
+//        if (score != EGTB_SCORE_ILLEGAL && egtbFile->getScore(idx2, side) == EGTB_SCORE_ILLEGAL) {
+//            rcd.board->printOut("board idx = " + std::to_string(idx));
+//            rcd.board2->printOut("board idx2 = " + std::to_string(idx2));
+//        }
+//        assert(score == EGTB_SCORE_ILLEGAL || egtbFile->getScore(idx2, side) != EGTB_SCORE_ILLEGAL);
+        egtbFile->setBufScore(idx2, score, side);
+        vec.push_back(idx2);
+    }
+    return vec;
+}
 
-bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
+void EgtbGenDb::showData(const std::string& msg, i64 idx, Side side, bool withChildren)
+{
+    if (!egtbFile || idx < 0 || idx >= egtbFile->getSize()) {
+        return;
+    }
+
+    int scores[2] = {
+        egtbFile->getBufScore(idx, Side::black),
+        egtbFile->getBufScore(idx, Side::white)
+    };
+    std::cout << msg << ", idx=" << idx << ", scores={" << scores[0] << ", " << scores[1] << "}";
+    
+    if (egtbFile->flags) {
+        int caps[2] = {
+            egtbFile->flag_is_cap(idx, Side::black),
+            egtbFile->flag_is_cap(idx, Side::white)
+        };
+        int si[2] = {
+            egtbFile->flag_is_side(idx, Side::black),
+            egtbFile->flag_is_side(idx, Side::white)
+        };
+        std::cout << ", flags cap={"
+        << caps[0] << ", " << caps[1] << "}, sides={"
+        << si[0] << ", " << si[1] << "}"
+        ;
+
+    }
+    std::cout << std::endl;
+
+    if (scores[0] == EGTB_SCORE_ILLEGAL && scores[1] == EGTB_SCORE_ILLEGAL) {
+        std::cerr << "Illegal board idx = " << idx << std::endl;
+        return;
+    }
+
+    GenBoard board;
+    
+    auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white);
+    if (!ok) {
+        std::cerr << "Something wrong, could not setupBoard for idx = " << idx << std::endl;
+        return;
+    }
+    
+    if (!withChildren) {
+        board.printOut("showData, idx=" + std::to_string(idx) + ", side=" + Funcs::side2String(side, false));
+        return;
+    }
+    
+    for (auto sd = 0; sd < 2; sd++) {
+        auto theSide = static_cast<Side>(sd);
+        if ((theSide == side || side == Side::none) && scores[sd] != EGTB_SCORE_ILLEGAL) {
+            probeByChildren(board, theSide, egtbFile, true);
+        }
+    }
+}
+
+bool EgtbGenDb::verifyData_thread(int threadIdx, EgtbFile* pEgtbFile) {
     assert(pEgtbFile);
     auto& rcd = threadRecordVec.at(threadIdx);
-
+    
     if (egtbVerbose) {
         std::lock_guard<std::mutex> thelock(printMutex);
         std::cout << "\tverify " << pEgtbFile->getName() << ", started by thread " << threadIdx << ") range: " << rcd.fromIdx << " -> " << rcd.toIdx << std::endl;
     }
-
-    EgtbBoard board;
-
+    
+    GenBoard board;
+    
     assert(rcd.fromIdx < rcd.toIdx);
     
     for (auto idx = rcd.fromIdx; idx < rcd.toIdx && verifyDataOK; idx ++) {
@@ -460,20 +537,20 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
             pEgtbFile->getScore(idx, Side::black, false),
             pEgtbFile->getScore(idx, Side::white, false)
         };
-
+        
         auto k = idx - rcd.fromIdx;
         if (k % (64L * 1024 * 1024) == 0 && egtbVerbose) {
             if (egtbVerbose) {
                 auto elapsed = (Funcs::now() - time_start_verify) / 1000.0;
                 if (elapsed <= 0) elapsed = 1;
-
+                
                 std::lock_guard<std::mutex> thelock(printMutex);
                 std::cout << "\tverify threadIdx = " << threadIdx << ", idx = " << GenLib::formatString(idx) << " of " << rcd.toIdx << " " << k * 100 / (rcd.toIdx - rcd.fromIdx) << "%, speed: " << GenLib::formatSpeed((int)(k / elapsed)) << std::endl;
             }
         }
-
+        
         auto b = pEgtbFile->setupBoard(board, idx, FlipMode::none, Side::white);
-
+        
         if (!b) {
             if (curScore[0] != EGTB_SCORE_ILLEGAL || curScore[1] != EGTB_SCORE_ILLEGAL) {
                 std::lock_guard<std::mutex> thelock(printMutex);
@@ -492,85 +569,31 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
             if (board.isIncheck(xside)) {
                 bestScore = EGTB_SCORE_ILLEGAL;
             } else {
-                if ((curScore[sd] <= EGTB_SCORE_MATE && ((curScore[sd] > 0 && (curScore[sd] & 1) == 0) || (curScore[sd] < 0 && (-curScore[sd] & 1) != 0)))) {
+                auto sc = curScore[sd];
+                if ((sc <= EGTB_SCORE_MATE
+#ifdef _FELICITY_XQ_
+                     && !EgtbFile::isPerpetualScore(sc)
+#endif
+                     && ((sc > 0 && (sc & 1) == 0) || (sc < 0 && (-curScore[sd] & 1) != 0)))) {
                     verifyDataOK = false;
                     std::lock_guard<std::mutex> thelock(printMutex);
-                    printf("Error: score incorrect odd/even rules, idx=%lld, sd=%d, curScore[sd]=%d\n", idx, sd, curScore[sd]);
+                    printf("Error: score incorrect odd/even rules, idx=%lld, sd=%d, curScore[sd]=%d\n", idx, sd, sc);
                     board.printOut();
                     return false;
                 }
-
-                bestScore = -EGTB_SCORE_MATE;
-                auto legalCount = 0;
-
-                for (auto && move : board.gen(side)) {
-                    Hist hist;
-                    board.make(move, hist);
-
-                    if (!board.isIncheck(side)) {
-                        legalCount++;
-                        
-                        /// If the move is a capture or a promotion, it should probe from sub-endgames
-                        auto internal = hist.cap.isEmpty() && move.promotion == PieceType::empty;
-
-                        int score;
-                        
-                        if (internal) {     /// score from current working buffers
-                            auto r = pEgtbFile->getKey(board);
-                            auto xs = r.flipSide ? side : xside;
-                            score = pEgtbFile->getScore(r.key, xs, false);
-                        } else if (!board.hasAttackers()) {
-                            score = EGTB_SCORE_DRAW;
-                        } else {            /// probe from a sub-endgame
-                            score = getScore(board, xside);
-                        }
-                        
-                        if (score <= EGTB_SCORE_MATE) {
-                            score = -score;
-                            if (score > bestScore) {
-                                bestScore = score;
-                            }
-                        }
-#ifdef _FELICITY_XQ_
-                        else if (score == EGTB_SCORE_PERPETUAL_CHECK_WIN) {
-                            // EGTB_SCORE_PERPETUATION_LOSE;
-                            if (bestScore == EGTB_SCORE_UNSET || bestScore < EGTB_SCORE_DRAW) {
-                                bestScore = EGTB_SCORE_PERPETUAL_CHECK_LOSE;
-                            }
-                        } else if (score == EGTB_SCORE_PERPETUAL_CHECK_LOSE) {
-                            //score = EGTB_SCORE_PERPETUATION_WIN;
-                            if (bestScore <= EGTB_SCORE_DRAW) {
-                                bestScore = EGTB_SCORE_PERPETUAL_CHECK_WIN;
-                            }
-                        }
-#endif
-                    }
-                    board.takeBack(hist);
-                }
-
-                if (legalCount == 0) {
-#ifdef _FELICITY_CHESS_
-                    bestScore = board.isIncheck(side) ? -EGTB_SCORE_MATE : EGTB_SCORE_DRAW;
-#else
-                    bestScore = -EGTB_SCORE_MATE;
-#endif
-                } else {
-                    if (abs(bestScore) <= EGTB_SCORE_MATE && bestScore != EGTB_SCORE_DRAW) {
-                        if (bestScore > 0) bestScore--;
-                        else bestScore++;
-                    }
-                }
+                
+                bestScore = probeByChildren(board, side, pEgtbFile);
             }
             
             if (verifyDataOK) {
                 bool ok = (curScore[sd] == bestScore || (bestScore > EGTB_SCORE_MATE && curScore[sd] > EGTB_SCORE_MATE));
-
+                
                 if (!ok) {
-//                    verifyDataOK = false;
-
+                    //                    verifyDataOK = false;
+                    
                     std::lock_guard<std::mutex> thelock(printMutex);
                     std::cerr << "Verify FAILED " << threadIdx << ") " << pEgtbFile->getName() << ", idx: " << idx << ", sd: " << sd
-                    << ", data score: " << curScore[sd] << ", relative score: " << bestScore
+                    << ", data score: " << curScore[sd] << ", score by children: " << bestScore
                     << std::endl;
                     if (b) {
                         board.printOut();
@@ -578,19 +601,21 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                     
                     /// Debugging
                     {
+                        auto sc = probeByChildren(board, side, pEgtbFile);
+                        
                         Hist hist;
                         for (auto&& move : board.gen(side)) {
                             board.make(move, hist);
-
+                            
                             if (!board.isIncheck(side)) {
                                 /// If the move is a capture or a promotion, it should probe from sub-endgames
                                 auto internal = hist.cap.isEmpty() && move.promotion == PieceType::empty;
-
+                                
                                 int score;
                                 i64 idx2 = -1;
-
+                                
                                 if (internal) {     /// score from current working buffers
-                                    idx2 = pEgtbFile->getKey(board).key;
+                                    idx2 = pEgtbFile->getIdx(board).key;
                                     score = pEgtbFile->getScore(idx2, xside, false);
                                 }
                                 else if (!board.hasAttackers()) {
@@ -599,16 +624,44 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
                                 else {            /// probe from a sub-endgame
                                     score = getScore(board, xside);
                                 }
-
+                                
                                 std::string msg = "move: " + board.toString_coordinate(move) + ", score: " + std::to_string(score) + ", idx2: " + std::to_string(idx2);
                                 board.printOut(msg);
                             }
                             board.takeBack(hist);
                         }
-
+                        
                     }
                     exit(1);
                     return false;
+                }
+            }
+        } // for (sd
+        
+        if (check2Flip) {
+            auto flip = board.needSymmetryFlip();
+            if (flip != FlipMode::none) {
+                board.flip(flip);
+                assert(board.isValid());
+                auto sIdx = pEgtbFile->getIdx(board).key; assert(sIdx >= 0);
+                
+                if (idx != sIdx) {
+                    int curScore2[] = {
+                        pEgtbFile->getScore(sIdx, Side::black, false),
+                        pEgtbFile->getScore(sIdx, Side::white, false)
+                    };
+                    
+                    if (curScore[0] != curScore2[0] || curScore[1] != curScore2[1]) {
+                        std::lock_guard<std::mutex> thelock(printMutex);
+                        std::cerr << "Verify FAILED " << threadIdx << ") " << pEgtbFile->getName() << ", idx: " << idx << ", not matched scores with flipped board idx2: " << sIdx
+                        << ", curScore = " << curScore[0] << ", " << curScore[1]
+                        << ", curScore2 = " << curScore2[0] << ", " << curScore2[1]
+                        << std::endl;
+                        board.printOut();
+                        exit(1);
+                        return false;
+                        
+                    }
                 }
             }
         }
@@ -619,6 +672,11 @@ bool EgtbGenDb::verifyData_chunk(int threadIdx, EgtbFile* pEgtbFile) {
         std::cout << "\tverify DONE " << pEgtbFile->getName() << ", " << threadIdx << std::endl;
     }
     return true;
+}
+
+void EgtbGenDb::showStringWithCurrentTime(const std::string& msg)
+{
+    std::cout << msg << " at: " << GenLib::currentTimeDate() << std::endl;
 }
 
 bool EgtbGenDb::verifyData(EgtbFile* egtbFile)
@@ -632,20 +690,19 @@ bool EgtbGenDb::verifyData(EgtbFile* egtbFile)
         return false;
     }
 
-    std::cout << " verifying " << egtbFile->getName() << " sz: " << GenLib::formatString(egtbFile->getSize()) << " at: " << GenLib::currentTimeDate() << std::endl;
-    
+    std::string msg = "\tverifying " + egtbFile->getName() + " sz: " + GenLib::formatString(egtbFile->getSize());
+    showStringWithCurrentTime(msg);
     
     verifyDataOK = true;
     
     setupThreadRecords(egtbFile->getSize());
     {
-
         std::vector<std::thread> threadVec;
         for (auto i = 1; i < threadRecordVec.size(); ++i) {
-            threadVec.push_back(std::thread(&EgtbGenDb::verifyData_chunk, this, i, egtbFile));
+            threadVec.push_back(std::thread(&EgtbGenDb::verifyData_thread, this, i, egtbFile));
         }
 
-        verifyData_chunk(0, egtbFile);
+        verifyData_thread(0, egtbFile);
         
         for (auto && t : threadVec) {
             t.join();
@@ -655,7 +712,7 @@ bool EgtbGenDb::verifyData(EgtbFile* egtbFile)
         }
     }
     
-    std::cout << "       " <<  egtbFile->getName() << " passed" << std::endl;
+    std::cout << "\tpassed " << egtbFile->getName() << std::endl;
     return true;
 }
 
@@ -664,10 +721,10 @@ bool EgtbGenDb::verifyKeys(const std::string& name, EgtbType egtbType) const {
     
     EgtbGenFile egtbFile;
     egtbFile.create(name, egtbType);
-    return egtbFile.verifyKeys();
+    return egtbFile.verifyIndexes();
 }
 
-void EgtbGenDb::verifyKeys(const std::vector<std::string>& endgameNames) const
+void EgtbGenDb::verifyIndexes(const std::vector<std::string>& endgameNames) const
 {
     std::cout << "\nVerify keys for " << endgameNames.size() << " endgames\n" << std::endl;
 
@@ -679,7 +736,7 @@ void EgtbGenDb::verifyKeys(const std::vector<std::string>& endgameNames) const
         count++;
         EgtbGenFile egtbFile;
         egtbFile.create(aName, egtbType);
-        if (egtbFile.verifyKeys()) {
+        if (egtbFile.verifyIndexes()) {
             succ++;
         }
     }
@@ -787,3 +844,26 @@ void EgtbGenDb::compare(EgtbGenDb& otherEgtbGenFileMng, std::string endgameName,
     std::cout << "Compare COMPLETED. total: " << count << ", passed: " << succ << ", failed: " << err << std::endl;
 }
 
+void EgtbGenDb::showStats(const std::vector<std::string>& nameVec)
+{
+    std::cout << "Stats of endgames:\n";
+
+    for(auto egtbidx = 0; egtbidx < nameVec.size(); egtbidx++) {
+        auto name = nameVec.at(egtbidx);
+        
+        auto ok = false;
+        if (nameMap.find(name) != nameMap.end()) {
+            auto egtbFile = getEgtbFile(name);
+            if (egtbFile) {
+                auto s = EgtbGenFile::createStatsString(egtbFile);
+                std::cout << "------------\n" << s << "\n\n" << std::endl;
+                ok = true;
+            }
+        }
+        
+        if (!ok) {
+            std::cerr << "Error: not existent endgame: " << name << std::endl;
+        }
+    }
+    std::cout << "Completed!\n" << std::endl;
+}

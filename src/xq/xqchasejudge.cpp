@@ -28,6 +28,12 @@
 #include "../base/types.h"
 
 #ifdef _FELICITY_XQ_
+
+#ifdef _DEBUG_PRINT_
+extern bool debug_print;
+bool debug_print = false;
+#endif
+
 using namespace bslib;
 
 namespace bslib {
@@ -47,6 +53,7 @@ std::string XqChaseJudge::toString() const {
 Result XqChaseJudge::evaluate(XqBoard& board, int repeatLen) {
     XqBoard tmpBoard;
     Result r0;
+    
     auto b0 = XqChaseJudge::perpetual_check(board, tmpBoard, repeatLen, r0);
 
     /// In case of draw, need to verify if any side chased
@@ -54,10 +61,16 @@ Result XqChaseJudge::evaluate(XqBoard& board, int repeatLen) {
         return r0;
     }
 
+#ifdef _FELICITY_USE_HASH_
+    assert(tmpBoard.isHashKeyValid());
+#endif
+
     assert(r0.isNone() || r0.result == GameResultType::draw);
 
     XqChaseJudge xqChaseJudge;
-    auto r1 = xqChaseJudge.ruleRepetition(board, tmpBoard, repeatLen);
+//    auto r1 = xqChaseJudge.ruleRepetition(board, tmpBoard, repeatLen);
+
+    auto r1 = xqChaseJudge.ruleRepetition2(board, repeatLen);
     auto r = r1.isNone() ? r0 : r1;
 
     /// It is better to rule when one side violates the rule for hist last move
@@ -144,7 +157,9 @@ bool XqChaseJudge::perpetual_check(const XqBoard& board, XqBoard& tmpBoard, int 
 
 Result XqChaseJudge::ruleRepetition(const XqBoard& board, XqBoard& wBoard, int repeatLen) {
 #ifdef _DEBUG_PRINT_
-    wBoard.printOut("wBoard Start repetition");
+    if (debug_print) {
+        wBoard.printOut("wBoard Start repetition");
+    }
 #endif
     
     assert(repeatLen >= 4 && static_cast<int>(board.getHistListSize()) >= repeatLen);
@@ -180,9 +195,11 @@ Result XqChaseJudge::ruleRepetition(const XqBoard& board, XqBoard& wBoard, int r
     workingPair.pair[1 - wSd] = x1;
     
 #ifdef _DEBUG_PRINT_
-    std::cout << "Start of workingPair[" << wSd << "]: " << workingPair.pair[wSd].toString() << std::endl;
-    std::cout << "Start of workingPair[" << 1 - wSd     << "]: " << workingPair.pair[1 - wSd].toString() << std::endl;
-    wBoard.printOut("Pos after the first move");
+    if (debug_print) {
+        std::cout << "Start of workingPair[" << wSd << "]: " << workingPair.pair[wSd].toString() << std::endl;
+        std::cout << "Start of workingPair[" << 1 - wSd     << "]: " << workingPair.pair[1 - wSd].toString() << std::endl;
+        wBoard.printOut("Pos after the first move");
+    }
 #endif
     
     std::swap(wSide, oppSide);
@@ -207,7 +224,9 @@ Result XqChaseJudge::ruleRepetition(const XqBoard& board, XqBoard& wBoard, int r
                 workingPair.pair[sd].subtract(atkVec[x].pair[sd]);
                 
 #ifdef _DEBUG_PRINT_
-                std::cout << "workingPair[" << sd << "] after - " << workingPair.pair[sd].toString() << std::endl;
+                if (debug_print) {
+                    std::cout << "workingPair[" << sd << "] after - " << workingPair.pair[sd].toString() << std::endl;
+                }
 #endif
                 /// Store
                 if (!workingPair.pair[sd].isEmpty()) {
@@ -223,8 +242,10 @@ Result XqChaseJudge::ruleRepetition(const XqBoard& board, XqBoard& wBoard, int r
                     listC.sameVictims(workingPair.pair[sd]);
                     
 #ifdef _DEBUG_PRINT_
-                    std::cout << "list B " << listB.toString() << std::endl;
-                    std::cout << "list C = workingChaseList[" << sd << "] = " << listC.toString() << std::endl;
+                    if (debug_print) {
+                        std::cout << "list B " << listB.toString() << std::endl;
+                        std::cout << "list C = workingChaseList[" << sd << "] = " << listC.toString() << std::endl;
+                    }
 #endif
                     workingPair.pair[sd] = listC;
                     
@@ -250,9 +271,167 @@ Result XqChaseJudge::ruleRepetition(const XqBoard& board, XqBoard& wBoard, int r
     assert(workingPair.pair[1].list.empty() || workingPair.pair[1].list.begin()->victim.side == Side::white);
     
 #ifdef _DEBUG_PRINT_
-    std::cout << "Last 0 (black) " << workingPair.pair[0].toString() << std::endl;
-    std::cout << "Last 1 (white) " << workingPair.pair[1].toString() << std::endl;
+    if (debug_print) {
+        std::cout << "Last 0 (black) " << workingPair.pair[0].toString() << std::endl;
+        std::cout << "Last 1 (white) " << workingPair.pair[1].toString() << std::endl;
+    }
 #endif
+    
+    return evaluate();
+}
+
+
+Result XqChaseJudge::ruleRepetition2(const XqBoard& board, int repeatLen) {
+    
+    XqBoard wBoard(board);
+    
+#ifdef _DEBUG_PRINT_
+    if (debug_print) {
+        wBoard.printOut("wBoard Start repetition 2");
+    }
+#endif
+    
+    assert(repeatLen >= 4 && static_cast<int>(board.getHistListSize()) >= repeatLen);
+//    assert(wBoard.getHistListSize() + repeatLen - 1 == board.getHistListSize());
+    
+    addingCnt = 0;
+
+    if (!addBoard(wBoard, wBoard.side)) {
+        return Result(GameResultType::draw, ReasonType::repetition);
+    }
+    
+#ifdef _DEBUG_PRINT_
+    if (debug_print) {
+        auto wSide = wBoard.side;
+        auto wSd = static_cast<int>(wSide);
+        
+        std::cout << "Start of workingPair[" << wSd << "]: " << workingPair.pair[wSd].toString() << std::endl;
+        std::cout << "Start of workingPair[" << 1 - wSd     << "]: " << workingPair.pair[1 - wSd].toString() << std::endl;
+        wBoard.printOut("Pos after the first move");
+    }
+#endif
+
+    for(auto i = 1; i < repeatLen; i++) {
+        wBoard.takeBack();
+//        wBoard.printOut("after a takeBack");
+        if (!addBoard(wBoard, wBoard.side)) {
+            return Result(GameResultType::draw, ReasonType::repetition);
+        }
+        
+//#ifdef _DEBUG_PRINT_
+//        if (debug_print) {
+//            std::cout << "addingCnt: " << addingCnt
+//            << "\nworkingPair[" << wSd << "]: " << workingPair.pair[wSd].toString()
+//            << "\nworkingPair[" << 1 - wSd     << "]: " << workingPair.pair[1 - wSd].toString() << std::endl;
+//        }
+//#endif
+    }
+    return evaluate2();
+    
+
+//    auto wSide = wBoard.side;
+//    auto wSd = static_cast<int>(wSide);
+//    auto oppSide = board.xSide(wSide);
+//    
+//    
+//    /*
+//     * Initialise data
+//     */
+//    atkVec = std::vector<XqChaseListPair>(repeatLen);
+//    chaseVec = std::vector<XqChaseListPair>(repeatLen);
+//    
+//    /// evasion/chase by opposite side
+//    XqChaseList x0(wBoard, oppSide);
+//    
+//    atkVec[0].pair[wSd] = x0;
+//    workingPair.pair[wSd] = x0;
+//    
+//    auto move = board.getMoveAt(wBoard.getHistListSize());
+//    wBoard.make(move);
+//    
+//    /// start chasing by working side
+//    XqChaseList x1(wBoard, wSide);
+//    if (x1.isEmpty()) {
+//        return Result(GameResultType::draw, ReasonType::repetition);
+//    }
+//    
+//    atkVec[1].pair[1 - wSd] = x1;
+//    workingPair.pair[1 - wSd] = x1;
+//    
+//#ifdef _DEBUG_PRINT_
+//    std::cout << "Start of workingPair[" << wSd << "]: " << workingPair.pair[wSd].toString() << std::endl;
+//    std::cout << "Start of workingPair[" << 1 - wSd     << "]: " << workingPair.pair[1 - wSd].toString() << std::endl;
+//    wBoard.printOut("Pos after the first move");
+//#endif
+//    
+//    std::swap(wSide, oppSide);
+//    wSd = 1 - wSd;
+//    
+//    /// Build up data
+//    for (auto x = 1; !workingPair.isEmpty(); x++) {
+//        
+//        /// sd is the side of victims
+//        for (auto sd = 1; sd >= 0; --sd) {
+//            if (!atkVec[x].pair[sd].isBuilt) {
+//                atkVec[x].pair[sd] = XqChaseList(wBoard, static_cast<Side>(1 - sd));
+//            }
+//            if (workingPair.pair[sd].list.empty()) {
+//                continue;
+//            }
+//            
+//            assert(workingPair.pair[sd].list.begin()->victim.side != workingPair.pair[sd].list.begin()->attacker.side);
+//            assert(workingPair.pair[sd].list.begin()->victim.side == static_cast<Side>(sd));
+//            
+//            if (wSd != sd) {
+//                workingPair.pair[sd].subtract(atkVec[x].pair[sd]);
+//                
+//#ifdef _DEBUG_PRINT_
+//                std::cout << "workingPair[" << sd << "] after - " << workingPair.pair[sd].toString() << std::endl;
+//#endif
+//                /// Store
+//                if (!workingPair.pair[sd].isEmpty()) {
+//                    chaseVec[x - 1].pair[sd] = workingPair.pair[sd];
+//                }
+//            } else
+//                if (x > 1) {
+//                    
+//                    auto listC = atkVec[x].pair[sd];
+//                    auto listB = atkVec[x-1].pair[sd];
+//                    
+//                    listC.subtract(listB);
+//                    listC.sameVictims(workingPair.pair[sd]);
+//                    
+//#ifdef _DEBUG_PRINT_
+//                    std::cout << "list B " << listB.toString() << std::endl;
+//                    std::cout << "list C = workingChaseList[" << sd << "] = " << listC.toString() << std::endl;
+//#endif
+//                    workingPair.pair[sd] = listC;
+//                    
+//                    if (!workingPair.pair[sd].isEmpty()) {
+//                        chaseVec[x].pair[sd] = workingPair.pair[sd];
+//                    }
+//                }
+//        } /// for (auto x
+//        
+//        auto l = wBoard.getHistListSize();
+//        if (l >= board.getHistListSize()) {
+//            break;
+//        }
+//        
+//        auto move = board.getMoveAt(l);
+//        wBoard.make(move);
+//        
+//        std::swap(wSide, oppSide);
+//        wSd = 1 - wSd;
+//    }
+//    
+//    assert(workingPair.pair[0].list.empty() || workingPair.pair[0].list.begin()->victim.side == Side::black);
+//    assert(workingPair.pair[1].list.empty() || workingPair.pair[1].list.begin()->victim.side == Side::white);
+//    
+//#ifdef _DEBUG_PRINT_
+//    std::cout << "Last 0 (black) " << workingPair.pair[0].toString() << std::endl;
+//    std::cout << "Last 1 (white) " << workingPair.pair[1].toString() << std::endl;
+//#endif
     
     return evaluate();
 }
@@ -276,6 +455,33 @@ Result XqChaseJudge::evaluate() {
     /// one chase, one not chase
     if (scoreW != scoreB) {
         return Result(scoreW > scoreB ? GameResultType::win : GameResultType::loss,
+                         ReasonType::perpetualchase);
+    } else if (scoreB > 0) {
+        return Result(GameResultType::draw, ReasonType::bothperpetualchase);
+    }
+
+    /// if none chased, game is draw
+    return Result(GameResultType::draw, ReasonType::repetition);
+}
+
+Result XqChaseJudge::evaluate2() {
+    /*
+     * Check if all chases are allowed (such as King/Pawn chase, Pawn being chased, protected), clear the workingPair for that side
+     */
+
+    for (auto sd = 0; sd < 2; sd++) {
+        if (!workingPair.pair[sd].list.empty() && areAllChasesLegal(sd)) {
+            workingPair.pair[sd].list.clear();
+        }
+    }
+
+    /// not-empty-list means being chased -> winning
+    auto scoreB = workingPair.pair[0].list.empty() ? 0 : 1; /// for Black
+    auto scoreW = workingPair.pair[1].list.empty() ? 0 : 1; /// for White
+
+    /// one chase, one not chase
+    if (scoreW != scoreB) {
+        return Result(scoreW < scoreB ? GameResultType::win : GameResultType::loss,
                          ReasonType::perpetualchase);
     } else if (scoreB > 0) {
         return Result(GameResultType::draw, ReasonType::bothperpetualchase);
@@ -326,7 +532,147 @@ bool XqChaseJudge::areAllChasesLegal(int attackerSd) const {
     return false;
 }
 
+void XqChaseJudge::removeLastBoard()
+{
+    assert(addingCnt > 0);
+    addingCnt--;
+}
 
+bool XqChaseJudge::addBoard(XqBoard& board, Side side)
+{
+    auto ac = addingCnt;
+    addingCnt++;
+    
+    /*
+     * Initialise data
+     */
+    if (ac == 0) {
+        atkVec.clear();
+        chaseVec.clear();
+    }
+        
+    if (board.isIncheck(side)) {
+        return false;
+    }
+
+    auto wSide = side;
+    auto wSd = static_cast<int>(wSide);
+    auto oppSide = board.xSide(wSide);
+    auto oSd = static_cast<int>(oppSide);
+    
+    
+    /// building the chasing list of attackers from oppSide (pieces on side being attacked)
+    XqChaseList xo(board, oppSide);
+
+    /// if no chase return false
+    if ((ac & 1) == 0 && xo.isEmpty()) {
+        return false;
+    }
+    
+    /// chase list by side pieces (pieces on oppSide being attacked)
+    XqChaseList xx(board, side);
+
+
+    while (ac >= atkVec.size()) {
+        atkVec.push_back(XqChaseListPair());
+    }
+
+    atkVec[ac].pair[oSd] = xo;
+    atkVec[ac].pair[wSd] = xx;
+    
+//#ifdef _DEBUG_PRINT_
+//    std::cout   << "Side: " << Funcs::side2String(side, false) << ", addingCnt: " << std::to_string(addingCnt)
+//                << "\nxx: " << xx.toString()
+//                << "\nxo: " << xo.toString() << std::endl;
+//#endif
+
+    if (addingCnt < 2) {
+        return true;
+    }
+
+    /// Side of the starting point
+    if ((ac & 1) != 0) {
+        std::swap(wSide, oppSide);
+        std::swap(wSd, oSd);
+    }
+
+    workingPair.reset();
+    workingPair.pair[wSd] = atkVec[1].pair[wSd];
+    workingPair.pair[oSd] = atkVec[0].pair[oSd];
+    
+    /// Build up data
+    for (auto i = 1; !workingPair.isEmpty() && i < addingCnt; i++) {
+        
+        /// sd is the side of victims
+        for (auto sd = 0; sd < 2; ++sd) {
+            assert(atkVec[i].pair[sd].isBuilt);
+            if (workingPair.pair[sd].list.empty()) {
+                continue;
+            }
+            
+//            assert(workingPair.pair[sd].list.begin()->victim.side != workingPair.pair[sd].list.begin()->attacker.side);
+//            assert(workingPair.pair[sd].list.begin()->victim.side == static_cast<Side>(sd));
+            
+            while (i >= chaseVec.size()) {
+                chaseVec.push_back(XqChaseListPair());
+            }
+
+            if (wSd != sd) {
+                workingPair.pair[sd].subtract(atkVec[i].pair[sd]);
+                
+#ifdef _DEBUG_PRINT_
+                if (debug_print) {
+                    std::cout << "workingPair[" << sd << "] after - " << workingPair.pair[sd].toString() << std::endl;
+                }
+#endif
+                /// Store for checking legal chases later
+                //if (!workingPair.pair[sd].isEmpty()) {
+                //    chaseVec[i - 1].pair[sd] = workingPair.pair[sd];
+                //}
+                chaseVec[i].pair[sd] = workingPair.pair[sd];
+            } else { //if (i > 1) {
+                auto listC = atkVec[i].pair[sd];
+                auto listB = atkVec[i - 1].pair[sd];
+                
+                listC.subtract(listB);
+                listC.sameVictims(workingPair.pair[sd]);
+                
+#ifdef _DEBUG_PRINT_
+                if (debug_print) {
+                    std::cout << "list B " << listB.toString() << std::endl;
+                    std::cout << "list C = workingChaseList[" << sd << "] = " << listC.toString() << std::endl;
+                }
+#endif
+                workingPair.pair[sd] = listC;
+                chaseVec[i].pair[sd] = workingPair.pair[sd];
+            }
+        } /// for sd
+        
+        /// change working side
+        std::swap(wSide, oppSide);
+        std::swap(wSd, oSd);
+    } /// for i
+    
+//    assert(workingPair.pair[0].list.empty() || workingPair.pair[0].list.begin()->victim.side == Side::black);
+//    assert(workingPair.pair[1].list.empty() || workingPair.pair[1].list.begin()->victim.side == Side::white);
+    
+#ifdef _DEBUG_PRINT_
+    if (debug_print) {
+        std::cout << "workingPair 0 (black) " << workingPair.pair[0].toString() << std::endl;
+        std::cout << "workingPair 1 (white) " << workingPair.pair[1].toString() << std::endl;
+    }
+#endif
+    
+    if (!workingPair.isEmpty() && addingCnt >= 4) {
+        auto r = evaluate2();
+        if (r.result == GameResultType::draw) {
+            return false;
+        }
+    }
+    
+    auto b = (addingCnt & 1) != 0 || !workingPair.isEmpty();
+    return b;
+}
 
 } // namespace Chess
 

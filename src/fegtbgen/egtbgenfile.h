@@ -31,10 +31,38 @@ extern std::mutex printMutex;
 
 namespace fegtb {
 
+class EgtbGenFile;
+class EgtbFileStats;
+
+class EgtbFileStats
+{
+public:
+    i64 validCnt[2] = { 0, 0 };
+    i64 wdl[2][3] = {{0, 0, 0}, {0, 0, 0}};
+    int smallestCell = EGTB_SCORE_MATE;
+
+#ifdef _FELICITY_XQ_
+    i64 perpetuals[2][4] = {{ 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
+    std::vector<std::pair<i64, int>> perpVecs[4];
+    int perpCnt = 0;
+#endif
+
+    std::unordered_map<i64, int> sampleMap;
+    
+    std::string name;
+    i64 size;
+    bool isBothArmed;
+
+    std::string createStatsString(EgtbFile* egtbFile);
+
+    void createStats(EgtbFile*, bool pickSamples = true);
+};
+
     class EgtbGenFile : public EgtbFile, public ThreadMng {
     public:
         ~EgtbGenFile();
 
+        static std::string createStatsString(EgtbFile*);
         std::string createStatsString();
         void createStatsFile();
 
@@ -58,9 +86,9 @@ namespace fegtb {
         void    checkAndConvert2bytesTo1();
         void    convert1byteTo2();
         
-        bool    verifyKeys();
-        bool    verifyKey(int threadIdx, i64 idx);
-        bool    verifyKeys_loop(int threadIdx);
+        bool    verifyIndexes();
+        bool    verifyIndex(int threadIdx, i64 idx);
+        bool    verifyIndexes_thread(int threadIdx);
 
         bool    createBuffersForGenerating();
         bool    setBufScore(i64 idx, int score, bslib::Side side);
@@ -103,7 +131,42 @@ namespace fegtb {
             }
             return stringStream.str();
         }
-   
+
+    public:
+        /// Verify indexes
+        bool verifyIndexes(bool printRandom = false) const;
+        
+    #define Verify_bit_setupOK      1
+    #define Verify_bit_valid        (1 << 1)
+    #define Verify_bit_bad_flip     (1 << 2)
+
+        int verifyIndex(GenBoard& board, i64 idx) const;
+
+
+    public:
+        /// tmp files
+        bool readFromTmpFiles(const std::string& folder, int& ply, int& mPly);
+
+        bool writeTmpFiles(const std::string& folder, int ply, int mPly);
+
+        void removeTmpFiles(const std::string& folder) const;
+
+    private:
+        std::string getTmpFileName(const std::string& folder, bslib::Side side) const;
+        std::string getFlagTmpFileName(const std::string& folder) const;
+
+        u32 checksum(void* data, i64 len) const;
+        
+        int readFromTmpFile(const std::string& folder, bslib::Side side);
+        
+        int readFromTmpFile(const std::string& folder, bslib::Side side, i64 fromIdx, i64 toIdx, char * toBuf);
+        
+        bool writeTmpFile(const std::string& folder, bslib::Side side, int loop);
+
+        bool readFlagTmpFile(const std::string& folder);
+        bool writeFlagTmpFile(const std::string& folder);
+       
+
     public:
         void    createFlagBuffer();
         void    removeFlagBuffer();

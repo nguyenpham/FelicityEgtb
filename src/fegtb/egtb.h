@@ -35,6 +35,7 @@
 #endif
 
 
+//#ifdef _FELICITY_FLIP_MAP_
 
 namespace fegtb {
 
@@ -44,7 +45,7 @@ const std::string EGTB_MAJOR_VARIANT = "Chess";
 const std::string EGTB_MAJOR_VARIANT = "Xiangqi/Jeiqi";
 #endif
 
-const std::string EGTB_VERSION_STRING = "0.001";
+const std::string EGTB_VERSION_STRING = "0.01";
 
 const int EGTB_VERSION = 1;
 
@@ -75,6 +76,16 @@ const int64_t   EGTB_LARGE_COMPRESS_SIZE  = (EGTB_UNCOMPRESS_BIT_FOR_LARGE_COMPR
 
 const static int COPYRIGHT_BUFSZ = 64;
 
+//////////////////////////////////////////////////////////////////////
+
+#define EGTB_SCORE_DRAW                     0
+#define EGTB_SCORE_MATE                     10000
+
+#define EGTB_SCORE_ILLEGAL                  10004
+
+#define EGTB_SCORE_MISSING                  10006
+#define EGTB_SCORE_UNSET                    10007
+
 
 //////////////////////////////////////////////////////////////////////
 #ifdef _FELICITY_CHESS_
@@ -84,16 +95,18 @@ const static int COPYRIGHT_BUFSZ = 64;
 #define TB_DRAW                             7
 
 #define TB_PERPETUAL_CHECK_WIN              3
-#define TB_PERPETUAL_CHECK_LOSE             4
+#define TB_PERPETUAL_CHECK_LOSS             4
 #define TB_PERPETUAL_CHASE_WIN              5
-#define TB_PERPETUAL_CHASE_LOSE             6
+#define TB_PERPETUAL_CHASE_LOSS             6
 
 
-#define EGTB_SCORE_PERPETUAL_CHECK_WIN      1008
-#define EGTB_SCORE_PERPETUAL_CHECK_LOSE     1009
+#define EGTB_SCORE_PERPETUAL_ABOVE          8005
 
-#define EGTB_SCORE_PERPETUAL_CHASE_WIN      1010
-#define EGTB_SCORE_PERPETUAL_CHASE_LOSE     1011
+#define EGTB_SCORE_PERPETUAL_CHECK_WIN      8002
+#define EGTB_SCORE_PERPETUAL_CHECK_LOSS     -EGTB_SCORE_PERPETUAL_CHECK_WIN
+
+#define EGTB_SCORE_PERPETUAL_CHASE_WIN      8001
+#define EGTB_SCORE_PERPETUAL_CHASE_LOSS     -EGTB_SCORE_PERPETUAL_CHASE_WIN
 
 #endif
 
@@ -110,16 +123,6 @@ const static int COPYRIGHT_BUFSZ = 64;
 
 
 #define TB_START_MATING                     (TB_DRAW + 1)
-
-//////////////////////////////////////////////////////////////////////
-
-#define EGTB_SCORE_DRAW                     0
-#define EGTB_SCORE_MATE                     1000
-
-#define EGTB_SCORE_ILLEGAL                  1004
-
-#define EGTB_SCORE_MISSING                  1006
-#define EGTB_SCORE_UNSET                    1007
 
 
 //////////////////////////////////////////////////////////////////////

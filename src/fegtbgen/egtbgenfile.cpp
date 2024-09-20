@@ -34,26 +34,200 @@ extern const int pieceValForOrdering[7];
 
 #define COPYRIGHT       "Copyright 2024 by Felicity EGTB"
 
-static const int TmpHeaderSize = 16;
-static const i16 TmpHeaderSign = 2345;
-static const i16 TmpHeaderSign2 = 2346;
+#define SAMPLE_CNT 10
 
-struct TmpHeader {
-    i16 sign;
-    i16 loop;
-    u32 checksum;
-    char resert[16];
-};
+static const int firstWidth = 23;
+
+void printFormatedString(std::ostringstream& stringStream, const std::string& s0, const std::string& s1)
+{
+    stringStream << std::left << std::setw(firstWidth) << s0 << ": " << s1 << std::endl;
+}
+
+void EgtbFileStats::createStats(EgtbFile* egtbFile, bool pickSamples)
+{
+    assert(egtbFile);
+    name = egtbFile->getName();
+    size = egtbFile->getSize();
+    isBothArmed = egtbFile->isBothArmed();
+    
+    for(i64 idx = 0; idx < size; idx++) {
+        int scores[2] = {
+            egtbFile->getScore(idx, Side::black),
+            egtbFile->getScore(idx, Side::white)
+        };
+
+        for (auto sd = 0; sd < 2; sd++) {
+            auto score = scores[sd];
+            if (score == EGTB_SCORE_ILLEGAL) {
+                continue;
+            }
+            validCnt[sd]++;
+            if (score == EGTB_SCORE_DRAW) {
+                wdl[sd][1]++;
+#ifdef _FELICITY_XQ_
+            } else if (EgtbFile::isPerpetualScore(score)) {
+                auto k = EgtbFile::perpetualScoreToIdx(score);
+                if (k >= 0) {
+                    perpetuals[sd][k]++; perpCnt++;
+                    if (pickSamples && perpVecs[k].size() < SAMPLE_CNT) {
+                        std::pair<i64, int> p;
+                        p.first = idx;
+                        p.second = sd;
+                        perpVecs[k].push_back(p);
+                    }
+                }
+#endif
+            } else if (score <= EGTB_SCORE_MATE) {
+                if (score > 0) wdl[sd][0]++;
+                else wdl[sd][2]++;
+                auto absScore = abs(score);
+                if (smallestCell > absScore) {
+                    sampleMap.clear();
+                    smallestCell = absScore;
+                }
+                if (smallestCell == absScore) {
+                    sampleMap[idx] = sd;
+                    if (pickSamples && sampleMap.size() > SAMPLE_CNT) {
+                        auto p = sampleMap.begin();
+                        for (auto k = 0; (rand() & 1) && k < 4; k++) {
+                            p++;
+                        }
+                        sampleMap.erase(p);
+                    }
+                }
+            }
+            
+        }
+    }
+
+}
+
+std::string EgtbFileStats::createStatsString(EgtbFile* egtbFile)
+{
+    assert(egtbFile);
+    createStats(egtbFile);
+    
+
+    std::ostringstream stringStream;
+    
+    printFormatedString(stringStream, "Name", name);
+
+ 
+    printFormatedString(stringStream, "Total positions", std::to_string(size));
+
+    i64 total = validCnt[0] + validCnt[1];
+    
+    std::string s = std::to_string(total) + " (" + std::to_string(total * 50 / size) + "%) (2 sides)";
+    printFormatedString(stringStream, "Legal positions", s);
+
+    
+    for(auto sd = 1; sd >= 0; sd--) {
+        i64 w = wdl[sd][0] * 100 / validCnt[sd];
+        s = std::to_string(w) + "%";
+        if (w == 0 && wdl[sd][0] > 0) {
+            s += " (" + std::to_string(wdl[sd][0]) + ")";
+        }
+        s += ", " + std::to_string(wdl[sd][1] * 100 / validCnt[sd]) + "%";
+
+        if (wdl[sd][2] || isBothArmed) {
+            s += ", " + std::to_string(wdl[sd][2] * 100 / validCnt[sd]) + "%";
+        }
+        
+        printFormatedString(stringStream, std::string(sd == W ? "White" : "Black") + " to move (WDL)", s);
+
+#ifdef _FELICITY_XQ_
+        if (perpCnt > 0) {
+            s = std::to_string(perpetuals[sd][0]) + ", " + std::to_string(perpetuals[sd][1]);
+            printFormatedString(stringStream, " Perpetual checks (WL)", s);
+
+            s = std::to_string(perpetuals[sd][2]) + ", " + std::to_string(perpetuals[sd][3]);
+            printFormatedString(stringStream, " Perpetual chases (WL)", s);
+        }
+#endif
+
+    }
+
+    auto draws = wdl[0][1] + wdl[1][1];
+    s = std::to_string(draws) + ", " + std::to_string(draws * 100 / total) + "% of total legal";
+    printFormatedString(stringStream, "Total draws", s);
+
+#ifdef _FELICITY_XQ_
+    if (perpCnt > 0) {
+        auto checks = perpetuals[0][0] + perpetuals[0][1] + perpetuals[1][0] + perpetuals[1][1];
+        auto chases = perpetuals[0][2] + perpetuals[0][3] + perpetuals[1][2] + perpetuals[1][3];
+        s = std::to_string(perpCnt) + ", "
+            + std::to_string(perpCnt * 100 / std::max<i64>(1, draws)) + "% of draws. #checks: "
+            + std::to_string(checks) + ", #chases: " + std::to_string(chases);
+        printFormatedString(stringStream, "Total perpetuations", s);
+    }
+#endif
+
+    s = std::to_string(abs(EGTB_SCORE_MATE - smallestCell));
+    printFormatedString(stringStream, "Max DTM", s);
+
+    /// Examples
+
+    if (!sampleMap.empty()) {
+        stringStream << "\n\nSamples with max DTM:\n";
+        
+        GenBoard board;
+        for(auto && p : sampleMap) {
+            auto idx = p.first;
+            auto sd = p.second;
+            
+            auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white); assert(ok);
+            board.side = static_cast<Side>(sd);
+            board.setFenComplete();
+
+            stringStream << board.getFen() << std::endl;
+        }
+        
+#ifdef _FELICITY_XQ_
+//        std::vector<std::pair<i64, int>> perpVecs[4];
+        auto k = EgtbFile::perpetualScoreToIdx(EGTB_SCORE_PERPETUAL_CHECK_LOSS);
+//        auto k = EGTB_SCORE_PERPETUAL_CHECK_LOSS - EGTB_SCORE_PERPETUAL_CHECK_WIN;
+        if (!perpVecs[k].empty()) {
+            stringStream << "\n\nSamples of perpetual checks:\n";
+            
+            for(auto && p : perpVecs[k]) {
+                auto idx = p.first;
+                auto sd = p.second;
+                
+                auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white); assert(ok);
+                board.side = static_cast<Side>(sd);
+                board.setFenComplete();
+
+                stringStream << board.getFen() << std::endl;
+            }
+        }
+        
+        k = EgtbFile::perpetualScoreToIdx(EGTB_SCORE_PERPETUAL_CHASE_LOSS);
+        if (!perpVecs[k].empty()) {
+            stringStream << "\n\nSamples of perpetual chases:\n";
+            
+            for(auto && p : perpVecs[k]) {
+                auto idx = p.first;
+                auto sd = p.second;
+                
+                auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white); assert(ok);
+                board.side = static_cast<Side>(sd);
+                board.setFenComplete();
+
+                stringStream << board.getFen() << std::endl;
+            }
+        }
+#endif
+    }
+    return stringStream.str();
+}
+
+
 
 
 EgtbGenFile::~EgtbGenFile()
 {
 }
 
-//void EgtbGenFile::removeBuffers()
-//{
-//    EgtbFile::removeBuffers();
-//}
 
 void EgtbGenFile::setName(const std::string& s)
 {
@@ -86,6 +260,13 @@ void EgtbGenFile::create(const std::string& name, EgtbType _egtbType, u32 order)
 
     auto sz = setupIdxComputing(name, order); //, getVersion());
     setSize(sz); assert(sz);
+    
+    for(auto k = FirstAttacker; k < PAWN; k++) {
+        if (pieceCount[B][k] > 0) {
+            bothArmed = true;
+            break;
+        }
+    }
 }
 
 
@@ -112,7 +293,7 @@ int EgtbGenFile::getBufScore(i64 idx, Side side)
 {
     assert (idx < getSize());
     
-    int sd = static_cast<int>(side);
+    auto sd = static_cast<int>(side);
 
     if (isTwoBytes()) {
         
@@ -128,6 +309,10 @@ int EgtbGenFile::getBufScore(i64 idx, Side side)
 
 bool EgtbGenFile::setBufScore(i64 idx, int score, Side side)
 {
+//    if ((idx == 2198 || idx == 51806) && score == 9983) {
+//        std::cout << "setBufScore, idx=" + std::to_string(idx) + ", score=" + std::to_string(score) << std::endl;
+//    }
+
     if (isTwoBytes()) {
         return setBuf2Bytes(idx, score, side);
     }
@@ -137,9 +322,32 @@ bool EgtbGenFile::setBufScore(i64 idx, int score, Side side)
 }
 
 char EgtbGenFile::scoreToCell(int score) {
+    switch (score) {
+        case EGTB_SCORE_DRAW:
+            return TB_DRAW;
+        case EGTB_SCORE_MISSING:
+            return TB_MISSING;
+        case EGTB_SCORE_ILLEGAL:
+            return TB_ILLEGAL;
+        case EGTB_SCORE_UNSET:
+            return TB_UNSET;
+
+#ifdef _FELICITY_XQ_
+        case EGTB_SCORE_PERPETUAL_CHECK_WIN:
+            return TB_PERPETUAL_CHECK_WIN;
+        case EGTB_SCORE_PERPETUAL_CHECK_LOSS:
+            return TB_PERPETUAL_CHECK_LOSS;
+        case EGTB_SCORE_PERPETUAL_CHASE_WIN:
+            return TB_PERPETUAL_CHASE_WIN;
+        case EGTB_SCORE_PERPETUAL_CHASE_LOSS:
+            return TB_PERPETUAL_CHASE_LOSS;
+#endif
+
+        default:
+            break;
+    }
+
     if (score <= EGTB_SCORE_MATE) {
-        if (score == EGTB_SCORE_DRAW) return TB_DRAW;
-        
         auto mi = (EGTB_SCORE_MATE - abs(score)) / 2;
         
         if (mi > TB_RANGE_1_BYTE) {
@@ -152,31 +360,6 @@ char EgtbGenFile::scoreToCell(int score) {
         assert(k >= 0 && k < 255);
 
         return (char)k;
-    }
-
-    switch (score) {
-        case EGTB_SCORE_MISSING:
-            return TB_MISSING;
-
-#ifdef _FELICITY_XQ_
-        case EGTB_SCORE_PERPETUAL_CHECK_WIN:
-            return TB_PERPETUAL_CHECK_WIN;
-        case EGTB_SCORE_PERPETUAL_CHECK_LOSE:
-            return TB_PERPETUAL_CHECK_LOSE;
-        case EGTB_SCORE_PERPETUAL_CHASE_WIN:
-            return TB_PERPETUAL_CHASE_WIN;
-        case EGTB_SCORE_PERPETUAL_CHASE_LOSE:
-            return TB_PERPETUAL_CHASE_LOSE;
-#endif
-
-        case EGTB_SCORE_ILLEGAL:
-            return TB_ILLEGAL;
-            
-        case EGTB_SCORE_UNSET:
-            return TB_UNSET;
-        default:
-            assert(false);
-            return TB_UNSET;
     }
 
     assert(false);
@@ -198,325 +381,197 @@ bool EgtbGenFile::createBuffersForGenerating() {
     return r;
 }
 
-//std::string EgtbGenFile::getTmpFileName(const std::string& folder, Side side) const {
-//    return createFileName(folder, getName(), EgtbType::tmp, side, false);
-//}
-//
-//std::string EgtbGenFile::getFlagTmpFileName(const std::string& folder) const {
-//    auto fileName = getTmpFileName(folder, Side::white);
-//    fileName = fileName.substr(0, fileName.length() - 5) + "f.tmt";
-//    return fileName;
-//}
-//
-//
-//bool EgtbGenFile::readFromTmpFiles(const std::string& folder, int& ply, int& mPly)
-//{
-//    ply = readFromTmpFile(folder, Side::black);
-//    mPly = readFromTmpFile(folder, Side::white);
-//    return ply >= 0 && mPly >= 0 && (flags == nullptr || readFlagTmpFile(folder));
-//}
-//
-//bool EgtbGenFile::writeTmpFiles(const std::string& folder, int ply, int mPly)
-//{
-//    return writeTmpFile(folder, Side::black, ply) && writeTmpFile(folder, Side::white, mPly) && (flags == nullptr || writeFlagTmpFile(folder));
-//}
-//
-//int EgtbGenFile::readFromTmpFile(const std::string& folder, Side side)
-//{
-//    auto sz = getSize();
-//    auto bufsz = sz;
-//    if (isTwoBytes()) bufsz += bufsz;
-//
-//    auto sd = static_cast<int>(side);
-//    if (!pBuf[sd]) {
-//        createBuf(bufsz, side);
-//    }
-//    assert(pBuf[sd]);
-//
-//    return readFromTmpFile(folder, side, 0, sz, pBuf[sd]);
-//}
-//
-//u32 EgtbGenFile::checksum(void* data, i64 len) const
-//{
-//    assert(data && len > 0);
-//    
-//    u32 checksum = 0;
-//    unsigned shift = 0;
-//    
-//    auto n = len / sizeof(u32);
-//    u32 *p = (u32*)data, *e = p + n;
-//    
-//    for (; p < e; p++) {
-//        checksum += (*p << shift);
-//        shift += 8;
-//        if (shift == 32) {
-//            shift = 0;
-//        }
-//    }
-//    
-//    return checksum;
-//}
-//
-//int EgtbGenFile::readFromTmpFile(const std::string& folder, Side side, i64 fromIdx, i64 toIdx, char * toBuf)
-//{
-//    assert(toBuf);
-//    auto fromOfs = fromIdx, toOfs = toIdx;
-//    if (isTwoBytes()) {
-//        fromOfs += fromOfs;
-//        toOfs += toOfs;
-//    }
-//    i64 bufsz = toOfs - fromOfs;
-//    if (bufsz <= 0) {
-//        return -1;
-//    }
-//
-//    auto fileName = getTmpFileName(folder, side);
-//
-//    std::ifstream file(fileName.c_str(), std::ios::binary);
-//
-//    if (!file) {
-//        if (egtbVerbose)
-//            printf("Not found temp file %s\n", fileName.c_str());
-//        return -1;
-//    }
-//
-//    TmpHeader tmpHeader;
-//    file.seekg(0);
-//    i16 sign = flags == nullptr ? TmpHeaderSign : TmpHeaderSign2;
-//    bool ok = file.read((char *)&tmpHeader, TmpHeaderSize) && tmpHeader.sign == sign && tmpHeader.loop >= 0;
-//
-//    if (ok) {
-//        file.seekg((i64)(TmpHeaderSize + fromOfs));
-//        file.read(toBuf, bufsz);
-//    }
-//
-//    if (!ok) {
-//        if (egtbVerbose) {
-//            std::cerr << "Error: cannot read tmp file: " << fileName << ", sd: " << Funcs::side2String(side, false) << std::endl;
-//        }
-//        file.close();
-//        return -1;
-//    }
-//
-//    auto sd = static_cast<int>(side);
-//    startpos[sd] = fromIdx;
-//    endpos[sd] = toIdx;
-//
-//    file.close();
-//    
-//    if (fromIdx == 0 && toIdx == getSize()) {
-//        auto sum = checksum(pBuf[sd], bufsz);
-//        if (tmpHeader.checksum != sum) {
-//            std::cerr << "Error: checksum failed for temp file side " << Funcs::side2String(side, false) << ". Ignored that file." << std::endl;
-//            return -1;
-//        }
-//    }
-//    return tmpHeader.loop;
-//}
-//
-//bool EgtbGenFile::readFlagTmpFile(const std::string& folder)
-//{
-//    assert(flags);
-//    
-//    auto fileName = getFlagTmpFileName(folder);
-//    
-//    auto bufsz = (getSize() + 1) / 2;
-//    std::ifstream file(fileName.c_str(), std::ios::binary);
-//    
-//    if (!file) {
-//        if (egtbVerbose)
-//            std::cerr << "Not found temp file " << fileName << std::endl;
-//        return false;
-//    }
-//    
-//    TmpHeader tmpHeader;
-//    file.seekg(0);
-//    bool ok = file.read((char *)&tmpHeader, TmpHeaderSize) && tmpHeader.sign == TmpHeaderSign2;
-//    
-//    if (ok) {
-//        file.seekg((i64)(TmpHeaderSize));
-//        file.read((char*)flags, bufsz);
-//    }
-//    
-//    if (!ok) {
-//        if (egtbVerbose)
-//            std::cerr << "Error: cannot read data for flags with temp file " << fileName << std::endl;
-//        file.close();
-//        return false;
-//    }
-//    
-//    file.close();
-//    
-//    auto sum = checksum(flags, bufsz);
-//    if (tmpHeader.checksum != sum) {
-//        if (egtbVerbose)
-//            std::cerr << "Error: cannot read data for flags (checksum failed) with temp file " << fileName << std::endl;
-//        return false;
-//    }
-//    
-//    return true;
-//}
-//
-//bool EgtbGenFile::writeFlagTmpFile(const std::string& folder)
-//{
-//    auto bufsz = (getSize() + 1) / 2;
-//    
-//    auto fileName = getFlagTmpFileName(folder);
-//
-//    std::ofstream outfile(fileName.c_str(), std::ios::binary);
-//    
-//    if (!outfile) {
-//        std::cerr << "Error: cannot open to write temp file " << fileName << std::endl;
-//        return false;
-//    }
-//    
-//    TmpHeader tmpHeader;
-//    tmpHeader.sign = TmpHeaderSign2;
-//    tmpHeader.checksum = checksum(flags, bufsz);
-//    outfile.seekp(0);
-//    
-//    if (outfile.write((char *)&tmpHeader, TmpHeaderSize) && outfile.write((char*)flags, bufsz)) {
-//        outfile.close();
-//        if (egtbVerbose)
-//            std::cout << "Successfully save to flag tmp, file: " << fileName << std::endl;
-//        return true;
-//    }
-//    
-//    std::cerr << "Error: cannot write flag tmp file " << fileName << std::endl;
-//    outfile.close();
-//    return false;
-//}
-//
-//
-//bool EgtbGenFile::writeTmpFile(const std::string& folder, Side side, int loop)
-//{
-//    auto sd = static_cast<int>(side);
-//    auto sz = getSize(), bufSz = sz;
-//    if (isTwoBytes()) bufSz += bufSz;
-//
-//    assert(pBuf[sd]);
-//
-//    auto fileName = getTmpFileName(folder, side);
-//    std::ofstream outfile(fileName.c_str(), std::ios::binary);
-//
-//    if (egtbVerbose) {
-//        std::cout << "writeTmpFile, starting sd: " << sd << ", bufsz: " << GenLib::formatString(bufSz) << std::endl;
-//    }
-//    
-//    if (!outfile) {
-//        printf("EgtbFileWriter::writeTmpFile, Error: Cannot open file %s\n", fileName.c_str());
-//        return false;
-//    }
-//
-//    TmpHeader tmpHeader;
-//    i16 sign = flags == nullptr ? TmpHeaderSign : TmpHeaderSign2;
-//    tmpHeader.sign = sign;
-//    tmpHeader.loop = loop;
-//    tmpHeader.checksum = checksum(pBuf[sd], bufSz);
-//
-//    outfile.seekp(0);
-//
-//    if (outfile.write((char *)&tmpHeader, TmpHeaderSize) &&
-//        outfile.write(pBuf[sd], bufSz)) {
-//        outfile.close();
-//        if (egtbVerbose)
-//            std::cout << "Successfully save to tmp sd " << sd << ", at " << loop << ", file: " << fileName << std::endl;
-//        return true;
-//    }
-//
-//    printf("EgtbFileWriter::writeTmpFile Error: cannot write data, sd=%d, %s\n", sd, fileName.c_str());
-//    outfile.close();
-//    return false;
-//}
-//
-//void EgtbGenFile::removeTmpFiles(const std::string& folder) const
-//{
-//    for(int sd = 0; sd < 2; sd++) {
-//        auto fileName = getTmpFileName(folder, static_cast<Side>(sd));
-//        std::remove(fileName.c_str());
-//    }
-//    auto fileName = getFlagTmpFileName(folder);
-//    std::remove(fileName.c_str());
-//}
 
 std::string EgtbGenFile::createStatsString()
 {
-    std::ostringstream stringStream;
-    stringStream << "Name:\t\t\t" << getName() << std::endl;
-
-    i64 validCnt[2] = { 0, 0 };
-    auto smallestCell = EGTB_SCORE_MATE;
-    i64 wdl[2][3] = {{0, 0, 0}, {0, 0, 0}};
-
-#ifdef _FELICITY_XQ_
-    i64 perpetuations_win[2] = { 0, 0 }, perpetuations_lose[2] = { 0, 0 };
-#endif
-    
-    for (auto sd = 0; sd < 2; sd++) {
-        auto side = static_cast<Side>(sd);
-        for(i64 idx = 0; idx < getSize(); idx++) {
-            auto score = getScore(idx, side);
-            if (score == EGTB_SCORE_ILLEGAL) {
-                continue;
-            }
-            validCnt[sd]++;
-            if (score == EGTB_SCORE_DRAW) {
-                wdl[sd][1]++;
-            } else if (score <= EGTB_SCORE_MATE) {
-                if (score > 0) wdl[sd][0]++;
-                else wdl[sd][2]++;
-                auto absScore = abs(score);
-                smallestCell = std::min(smallestCell, absScore);
-            }
-            
-#ifdef _FELICITY_XQ_
-            else if (score == EGTB_SCORE_PERPETUAL_CHECK_WIN) {
-                perpetuations_win[sd]++;
-            } else if (score == EGTB_SCORE_PERPETUAL_CHECK_LOSE) {
-                perpetuations_lose[sd]++;
-            }
-#endif
-        }
-    }
-
-    stringStream << "Total positions:               " << getSize() << std::endl;
-    i64 total = validCnt[0] + validCnt[1];
-    stringStream << "Legal positions:               " << total << " (" << (total * 50 / getSize()) << "%) (2 sides)" << std::endl;  // count size for both sides, thus x 50 insteal of 100
-
-    for(auto sd = 1; sd >= 0; sd--) {
-        i64 w = wdl[sd][0] * 100 / validCnt[sd];
-        stringStream << (sd == W ? "White" : "Black") << " to move (WDL):      " << w << "%";
-        if (w == 0 &&  wdl[sd][0] > 0) {
-            stringStream << " (" << wdl[sd][0] << ")";
-        }
-        stringStream << ", " << wdl[sd][1] * 100 / validCnt[sd] << "%";
-        if (wdl[sd][2] || isBothArmed()) {
-            stringStream << ", " << wdl[sd][2] * 100 / validCnt[sd] << "%";
-        }
-        stringStream << std::endl;
-        
-#ifdef _FELICITY_XQ_
-        if (perpetuations_win[sd] + perpetuations_lose[sd] > 0) {
-            stringStream << "Perpetuations (WL):            " << perpetuations_win[sd] << ", " << perpetuations_lose[sd] << std::endl;
-        }
-#endif
-        
-    }
-
-//    stringStream << "Black to move,\t\t";
-//    if (wdl[0][0] || isBothArmed()) {
-//        w = wdl[0][0] * 100 / validCnt[0];
-//        stringStream << "win: " << w << "%";
-//        if (wdl[0][0] > 0 && (w == 0 || !isBothArmed())) {
-//            stringStream << " (" << wdl[0][0] << ")";
-//        }
-//        stringStream << ", ";
-//    }
-//    stringStream << "draw: " << wdl[0][1] * 100 / validCnt[0] << "%, loss: " << wdl[0][2] * 100 / validCnt[0] << "%" << std::endl;
-
-    stringStream << "Max distance to mate:\t" << abs(EGTB_SCORE_MATE - smallestCell) << std::endl;
-    return stringStream.str();
+    return createStatsString(this);
 }
+
+std::string EgtbGenFile::createStatsString(EgtbFile* egtbFile)
+{
+    assert(egtbFile);
+ 
+    EgtbFileStats stats;
+    return stats.createStatsString(egtbFile);
+}
+
+//    std::ostringstream stringStream;
+//    
+//    printFormatedString(stringStream, "Name", egtbFile->getName());
+//
+//    EgtbGenFileStats stats;
+//    stats.createStats(egtbFile);
+//    
+////    i64 validCnt[2] = { 0, 0 };
+////    auto smallestCell = EGTB_SCORE_MATE;
+////    i64 wdl[2][3] = {{0, 0, 0}, {0, 0, 0}};
+////
+////
+////#ifdef _FELICITY_XQ_
+////    i64 perpetuals[2][4] = {{ 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
+////    auto perpCnt = 0;
+////    std::vector<std::pair<i64, int>> perpVecs[4];
+////#endif
+////    
+////    std::unordered_map<i64, int> sampleMap;
+////    
+////    for(i64 idx = 0; idx < egtbFile->getSize(); idx++) {
+////        int scores[2] = {
+////            egtbFile->getScore(idx, Side::black),
+////            egtbFile->getScore(idx, Side::white)
+////        };
+////
+////        for (auto sd = 0; sd < 2; sd++) {
+////            auto score = scores[sd];
+////            if (score == EGTB_SCORE_ILLEGAL) {
+////                continue;
+////            }
+////            validCnt[sd]++;
+////            if (score == EGTB_SCORE_DRAW) {
+////                wdl[sd][1]++;
+////#ifdef _FELICITY_XQ_
+////            } else if (isPerpetualScore(score)) {
+////                auto k = EgtbFile::perpetualScoreToIdx(score);
+////                if (k >= 0) {
+////                    perpetuals[sd][k]++; perpCnt++;
+////                    if (perpVecs[k].size() < SAMPLE_CNT) {
+////                        std::pair<i64, int> p;
+////                        p.first = idx;
+////                        p.second = sd;
+////                        perpVecs[k].push_back(p);
+////                    }
+////                }
+////#endif
+////            } else if (score <= EGTB_SCORE_MATE) {
+////                if (score > 0) wdl[sd][0]++;
+////                else wdl[sd][2]++;
+////                auto absScore = abs(score);
+////                if (smallestCell > absScore) {
+////                    sampleMap.clear();
+////                    smallestCell = absScore;
+////                }
+////                if (smallestCell == absScore) {
+////                    sampleMap[idx] = sd;
+////                    if (sampleMap.size() > SAMPLE_CNT) {
+////                        auto p = sampleMap.begin();
+////                        for (auto k = 0; (rand() & 1) && k < 4; k++) {
+////                            p++;
+////                        }
+////                        sampleMap.erase(p);
+////                    }
+////                }
+////            }
+////            
+////        }
+////    }
+//
+//    printFormatedString(stringStream, "Total positions", std::to_string(egtbFile->getSize()));
+//
+//    i64 total = stats.validCnt[0] + stats.validCnt[1];
+//    
+//    std::string s = std::to_string(total) + " (" + std::to_string(total * 50 / egtbFile->getSize()) + "%) (2 sides)";
+//    printFormatedString(stringStream, "Legal positions", s);
+//
+//    
+//    for(auto sd = 1; sd >= 0; sd--) {
+//        i64 w = wdl[sd][0] * 100 / validCnt[sd];
+//        s = std::to_string(w) + "%";
+//        if (w == 0 && wdl[sd][0] > 0) {
+//            s += " (" + std::to_string(wdl[sd][0]) + ")";
+//        }
+//        s += ", " + std::to_string(wdl[sd][1] * 100 / validCnt[sd]) + "%";
+//
+//        if (wdl[sd][2] || egtbFile->isBothArmed()) {
+//            s += ", " + std::to_string(wdl[sd][2] * 100 / validCnt[sd]) + "%";
+//        }
+//        
+//        printFormatedString(stringStream, std::string(sd == W ? "White" : "Black") + " to move (WDL)", s);
+//
+//#ifdef _FELICITY_XQ_
+//        if (perpCnt > 0) {
+//            s = std::to_string(perpetuals[sd][0]) + ", " + std::to_string(perpetuals[sd][1]);
+//            printFormatedString(stringStream, " Perpetual checks (WL)", s);
+//
+//            s = std::to_string(perpetuals[sd][2]) + ", " + std::to_string(perpetuals[sd][3]);
+//            printFormatedString(stringStream, " Perpetual chases (WL)", s);
+//        }
+//#endif
+//
+//    }
+//
+//    auto draws = wdl[0][1] + wdl[1][1];
+//    s = std::to_string(draws) + ", " + std::to_string(draws * 100 / total) + "% of total legal";
+//    printFormatedString(stringStream, "Total draws", s);
+//
+//#ifdef _FELICITY_XQ_
+//    if (perpCnt > 0) {
+//        auto checks = perpetuals[0][0] + perpetuals[0][1] + perpetuals[1][0] + perpetuals[1][1];
+//        auto chases = perpetuals[0][2] + perpetuals[0][3] + perpetuals[1][2] + perpetuals[1][3];
+//        s = std::to_string(perpCnt) + ", "
+//            + std::to_string(perpCnt * 100 / std::max<i64>(1, draws)) + "% of draws. #checks: "
+//            + std::to_string(checks) + ", #chases: " + std::to_string(chases);
+//        printFormatedString(stringStream, "Total perpetuations", s);
+//    }
+//#endif
+//
+//    s = std::to_string(abs(EGTB_SCORE_MATE - smallestCell));
+//    printFormatedString(stringStream, "Max DTM", s);
+//
+//    /// Examples
+//
+//    if (!sampleMap.empty()) {
+//        stringStream << "\n\nSamples with max DTM:\n";
+//        
+//        GenBoard board;
+//        for(auto && p : sampleMap) {
+//            auto idx = p.first;
+//            auto sd = p.second;
+//            
+//            auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white); assert(ok);
+//            board.side = static_cast<Side>(sd);
+//            board.setFenComplete();
+//
+//            stringStream << board.getFen() << std::endl;
+//        }
+//        
+//#ifdef _FELICITY_XQ_
+////        std::vector<std::pair<i64, int>> perpVecs[4];
+//        auto k = EgtbFile::perpetualScoreToIdx(EGTB_SCORE_PERPETUAL_CHECK_LOSS);
+////        auto k = EGTB_SCORE_PERPETUAL_CHECK_LOSS - EGTB_SCORE_PERPETUAL_CHECK_WIN;
+//        if (!perpVecs[k].empty()) {
+//            stringStream << "\n\nSamples of perpetual checks:\n";
+//            
+//            for(auto && p : perpVecs[k]) {
+//                auto idx = p.first;
+//                auto sd = p.second;
+//                
+//                auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white); assert(ok);
+//                board.side = static_cast<Side>(sd);
+//                board.setFenComplete();
+//
+//                stringStream << board.getFen() << std::endl;
+//            }
+//        }
+//        
+//        k = EgtbFile::perpetualScoreToIdx(EGTB_SCORE_PERPETUAL_CHASE_LOSS);
+//        if (!perpVecs[k].empty()) {
+//            stringStream << "\n\nSamples of perpetual chases:\n";
+//            
+//            for(auto && p : perpVecs[k]) {
+//                auto idx = p.first;
+//                auto sd = p.second;
+//                
+//                auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white); assert(ok);
+//                board.side = static_cast<Side>(sd);
+//                board.setFenComplete();
+//
+//                stringStream << board.getFen() << std::endl;
+//            }
+//        }
+//#endif
+//    }
+//    return stringStream.str();
+//}
 
 void EgtbGenFile::createStatsFile()
 {
@@ -704,7 +759,11 @@ void EgtbGenFile::checkAndConvert2bytesTo1() {
     
     for(i64 idx = 0; idx < getSize(); ++idx) {
         auto score = getBufScore(idx, Side::white);
-        if (score < EGTB_SCORE_MATE && score != EGTB_SCORE_DRAW) {
+        if (score < EGTB_SCORE_MATE && score != EGTB_SCORE_DRAW
+#ifdef _FELICITY_XQ_
+            && !EgtbFile::isPerpetualScore(score)
+#endif
+            ) {
             auto mi = TB_START_LOSING + (EGTB_SCORE_MATE - std::abs(score)) / 2;
             
             auto confirm = mi > 255;
@@ -715,7 +774,7 @@ void EgtbGenFile::checkAndConvert2bytesTo1() {
         }
     }
     
-    std::cout << "\t\t2 bytes are redundant. Converting into 1 byte per item." << std::endl;
+    std::cout << "\t\t2 bytes redundant. Converting into 1 byte per item." << std::endl;
 
     /// Convert into 1 byte
     header->setProperty(header->getProperty() & ~EGTB_PROP_2BYTES);
@@ -729,7 +788,7 @@ void EgtbGenFile::checkAndConvert2bytesTo1() {
         }
     }
     
-    std::cout << "\t\tconverted into 1 byte per item." << std::endl;
+    std::cout << "\tconverted into 1 byte per item." << std::endl;
 }
 
 void EgtbGenFile::convert1byteTo2() {
@@ -755,11 +814,11 @@ void EgtbGenFile::convert1byteTo2() {
     std::cout << "\t\tConverted into 2 bytes per item." << std::endl;
 }
 
-bool EgtbGenFile::verifyKey(int threadIdx, i64 idx) {
+bool EgtbGenFile::verifyIndex(int threadIdx, i64 idx) {
     auto& rcd = threadRecordVec.at(threadIdx);
     assert(rcd.board);
     
-    auto bit = verifyAKey(*rcd.board, idx);
+    auto bit = verifyIndex(*rcd.board, idx);
     
     /// ok if it cannot setup board or the board is valid and key is correct
     auto ok = bit == 0 || (bit & Verify_bit_valid);
@@ -770,25 +829,39 @@ bool EgtbGenFile::verifyKey(int threadIdx, i64 idx) {
         }
     } else {
         std::lock_guard<std::mutex> thelock(printMutex);
-        auto idx2 = getKey(*rcd.board).key;
-        rcd.board->printOut("FAILED verifyKey, key: " + std::to_string(idx));
+        auto idx2 = getIdx(*rcd.board).key;
+        std::string s = "FAILED verifyKey, key: " + std::to_string(idx);
+        if (bit & Verify_bit_bad_flip) {
+            s += ", flip error";
+        }
+        rcd.board->printOut(s);
         
-        idx2 = getKey(*rcd.board).key;
+        idx2 = getIdx(*rcd.board).key;
 
         if (!setupBoard(*rcd.board, idx, FlipMode::none, Side::white)) {
             std::cout << "Wrong" << std::endl;
         }
         
-        rcd.board->printOut();
-        std::cout << "idx2 = " << idx2 << std::endl;
+        s += ", idx2=" + std::to_string(idx2);
+        rcd.board->printOut(s);
+        
+        if (bit & Verify_bit_bad_flip) {
+            auto flip = rcd.board->needSymmetryFlip();
+            if (flip != FlipMode::none) {
+                rcd.board->flip(flip);
 
-//        auto b0 = setupBoard(*rcd.board, idx, FlipMode::none, Side::white);
-//        rcd.board->printOut();
-//        
-//        if (rcd.board->isValid()) {
-//            auto idx2 = getKey(*rcd.board).key;
-//            rcd.board->printOut();
-//        }
+                auto fidx2 = getIdx(*rcd.board).key;
+                rcd.board->printOut("Flipped once, flipped idx2: " + std::to_string(fidx2));
+                if (fidx2 != idx) {
+                    auto flip3 = rcd.board->needSymmetryFlip();
+                    if (flip3 != FlipMode::none) {
+                        rcd.board->flip(flip3);
+                        auto idx3 = getIdx(*rcd.board).key;
+                        rcd.board->printOut("Flipped twice, flipped idx3: " + std::to_string(idx3));
+                    }
+                }
+            }
+        }
 
     }
 
@@ -797,14 +870,14 @@ bool EgtbGenFile::verifyKey(int threadIdx, i64 idx) {
 }
 
 
-bool EgtbGenFile::verifyKeys_loop(int threadIdx) {
+bool EgtbGenFile::verifyIndexes_thread(int threadIdx) {
     auto& rcd = threadRecordVec.at(threadIdx);
     if (!rcd.board) {
         rcd.createBoards();
     }
 
     for(i64 idx = rcd.fromIdx; idx < rcd.toIdx && rcd.ok; idx++) {
-        if (!verifyKey(threadIdx, idx)) {
+        if (!verifyIndex(threadIdx, idx)) {
             assert(false);
             setAllThreadNotOK();
             return false;
@@ -815,16 +888,16 @@ bool EgtbGenFile::verifyKeys_loop(int threadIdx) {
 
 i64 totalConflictLocCnt = 0, totalFacingCnt = 0, allSize = 0;
 
-bool EgtbGenFile::verifyKeys()
+bool EgtbGenFile::verifyIndexes()
 {
     setupThreadRecords(getSize());
     resetAllThreadRecordCounters();
 
     std::vector<std::thread> threadVec;
     for (auto i = 1; i < threadRecordVec.size(); ++i) {
-        threadVec.push_back(std::thread(&EgtbGenFile::verifyKeys_loop, this, i));
+        threadVec.push_back(std::thread(&EgtbGenFile::verifyIndexes_thread, this, i));
     }
-    verifyKeys_loop(0);
+    verifyIndexes_thread(0);
     
     for (auto && t : threadVec) {
         t.join();
@@ -845,6 +918,82 @@ bool EgtbGenFile::verifyKeys()
 
     return r;
 }
+
+
+
+int EgtbGenFile::verifyIndex(GenBoard& board, i64 idx) const
+{
+    /// It is considered OK if it cann't setup the board
+    if (!setupBoard(board, idx, FlipMode::none, Side::white)) {
+        return 0;
+    }
+    
+    auto bit = Verify_bit_setupOK;
+    if (board.isValid() && getIdx(board).key == idx) {
+        auto flip = board.needSymmetryFlip();
+        if (flip != FlipMode::none) {
+            board.flip(flip);
+            auto idx2 = getIdx(board).key;
+            
+            if (idx2 != idx) {
+                auto flip2 = board.needSymmetryFlip();
+                if (flip2 == FlipMode::none) {
+                    bit |= Verify_bit_bad_flip;
+                    return bit;
+                } else {
+                    board.flip(flip2);
+                    auto idx3 = getIdx(board).key;
+                    
+                    if (idx != idx3) {
+                        bit |= Verify_bit_bad_flip;
+                        return bit;
+                    }
+                }
+            }
+        }
+        bit |= Verify_bit_valid;
+    }
+    
+    return bit;
+}
+
+/**
+ Simple function to test the consistancy and correctness of keys, using only one (main) thread
+  For faster, using multi threads, use functions in generator code
+ */
+bool EgtbGenFile::verifyIndexes(bool printRandom) const
+{
+    GenBoard board;
+    
+    auto sz = getSize();
+    std::cout << "Verifying Keys for " << getName() << ", size: " << sz << std::endl;
+
+    int64_t cnt = 0;
+    
+    for (int64_t idx = 0; idx < sz; ++idx) {
+        auto ok = verifyIndex(board, idx);
+
+        if (ok) {
+            cnt++;
+        }
+        
+        auto prt = !ok || (printRandom && rand() % 500000 == 0);
+        if (prt) {
+            auto msg = std::string("idx: ") + std::to_string(idx);
+            board.printOut(msg);
+        }
+        if (!ok) {
+            std::cout << "The board is invalid or not matched keys, idx = " << idx << std::endl;
+            return false;
+        }
+    }
+    
+    std::cout << " passed. Valid keys: " << cnt << std::endl;
+
+    return true;
+}
+
+
 
 void EgtbGenFile::createFlagBuffer() {
     removeFlagBuffer();

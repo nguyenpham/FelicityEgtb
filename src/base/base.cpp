@@ -187,17 +187,23 @@ int BoardCore::findKing(Side side) const
 extern uint64_t zobristWhite;
 #endif
 
-void BoardCore::make(const MoveFull& move)
+void BoardCore::flipSide()
 {
-    Hist hist;
-    make(move, hist);
-    histList.push_back(hist);
     side = xSide(side);
 
 #ifdef _FELICITY_USE_HASH_
     hashKey ^= zobristWhite;
     assert(isHashKeyValid());
 #endif
+}
+
+void BoardCore::make(const MoveFull& move)
+{
+    Hist hist;
+    make(move, hist);
+    histList.push_back(hist);
+    
+    flipSide();
 }
 
 void BoardCore::takeBack()

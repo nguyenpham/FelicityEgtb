@@ -28,9 +28,11 @@
     <ClCompile Include="src\fegtbgen\egtbgendb_forward.cpp" />
     <ClCompile Include="src\fegtbgen\egtbgendb_lib.cpp" />
     <ClCompile Include="src\fegtbgen\egtbgenfile.cpp" />
+    <ClCompile Include="src\fegtbgen\egtbgenfile_tmp.cpp" />
     <ClCompile Include="src\fegtbgen\genboard_cs.cpp" />
     <ClCompile Include="src\fegtbgen\genboard_xq.cpp" />
     <ClCompile Include="src\fegtbgen\genlib.cpp" />
+    <ClCompile Include="src\fegtbgen\perpetuation_xq.cpp" />
     <ClCompile Include="src\fegtbgen\threadmng.cpp" />
     <ClCompile Include="src\fegtb\egtb.cpp" />
     <ClCompile Include="src\fegtb\egtbdb.cpp" />
@@ -45,6 +47,10 @@
     <ClCompile Include="src\lzma\LzmaEnc.c" />
     <ClCompile Include="src\mainegtb.cpp" />
     <ClCompile Include="src\xq\xq.cpp" />
+    <ClCompile Include="src\xq\xqchasejudge.cpp" />
+    <ClCompile Include="src\xq\xqchaselist.cpp" />
+    <ClCompile Include="src\xq\xqchaserecord.cpp" />
+    <ClCompile Include="src\xq\xqchasetest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\base.h" />
@@ -71,6 +77,9 @@
     <ClInclude Include="src\lzma\LzmaEnc.h" />
     <ClInclude Include="src\lzma\Precomp.h" />
     <ClInclude Include="src\xq\xq.h" />
+    <ClInclude Include="src\xq\xqchasejudge.h" />
+    <ClInclude Include="src\xq\xqchaselist.h" />
+    <ClInclude Include="src\xq\xqchaserecord.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -159,7 +168,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalOptions>-D_FELICITY_CHESS_ -D_7ZIP_ST %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-D_FELICITY_XQ_ -D_7ZIP_ST %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -176,7 +185,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>-D_FELICITY_XQ_ -D_7ZIP_ST %(AdditionalOptions)</AdditionalOptions>
-      <Optimization>Full</Optimization>
+      <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -75,7 +75,7 @@ static void show_usage(std::string name)
 //    << "  -zip         Compress endgames (create .ztb files)\n"
 //    << "  -unzip       Uncompress endgames (create .xtb files)\n"
     << "  -v           Verify endgames (exact name or attack pieces such as ch, r-h)\n"
-    << "  -vkey        Verify keys (boards <-> indeces)\n"
+    << "  -vidx        Verify indeces (boards <-> indeces)\n"
 //    << "  -speed       Test speed\n"
     << "  -2           2 bytes per item\n"
     << "  -noverify    Turn off verifying\n"
@@ -104,53 +104,6 @@ static void show_usage(std::string name)
 	<< std::endl;
 }
 
-std::string explainScore(int score) {
-    std::string str;
-    
-    switch (score) {
-        case EGTB_SCORE_DRAW:
-            str = "draw";
-            break;
-            
-        case EGTB_SCORE_MISSING:
-            str = "missing (board is incorrect or missing some endgame databases)";
-            break;
-        case EGTB_SCORE_MATE:
-            str = "mate";
-            break;
-            
-        case EGTB_SCORE_ILLEGAL:
-            str = "illegal";
-            break;
-            
-//        case EGTB_SCORE_UNKNOWN:
-//            str = "unknown";
-//            break;
-#ifdef _FELICITY_XQ_
-        case EGTB_SCORE_PERPETUAL_CHECK_WIN:
-            str = "perpetual check win";
-            break;
-        case EGTB_SCORE_PERPETUAL_CHECK_LOSE:
-            str = "perpetual check lose";
-            break;
-        case EGTB_SCORE_PERPETUAL_CHASE_WIN:
-            str = "perpetual chase win";
-            break;
-        case EGTB_SCORE_PERPETUAL_CHASE_LOSE:
-            str = "perpetual chase lose";
-            break;
-#endif
-
-        default: {
-            auto mateInPly = EGTB_SCORE_MATE - abs(score);
-            auto mateIn = (mateInPly + 1) / 2; // devide 2 for full (not half or ply) moves
-            if (score < 0) mateIn = -mateIn;
-            str = "mate in " + std::to_string(mateIn) + " (" + std::to_string(mateInPly) + " " + (mateInPly <= 1 ? "ply" : "plies") + ")";
-            break;
-        }
-    }
-    return str;
-}
 
 static void prePocessName(std::string& endgameName, bool& isExactName)
 {
@@ -206,11 +159,17 @@ int main(int argc, char* argv[])
 #if defined(_MSC_VER)
 	setvbuf(stdout, 0, _IOLBF, 4096);
 #endif
+
+#ifndef NDEBUG
+    std::cerr << "WARNING: program compiled in DEBUG mode!" << std::endl;
+#endif
     
-    {
-        XqChaseJudge::testRules();
-        return 0;
-    }
+    
+//    {
+//        XqChaseJudge::testRules();
+////        XqChaseJudge::testRules2();
+//        return 0;
+//    }
     
     static const auto programName = "egtbgen";
     std::cout << "Felicity EGTB generator for " << EGTB_MAJOR_VARIANT
@@ -235,7 +194,8 @@ int main(int argc, char* argv[])
         std::string str = arg;
         auto ok = true;
 
-        if (arg == "-core" || arg == "-ram" || arg == "-n" || arg == "-fen" || arg == "-fenfile" 
+        /// parametters with following ones
+        if (arg == "-core" || arg == "-ram" || arg == "-n" || arg == "-fen" || arg == "-fenfile"
             || arg == "-d" || arg == "-d2" || arg == "-epd"
             || arg == "-test"
             || arg == "-maxsize" || arg == "-perft") {
@@ -243,6 +203,7 @@ int main(int argc, char* argv[])
                 i++;
                 str = argv[i];
 
+                /// -fen should be the last one
 				if (arg == "-fen") {
 					while (i + 1 < argc) {
 						i++;
@@ -373,13 +334,22 @@ int main(int argc, char* argv[])
             }
 
             std::cout  << "Total: #" << cnt << ", sz: " << GenLib::formatString(sz) << std::endl;
+            return 1;
 		}
-		else if (argmap.find("-fen") != argmap.end()) {
+		
+        if (argmap.find("-fen") != argmap.end()) {
 			auto fenString = argmap["-fen"];
-            auto allMoveScores = argmap.find("-allmovescores") != argmap.end();
-            probeFen(egtbDb, fenString, allMoveScores);
+            
+            if (argmap.find("-bestline") != argmap.end()) {
+                egtbDb.getBestLine(fenString);
+            } else {
+                auto allMoveScores = argmap.find("-allmovescores") != argmap.end();
+                probeFen(egtbDb, fenString, allMoveScores);
+            }
 			return 1;
-        } else {
+        }
+        
+        {
             auto fileName = argmap["-fenfile"];
             auto array = GenLib::readFileToLineArray(fileName);
             for(auto && str : array) {
@@ -444,7 +414,7 @@ int main(int argc, char* argv[])
     }
 
     /////////////////////////////////////////////////
-    // Display info
+    /// Display info
     /////////////////////////////////////////////////
     if (subinfo) {
         EgtbGenDb::showSubTables(nameVec, EgtbType::dtm);
@@ -452,7 +422,17 @@ int main(int argc, char* argv[])
     }
     
     /////////////////////////////////////////////////
-    // Generate & modify data
+    /// Stats
+    /////////////////////////////////////////////////
+    if (argmap.find("-stats") != argmap.end()) {
+        EgtbGenDb egtbGenFileMng;
+        egtbGenFileMng.preload(egtbFolder, EgtbMemMode::all);
+        egtbGenFileMng.showStats(nameVec);
+        return 1;
+    }
+
+    /////////////////////////////////////////////////
+    /// Generate & modify data
     /////////////////////////////////////////////////
     if (argmap.find("-g") != argmap.end()) {
         EgtbGenDb egtbGenFileMng;
@@ -501,9 +481,9 @@ int main(int argc, char* argv[])
         return 1;
     }
     
-    if (argmap.find("-vkey") != argmap.end()) {
+    if (argmap.find("-vidx") != argmap.end()) {
         EgtbGenDb egtbGenFileMng;
-        egtbGenFileMng.verifyKeys(nameVec);
+        egtbGenFileMng.verifyIndexes(nameVec);
         return 1;
     }
     
@@ -519,7 +499,7 @@ bool probeFen(EgtbDb& egtbDb, const std::string& fenString, bool allMoveScores)
         
         auto score = egtbDb.getScore(board);
         auto idx = egtbDb.getKey(board);
-        std::cout << "score: " << score << ", explaination: " << explainScore(score) << ", idx: " << idx << std::endl;
+        std::cout << "score: " << score << ", explaination: " << EgtbFile::explainScore(score) << ", idx: " << idx << std::endl;
         
         if (allMoveScores) {
             auto side = board.side, xside = getXSide(side);

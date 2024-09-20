@@ -21,22 +21,6 @@
 #define EGTB_SCORE_MAX                      245
 
 
-enum class GameResultType { // Based on white side
-    win,    // white wins
-    loss,   // white loses
-    draw,
-    unknown
-};
-
-enum class GameReasonType {
-    draw_repetition,
-    draw_check_idle,
-    draw_same_violate,
-    perpetual_check,
-    perpetual_chase,
-    unknown
-};
-
 #ifdef _WIN32
     #define uint unsigned int
 #endif

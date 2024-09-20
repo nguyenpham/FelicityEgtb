@@ -596,8 +596,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "375"
-            endingLineNumber = "375"
+            startingLineNumber = "336"
+            endingLineNumber = "336"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1123,8 +1123,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "218"
-            endingLineNumber = "218"
+            startingLineNumber = "177"
+            endingLineNumber = "177"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
             <Locations>
@@ -1171,8 +1171,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "214"
-            endingLineNumber = "214"
+            startingLineNumber = "173"
+            endingLineNumber = "173"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1187,8 +1187,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "204"
-            endingLineNumber = "204"
+            startingLineNumber = "157"
+            endingLineNumber = "157"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1277,8 +1277,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "352"
-            endingLineNumber = "352"
+            startingLineNumber = "313"
+            endingLineNumber = "313"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1293,9 +1293,9 @@
             filePath = "src/fegtbgen/egtbgenfile.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "773"
-            endingLineNumber = "773"
-            landmarkName = "EgtbGenFile::verifyKey(threadIdx, idx)"
+            startingLineNumber = "832"
+            endingLineNumber = "832"
+            landmarkName = "EgtbGenFile::verifyIndex(threadIdx, idx)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -1434,8 +1434,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "244"
-            endingLineNumber = "244"
+            startingLineNumber = "341"
+            endingLineNumber = "341"
             landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply, sd, phase)"
             landmarkType = "7">
             <Locations>
@@ -1475,69 +1475,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B4DF404F-9A77-4C3E-936B-7AC33F173508"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "257"
-            endingLineNumber = "257"
-            landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply, sd, phase)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "B4DF404F-9A77-4C3E-936B-7AC33F173508 - 9be216a236a6ccf8"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::gen_backward_thread(int, int)"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "261"
-                  endingLineNumber = "261"
-                  offsetFromSymbolStart = "941">
-               </Location>
-               <Location
-                  uuid = "B4DF404F-9A77-4C3E-936B-7AC33F173508 - 9be216a236a6ccdf"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::gen_backward_thread(int, int)"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "260"
-                  endingLineNumber = "260"
-                  offsetFromSymbolStart = "1137">
-               </Location>
-               <Location
-                  uuid = "B4DF404F-9A77-4C3E-936B-7AC33F173508 - 9be216a236a6ccdf"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::gen_backward_thread(int, int)"
-                  moduleName = "FelicityEgtb"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "260"
-                  endingLineNumber = "260"
-                  offsetFromSymbolStart = "868">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "6E03D898-0EAA-49F5-91DD-DE5F48392C21"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -1545,8 +1482,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "248"
-            endingLineNumber = "248"
+            startingLineNumber = "345"
+            endingLineNumber = "345"
             landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply, sd, phase)"
             landmarkType = "7">
             <Locations>
@@ -1638,8 +1575,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "82"
-            endingLineNumber = "82"
+            startingLineNumber = "113"
+            endingLineNumber = "113"
             landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1654,8 +1591,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "108"
-            endingLineNumber = "108"
+            startingLineNumber = "137"
+            endingLineNumber = "137"
             landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
             landmarkType = "7">
             <Locations>
@@ -1710,22 +1647,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "AF62D680-A1A8-4C5E-A141-36A64727A82C"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
-            landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "B4651B17-CEBD-4598-B1B9-B4EFFAA297D7"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -1733,9 +1654,9 @@
             filePath = "src/fegtbgen/egtbgendb_lib.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "500"
-            endingLineNumber = "500"
-            landmarkName = "EgtbGenDb::verifyData_chunk(threadIdx, pEgtbFile)"
+            startingLineNumber = "582"
+            endingLineNumber = "582"
+            landmarkName = "EgtbGenDb::verifyData_thread(threadIdx, pEgtbFile)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -1796,8 +1717,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "79"
-            endingLineNumber = "79"
+            startingLineNumber = "110"
+            endingLineNumber = "110"
             landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1812,8 +1733,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "69"
-            endingLineNumber = "69"
+            startingLineNumber = "100"
+            endingLineNumber = "100"
             landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1828,8 +1749,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "238"
-            endingLineNumber = "238"
+            startingLineNumber = "335"
+            endingLineNumber = "335"
             landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply, sd, phase)"
             landmarkType = "7">
             <Locations>
@@ -1876,8 +1797,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "385"
-            endingLineNumber = "385"
+            startingLineNumber = "663"
+            endingLineNumber = "663"
             landmarkName = "EgtbGenDb::gen_backward(folder)"
             landmarkType = "7">
             <Locations>
@@ -1924,8 +1845,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "401"
-            endingLineNumber = "401"
+            startingLineNumber = "684"
+            endingLineNumber = "684"
             landmarkName = "EgtbGenDb::gen_backward(folder)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1940,8 +1861,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "427"
-            endingLineNumber = "427"
+            startingLineNumber = "716"
+            endingLineNumber = "716"
             landmarkName = "EgtbGenDb::gen_backward(folder)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1956,8 +1877,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "239"
-            endingLineNumber = "239"
+            startingLineNumber = "336"
+            endingLineNumber = "336"
             landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply, sd, phase)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1972,8 +1893,8 @@
             filePath = "src/fegtbgen/egtbgendb_backward.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "281"
-            endingLineNumber = "281"
+            startingLineNumber = "354"
+            endingLineNumber = "354"
             landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply, sd, phase)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1988,8 +1909,8 @@
             filePath = "src/fegtbgen/egtbgendb_lib.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "127"
-            endingLineNumber = "127"
+            startingLineNumber = "129"
+            endingLineNumber = "129"
             landmarkName = "EgtbGenDb::parseName(name, includeSubs)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2004,8 +1925,8 @@
             filePath = "src/fegtbgen/egtbgendb_lib.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "120"
-            endingLineNumber = "120"
+            startingLineNumber = "122"
+            endingLineNumber = "122"
             landmarkName = "addName(names, ln, rn)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2068,8 +1989,8 @@
             filePath = "src/fegtbgen/egtbgendb_lib.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "64"
-            endingLineNumber = "64"
+            startingLineNumber = "66"
+            endingLineNumber = "66"
             landmarkName = "addName(names, l, r)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2084,8 +2005,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "157"
-            endingLineNumber = "157"
+            startingLineNumber = "110"
+            endingLineNumber = "110"
             landmarkName = "prePocessName(endgameName, isExactName)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2196,9 +2117,9 @@
             filePath = "src/fegtbgen/perpetuation_xq.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "270"
-            endingLineNumber = "270"
-            landmarkName = "EgtbGenDb::perpetuation_atk(rcd, idx, side, idxSet, evasion_checking)"
+            startingLineNumber = "380"
+            endingLineNumber = "380"
+            landmarkName = "EgtbGenDb::perpetual_check_attack(rcd, idx, side, idxSet, evasion_checking)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2253,273 +2174,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2EE45A30-E6BB-46C7-9E82-D0EB16CD0E0A"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/perpetuation_xq.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "503"
-            endingLineNumber = "503"
-            landmarkName = "EgtbGenDb::perpetuation_thread_gen(threadIdx)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "2EE45A30-E6BB-46C7-9E82-D0EB16CD0E0A - c41ebc113e95b672"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "473"
-                  endingLineNumber = "473"
-                  offsetFromSymbolStart = "1938">
-               </Location>
-               <Location
-                  uuid = "2EE45A30-E6BB-46C7-9E82-D0EB16CD0E0A - c41ebc113e95b672"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "473"
-                  endingLineNumber = "473"
-                  offsetFromSymbolStart = "1846">
-               </Location>
-               <Location
-                  uuid = "2EE45A30-E6BB-46C7-9E82-D0EB16CD0E0A - c41ebc113e95b769"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "480"
-                  endingLineNumber = "480"
-                  offsetFromSymbolStart = "1846">
-               </Location>
-               <Location
-                  uuid = "2EE45A30-E6BB-46C7-9E82-D0EB16CD0E0A - c41ebc113e95b769"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "480"
-                  endingLineNumber = "480"
-                  offsetFromSymbolStart = "1698">
-               </Location>
-               <Location
-                  uuid = "2EE45A30-E6BB-46C7-9E82-D0EB16CD0E0A - c41ebc113e95b769"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "480"
-                  endingLineNumber = "480"
-                  offsetFromSymbolStart = "812">
-               </Location>
-               <Location
-                  uuid = "2EE45A30-E6BB-46C7-9E82-D0EB16CD0E0A - c41ebc113e95b590"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "503"
-                  endingLineNumber = "503"
-                  offsetFromSymbolStart = "1707">
-               </Location>
-               <Location
-                  uuid = "2EE45A30-E6BB-46C7-9E82-D0EB16CD0E0A - c41ebc113e95b590"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "503"
-                  endingLineNumber = "503"
-                  offsetFromSymbolStart = "1737">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "F007E2B4-6567-4C85-8CD9-5EEB4054BFC0"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/perpetuation_xq.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "510"
-            endingLineNumber = "510"
-            landmarkName = "EgtbGenDb::perpetuation_thread_gen(threadIdx)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "F007E2B4-6567-4C85-8CD9-5EEB4054BFC0 - c41ebc113e95b769"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "480"
-                  endingLineNumber = "480"
-                  offsetFromSymbolStart = "2262">
-               </Location>
-               <Location
-                  uuid = "F007E2B4-6567-4C85-8CD9-5EEB4054BFC0 - c41ebc113e95b769"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "480"
-                  endingLineNumber = "480"
-                  offsetFromSymbolStart = "2225">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "CFB262BB-06D9-493A-B0C9-0575D67EDB21"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/perpetuation_xq.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "499"
-            endingLineNumber = "499"
-            landmarkName = "EgtbGenDb::perpetuation_thread_gen(threadIdx)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "CFB262BB-06D9-493A-B0C9-0575D67EDB21 - c41ebc113e958f6b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "418"
-                  endingLineNumber = "418"
-                  offsetFromSymbolStart = "1294">
-               </Location>
-               <Location
-                  uuid = "CFB262BB-06D9-493A-B0C9-0575D67EDB21 - c41ebc113e958f44"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "419"
-                  endingLineNumber = "419"
-                  offsetFromSymbolStart = "1369">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "6EB6C5D8-184E-43A5-970E-D716E6003FEE"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/perpetuation_xq.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "219"
-            endingLineNumber = "219"
-            landmarkName = "EgtbGenDb::perpetuation_evasion(rcd, idx, side, idxSet, evasion_checking)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "6EB6C5D8-184E-43A5-970E-D716E6003FEE - bbfaebe3d50e82ed"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_evasion(fegtb::EgtbGenThreadRecord&amp;, long long, bslib::Side, std::__1::set&lt;long long, std::__1::less&lt;long long&gt;, std::__1::allocator&lt;long long&gt;&gt;&amp;, bool)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "210"
-                  endingLineNumber = "210"
-                  offsetFromSymbolStart = "1029">
-               </Location>
-               <Location
-                  uuid = "6EB6C5D8-184E-43A5-970E-D716E6003FEE - bbfaebe3d50efe24"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_evasion(fegtb::EgtbGenThreadRecord&amp;, long long, bslib::Side, std::__1::set&lt;long long, std::__1::less&lt;long long&gt;, std::__1::allocator&lt;long long&gt;&gt;&amp;, bool)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "185"
-                  endingLineNumber = "185"
-                  offsetFromSymbolStart = "1029">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "193F711B-0D9B-41C7-8E66-E68F63ABC931"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -2527,9 +2181,9 @@
             filePath = "src/fegtbgen/perpetuation_xq.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "253"
-            endingLineNumber = "253"
-            landmarkName = "EgtbGenDb::perpetuation_atk(rcd, idx, side, idxSet, evasion_checking)"
+            startingLineNumber = "358"
+            endingLineNumber = "358"
+            landmarkName = "EgtbGenDb::perpetual_check_attack(rcd, idx, side, idxSet, evasion_checking)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2543,449 +2197,9 @@
             filePath = "src/fegtbgen/perpetuation_xq.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "245"
-            endingLineNumber = "245"
-            landmarkName = "EgtbGenDb::perpetuation_atk(rcd, idx, side, idxSet, evasion_checking)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "DF8568BE-E6C9-41C9-9333-BB5E7FF39BBD"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/perpetuation_xq.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "159"
-            endingLineNumber = "159"
-            landmarkName = "EgtbGenDb::perpetuation_thread_init(threadIdx)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "DF8568BE-E6C9-41C9-9333-BB5E7FF39BBD - 40e6421270fcf052"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_init(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "144"
-                  endingLineNumber = "144"
-                  offsetFromSymbolStart = "733">
-               </Location>
-               <Location
-                  uuid = "DF8568BE-E6C9-41C9-9333-BB5E7FF39BBD - 40e6421270fcf339"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_init(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "153"
-                  endingLineNumber = "153"
-                  offsetFromSymbolStart = "1087">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "EF4BC7DF-2A77-4599-8C0A-D9AD22A81245"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/perpetuation_xq.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "235"
-            endingLineNumber = "235"
-            landmarkName = "EgtbGenDb::perpetuation_atk(rcd, idx, side, idxSet, evasion_checking)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "BA696E2A-385B-4E21-965D-3BCE79358341"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/perpetuation_xq.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "282"
-            endingLineNumber = "282"
-            landmarkName = "EgtbGenDb::perpetuation_atk(rcd, idx, side, idxSet, evasion_checking)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "BA696E2A-385B-4E21-965D-3BCE79358341 - 367a0681cc879b52"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_atk(fegtb::EgtbGenThreadRecord&amp;, long long, bslib::Side, std::__1::set&lt;long long, std::__1::less&lt;long long&gt;, std::__1::allocator&lt;long long&gt;&gt;&amp;, bool)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "259"
-                  endingLineNumber = "259"
-                  offsetFromSymbolStart = "1512">
-               </Location>
-               <Location
-                  uuid = "BA696E2A-385B-4E21-965D-3BCE79358341 - 367a0681cc879b52"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_atk(fegtb::EgtbGenThreadRecord&amp;, long long, bslib::Side, std::__1::set&lt;long long, std::__1::less&lt;long long&gt;, std::__1::allocator&lt;long long&gt;&gt;&amp;, bool)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "259"
-                  endingLineNumber = "259"
-                  offsetFromSymbolStart = "1279">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E3540C03-813A-4A98-8CAB-9A6890205002"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/perpetuation_xq.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "220"
-            endingLineNumber = "220"
-            landmarkName = "EgtbGenDb::perpetuation_evasion(rcd, idx, side, idxSet, evasion_checking)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "E3540C03-813A-4A98-8CAB-9A6890205002 - bbfaebe3d50e8050"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_evasion(fegtb::EgtbGenThreadRecord&amp;, long long, bslib::Side, std::__1::set&lt;long long, std::__1::less&lt;long long&gt;, std::__1::allocator&lt;long long&gt;&gt;&amp;, bool)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "197"
-                  endingLineNumber = "197"
-                  offsetFromSymbolStart = "1358">
-               </Location>
-               <Location
-                  uuid = "E3540C03-813A-4A98-8CAB-9A6890205002 - bbfaebe3d50e8050"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_evasion(fegtb::EgtbGenThreadRecord&amp;, long long, bslib::Side, std::__1::set&lt;long long, std::__1::less&lt;long long&gt;, std::__1::allocator&lt;long long&gt;&gt;&amp;, bool)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "197"
-                  endingLineNumber = "197"
-                  offsetFromSymbolStart = "1125">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "F845571A-798C-449B-BB14-4D553896661F"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/perpetuation_xq.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "156"
-            endingLineNumber = "156"
-            landmarkName = "EgtbGenDb::perpetuation_thread_init(threadIdx)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "F845571A-798C-449B-BB14-4D553896661F - 40e6421270fcf35a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_init(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "152"
-                  endingLineNumber = "152"
-                  offsetFromSymbolStart = "1239">
-               </Location>
-               <Location
-                  uuid = "F845571A-798C-449B-BB14-4D553896661F - 40e6421270fcf35a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_init(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "152"
-                  endingLineNumber = "152"
-                  offsetFromSymbolStart = "1106">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B31C2DAB-4A63-48B6-A6BB-BAE55AAB3BA3"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/perpetuation_xq.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "460"
-            endingLineNumber = "460"
-            landmarkName = "EgtbGenDb::perpetuation_thread_gen(threadIdx)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "B31C2DAB-4A63-48B6-A6BB-BAE55AAB3BA3 - c41ebc113e958cff"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "430"
-                  endingLineNumber = "430"
-                  offsetFromSymbolStart = "455">
-               </Location>
-               <Location
-                  uuid = "B31C2DAB-4A63-48B6-A6BB-BAE55AAB3BA3 - c41ebc113e958cff"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "430"
-                  endingLineNumber = "430"
-                  offsetFromSymbolStart = "384">
-               </Location>
-               <Location
-                  uuid = "B31C2DAB-4A63-48B6-A6BB-BAE55AAB3BA3 - c41ebc113e958d16"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "437"
-                  endingLineNumber = "437"
-                  offsetFromSymbolStart = "384">
-               </Location>
-               <Location
-                  uuid = "B31C2DAB-4A63-48B6-A6BB-BAE55AAB3BA3 - c41ebc113e958dd0"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "439"
-                  endingLineNumber = "439"
-                  offsetFromSymbolStart = "329">
-               </Location>
-               <Location
-                  uuid = "B31C2DAB-4A63-48B6-A6BB-BAE55AAB3BA3 - c41ebc113e95b01d"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "384">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "6E12FBD6-F3B0-485D-82DE-7BAD5F0EA7D5"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/perpetuation_xq.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "492"
-            endingLineNumber = "492"
-            landmarkName = "EgtbGenDb::perpetuation_thread_gen(threadIdx)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "6E12FBD6-F3B0-485D-82DE-7BAD5F0EA7D5 - c41ebc113e95b0df"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "462"
-                  endingLineNumber = "462"
-                  offsetFromSymbolStart = "1630">
-               </Location>
-               <Location
-                  uuid = "6E12FBD6-F3B0-485D-82DE-7BAD5F0EA7D5 - c41ebc113e95b0df"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "462"
-                  endingLineNumber = "462"
-                  offsetFromSymbolStart = "1555">
-               </Location>
-               <Location
-                  uuid = "6E12FBD6-F3B0-485D-82DE-7BAD5F0EA7D5 - c41ebc113e95b1f6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "469"
-                  endingLineNumber = "469"
-                  offsetFromSymbolStart = "1555">
-               </Location>
-               <Location
-                  uuid = "6E12FBD6-F3B0-485D-82DE-7BAD5F0EA7D5 - c41ebc113e95b1f6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "469"
-                  endingLineNumber = "469"
-                  offsetFromSymbolStart = "1407">
-               </Location>
-               <Location
-                  uuid = "6E12FBD6-F3B0-485D-82DE-7BAD5F0EA7D5 - c41ebc113e95b191"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "472"
-                  endingLineNumber = "472"
-                  offsetFromSymbolStart = "671">
-               </Location>
-               <Location
-                  uuid = "6E12FBD6-F3B0-485D-82DE-7BAD5F0EA7D5 - c41ebc113e95b4fd"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "492"
-                  endingLineNumber = "492"
-                  offsetFromSymbolStart = "1416">
-               </Location>
-               <Location
-                  uuid = "6E12FBD6-F3B0-485D-82DE-7BAD5F0EA7D5 - c41ebc113e95b4fd"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_gen(int)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "492"
-                  endingLineNumber = "492"
-                  offsetFromSymbolStart = "1443">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "5A2542B7-7DC5-4F7E-A852-B3DF9384C422"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/fegtbgen/perpetuation_xq.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "375"
-            endingLineNumber = "375"
-            landmarkName = "EgtbGenDb::perpetuation_children_probe(board, side)"
+            startingLineNumber = "350"
+            endingLineNumber = "350"
+            landmarkName = "EgtbGenDb::perpetual_check_attack(rcd, idx, side, idxSet, evasion_checking)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3094,8 +2308,8 @@
             filePath = "src/mainegtb.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "212"
-            endingLineNumber = "212"
+            startingLineNumber = "170"
+            endingLineNumber = "170"
             landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3110,8 +2324,8 @@
             filePath = "src/xq/xqchasetest.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "664"
-            endingLineNumber = "664"
+            startingLineNumber = "625"
+            endingLineNumber = "625"
             landmarkName = "parsePGN(contentVec, itemMap, moveVec, board)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3126,8 +2340,8 @@
             filePath = "src/xq/xqchasetest.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "683"
-            endingLineNumber = "683"
+            startingLineNumber = "644"
+            endingLineNumber = "644"
             landmarkName = "parsePGN(contentVec, itemMap, moveVec, board)"
             landmarkType = "9">
             <Locations>
@@ -3189,8 +2403,8 @@
             filePath = "src/xq/xqchasetest.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "542"
-            endingLineNumber = "542"
+            startingLineNumber = "555"
+            endingLineNumber = "555"
             landmarkName = "fromMoveList(board, moveText)"
             landmarkType = "9">
             <Locations>
@@ -3237,8 +2451,8 @@
             filePath = "src/xq/xqchasetest.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "419"
-            endingLineNumber = "419"
+            startingLineNumber = "432"
+            endingLineNumber = "432"
             landmarkName = "fromMoveList(board, moveText)"
             landmarkType = "9">
             <Locations>
@@ -3285,8 +2499,8 @@
             filePath = "src/xq/xqchasetest.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "413"
-            endingLineNumber = "413"
+            startingLineNumber = "426"
+            endingLineNumber = "426"
             landmarkName = "fromMoveList(board, moveText)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3301,8 +2515,8 @@
             filePath = "src/xq/xqchasetest.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "561"
-            endingLineNumber = "561"
+            startingLineNumber = "574"
+            endingLineNumber = "574"
             landmarkName = "fromMoveList(board, moveText)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3317,8 +2531,8 @@
             filePath = "src/xq/xqchasetest.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "563"
-            endingLineNumber = "563"
+            startingLineNumber = "576"
+            endingLineNumber = "576"
             landmarkName = "fromMoveList(board, moveText)"
             landmarkType = "9">
             <Locations>
@@ -3365,8 +2579,8 @@
             filePath = "src/xq/xqchasetest.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "356"
-            endingLineNumber = "356"
+            startingLineNumber = "369"
+            endingLineNumber = "369"
             landmarkName = "checkMake(board, from, dest, promotion)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3381,8 +2595,8 @@
             filePath = "src/xq/xqchasetest.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "565"
-            endingLineNumber = "565"
+            startingLineNumber = "578"
+            endingLineNumber = "578"
             landmarkName = "fromMoveList(board, moveText)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3397,170 +2611,10 @@
             filePath = "src/xq/xqchasetest.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "570"
-            endingLineNumber = "570"
+            startingLineNumber = "583"
+            endingLineNumber = "583"
             landmarkName = "fromMoveList(board, moveText)"
             landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "3D267B68-DA86-4AB5-BE07-8FD2DDE13413"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/xq/xqchasetest.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "751"
-            endingLineNumber = "751"
-            landmarkName = "XqChaseJudge::testRules(_contentVec)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "3D267B68-DA86-4AB5-BE07-8FD2DDE13413 - b027aba71ee8730"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::XqChaseJudge::testRules(std::__1::vector&lt;std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt;, std::__1::allocator&lt;std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt;&gt;&gt; const&amp;)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasetest.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "761"
-                  endingLineNumber = "761"
-                  offsetFromSymbolStart = "943">
-               </Location>
-               <Location
-                  uuid = "3D267B68-DA86-4AB5-BE07-8FD2DDE13413 - b027aba71ee8730"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::XqChaseJudge::testRules(std::__1::vector&lt;std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt;, std::__1::allocator&lt;std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt;&gt;&gt; const&amp;)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasetest.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "761"
-                  endingLineNumber = "761"
-                  offsetFromSymbolStart = "933">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "6978452E-62FF-4549-AF51-8793089883CB"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/xq/xqchasetest.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "617"
-            endingLineNumber = "617"
-            landmarkName = "string2ResultType(s)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "BB8090B6-6E57-459B-946F-B3919A94BA9A"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/xq/xqchasetest.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "619"
-            endingLineNumber = "619"
-            landmarkName = "string2ResultType(s)"
-            landmarkType = "9">
-            <Locations>
-               <Location
-                  uuid = "BB8090B6-6E57-459B-946F-B3919A94BA9A - fe40f227e65b296a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::string2ResultType(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt; const&amp;)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasetest.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "620"
-                  endingLineNumber = "620"
-                  offsetFromSymbolStart = "108">
-               </Location>
-               <Location
-                  uuid = "BB8090B6-6E57-459B-946F-B3919A94BA9A - fe40f227e65b294b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::string2ResultType(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt; const&amp;)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasetest.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "619"
-                  endingLineNumber = "619"
-                  offsetFromSymbolStart = "97">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "62C06E72-3557-49C8-8C43-CDE196AA47B5"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/xq/xqchasetest.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "622"
-            endingLineNumber = "622"
-            landmarkName = "string2ResultType(s)"
-            landmarkType = "9">
-            <Locations>
-               <Location
-                  uuid = "62C06E72-3557-49C8-8C43-CDE196AA47B5 - fe40f227e65b29ac"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::string2ResultType(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt; const&amp;)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasetest.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "622"
-                  endingLineNumber = "622"
-                  offsetFromSymbolStart = "134">
-               </Location>
-               <Location
-                  uuid = "62C06E72-3557-49C8-8C43-CDE196AA47B5 - fe40f227e65b29ac"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "bslib::string2ResultType(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt; const&amp;)"
-                  moduleName = "FelicityEgtb-xq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasetest.cpp"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "622"
-                  endingLineNumber = "622"
-                  offsetFromSymbolStart = "127">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3573,8 +2627,8 @@
             filePath = "src/xq/xq.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1040"
-            endingLineNumber = "1040"
+            startingLineNumber = "1046"
+            endingLineNumber = "1046"
             landmarkName = "XqBoard::rule()"
             landmarkType = "7">
             <Locations>
@@ -3608,6 +2662,21 @@
                   endingLineNumber = "1038"
                   offsetFromSymbolStart = "387">
                </Location>
+               <Location
+                  uuid = "F8C80F2F-BA52-4752-9757-60B5F88B85A3 - a625f1a7bf468c74"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqBoard::rule()"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xq.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1046"
+                  endingLineNumber = "1046"
+                  offsetFromSymbolStart = "474">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -3621,8 +2690,8 @@
             filePath = "src/xq/xq.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "985"
-            endingLineNumber = "985"
+            startingLineNumber = "987"
+            endingLineNumber = "987"
             landmarkName = "XqBoard::rule()"
             landmarkType = "7">
          </BreakpointContent>
@@ -3637,8 +2706,8 @@
             filePath = "src/xq/xq.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1046"
-            endingLineNumber = "1046"
+            startingLineNumber = "1053"
+            endingLineNumber = "1053"
             landmarkName = "XqBoard::rule()"
             landmarkType = "7">
             <Locations>
@@ -3685,8 +2754,8 @@
             filePath = "src/xq/xqchasetest.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "784"
-            endingLineNumber = "784"
+            startingLineNumber = "753"
+            endingLineNumber = "753"
             landmarkName = "XqChaseJudge::testRules(_contentVec)"
             landmarkType = "7">
          </BreakpointContent>
@@ -3701,8 +2770,8 @@
             filePath = "src/xq/xqchasetest.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "785"
-            endingLineNumber = "785"
+            startingLineNumber = "754"
+            endingLineNumber = "754"
             landmarkName = "XqChaseJudge::testRules(_contentVec)"
             landmarkType = "7">
          </BreakpointContent>
@@ -3717,8 +2786,8 @@
             filePath = "src/xq/xqchasetest.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "742"
-            endingLineNumber = "742"
+            startingLineNumber = "707"
+            endingLineNumber = "707"
             landmarkName = "XqChaseJudge::testRules(_contentVec)"
             landmarkType = "7">
             <Locations>
@@ -3765,8 +2834,8 @@
             filePath = "src/xq/xqchasetest.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "677"
-            endingLineNumber = "677"
+            startingLineNumber = "638"
+            endingLineNumber = "638"
             landmarkName = "parsePGN(contentVec, itemMap, moveVec, board)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3797,8 +2866,8 @@
             filePath = "src/xq/xq.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1038"
-            endingLineNumber = "1038"
+            startingLineNumber = "1044"
+            endingLineNumber = "1044"
             landmarkName = "XqBoard::rule()"
             landmarkType = "7">
          </BreakpointContent>
@@ -3813,8 +2882,8 @@
             filePath = "src/xq/xqchasetest.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "819"
-            endingLineNumber = "819"
+            startingLineNumber = "788"
+            endingLineNumber = "788"
             landmarkName = "XqChaseJudge::testRules()"
             landmarkType = "7">
          </BreakpointContent>
@@ -3829,8 +2898,8 @@
             filePath = "src/xq/xqchasejudge.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "60"
-            endingLineNumber = "60"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
             landmarkName = "XqChaseJudge::evaluate(board, repeatLen)"
             landmarkType = "7">
             <Locations>
@@ -3864,6 +2933,51 @@
                   endingLineNumber = "69"
                   offsetFromSymbolStart = "365">
                </Location>
+               <Location
+                  uuid = "95466E3C-2F92-498E-AE08-F7C2E90940A3 - 7363ae90cf48a6c3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::evaluate(bslib::XqBoard&amp;, int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "67"
+                  endingLineNumber = "67"
+                  offsetFromSymbolStart = "595">
+               </Location>
+               <Location
+                  uuid = "95466E3C-2F92-498E-AE08-F7C2E90940A3 - 7363ae90cf48a681"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::evaluate(bslib::XqBoard&amp;, int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "65"
+                  endingLineNumber = "65"
+                  offsetFromSymbolStart = "618">
+               </Location>
+               <Location
+                  uuid = "95466E3C-2F92-498E-AE08-F7C2E90940A3 - 7363ae90cf48a681"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::evaluate(bslib::XqBoard&amp;, int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "65"
+                  endingLineNumber = "65"
+                  offsetFromSymbolStart = "558">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -3877,8 +2991,8 @@
             filePath = "src/xq/xqchasejudge.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "195"
-            endingLineNumber = "195"
+            startingLineNumber = "212"
+            endingLineNumber = "212"
             landmarkName = "XqChaseJudge::ruleRepetition(board, wBoard, repeatLen)"
             landmarkType = "7">
             <Locations>
@@ -3913,6 +3027,1817 @@
                   offsetFromSymbolStart = "1825">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "683B8310-0486-4C02-893B-0E1254DFEEE6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "308"
+            endingLineNumber = "308"
+            landmarkName = "EgtbGenDb::gen_finish(folder, compressMode, needVerify)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D5211CE7-40AD-4230-A677-EDC0E04277C6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/perpetuation_xq.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
+            landmarkName = "EgtbGenDb::perpetuation_process()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7A6CFE62-6FE7-4910-9887-165C63BC3A15"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/perpetuation_xq.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
+            landmarkName = "EgtbGenDb::perpetuation_process()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "117E58CA-EB42-48CA-B475-E7A081E70CFE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/perpetuation_xq.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
+            landmarkName = "EgtbGenDb::perpetuation_process()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B96FE159-9258-458C-A4EE-D03696F3B495"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "340"
+            endingLineNumber = "340"
+            landmarkName = "EgtbGenDb::gen_finish(folder, compressMode, needVerify)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "55203CEA-F6F1-462B-92AB-FDB568D563E0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/perpetuation_xq.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "622"
+            endingLineNumber = "622"
+            landmarkName = "EgtbGenDb::perpetual_chase_evasion(rcd, idx, side, startIdx, idxSet, chaseJudge)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "30270D6E-1B60-4605-8102-DF24E3F29619"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "607"
+            endingLineNumber = "607"
+            landmarkName = "XqChaseJudge::addBoard(board, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B5DE1EAF-6064-4D16-8FE4-2933CFB6E4BA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "609"
+            endingLineNumber = "609"
+            landmarkName = "XqChaseJudge::addBoard(board, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3AD59C1F-4CCE-4860-AB2D-7A577010B841"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "635"
+            endingLineNumber = "635"
+            landmarkName = "XqChaseJudge::addBoard(board, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "911889DC-26D4-4E95-A5D9-560D00CB4070"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "613"
+            endingLineNumber = "613"
+            landmarkName = "EgtbGenDb::gen_backward(folder)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7C49FFCD-F502-40BF-815A-AC7DDFAB6A54"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "614"
+            endingLineNumber = "614"
+            landmarkName = "EgtbGenDb::gen_backward(folder)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0BD2DB67-3A9A-479B-8294-6E9559D76A93"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasetest.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "822"
+            endingLineNumber = "822"
+            landmarkName = "XqChaseJudge::testRules2()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B8DAAE60-5571-48A2-9337-231568401EB6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasetest.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "852"
+            endingLineNumber = "852"
+            landmarkName = "XqChaseJudge::testRules2()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7A9F36C8-514B-4D24-839E-B83F7C38C752"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasetest.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "837"
+            endingLineNumber = "837"
+            landmarkName = "XqChaseJudge::testRules2()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3CA13E82-5A67-4C3A-A32E-F9B936E7BF1C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "549"
+            endingLineNumber = "549"
+            landmarkName = "XqChaseJudge::addBoard(board, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EC60BCBE-9AE8-48FF-B5C3-0DFE81AA3F7C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "589"
+            endingLineNumber = "589"
+            landmarkName = "XqChaseJudge::addBoard(board, side)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "EC60BCBE-9AE8-48FF-B5C3-0DFE81AA3F7C - f4b5cce9cf25b01b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::addBoard(bslib::XqBoard&amp;, bslib::Side)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "375"
+                  endingLineNumber = "375"
+                  offsetFromSymbolStart = "762">
+               </Location>
+               <Location
+                  uuid = "EC60BCBE-9AE8-48FF-B5C3-0DFE81AA3F7C - f4b5cce9cf25b01b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::addBoard(bslib::XqBoard&amp;, bslib::Side)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "375"
+                  endingLineNumber = "375"
+                  offsetFromSymbolStart = "824">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7E0E40D0-F293-4AB7-AC33-5ECC33820CBB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "594"
+            endingLineNumber = "594"
+            landmarkName = "XqChaseJudge::addBoard(board, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ADAF8A13-F3C4-4BD9-A5AD-F7B077E04D31"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "603"
+            endingLineNumber = "603"
+            landmarkName = "XqChaseJudge::addBoard(board, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C8EAAE9A-2FFE-4C19-AE53-386787A163FE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "604"
+            endingLineNumber = "604"
+            landmarkName = "XqChaseJudge::addBoard(board, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "40E4F91C-F242-430D-BAAC-A94169603FFF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasetest.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "847"
+            endingLineNumber = "847"
+            landmarkName = "XqChaseJudge::testRules2()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FE7AC878-6B21-4504-8104-FF9B0DBB814F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "457"
+            endingLineNumber = "457"
+            landmarkName = "XqChaseJudge::evaluate()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "FE7AC878-6B21-4504-8104-FF9B0DBB814F - a101cc891c42021a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::evaluate()"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "278"
+                  endingLineNumber = "278"
+                  offsetFromSymbolStart = "239">
+               </Location>
+               <Location
+                  uuid = "FE7AC878-6B21-4504-8104-FF9B0DBB814F - a101cc891c43f630"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::evaluate()"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "432"
+                  endingLineNumber = "432"
+                  offsetFromSymbolStart = "239">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7C4726F0-2005-4267-80C6-DDA89372172F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasetest.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "749"
+            endingLineNumber = "749"
+            landmarkName = "XqChaseJudge::testRules(_contentVec)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B8C007E2-5AAC-463B-BE32-777EEF8D9EC0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "299"
+            endingLineNumber = "299"
+            landmarkName = "XqChaseJudge::ruleRepetition2(board, repeatLen)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "B8C007E2-5AAC-463B-BE32-777EEF8D9EC0 - f024360a799b13a5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::ruleRepetition2(bslib::XqBoard const&amp;, bslib::XqBoard&amp;, int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "283"
+                  endingLineNumber = "283"
+                  offsetFromSymbolStart = "493">
+               </Location>
+               <Location
+                  uuid = "B8C007E2-5AAC-463B-BE32-777EEF8D9EC0 - f024360a799b1018"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::ruleRepetition2(bslib::XqBoard const&amp;, bslib::XqBoard&amp;, int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "280"
+                  endingLineNumber = "280"
+                  offsetFromSymbolStart = "478">
+               </Location>
+               <Location
+                  uuid = "B8C007E2-5AAC-463B-BE32-777EEF8D9EC0 - f024360a799b1018"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::ruleRepetition2(bslib::XqBoard const&amp;, bslib::XqBoard&amp;, int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "280"
+                  endingLineNumber = "280"
+                  offsetFromSymbolStart = "384">
+               </Location>
+               <Location
+                  uuid = "B8C007E2-5AAC-463B-BE32-777EEF8D9EC0 - f024360a799b1018"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::ruleRepetition2(bslib::XqBoard const&amp;, bslib::XqBoard&amp;, int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "280"
+                  endingLineNumber = "280"
+                  offsetFromSymbolStart = "295">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2F628AD8-D9D9-4C72-A6D7-DF968D32FE18"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "329"
+            endingLineNumber = "329"
+            landmarkName = "XqChaseJudge::ruleRepetition2(board, repeatLen)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "2F628AD8-D9D9-4C72-A6D7-DF968D32FE18 - f024360a799b14f0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::ruleRepetition2(bslib::XqBoard const&amp;, bslib::XqBoard&amp;, int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "304"
+                  endingLineNumber = "304"
+                  offsetFromSymbolStart = "1687">
+               </Location>
+               <Location
+                  uuid = "2F628AD8-D9D9-4C72-A6D7-DF968D32FE18 - f024360a799b1511"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::ruleRepetition2(bslib::XqBoard const&amp;, bslib::XqBoard&amp;, int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "303"
+                  endingLineNumber = "303"
+                  offsetFromSymbolStart = "1687">
+               </Location>
+               <Location
+                  uuid = "2F628AD8-D9D9-4C72-A6D7-DF968D32FE18 - f024360a799b1532"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::ruleRepetition2(bslib::XqBoard const&amp;, bslib::XqBoard&amp;, int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "302"
+                  endingLineNumber = "302"
+                  offsetFromSymbolStart = "1672">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F4D5570F-5A35-408A-AF60-1E1FB122053A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasetest.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "748"
+            endingLineNumber = "748"
+            landmarkName = "XqChaseJudge::testRules(_contentVec)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B9DA963E-F0E2-42B1-805B-61C0A619D54F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/perpetuation_xq.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "601"
+            endingLineNumber = "601"
+            landmarkName = "EgtbGenDb::perpetual_chase_evasion(rcd, idx, side, startIdx, idxSet, chaseJudge)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E5995B53-2FDB-4062-8331-CE7E277DCA93"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "669"
+            endingLineNumber = "669"
+            landmarkName = "XqChaseJudge::addBoard(board, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4EFA2FF0-C2FA-4E0D-BF46-60C08102C1F4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "666"
+            endingLineNumber = "666"
+            landmarkName = "XqChaseJudge::addBoard(board, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CAFE161A-0DA4-4D8B-B885-5B4DA4D2C30D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "668"
+            endingLineNumber = "668"
+            landmarkName = "XqChaseJudge::addBoard(board, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6D38E5CE-B297-40A4-BD58-2A3D63348574"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasetest.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "829"
+            endingLineNumber = "829"
+            landmarkName = "XqChaseJudge::testRules2()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BA604E3B-6C15-4FC7-8D1E-45C4381AB48F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "484"
+            endingLineNumber = "484"
+            landmarkName = "XqChaseJudge::evaluate2()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "BA604E3B-6C15-4FC7-8D1E-45C4381AB48F - 7a6f4af145623591"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::evaluate2()"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "462"
+                  endingLineNumber = "462"
+                  offsetFromSymbolStart = "227">
+               </Location>
+               <Location
+                  uuid = "BA604E3B-6C15-4FC7-8D1E-45C4381AB48F - 7a6f4af145623591"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::evaluate2()"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "462"
+                  endingLineNumber = "462"
+                  offsetFromSymbolStart = "239">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "75D4AE67-1E9C-4A5C-A12A-6B88C3D4F064"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "65"
+            endingLineNumber = "65"
+            landmarkName = "XqChaseJudge::evaluate(board, repeatLen)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6E1CAB87-9A39-46D9-8A8C-163B7DBD9F16"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "289"
+            endingLineNumber = "289"
+            landmarkName = "XqChaseJudge::ruleRepetition2(board, repeatLen)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6B99C450-F831-43AE-BC2A-84E4A16A3FA3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasejudge.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "294"
+            endingLineNumber = "294"
+            landmarkName = "XqChaseJudge::ruleRepetition2(board, repeatLen)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "6B99C450-F831-43AE-BC2A-84E4A16A3FA3 - f024360a799b107b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::ruleRepetition2(bslib::XqBoard const&amp;, bslib::XqBoard&amp;, int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "277"
+                  endingLineNumber = "277"
+                  offsetFromSymbolStart = "143">
+               </Location>
+               <Location
+                  uuid = "6B99C450-F831-43AE-BC2A-84E4A16A3FA3 - d9291bc61e79964d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseJudge::ruleRepetition2(bslib::XqBoard const&amp;, int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchasejudge.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "276"
+                  endingLineNumber = "276"
+                  offsetFromSymbolStart = "130">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "99BCD829-E527-44F6-BD90-F5D930503775"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/perpetuation_xq.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "685"
+            endingLineNumber = "685"
+            landmarkName = "EgtbGenDb::perpetual_chase_evasion(rcd, idx, side, startIdx, idxSet, chaseJudge)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5099F383-D307-4768-8A0D-4B794B5E774B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchasetest.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "721"
+            endingLineNumber = "721"
+            landmarkName = "XqChaseJudge::testRules(_contentVec)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3D84DEEA-2BB5-4FA6-B3FC-A7FCC49BC43F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/xq/xqchaselist.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "171"
+            endingLineNumber = "171"
+            landmarkName = "XqChaseList::build(board, side)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "3D84DEEA-2BB5-4FA6-B3FC-A7FCC49BC43F - 56abbc72827afee8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseList::sameVictims(bslib::XqChaseList const&amp;)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk/usr/include/c++/v1/vector"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "672"
+                  endingLineNumber = "672"
+                  offsetFromSymbolStart = "17">
+               </Location>
+               <Location
+                  uuid = "3D84DEEA-2BB5-4FA6-B3FC-A7FCC49BC43F - 16d50e53ef87cb13"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bslib::XqChaseList::build(bslib::XqBoard&amp;, bslib::Side)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/xq/xqchaselist.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "171"
+                  endingLineNumber = "171"
+                  offsetFromSymbolStart = "2129">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5DD54048-2B4A-409B-97FF-6B6DBE4989DF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/perpetuation_xq.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "573"
+            endingLineNumber = "573"
+            landmarkName = "EgtbGenDb::perpetual_chase(rcd, idx, side)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "5DD54048-2B4A-409B-97FF-6B6DBE4989DF - 177a530afee0bb55"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::perpetual_chase(fegtb::EgtbGenThreadRecord&amp;, long long, bslib::Side)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "880"
+                  endingLineNumber = "880"
+                  offsetFromSymbolStart = "2759">
+               </Location>
+               <Location
+                  uuid = "5DD54048-2B4A-409B-97FF-6B6DBE4989DF - 177a530afee0b982"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::perpetual_chase(fegtb::EgtbGenThreadRecord&amp;, long long, bslib::Side)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "893"
+                  endingLineNumber = "893"
+                  offsetFromSymbolStart = "2471">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "842882AE-E89B-468E-BBDA-BE20E8FB727B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/perpetuation_xq.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1039"
+            endingLineNumber = "1039"
+            landmarkName = "EgtbGenDb::perpetuation_thread_propaganda_init(threadIdx)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0366B2FA-412E-437C-94EF-99B856C930BB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/perpetuation_xq.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1063"
+            endingLineNumber = "1063"
+            landmarkName = "EgtbGenDb::perpetuation_thread_propaganda_init(threadIdx)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "0366B2FA-412E-437C-94EF-99B856C930BB - 576dbc6632bdcdd0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_propaganda_init(int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "889"
+                  endingLineNumber = "889"
+                  offsetFromSymbolStart = "1010">
+               </Location>
+               <Location
+                  uuid = "0366B2FA-412E-437C-94EF-99B856C930BB - 576dbc6632bdcfe2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_propaganda_init(int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "903"
+                  endingLineNumber = "903"
+                  offsetFromSymbolStart = "1010">
+               </Location>
+               <Location
+                  uuid = "0366B2FA-412E-437C-94EF-99B856C930BB - 576dbc6632bdc85f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_propaganda_init(int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "908"
+                  endingLineNumber = "908"
+                  offsetFromSymbolStart = "995">
+               </Location>
+               <Location
+                  uuid = "0366B2FA-412E-437C-94EF-99B856C930BB - 576dbc6632bdc991"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_propaganda_init(int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "922"
+                  endingLineNumber = "922"
+                  offsetFromSymbolStart = "995">
+               </Location>
+               <Location
+                  uuid = "0366B2FA-412E-437C-94EF-99B856C930BB - 576dbc6632bdcaca"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::perpetuation_thread_propaganda_init(int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "927"
+                  endingLineNumber = "927"
+                  offsetFromSymbolStart = "995">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "48C62295-9482-4077-BC97-EA2C5C86F3D3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "406"
+            endingLineNumber = "406"
+            landmarkName = "EgtbGenDb::gen_backward_thread(threadIdx, ply, sd, phase)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D437EA52-2C56-449B-8A71-20A44FD37F4C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "220"
+            endingLineNumber = "220"
+            landmarkName = "EgtbGenDb::gen_backward_probe(board, idx, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7E145500-9A64-446B-8678-3937DAD17758"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "228"
+            endingLineNumber = "228"
+            landmarkName = "EgtbGenDb::gen_backward_probe(board, idx, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B48D8286-1762-4F6D-B1CE-975FAB69C9A6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "201"
+            endingLineNumber = "201"
+            landmarkName = "EgtbGenDb::gen_backward_probe(board, idx, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A45E2B9B-7369-400F-A6F4-A09E4DAFB169"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/mainegtb.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "174"
+            endingLineNumber = "174"
+            landmarkName = "main(argc, argv)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "56742082-CC65-4DBF-8BB2-64653A43345E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtb/egtbfile.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "746"
+            endingLineNumber = "746"
+            landmarkName = "EgtbFile::pickBestFromRivalScore(bestScore, score)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "08B7BC90-18E0-4973-B2EF-77CF6CF7D44C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_lib.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "606"
+            endingLineNumber = "606"
+            landmarkName = "EgtbGenDb::verifyData_thread(threadIdx, pEgtbFile)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "08B7BC90-18E0-4973-B2EF-77CF6CF7D44C - a3be7864c0e0e1a6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::verifyData_thread(int, fegtb::EgtbFile*)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_lib.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "529"
+                  endingLineNumber = "529"
+                  offsetFromSymbolStart = "3547">
+               </Location>
+               <Location
+                  uuid = "08B7BC90-18E0-4973-B2EF-77CF6CF7D44C - a3be7864c0e0e1a6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::verifyData_thread(int, fegtb::EgtbFile*)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_lib.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "529"
+                  endingLineNumber = "529"
+                  offsetFromSymbolStart = "3434">
+               </Location>
+               <Location
+                  uuid = "08B7BC90-18E0-4973-B2EF-77CF6CF7D44C - a3be7864c0e0e1a6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::verifyData_thread(int, fegtb::EgtbFile*)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_lib.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "529"
+                  endingLineNumber = "529"
+                  offsetFromSymbolStart = "3440">
+               </Location>
+               <Location
+                  uuid = "08B7BC90-18E0-4973-B2EF-77CF6CF7D44C - a3be7864c0e0ea14"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::verifyData_thread(int, fegtb::EgtbFile*)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_lib.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "579"
+                  endingLineNumber = "579"
+                  offsetFromSymbolStart = "3440">
+               </Location>
+               <Location
+                  uuid = "08B7BC90-18E0-4973-B2EF-77CF6CF7D44C - a3be7864c0e0e9e6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::verifyData_thread(int, fegtb::EgtbFile*)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_lib.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "593"
+                  endingLineNumber = "593"
+                  offsetFromSymbolStart = "3440">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8D357C1B-D71F-4445-B812-B9996687A100"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_lib.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "604"
+            endingLineNumber = "604"
+            landmarkName = "EgtbGenDb::verifyData_thread(threadIdx, pEgtbFile)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "8D357C1B-D71F-4445-B812-B9996687A100 - a3be7864c0e0e160"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::verifyData_thread(int, fegtb::EgtbFile*)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_lib.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "527"
+                  endingLineNumber = "527"
+                  offsetFromSymbolStart = "3382">
+               </Location>
+               <Location
+                  uuid = "8D357C1B-D71F-4445-B812-B9996687A100 - a3be7864c0e0e160"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::verifyData_thread(int, fegtb::EgtbFile*)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_lib.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "527"
+                  endingLineNumber = "527"
+                  offsetFromSymbolStart = "3385">
+               </Location>
+               <Location
+                  uuid = "8D357C1B-D71F-4445-B812-B9996687A100 - a3be7864c0e0ebd6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::verifyData_thread(int, fegtb::EgtbFile*)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_lib.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "577"
+                  endingLineNumber = "577"
+                  offsetFromSymbolStart = "3385">
+               </Location>
+               <Location
+                  uuid = "8D357C1B-D71F-4445-B812-B9996687A100 - a3be7864c0e0e9a0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::verifyData_thread(int, fegtb::EgtbFile*)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_lib.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "591"
+                  endingLineNumber = "591"
+                  offsetFromSymbolStart = "3385">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "60FE3982-A774-4867-A9F8-8193DC7DBF69"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_lib.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "454"
+            endingLineNumber = "454"
+            landmarkName = "EgtbGenDb::setBufScore(rcd, idx, score, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DCCFAA46-883D-4656-AFE6-B16C2E739129"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "225"
+            endingLineNumber = "225"
+            landmarkName = "EgtbGenDb::gen_backward_probe(board, idx, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "20A526CB-FE16-4A72-AC95-446AD6167D57"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/perpetuation_xq.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "344"
+            endingLineNumber = "344"
+            landmarkName = "EgtbGenDb::perpetual_check_attack(rcd, idx, side, idxSet, evasion_checking)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1930B16A-A955-4E30-9DF6-E3E42D90121A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/mainegtb.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "504"
+            endingLineNumber = "504"
+            landmarkName = "probeFen(egtbDb, fenString, allMoveScores)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2922462D-F296-4A1A-8CE3-FD1E721AB4DA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_lib.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "654"
+            endingLineNumber = "654"
+            landmarkName = "EgtbGenDb::verifyData_thread(threadIdx, pEgtbFile)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ADD1B9FF-F134-4452-878B-E5A6DDF9ADC0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/mainegtb.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "430"
+            endingLineNumber = "430"
+            landmarkName = "main(argc, argv)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9C669E3F-A952-4F48-9146-4567239BEEB1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/perpetuation_xq.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "476"
+            endingLineNumber = "476"
+            landmarkName = "EgtbGenDb::perpetuation_debug()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "9C669E3F-A952-4F48-9146-4567239BEEB1 - 9e20399d2900c9ca"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::perpetuation_debug()"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "416"
+                  endingLineNumber = "416"
+                  offsetFromSymbolStart = "444">
+               </Location>
+               <Location
+                  uuid = "9C669E3F-A952-4F48-9146-4567239BEEB1 - 9e20399d2900c9ca"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::perpetuation_debug()"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/perpetuation_xq.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "416"
+                  endingLineNumber = "416"
+                  offsetFromSymbolStart = "520">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8395AE13-9196-4891-B6B3-F9111B9329AE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/perpetuation_xq.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "557"
+            endingLineNumber = "557"
+            landmarkName = "EgtbGenDb::perpetual_chase(rcd, idx, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "818F9A89-027E-41A4-AE57-7372B43F3673"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "644"
+            endingLineNumber = "644"
+            landmarkName = "EgtbGenDb::getFlipIdx(rcd, idx)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9F23AF0E-11E2-42A2-A60D-8C19DAEB4333"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgenfile.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "824"
+            endingLineNumber = "824"
+            landmarkName = "EgtbGenFile::verifyIndex(threadIdx, idx)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "48C0E6EF-C9A7-40EA-8514-4260E4C00413"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgenfile.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "932"
+            endingLineNumber = "932"
+            landmarkName = "EgtbGenFile::verifyIndex(board, idx)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EBBE44B2-D09D-4D7F-83CF-1E2611CF83D3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgenfile.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "936"
+            endingLineNumber = "936"
+            landmarkName = "EgtbGenFile::verifyIndex(board, idx)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A132FED0-421D-49A3-A326-CFC5D708BF7E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "563"
+            endingLineNumber = "563"
+            landmarkName = "EgtbGenDb::gen_fillCapturesAfterGenerating()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "A132FED0-421D-49A3-A326-CFC5D708BF7E - 558755aebc81c41d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::gen_fillCapturesAfterGenerating()"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "535"
+                  endingLineNumber = "535"
+                  offsetFromSymbolStart = "1780">
+               </Location>
+               <Location
+                  uuid = "A132FED0-421D-49A3-A326-CFC5D708BF7E - 558755aebc81c41d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::gen_fillCapturesAfterGenerating()"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "535"
+                  endingLineNumber = "535"
+                  offsetFromSymbolStart = "1371">
+               </Location>
+               <Location
+                  uuid = "A132FED0-421D-49A3-A326-CFC5D708BF7E - 558755aebc81c1b1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::gen_fillCapturesAfterGenerating()"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "555"
+                  endingLineNumber = "555"
+                  offsetFromSymbolStart = "1371">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1B3F51D1-592D-49DD-A43A-AC4919DE4FD6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "551"
+            endingLineNumber = "551"
+            landmarkName = "EgtbGenDb::gen_fillCapturesAfterGenerating()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "1B3F51D1-592D-49DD-A43A-AC4919DE4FD6 - 558755aebc81c591"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::gen_fillCapturesAfterGenerating()"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "523"
+                  endingLineNumber = "523"
+                  offsetFromSymbolStart = "1122">
+               </Location>
+               <Location
+                  uuid = "1B3F51D1-592D-49DD-A43A-AC4919DE4FD6 - 558755aebc81c591"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::gen_fillCapturesAfterGenerating()"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "523"
+                  endingLineNumber = "523"
+                  offsetFromSymbolStart = "683">
+               </Location>
+               <Location
+                  uuid = "1B3F51D1-592D-49DD-A43A-AC4919DE4FD6 - 558755aebc81c705"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::gen_fillCapturesAfterGenerating()"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "543"
+                  endingLineNumber = "543"
+                  offsetFromSymbolStart = "683">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6E0B9F5D-5395-424D-B369-36A15D601AAA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgenfile.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "313"
+            endingLineNumber = "313"
+            landmarkName = "EgtbGenFile::setBufScore(idx, score, side)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BB457E93-EBC6-4780-98E3-989DCEE50AA0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "BB457E93-EBC6-4780-98E3-989DCEE50AA0 - 9b6ef840f220177"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::gen_backward_thread_init(int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "49"
+                  endingLineNumber = "49"
+                  offsetFromSymbolStart = "356">
+               </Location>
+               <Location
+                  uuid = "BB457E93-EBC6-4780-98E3-989DCEE50AA0 - 9b6ef840f220177"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbGenDb::gen_backward_thread_init(int)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtbgen/egtbgendb_backward.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "49"
+                  endingLineNumber = "49"
+                  offsetFromSymbolStart = "412">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9BBB0D7C-00DD-4CE2-A6E9-8856026A8049"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtbgen/egtbgendb_backward.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "82"
+            endingLineNumber = "82"
+            landmarkName = "EgtbGenDb::gen_backward_thread_init(threadIdx)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F7B994AA-E3C0-4C94-BFB2-BEBFE0E5FB87"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtb/egtbdb.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "502"
+            endingLineNumber = "502"
+            landmarkName = "EgtbDb::getBestLine(fen)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2792BE16-099E-406F-B586-6EBA96260B1A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtb/egtbdb.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "517"
+            endingLineNumber = "517"
+            landmarkName = "EgtbDb::getBestLine(board)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "62B38E5F-0633-4897-B1DA-DB10A37AA11A"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/fegtb/egtbdb.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "523"
+            endingLineNumber = "523"
+            landmarkName = "EgtbDb::getBestLine(board)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "62B38E5F-0633-4897-B1DA-DB10A37AA11A - 1c085eaafcac7e0a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbDb::getBestLine(bslib::XqBoard&amp;, std::__1::unordered_map&lt;long long, int, std::__1::hash&lt;long long&gt;, std::__1::equal_to&lt;long long&gt;, std::__1::allocator&lt;std::__1::pair&lt;long long const, int&gt;&gt;&gt;&amp;)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtb/egtbdb.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "525"
+                  endingLineNumber = "525"
+                  offsetFromSymbolStart = "55">
+               </Location>
+               <Location
+                  uuid = "62B38E5F-0633-4897-B1DA-DB10A37AA11A - 48c0a329f28eba6b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "fegtb::EgtbDb::getBestLine(bslib::XqBoard&amp;)"
+                  moduleName = "FelicityEgtb-xq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenpham/workspace/myopensources/FelicityEgtb/src/fegtb/egtbdb.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "523"
+                  endingLineNumber = "523"
+                  offsetFromSymbolStart = "418">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "85E34E89-901B-4130-A416-1BE93FAA501F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/mainegtb.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "343"
+            endingLineNumber = "343"
+            landmarkName = "main(argc, argv)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
