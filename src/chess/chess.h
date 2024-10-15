@@ -46,10 +46,10 @@ namespace bslib {
         virtual bool isValid() const override;
         virtual bool isLegal() const override;
 
-        virtual int columnCount() const override;
-        virtual int rankCount() const override;
-        virtual int getColumn(int pos) const override;
-        virtual int getRank(int pos) const override;
+//        virtual int columnCount() const override;
+//        virtual int rankCount() const override;
+//        virtual int getColumn(int pos) const override;
+//        virtual int getRank(int pos) const override;
 
         virtual void reset() override {
             BoardCore::reset();

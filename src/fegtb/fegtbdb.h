@@ -22,8 +22,8 @@
 #include <map>
 #include <string>
 
-#include "egtb.h"
-#include "egtbfile.h"
+#include "fegtb.h"
+#include "fegtbfile.h"
 
 namespace fegtb {
 
@@ -68,7 +68,7 @@ namespace fegtb {
         int probe(EgtbBoard& board, std::vector<bslib::MoveFull>& moveList);
         int probe(const std::string& fenString, std::vector<bslib::MoveFull>& moveList);
         
-        int probeByChildren(EgtbBoard& board, bslib::Side, EgtbFile* mainEgtbFile, bool debugging = false);
+        int probeByChildren(EgtbBoard& board, bslib::Side, EgtbFile* mainEgtbFile, bool rule120 = true, bool debugging = false);
 
     public:
         EgtbFile* getEgtbFile(const std::string& name);
@@ -82,7 +82,7 @@ namespace fegtb {
         std::pair<bslib::Result, std::vector<bslib::Move>> getBestLine(EgtbBoard&);
 
     protected:
-        std::pair<bslib::Result, std::vector<bslib::Move>> getBestLine(EgtbBoard&, std::unordered_map<i64, int>&);
+        std::pair<bslib::Result, std::vector<bslib::Move>> getBestLine(EgtbBoard&, bslib::GameResultType rootResultType, std::unordered_map<i64, int>&, int quietCnt);
 
     protected:
         static std::string getEgtbFileName(const bslib::BoardCore& board);

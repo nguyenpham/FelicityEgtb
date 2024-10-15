@@ -94,19 +94,16 @@ const static int COPYRIGHT_BUFSZ = 64;
 #else
 #define TB_DRAW                             7
 
-#define TB_PERPETUAL_CHECK_WIN              3
-#define TB_PERPETUAL_CHECK_LOSS             4
-#define TB_PERPETUAL_CHASE_WIN              5
-#define TB_PERPETUAL_CHASE_LOSS             6
 
+#define EGTB_SCORE_PERPETUAL_CHECK          8199
 
-#define EGTB_SCORE_PERPETUAL_ABOVE          8005
+#define EGTB_SCORE_PERPETUAL_CHASE          8198
 
-#define EGTB_SCORE_PERPETUAL_CHECK_WIN      8002
-#define EGTB_SCORE_PERPETUAL_CHECK_LOSS     -EGTB_SCORE_PERPETUAL_CHECK_WIN
+#define EGTB_SCORE_PERPETUAL_ABOVE          (EGTB_SCORE_PERPETUAL_CHECK+1)
 
-#define EGTB_SCORE_PERPETUAL_CHASE_WIN      8001
-#define EGTB_SCORE_PERPETUAL_CHASE_LOSS     -EGTB_SCORE_PERPETUAL_CHASE_WIN
+#define EGTB_SCORE_PERPETUAL_120            (EGTB_SCORE_PERPETUAL_CHASE-120)
+
+#define EGTB_SCORE_PERPETUAL_BELOW          8001
 
 #endif
 
@@ -358,9 +355,9 @@ enum EgtbIdx {
 
 } // namespace fegtb
 
-#include "egtbfile.h"
-#include "egtbdb.h"
-#include "egtbkey.h"
+#include "fegtbfile.h"
+#include "fegtbdb.h"
+#include "fegtbkey.h"
 
 #endif
 

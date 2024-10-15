@@ -19,9 +19,9 @@
 #include <iomanip>
 #include <ctime>
 
-#include "egtb.h"
-#include "egtbfile.h"
-#include "egtbkey.h"
+#include "fegtb.h"
+#include "fegtbfile.h"
+#include "fegtbkey.h"
 
 #include "../base/funcs.h"
 

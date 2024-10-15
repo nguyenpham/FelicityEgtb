@@ -31,20 +31,20 @@ i64 EgtbGenDb::maxEndgameSize = -1;
 #ifdef _FELICITY_CHESS_
 static const std::string pieceSorting = "0987654321";
 
-static const std::set<std::string> knownTwoBytesEndgameSet {
-    "kqpkq", "kqnkp", "kqbkp", "kqrkp", "kqqkp", "knnpk", "kbnpk", "kbbpk",
-    "krnpk", "krbpk", "krrpk", "kqnpk", "kqbpk", "kqrpk", "kqqpk", "knkpp",
-    "kbkpp", "krkpp", "kqkpp", "knpkp", "kbpkp", "krpkp", "kqpkp", "knppk",
-    "kbppk", "krppk", "kqppk", "kppkp", "kpppk"
-};
+//static const std::set<std::string> knownTwoBytesEndgameSet {
+//    "kqpkq", "kqnkp", "kqbkp", "kqrkp", "kqqkp", "knnpk", "kbnpk", "kbbpk",
+//    "krnpk", "krbpk", "krrpk", "kqnpk", "kqbpk", "kqrpk", "kqqpk", "knkpp",
+//    "kbkpp", "krkpp", "kqkpp", "knpkp", "kbpkp", "krpkp", "kqpkp", "knppk",
+//    "kbppk", "krppk", "kqppk", "kppkp", "kpppk"
+//};
 
 #else
 
 static const std::string pieceSorting = "09218765430";
 
-static const std::set<std::string> knownTwoBytesEndgameSet {
-    "",
-};
+//static const std::set<std::string> knownTwoBytesEndgameSet {
+//    "",
+//};
 
 #endif
 
@@ -248,7 +248,7 @@ std::string NameRecord::getSubfolder() const
 bool EgtbGenDb::gen_single(int egtbidx, const std::string& folder, const std::string& name, EgtbType egtbType, CompressMode compressMode)
 {
     time_start = Funcs::now();
-
+    
     /// Detect size of each item
     switch (EgtbGenDb::dataItemMode) {
         case DataItemMode::one:
@@ -257,47 +257,58 @@ bool EgtbGenDb::gen_single(int egtbidx, const std::string& folder, const std::st
         case DataItemMode::two:
             EgtbGenDb::twoBytes = true;
             break;
-
+            
         default:
         {
-            NameRecord nameRecord(name);
-            auto attackerCnt = nameRecord.attackerSides[0].size() + nameRecord.attackerSides[1].size();
+//            NameRecord nameRecord(name);
+//            auto attackerCnt = nameRecord.attackerSides[0].size() + nameRecord.attackerSides[1].size();
             
-            EgtbGenDb::twoBytes = false;
-            if (attackerCnt > 4
-                || knownTwoBytesEndgameSet.find(name) != knownTwoBytesEndgameSet.end()) {
-                EgtbGenDb::twoBytes = true;
-            }
+            //            EgtbGenDb::twoBytes = false;
+            //            if (attackerCnt > 4
+            //                || knownTwoBytesEndgameSet.find(name) != knownTwoBytesEndgameSet.end()) {
+            //                EgtbGenDb::twoBytes = true;
+            //            }
             break;
         }
     }
-
+    
     assert(egtbFile == nullptr);
     egtbFile = new EgtbGenFile();
     egtbFile->create(name, egtbType);
-
+    
     auto sz = egtbFile->getSize();
     auto bufsz = sz * 2;
     if (egtbFile->isTwoBytes()) bufsz += bufsz;
     if (useBackward) bufsz += sz / 2;
-
+    
     startTimeString = GenLib::currentTimeDate();
-    std::cout << std::endl << egtbidx + 1 << ") Start generating " << name << ", " << GenLib::formatString(sz) << (egtbFile->isTwoBytes() ? ", 2 bytes/item" : "") << ", main mem sz: " << GenLib::formatString(bufsz) << ", " << startTimeString << std::endl;
-
+    //    std::cout << std::endl << egtbidx + 1 << ") Start generating " << name << ", " << GenLib::formatString(sz) << (egtbFile->isTwoBytes() ? ", 2 bytes/item" : "") << ", main mem sz: " << GenLib::formatString(bufsz) << ", " << startTimeString << std::endl;
+    
+    std::string msg = std::to_string(egtbidx + 1)
+    + ") Start generating " + name
+    + ", " + GenLib::formatString(sz)
+    + (egtbFile->isTwoBytes() ? ", 2 bytes/item" : "")
+    + ", main mem sz: " + GenLib::formatString(bufsz);
+    showStringWithCurrentTime(msg);
+    
     egtbFile->createBuffersForGenerating();
     assert(egtbFile->isValidHeader());
     
     setupThreadRecords(egtbFile->getSize());
-
+    
     if (useBackward) {
         gen_backward(folder);
     } else {
         gen_forward(folder);
     }
-
+    
     auto r = gen_finish(folder, compressMode, verifyMode);
     if (r) {
-        std::cout << "\tGenerated successfully " << name << std::endl << std::endl;
+        auto elapsed = Funcs::now() - time_start;
+
+        std::string msg = "\tGenerated successfully " + name + ", elapsed " + GenLib::formatPeriod(int(elapsed / 1000)) + ",";
+        showStringWithCurrentTime(msg);
+        std::cout << std::endl;
     }
     return r;
 }
@@ -327,6 +338,8 @@ bool EgtbGenDb::gen_finish(const std::string& folder, CompressMode compressMode,
     /// Verify
     elapsed_verify = 0;
     if (needVerify) {
+//        // WARNING
+//        changeOneThread();
         if (!verifyData(egtbFile)) {
             std::cerr << "Error: verify FAILED for " << egtbFile->getName() << std::endl;
             exit(1);
@@ -336,6 +349,11 @@ bool EgtbGenDb::gen_finish(const std::string& folder, CompressMode compressMode,
         elapsed_verify = Funcs::now() - time_completed;
         total_elapsed_verify += elapsed_verify;
     }
+    
+
+    /// WARNING
+    exit(-1);
+
     
     egtbFile->checkAndConvert2bytesTo1();
 
@@ -348,6 +366,7 @@ bool EgtbGenDb::gen_finish(const std::string& folder, CompressMode compressMode,
 #endif
     std::cout << ", verifying: " << GenLib::formatPeriod(int(total_elapsed_verify / 1000)) << std::endl;
 
+    std::cout << "\tSaving..." << std::endl;
     if (egtbFile->saveFile(folder, compressMode)) {
         egtbFile->createStatsFile();
         writeLog();

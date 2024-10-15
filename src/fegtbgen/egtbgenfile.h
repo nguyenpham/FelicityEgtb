@@ -22,8 +22,8 @@
 #include <string.h>
 #include <fstream>
 
-#include "../fegtb/egtb.h"
-#include "../fegtb/egtbfile.h"
+#include "../fegtb/fegtb.h"
+#include "../fegtb/fegtbfile.h"
 #include "defs.h"
 #include "threadmng.h"
 
@@ -39,15 +39,21 @@ class EgtbFileStats
 public:
     i64 validCnt[2] = { 0, 0 };
     i64 wdl[2][3] = {{0, 0, 0}, {0, 0, 0}};
-    int smallestCell = EGTB_SCORE_MATE;
+    int minCells[2] = { EGTB_SCORE_MATE, EGTB_SCORE_MATE};
 
 #ifdef _FELICITY_XQ_
     i64 perpetuals[2][4] = {{ 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
-    std::vector<std::pair<i64, int>> perpVecs[4];
-    int perpCnt = 0;
+//    std::vector<std::pair<i64, int>> perpVecs[4];
+//    std::vector<std::pair<i64, int>> perpMaxLeadingVecs;
+    
+    std::unordered_map<i64, int> perpSampleMaps[2],
+    perpLeadingSampleMap;
+
+    
+    i64 perpCnt = 0, perpLeadingCnt[2] = { 0, 0}, perpLeadingMax = 0;
 #endif
 
-    std::unordered_map<i64, int> sampleMap;
+    std::unordered_map<i64, int> sampleMaps[2];
     
     std::string name;
     i64 size;

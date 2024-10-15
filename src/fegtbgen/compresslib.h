@@ -19,7 +19,7 @@
 #define CompressLib_hpp
 
 #include "defs.h"
-#include "../fegtb/egtb.h"
+#include "../fegtb/fegtb.h"
 
 namespace fegtb {
 

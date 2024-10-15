@@ -20,7 +20,7 @@
 
 #include <map>
 
-#include "egtb.h"
+#include "fegtb.h"
 
 namespace fegtb {
 

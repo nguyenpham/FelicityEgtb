@@ -206,13 +206,6 @@ std::vector<MoveFull> GenBoard::gen_backward_quiet(Side side) const
         }
     }
     
-//    std::vector<MoveFull> moves2;
-    for (auto && move : moves) {
-        assert(isEmpty(move.dest));
-//        if (isEmpty(move.dest)) {
-//            moves2.push_back(move);
-//        }
-    }
     return moves;
 }
 

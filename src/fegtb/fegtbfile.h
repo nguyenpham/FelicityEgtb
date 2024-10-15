@@ -22,7 +22,7 @@
 #include <fstream>
 #include <mutex>
 
-#include "egtb.h"
+#include "fegtb.h"
 
 
 namespace fegtb {
@@ -228,14 +228,16 @@ public:
     virtual int cellToScore(char cell);
     static int _cellToScore(char cell);
 
-    static bool pickBestFromRivalScore(int& bestScore, int score);
+    static bool pickBestFromRivalScore(int& bestScore, int score, bool rule120 = true);
     static bool isSmallerScore(int score0, int score1);
-    static int revertScore(int score, int inc = 1);
+    static int revertScore(int score, int inc = 1, bool rule120 = true);
     static std::string explainScore(int score);
+    static bool matchChilrenScore(int score, int chilrenScore);
 
 #ifdef _FELICITY_XQ_
     static bool isPerpetualScore(int score);
-    static int perpetualScoreToIdx(int score);
+    static bool isPerpetualScoreOver120(int score);
+
 #endif
 
 protected:

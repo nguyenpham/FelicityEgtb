@@ -68,11 +68,11 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n krakra"
-            isEnabled = "NO">
+            argument = "-n krakcnaa"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n krakcna"
+            argument = "-n krkcn"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -93,7 +93,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n kcpabknaa"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-n kcaknp"
@@ -121,7 +121,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-g"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-v"
@@ -169,7 +169,23 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-fen 3a5/4k4/4c4/4R4/9/9/9/3n5/9/5K3 w - - 2 3"
-            isEnabled = "YES">
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-fen 3a1a3/5k3/9/9/9/9/7p1/7c1/3R5/3K1A3 b 0 1"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-fen 9/4k4/4c4/6n2/9/5R3/9/9/9/4K4 w - - 26 10"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-fen 5k3/1C7/9/9/9/9/n8/4K4/4A4/9 w 0 1"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-fen R8/3k5/9/9/4c4/9/6n2/5K3/9/9 w - - 0 0"
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>

@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <iomanip>
 
-#include "fegtb/egtbdb.h"
+#include "fegtb/fegtbdb.h"
 #include "base/funcs.h"
 
 #include "fegtbgen/egtbgendb.h"
@@ -163,14 +163,7 @@ int main(int argc, char* argv[])
 #ifndef NDEBUG
     std::cerr << "WARNING: program compiled in DEBUG mode!" << std::endl;
 #endif
-    
-    
-//    {
-//        XqChaseJudge::testRules();
-////        XqChaseJudge::testRules2();
-//        return 0;
-//    }
-    
+        
     static const auto programName = "egtbgen";
     std::cout << "Felicity EGTB generator for " << EGTB_MAJOR_VARIANT
     << ", by Nguyen Hong Pham 2024, version: " << EGTB_VERSION_STRING

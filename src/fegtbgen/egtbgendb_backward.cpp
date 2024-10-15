@@ -24,8 +24,8 @@ using namespace bslib;
 extern bool check2Flip;
 bool check2Flip = true;
 
-static const int debugIdx = -1; //106840664;
-static const Side debugSide = Side::white;
+static const int debugIdx = -10;
+static const Side debugSide = Side::black; // Side::white;
 
 void EgtbGenDb::gen_backward_thread_init(int threadIdx)
 {
@@ -36,7 +36,6 @@ void EgtbGenDb::gen_backward_thread_init(int threadIdx)
 
     /// Init loop
     for (auto idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
-//        auto d = idx == 1173918 || idx == 1538248;
         if (!egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white)
 #ifdef _FELICITY_XQ_
             || !rcd.board->isLegal() /// don't need to check legal for chess variant
@@ -45,9 +44,6 @@ void EgtbGenDb::gen_backward_thread_init(int threadIdx)
             egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, Side::black);
             egtbFile->setBufScore(idx, EGTB_SCORE_ILLEGAL, Side::white);
             
-//            if (d) {
-//                std::cout << "Something wrong";
-//            }
             continue;
         }
 
@@ -78,17 +74,13 @@ void EgtbGenDb::gen_backward_thread_init(int threadIdx)
             rcd.board->isIncheck(Side::white)
         };
         
-//        if (d) {
-//            rcd.board->printOut("idx=" + std::to_string(idx));
-//        }
-        
         for (auto sd = 0; sd < 2; sd++) {
             auto side = static_cast<Side>(sd);
             auto xsd = 1 - sd;
             auto bestScore = EGTB_SCORE_UNSET;
             auto legalCount = 0, capCnt = 0;
 
-            auto d = false; //idx == debugIdx; // && side == Side::black;
+            auto d = idx == debugIdx; // && side == Side::black;
 
             if (inchecks[xsd]) {
                 bestScore = EGTB_SCORE_ILLEGAL;
@@ -122,10 +114,6 @@ void EgtbGenDb::gen_backward_thread_init(int threadIdx)
                                 }
                             }
                             
-//                            if (d) {
-//                                rcd.board->printOut("after capture move=" + rcd.board->toString(move) + ", score=" + std::to_string(score));
-//                            }
-
                             assert(score != EGTB_SCORE_UNSET);
                             EgtbFile::pickBestFromRivalScore(bestScore, score);
                         }
@@ -253,32 +241,6 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
             auto is_cap = egtbFile->flag_is_cap(idx, side);
             if (is_cap) {
                 if (fillScore == oScore) {
-//                    if (fillScore > 0) {
-////                        auto vec = setBufScore(rcd, idx, fillScore, side);
-////                        assert(vec.size() > 0 && vec.size() <= 2);
-////                        egtbFile->flag_clear_cap(idx, side);
-////                        if (vec.size() > 1) {
-////                            egtbFile->flag_clear_cap(vec[1], side);
-////                        }
-////                        rcd.changes++;
-////                        if (vec.front() == debugIdx || vec.back() == debugIdx) {
-////                            std::cout << "IMHERE 1, fillScore = " << fillScore
-////                            << ", side=" << Funcs::side2String(side, true) << std::endl;
-////                        }
-//
-//                        egtbFile->setBufScore(idx, fillScore, side);
-//                        egtbFile->flag_clear_cap(idx, side);
-//                        rcd.changes++;
-//
-//                    } else {
-//                        egtbFile->flag_set_side(idx, side);
-//                        auto ok = egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white);
-//                        auto idx2 = getFlipIdx(rcd, idx);
-//                        if (idx2 >= 0) {
-//                            egtbFile->flag_set_side(idx2, side);
-//                        }
-//                    }
-                    
                     auto ok = egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white); assert(ok);
                     auto idx2 = getFlipIdx(rcd, idx);
                     if (fillScore > 0) {
@@ -294,6 +256,13 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
                         egtbFile->flag_set_side(idx, side);
                         if (idx2 >= 0) {
                             egtbFile->flag_set_side(idx2, side);
+                        }
+                        if (idx == debugIdx || idx2 == debugIdx) {
+                            std::cout << "IMHERE 2, set side flag at " << idx
+                            << ", ply = " << ply
+                            << ", idx = " << idx
+                            << ", idx2 = " << idx2 << std::endl;
+                            rcd.board->printOut("IMHERE 2");
                         }
                     }
 
@@ -366,7 +335,8 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
                                 }
                                 rcd.changes++;
                                 
-                                if (vec.front() == debugIdx || vec.back() == debugIdx) {
+                                if (vec.front() == debugIdx || vec.back() == debugIdx
+                                    ) {
                                     std::cout << "IMHERE 8, fillScore = " << fillScore
                                     << ", vec sz=" << vec.size()
                                     << ", rIdx=" << rIdx
@@ -374,7 +344,11 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
                                     << ", rScore=" << rScore
                                     << std::endl;
                                     
-                                    rcd.board->printOut("rIdx = " + std::to_string(rIdx));
+//                                    rcd.board->printOut("rIdx = " + std::to_string(rIdx));
+                                    showData("IMHERE 8, fillScore", debugIdx, debugSide, true);
+                                    
+//                                    showData("IMHERE 8, fillScore", 1848018, debugSide, true);
+
                                 }
                                 
                             }
@@ -388,12 +362,21 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
                         if (sIdx >= 0) {
                             egtbFile->flag_set_side(sIdx, xside);
                         }
+                        
+                        if (rIdx == debugIdx || sIdx == debugIdx) {
+                            std::cout << "IMHERE 9, set side flag at " << idx
+                            << ", ply = " << ply
+                            << ", rIdx = " << rIdx
+                            << ", sIdx = " << sIdx << std::endl;
+                            rcd.board->printOut("IMHERE 9");
+                        }
                     }
                 }
                 
                 rcd.board->takeBack(hist);
             }
             
+            /// phase == 1
         } else if (egtbFile->flag_is_side(idx, side)) {
             /// phase 1 - work with marked positions only, they are lossing ones
             /// those positions have at least one lossing child but they may have
@@ -415,8 +398,10 @@ void EgtbGenDb::gen_backward_thread(int threadIdx, int ply, int sd, int phase)
                     std::cout
                     << "IMHERE 16, bestScore = " << bestScore
                     << ", idx = " << idx
+                    << ", fillScore = " << fillScore
                     << std::endl;
-                    rcd.board->printOut("idx = " + std::to_string(idx));
+//                    rcd.board->printOut("idx = " + std::to_string(idx));
+                    showData("IMHERE 16", debugIdx, debugSide, true);
                 }
             }
         }
@@ -481,12 +466,16 @@ int EgtbGenDb::gen_probeByChildren(EgtbBoard& board, Side side, bool debugging)
                 }
             }
             
-            if (score == EGTB_SCORE_UNSET) {
+            if (!EgtbFile::pickBestFromRivalScore(bestScore, score)) {
                 unsetCount++;
                 bestScore = EGTB_SCORE_UNSET;
-            } else if (!unsetCount) {
-                EgtbFile::pickBestFromRivalScore(bestScore, score);
             }
+//            if (score == EGTB_SCORE_UNSET) {
+//                unsetCount++;
+//                bestScore = EGTB_SCORE_UNSET;
+//            } else if (!unsetCount) {
+//                EgtbFile::pickBestFromRivalScore(bestScore, score);
+//            }
             
             if (debugging) {
                 board.printOut("after a move=" + board.toString(move)
@@ -547,10 +536,6 @@ void EgtbGenDb::gen_fillCapturesAfterGenerating()
                     egtbFile->flag_clear_cap(idx, side);
                     changCnt++;
                     
-//                    if (idx == 2198 || idx == 51806) {
-//                        board.printOut("idx=" + std::to_string(idx) + ", sc=" + std::to_string(sc));
-//                    }
-                    
                     auto flip = board.needSymmetryFlip();
                     if (flip != FlipMode::none) {
                         board.flip(flip);
@@ -558,11 +543,6 @@ void EgtbGenDb::gen_fillCapturesAfterGenerating()
                         if (idx != idx2) {
                             egtbFile->setBufScore(idx2, sc, side);
                             egtbFile->flag_clear_cap(idx2, side);
-                            
-//                            if (idx2 == 2198 || idx2 == 51806) {
-//                                board.printOut("idx2=" + std::to_string(idx2) + ", sc=" + std::to_string(sc));
-//                            }
-
                         }
                     }
                 }
@@ -576,13 +556,6 @@ void EgtbGenDb::gen_fillCapturesAfterGenerating()
             if (egtbFile->flag_is_cap(idx, side)) {
                 egtbFile->setBufScore(idx, EGTB_SCORE_UNSET, side);
                 egtbFile->flag_clear_cap(idx, side);
-
-//                auto vec = setBufScore(rcd, idx, EGTB_SCORE_UNSET, side);
-//                assert(vec.size() > 0 && vec.size() <= 2);
-//                egtbFile->flag_clear_cap(idx, side);
-//                if (vec.size() > 1) {
-//                    egtbFile->flag_clear_cap(vec[1], side);
-//                }
             }
         }
     }
@@ -694,7 +667,7 @@ void EgtbGenDb::gen_backward(const std::string& folder)
 #endif
     
     showData("After init", debugIdx, Side::none, false);
-//    showData("After init", 2198, Side::none, false);
+//    showData("After init", 2577018, Side::none, false);
 //    showData("After init", 51806, Side::none, false);
 
     /// Main loops
@@ -743,8 +716,6 @@ void EgtbGenDb::gen_backward(const std::string& folder)
     }
     
     showData("after gen_backward_thread, before filling", debugIdx, Side::none, false);
-//    showData("After gen_backward_thread", 2198, Side::none, false);
-//    showData("After gen_backward_thread", 51806, Side::none, false);
 
     /// All posible positions are generated , now fill the rest
     gen_fillCapturesAfterGenerating();
@@ -755,9 +726,8 @@ void EgtbGenDb::gen_backward(const std::string& folder)
         std::cout << "\tCompleted main loops." << std::endl;
     }
     
-//    egtbFile->writeTmpFiles(folder, ply, mPly);
-//    std::cout << "\twriteTmpFiles." << std::endl;
-    //    exit(0);
+    egtbFile->writeTmpFiles(folder, ply, mPly);
+    std::cout << "\twriteTmpFiles." << std::endl;
 }
 
 #ifdef _FELICITY_FLIP_MAP_

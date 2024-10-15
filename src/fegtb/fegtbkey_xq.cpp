@@ -15,8 +15,8 @@
  copies or substantial portions of the Software.
  */
 
-#include "egtb.h"
-#include "egtbkey.h"
+#include "fegtb.h"
+#include "fegtbkey.h"
 #include "../base/funcs.h"
 
 

@@ -751,7 +751,6 @@ void XqBoard::make(const MoveFull& move, Hist& hist)
     hashKey ^= xorHashKey(move.from);
 #endif
 
-
     if (!hist.cap.isEmpty() ||
         (abs(move.from - move.dest) != 1 && move.piece.type == PieceType::pawn) ||
         move.piece.type == PieceType::jeiqi) {

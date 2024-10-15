@@ -62,13 +62,9 @@ std::string Result::resultType2String(GameResultType type, bool shortFrom)
     return shortFrom ? resultStrings_short[t] : resultStrings[t];
 }
 
-//std::string toResultShortString(GameResultType result) {
-//    return resultType2String(result, true);
-//}
-
 std::string Result::toString(const Result& result)
 {
-    auto str = Result::resultType2String(result.result);
+    auto str = Result::resultType2String(result.result, false);
     if (result.reason != ReasonType::noreason) {
         str += " (" + Result::reasonString(result.reason) + ")";
     }

@@ -15,7 +15,7 @@
  copies or substantial portions of the Software.
  */
 
-#include "egtbkey.h"
+#include "fegtbkey.h"
 
 namespace fegtb {
     EgtbKey egtbKey;

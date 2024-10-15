@@ -199,13 +199,15 @@ public:
         return toString(*this);
     }
 
-//    void setReason(const std::string& s) {
-//        reason = string2ReasonType(s);
-//        if (reason == ReasonType::extracomment && comment.empty()) {
-//            comment = s;
-//        }
-//    }
-
+    bool operator > (const Result & o) const {
+        return static_cast<int>(result) < static_cast<int>(o.result);
+    }
+    bool operator >= (const Result & o) const {
+        return static_cast<int>(result) <= static_cast<int>(o.result);
+    }
+    bool operator == (const Result & o) const {
+        return result == o.result;
+    }
 };
 
 class Piece {

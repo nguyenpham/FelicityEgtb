@@ -24,14 +24,14 @@
 
 #include "defs.h"
 #include "genboard.h"
-#include "../fegtb/egtb.h"
+#include "../fegtb/fegtb.h"
 
 namespace fegtb {
 
 class EgtbGenThreadRecord {
 public:
     int threadIdx;
-    i64 fromIdx, toIdx, changes, cnt;
+    i64 fromIdx, toIdx, changes, cnt, n;
     bool ok;
     
     GenBoard *board = nullptr,  *board2 = nullptr;

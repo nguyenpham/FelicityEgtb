@@ -17,7 +17,7 @@
 
 #include <thread>
 
-#include "../fegtb/egtb.h"
+#include "../fegtb/fegtb.h"
 #include "../base/funcs.h"
 
 #include "egtbgenfile.h"
@@ -36,16 +36,62 @@ extern const int pieceValForOrdering[7];
 
 #define SAMPLE_CNT 10
 
-static const int firstWidth = 23;
+#ifdef _FELICITY_CHESS_
+static const int firstWidth = 22;
+#else
+static const int firstWidth = 28;
+#endif
+
 
 void printFormatedString(std::ostringstream& stringStream, const std::string& s0, const std::string& s1)
 {
     stringStream << std::left << std::setw(firstWidth) << s0 << ": " << s1 << std::endl;
 }
 
+void printSamples(std::ostringstream& stringStream, EgtbFile* egtbFile, const std::string& msg, const std::unordered_map<i64, int>& sampleMap)
+{
+    if (sampleMap.empty()) {
+        return;
+    }
+    
+    stringStream << "\n\n" << msg << ":\n";
+    
+    GenBoard board;
+    for(auto && p : sampleMap) {
+        auto idx = p.first;
+        auto sd = p.second;
+        
+        auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white); assert(ok);
+        board.side = static_cast<Side>(sd);
+        board.setFenComplete();
+
+        stringStream << board.getFen() << std::endl;
+    }
+}
+
+void addSamples(std::unordered_map<i64, int>& sampleMap, i64 idx, int sd)
+{
+    assert(idx >= 0 && (sd == 0 || sd == 1));
+    
+    if (sampleMap.size() >= SAMPLE_CNT) {
+        if (rand() & 0xf) {
+            return;
+        }
+        auto p = std::next(sampleMap.begin(), rand() % SAMPLE_CNT);
+        sampleMap.erase(p);
+    }
+
+    sampleMap[idx] = sd;
+}
+
 void EgtbFileStats::createStats(EgtbFile* egtbFile, bool pickSamples)
 {
     assert(egtbFile);
+    
+    /// make sure the endgame is loaded
+    egtbFile->getScore(0, Side::white);
+    egtbFile->getScore(0, Side::black);
+
     name = egtbFile->getName();
     size = egtbFile->getSize();
     isBothArmed = egtbFile->isBothArmed();
@@ -66,37 +112,44 @@ void EgtbFileStats::createStats(EgtbFile* egtbFile, bool pickSamples)
                 wdl[sd][1]++;
 #ifdef _FELICITY_XQ_
             } else if (EgtbFile::isPerpetualScore(score)) {
-                auto k = EgtbFile::perpetualScoreToIdx(score);
-                if (k >= 0) {
-                    perpetuals[sd][k]++; perpCnt++;
-                    if (pickSamples && perpVecs[k].size() < SAMPLE_CNT) {
-                        std::pair<i64, int> p;
-                        p.first = idx;
-                        p.second = sd;
-                        perpVecs[k].push_back(p);
+                perpCnt++;
+                auto ascore = std::abs(score);
+                if (ascore == EGTB_SCORE_PERPETUAL_CHECK || ascore == EGTB_SCORE_PERPETUAL_CHASE) {
+                    auto k = ascore == EGTB_SCORE_PERPETUAL_CHECK ? 0 : 1;
+                    if (score < 0) k += 2;
+                    perpetuals[sd][k]++;
+                    if (pickSamples) {
+                        auto t = ascore == EGTB_SCORE_PERPETUAL_CHECK ? 0 : 1;
+                        addSamples(perpSampleMaps[t], idx, sd);
+                    }
+                } else {
+                    auto k = score < 0 ? 0 : 1;
+                    perpLeadingCnt[k]++;
+                    auto m = EGTB_SCORE_PERPETUAL_CHASE - ascore; assert(m > 0 && m <= 120);
+                    if (m > perpLeadingMax) {
+                        perpLeadingMax = m;
+                        perpLeadingSampleMap.clear();
+                    }
+                    if (perpLeadingMax == m && pickSamples) {
+                        addSamples(perpLeadingSampleMap, idx, sd);
                     }
                 }
 #endif
             } else if (score <= EGTB_SCORE_MATE) {
-                if (score > 0) wdl[sd][0]++;
-                else wdl[sd][2]++;
-                auto absScore = abs(score);
-                if (smallestCell > absScore) {
-                    sampleMap.clear();
-                    smallestCell = absScore;
-                }
-                if (smallestCell == absScore) {
-                    sampleMap[idx] = sd;
-                    if (pickSamples && sampleMap.size() > SAMPLE_CNT) {
-                        auto p = sampleMap.begin();
-                        for (auto k = 0; (rand() & 1) && k < 4; k++) {
-                            p++;
-                        }
-                        sampleMap.erase(p);
+                if (score > 0) {
+                    wdl[sd][0]++;
+
+                    if (minCells[sd] > score) {
+                        minCells[sd] = score;
+                        sampleMaps[sd].clear();
                     }
-                }
+
+                    if (minCells[sd] == score && pickSamples) {
+                        addSamples(sampleMaps[sd], idx, sd);
+                    }
+                } else wdl[sd][2]++;
+                
             }
-            
         }
     }
 
@@ -107,20 +160,37 @@ std::string EgtbFileStats::createStatsString(EgtbFile* egtbFile)
     assert(egtbFile);
     createStats(egtbFile);
     
-
     std::ostringstream stringStream;
     
     printFormatedString(stringStream, "Name", name);
 
- 
-    printFormatedString(stringStream, "Total positions", std::to_string(size));
+    std::string s = std::to_string(size) + " (each side)";
 
+    printFormatedString(stringStream, "Total positions", s);
+
+    if (size <= 0) {
+        return stringStream.str();
+    }
     i64 total = validCnt[0] + validCnt[1];
     
-    std::string s = std::to_string(total) + " (" + std::to_string(total * 50 / size) + "%) (2 sides)";
+    s = std::to_string(total) + " (" + std::to_string(total * 50 / size) + "%, 2 sides)";
     printFormatedString(stringStream, "Legal positions", s);
 
+    auto draws = wdl[0][1] + wdl[1][1];
+    s = std::to_string(draws) + " (" + std::to_string(draws * 100 / total) + "% of legals)";
+    printFormatedString(stringStream, "Total draws", s);
+
+#ifdef _FELICITY_XQ_
+    if (perpCnt > 0) {
+        auto d = draws + perpCnt;
+        s = std::to_string(d) + " (" + std::to_string(d * 100 / total) + "% of legals)";
+        printFormatedString(stringStream, "Draws + perpetuations", s);
+    }
+#endif
     
+//    s = std::to_string(abs(EGTB_SCORE_MATE - smallestCell));
+//    printFormatedString(stringStream, "Max DTM", s);
+
     for(auto sd = 1; sd >= 0; sd--) {
         i64 w = wdl[sd][0] * 100 / validCnt[sd];
         s = std::to_string(w) + "%";
@@ -138,86 +208,54 @@ std::string EgtbFileStats::createStatsString(EgtbFile* egtbFile)
 #ifdef _FELICITY_XQ_
         if (perpCnt > 0) {
             s = std::to_string(perpetuals[sd][0]) + ", " + std::to_string(perpetuals[sd][1]);
-            printFormatedString(stringStream, " Perpetual checks (WL)", s);
+            printFormatedString(stringStream, " perpetual checks (WL)", s);
 
             s = std::to_string(perpetuals[sd][2]) + ", " + std::to_string(perpetuals[sd][3]);
-            printFormatedString(stringStream, " Perpetual chases (WL)", s);
+            printFormatedString(stringStream, " perpetual chases (WL)", s);
         }
 #endif
-
+        if (minCells[sd] != EGTB_SCORE_MATE) {
+            assert(minCells[sd] > 0);
+            auto mDtm = abs(EGTB_SCORE_MATE - minCells[sd]);
+            s = std::to_string(mDtm);
+            printFormatedString(stringStream, " max winning DTM", s);
+        }
     }
-
-    auto draws = wdl[0][1] + wdl[1][1];
-    s = std::to_string(draws) + ", " + std::to_string(draws * 100 / total) + "% of total legal";
-    printFormatedString(stringStream, "Total draws", s);
 
 #ifdef _FELICITY_XQ_
     if (perpCnt > 0) {
         auto checks = perpetuals[0][0] + perpetuals[0][1] + perpetuals[1][0] + perpetuals[1][1];
         auto chases = perpetuals[0][2] + perpetuals[0][3] + perpetuals[1][2] + perpetuals[1][3];
+        
+        auto d = draws + perpCnt;
+
         s = std::to_string(perpCnt) + ", "
-            + std::to_string(perpCnt * 100 / std::max<i64>(1, draws)) + "% of draws. #checks: "
+            + std::to_string(perpCnt * 100 / std::max<i64>(1, d)) + "% of draws + perpetuations. #checks: "
             + std::to_string(checks) + ", #chases: " + std::to_string(chases);
         printFormatedString(stringStream, "Total perpetuations", s);
+        
+        if (perpLeadingCnt[0] + perpLeadingCnt[1]) {
+            s = std::to_string(perpLeadingCnt[0] + perpLeadingCnt[1])
+            + ", #wins: " + std::to_string(perpLeadingCnt[1]) + ", #losses: " + std::to_string(perpLeadingCnt[0]);
+            printFormatedString(stringStream, "Total forward perpetuations", s);
+
+            printFormatedString(stringStream, "Max forward distance", std::to_string(perpLeadingMax));
+        }
     }
 #endif
-
-    s = std::to_string(abs(EGTB_SCORE_MATE - smallestCell));
-    printFormatedString(stringStream, "Max DTM", s);
 
     /// Examples
+    printSamples(stringStream, egtbFile, "Samples of max DTM for White", sampleMaps[W]);
 
-    if (!sampleMap.empty()) {
-        stringStream << "\n\nSamples with max DTM:\n";
-        
-        GenBoard board;
-        for(auto && p : sampleMap) {
-            auto idx = p.first;
-            auto sd = p.second;
-            
-            auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white); assert(ok);
-            board.side = static_cast<Side>(sd);
-            board.setFenComplete();
+    printSamples(stringStream, egtbFile, "Samples of max DTM for Black", sampleMaps[B]);
 
-            stringStream << board.getFen() << std::endl;
-        }
-        
 #ifdef _FELICITY_XQ_
-//        std::vector<std::pair<i64, int>> perpVecs[4];
-        auto k = EgtbFile::perpetualScoreToIdx(EGTB_SCORE_PERPETUAL_CHECK_LOSS);
-//        auto k = EGTB_SCORE_PERPETUAL_CHECK_LOSS - EGTB_SCORE_PERPETUAL_CHECK_WIN;
-        if (!perpVecs[k].empty()) {
-            stringStream << "\n\nSamples of perpetual checks:\n";
-            
-            for(auto && p : perpVecs[k]) {
-                auto idx = p.first;
-                auto sd = p.second;
-                
-                auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white); assert(ok);
-                board.side = static_cast<Side>(sd);
-                board.setFenComplete();
+    printSamples(stringStream, egtbFile, "Samples of perpetual checks", perpSampleMaps[0]);
+    printSamples(stringStream, egtbFile, "Samples of perpetual chases", perpSampleMaps[1]);
 
-                stringStream << board.getFen() << std::endl;
-            }
-        }
-        
-        k = EgtbFile::perpetualScoreToIdx(EGTB_SCORE_PERPETUAL_CHASE_LOSS);
-        if (!perpVecs[k].empty()) {
-            stringStream << "\n\nSamples of perpetual chases:\n";
-            
-            for(auto && p : perpVecs[k]) {
-                auto idx = p.first;
-                auto sd = p.second;
-                
-                auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white); assert(ok);
-                board.side = static_cast<Side>(sd);
-                board.setFenComplete();
-
-                stringStream << board.getFen() << std::endl;
-            }
-        }
+    printSamples(stringStream, egtbFile, "Samples of max forward perpetuations", perpLeadingSampleMap);
 #endif
-    }
+    
     return stringStream.str();
 }
 
@@ -332,16 +370,16 @@ char EgtbGenFile::scoreToCell(int score) {
         case EGTB_SCORE_UNSET:
             return TB_UNSET;
 
-#ifdef _FELICITY_XQ_
-        case EGTB_SCORE_PERPETUAL_CHECK_WIN:
-            return TB_PERPETUAL_CHECK_WIN;
-        case EGTB_SCORE_PERPETUAL_CHECK_LOSS:
-            return TB_PERPETUAL_CHECK_LOSS;
-        case EGTB_SCORE_PERPETUAL_CHASE_WIN:
-            return TB_PERPETUAL_CHASE_WIN;
-        case EGTB_SCORE_PERPETUAL_CHASE_LOSS:
-            return TB_PERPETUAL_CHASE_LOSS;
-#endif
+//#ifdef _FELICITY_XQ_
+//        case EGTB_SCORE_PERPETUAL_CHECK_WIN:
+//            return TB_PERPETUAL_CHECK_WIN;
+//        case EGTB_SCORE_PERPETUAL_CHECK_LOSS:
+//            return TB_PERPETUAL_CHECK_LOSS;
+//        case EGTB_SCORE_PERPETUAL_CHASE_WIN:
+//            return TB_PERPETUAL_CHASE_WIN;
+//        case EGTB_SCORE_PERPETUAL_CHASE_LOSS:
+//            return TB_PERPETUAL_CHASE_LOSS;
+//#endif
 
         default:
             break;
@@ -394,184 +432,6 @@ std::string EgtbGenFile::createStatsString(EgtbFile* egtbFile)
     EgtbFileStats stats;
     return stats.createStatsString(egtbFile);
 }
-
-//    std::ostringstream stringStream;
-//    
-//    printFormatedString(stringStream, "Name", egtbFile->getName());
-//
-//    EgtbGenFileStats stats;
-//    stats.createStats(egtbFile);
-//    
-////    i64 validCnt[2] = { 0, 0 };
-////    auto smallestCell = EGTB_SCORE_MATE;
-////    i64 wdl[2][3] = {{0, 0, 0}, {0, 0, 0}};
-////
-////
-////#ifdef _FELICITY_XQ_
-////    i64 perpetuals[2][4] = {{ 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
-////    auto perpCnt = 0;
-////    std::vector<std::pair<i64, int>> perpVecs[4];
-////#endif
-////    
-////    std::unordered_map<i64, int> sampleMap;
-////    
-////    for(i64 idx = 0; idx < egtbFile->getSize(); idx++) {
-////        int scores[2] = {
-////            egtbFile->getScore(idx, Side::black),
-////            egtbFile->getScore(idx, Side::white)
-////        };
-////
-////        for (auto sd = 0; sd < 2; sd++) {
-////            auto score = scores[sd];
-////            if (score == EGTB_SCORE_ILLEGAL) {
-////                continue;
-////            }
-////            validCnt[sd]++;
-////            if (score == EGTB_SCORE_DRAW) {
-////                wdl[sd][1]++;
-////#ifdef _FELICITY_XQ_
-////            } else if (isPerpetualScore(score)) {
-////                auto k = EgtbFile::perpetualScoreToIdx(score);
-////                if (k >= 0) {
-////                    perpetuals[sd][k]++; perpCnt++;
-////                    if (perpVecs[k].size() < SAMPLE_CNT) {
-////                        std::pair<i64, int> p;
-////                        p.first = idx;
-////                        p.second = sd;
-////                        perpVecs[k].push_back(p);
-////                    }
-////                }
-////#endif
-////            } else if (score <= EGTB_SCORE_MATE) {
-////                if (score > 0) wdl[sd][0]++;
-////                else wdl[sd][2]++;
-////                auto absScore = abs(score);
-////                if (smallestCell > absScore) {
-////                    sampleMap.clear();
-////                    smallestCell = absScore;
-////                }
-////                if (smallestCell == absScore) {
-////                    sampleMap[idx] = sd;
-////                    if (sampleMap.size() > SAMPLE_CNT) {
-////                        auto p = sampleMap.begin();
-////                        for (auto k = 0; (rand() & 1) && k < 4; k++) {
-////                            p++;
-////                        }
-////                        sampleMap.erase(p);
-////                    }
-////                }
-////            }
-////            
-////        }
-////    }
-//
-//    printFormatedString(stringStream, "Total positions", std::to_string(egtbFile->getSize()));
-//
-//    i64 total = stats.validCnt[0] + stats.validCnt[1];
-//    
-//    std::string s = std::to_string(total) + " (" + std::to_string(total * 50 / egtbFile->getSize()) + "%) (2 sides)";
-//    printFormatedString(stringStream, "Legal positions", s);
-//
-//    
-//    for(auto sd = 1; sd >= 0; sd--) {
-//        i64 w = wdl[sd][0] * 100 / validCnt[sd];
-//        s = std::to_string(w) + "%";
-//        if (w == 0 && wdl[sd][0] > 0) {
-//            s += " (" + std::to_string(wdl[sd][0]) + ")";
-//        }
-//        s += ", " + std::to_string(wdl[sd][1] * 100 / validCnt[sd]) + "%";
-//
-//        if (wdl[sd][2] || egtbFile->isBothArmed()) {
-//            s += ", " + std::to_string(wdl[sd][2] * 100 / validCnt[sd]) + "%";
-//        }
-//        
-//        printFormatedString(stringStream, std::string(sd == W ? "White" : "Black") + " to move (WDL)", s);
-//
-//#ifdef _FELICITY_XQ_
-//        if (perpCnt > 0) {
-//            s = std::to_string(perpetuals[sd][0]) + ", " + std::to_string(perpetuals[sd][1]);
-//            printFormatedString(stringStream, " Perpetual checks (WL)", s);
-//
-//            s = std::to_string(perpetuals[sd][2]) + ", " + std::to_string(perpetuals[sd][3]);
-//            printFormatedString(stringStream, " Perpetual chases (WL)", s);
-//        }
-//#endif
-//
-//    }
-//
-//    auto draws = wdl[0][1] + wdl[1][1];
-//    s = std::to_string(draws) + ", " + std::to_string(draws * 100 / total) + "% of total legal";
-//    printFormatedString(stringStream, "Total draws", s);
-//
-//#ifdef _FELICITY_XQ_
-//    if (perpCnt > 0) {
-//        auto checks = perpetuals[0][0] + perpetuals[0][1] + perpetuals[1][0] + perpetuals[1][1];
-//        auto chases = perpetuals[0][2] + perpetuals[0][3] + perpetuals[1][2] + perpetuals[1][3];
-//        s = std::to_string(perpCnt) + ", "
-//            + std::to_string(perpCnt * 100 / std::max<i64>(1, draws)) + "% of draws. #checks: "
-//            + std::to_string(checks) + ", #chases: " + std::to_string(chases);
-//        printFormatedString(stringStream, "Total perpetuations", s);
-//    }
-//#endif
-//
-//    s = std::to_string(abs(EGTB_SCORE_MATE - smallestCell));
-//    printFormatedString(stringStream, "Max DTM", s);
-//
-//    /// Examples
-//
-//    if (!sampleMap.empty()) {
-//        stringStream << "\n\nSamples with max DTM:\n";
-//        
-//        GenBoard board;
-//        for(auto && p : sampleMap) {
-//            auto idx = p.first;
-//            auto sd = p.second;
-//            
-//            auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white); assert(ok);
-//            board.side = static_cast<Side>(sd);
-//            board.setFenComplete();
-//
-//            stringStream << board.getFen() << std::endl;
-//        }
-//        
-//#ifdef _FELICITY_XQ_
-////        std::vector<std::pair<i64, int>> perpVecs[4];
-//        auto k = EgtbFile::perpetualScoreToIdx(EGTB_SCORE_PERPETUAL_CHECK_LOSS);
-////        auto k = EGTB_SCORE_PERPETUAL_CHECK_LOSS - EGTB_SCORE_PERPETUAL_CHECK_WIN;
-//        if (!perpVecs[k].empty()) {
-//            stringStream << "\n\nSamples of perpetual checks:\n";
-//            
-//            for(auto && p : perpVecs[k]) {
-//                auto idx = p.first;
-//                auto sd = p.second;
-//                
-//                auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white); assert(ok);
-//                board.side = static_cast<Side>(sd);
-//                board.setFenComplete();
-//
-//                stringStream << board.getFen() << std::endl;
-//            }
-//        }
-//        
-//        k = EgtbFile::perpetualScoreToIdx(EGTB_SCORE_PERPETUAL_CHASE_LOSS);
-//        if (!perpVecs[k].empty()) {
-//            stringStream << "\n\nSamples of perpetual chases:\n";
-//            
-//            for(auto && p : perpVecs[k]) {
-//                auto idx = p.first;
-//                auto sd = p.second;
-//                
-//                auto ok = egtbFile->setupBoard(board, idx, FlipMode::none, Side::white); assert(ok);
-//                board.side = static_cast<Side>(sd);
-//                board.setFenComplete();
-//
-//                stringStream << board.getFen() << std::endl;
-//            }
-//        }
-//#endif
-//    }
-//    return stringStream.str();
-//}
 
 void EgtbGenFile::createStatsFile()
 {
@@ -759,10 +619,17 @@ void EgtbGenFile::checkAndConvert2bytesTo1() {
     
     for(i64 idx = 0; idx < getSize(); ++idx) {
         auto score = getBufScore(idx, Side::white);
-        if (score < EGTB_SCORE_MATE && score != EGTB_SCORE_DRAW
 #ifdef _FELICITY_XQ_
-            && !EgtbFile::isPerpetualScore(score)
+        if (EgtbFile::isPerpetualScore(score)) {
+            std::cout << "\t\tconfirmed: 2 bytes per item because of perpetual scores." << std::endl;
+            return;
+        }
 #endif
+
+        if (score < EGTB_SCORE_MATE && score != EGTB_SCORE_DRAW
+//#ifdef _FELICITY_XQ_
+//            && !EgtbFile::isPerpetualScore(score)
+//#endif
             ) {
             auto mi = TB_START_LOSING + (EGTB_SCORE_MATE - std::abs(score)) / 2;
             

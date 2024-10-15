@@ -17,7 +17,7 @@
 
 #include <thread>
 
-#include "../fegtb/egtb.h"
+#include "../fegtb/fegtb.h"
 #include "../base/funcs.h"
 
 #include "egtbgenfile.h"

@@ -19,9 +19,9 @@
 #include <iomanip>
 #include <ctime>
 
-#include "egtb.h"
-#include "egtbfile.h"
-#include "egtbkey.h"
+#include "fegtb.h"
+#include "fegtbfile.h"
+#include "fegtbkey.h"
 
 #include "../base/funcs.h"
 
@@ -635,16 +635,16 @@ int EgtbFile::_cellToScore(char cell) {
         case TB_UNSET:
             return EGTB_SCORE_UNSET;
 
-#ifdef _FELICITY_XQ_
-        case TB_PERPETUAL_CHECK_WIN:
-            return EGTB_SCORE_PERPETUAL_CHECK_WIN;
-        case TB_PERPETUAL_CHECK_LOSS:
-            return EGTB_SCORE_PERPETUAL_CHECK_LOSS;
-        case TB_PERPETUAL_CHASE_WIN:
-            return EGTB_SCORE_PERPETUAL_CHASE_WIN;
-        case TB_PERPETUAL_CHASE_LOSS:
-            return EGTB_SCORE_PERPETUAL_CHASE_LOSS;
-#endif
+//#ifdef _FELICITY_XQ_
+//        case TB_PERPETUAL_CHECK_WIN:
+//            return EGTB_SCORE_PERPETUAL_CHECK_WIN;
+//        case TB_PERPETUAL_CHECK_LOSS:
+//            return EGTB_SCORE_PERPETUAL_CHECK_LOSS;
+//        case TB_PERPETUAL_CHASE_WIN:
+//            return EGTB_SCORE_PERPETUAL_CHASE_WIN;
+//        case TB_PERPETUAL_CHASE_LOSS:
+//            return EGTB_SCORE_PERPETUAL_CHASE_LOSS;
+//#endif
             
         default:
             break;
@@ -678,71 +678,75 @@ bool EgtbFile::isSmallerScore(int score0, int score1)
 }
 
 /// Revert score for opposite side view
-int EgtbFile::revertScore(int score, int inc)
+int EgtbFile::revertScore(int score, int inc, bool rule120)
 {
     if (score <= EGTB_SCORE_MATE) {
-#ifdef _FELICITY_XQ_
-        switch (score) {
-            case EGTB_SCORE_PERPETUAL_CHECK_WIN:
-                return EGTB_SCORE_PERPETUAL_CHECK_LOSS;
-            case EGTB_SCORE_PERPETUAL_CHECK_LOSS:
-                return EGTB_SCORE_PERPETUAL_CHECK_WIN;
-            case EGTB_SCORE_PERPETUAL_CHASE_WIN:
-                return EGTB_SCORE_PERPETUAL_CHASE_LOSS;
-            case EGTB_SCORE_PERPETUAL_CHASE_LOSS:
-                return EGTB_SCORE_PERPETUAL_CHASE_WIN;
-                
-            default:
-                break;
-        }
-#endif
-
         if (score != EGTB_SCORE_DRAW) {
             score = -score;
+#ifdef _FELICITY_XQ_
+            if (score == EGTB_SCORE_PERPETUAL_CHECK || score == -EGTB_SCORE_PERPETUAL_CHECK) {
+                if (score > 0) score -= 1 + inc;
+                else score += 1 + inc;
+            } else {
+                if (score > 0) score -= inc;
+                else score += inc;                
+                if (rule120 && isPerpetualScoreOver120(score)) {
+                    score = EGTB_SCORE_DRAW;
+                }
+            }
+#else
             if (score > 0) score -= inc;
             else score += inc;
+#endif
         }
     }
 
     return score;
 }
 
+bool EgtbFile::matchChilrenScore(int score, int chilrenScore)
+{
+    auto ok = score == chilrenScore || (score > EGTB_SCORE_MATE && chilrenScore > EGTB_SCORE_MATE);
 #ifdef _FELICITY_XQ_
+    if (ok) {
+        return true;
+    }
+    if (isPerpetualScore(score) && isPerpetualScore(chilrenScore)) {
+        auto ascore = std::abs(score);
+        auto achilrenScore = std::abs(chilrenScore);
+        return (ascore <= EGTB_SCORE_PERPETUAL_CHASE - 1 && (achilrenScore == EGTB_SCORE_PERPETUAL_CHECK || achilrenScore == EGTB_SCORE_PERPETUAL_CHASE))
+        || (achilrenScore <= EGTB_SCORE_PERPETUAL_CHASE - 1 && (ascore == EGTB_SCORE_PERPETUAL_CHECK || ascore == EGTB_SCORE_PERPETUAL_CHASE));
+    }
+    return false;
+#else
+    return ok;
+#endif
+}
+
+#ifdef _FELICITY_XQ_
+
 bool EgtbFile::isPerpetualScore(int score)
 {
-    return score == EGTB_SCORE_PERPETUAL_CHECK_WIN
-        || score == EGTB_SCORE_PERPETUAL_CHASE_WIN
-        || score == EGTB_SCORE_PERPETUAL_CHECK_LOSS
-        || score == EGTB_SCORE_PERPETUAL_CHASE_LOSS;
+    auto ascore = std::abs(score);
+    return ascore > EGTB_SCORE_PERPETUAL_BELOW && ascore < EGTB_SCORE_PERPETUAL_ABOVE;
 }
 
-int EgtbFile::perpetualScoreToIdx(int score)
+bool EgtbFile::isPerpetualScoreOver120(int score)
 {
-    switch (score) {
-        case EGTB_SCORE_PERPETUAL_CHECK_WIN:
-            return 0;
-        case EGTB_SCORE_PERPETUAL_CHECK_LOSS:
-            return 1;
-        case EGTB_SCORE_PERPETUAL_CHASE_WIN:
-            return 2;
-        case EGTB_SCORE_PERPETUAL_CHASE_LOSS:
-            return 3;
-
-        default:
-            break;
-    }
-    return -1;
+    auto ascore = std::abs(score);
+    return ascore > EGTB_SCORE_PERPETUAL_BELOW && ascore < EGTB_SCORE_PERPETUAL_120;
 }
+
 #endif
 
 /// return true if score in the valid range
-bool EgtbFile::pickBestFromRivalScore(int& bestScore, int score)
+bool EgtbFile::pickBestFromRivalScore(int& bestScore, int score, bool rule120)
 {
     if (score == EGTB_SCORE_UNSET) {
         return false;
     }
 
-    score = revertScore(score);
+    score = revertScore(score, rule120);
     if (isSmallerScore(bestScore, score)) {
         bestScore = score;
     }
@@ -754,6 +758,19 @@ std::string EgtbFile::explainScore(int score)
 {
     std::string str;
     
+#ifdef _FELICITY_XQ_
+    if (isPerpetualScore(score)) {
+        auto ascore = std::abs(score);
+        if (ascore == EGTB_SCORE_PERPETUAL_CHECK) {
+            str = "perpetual check score";
+        }
+        else if (ascore == EGTB_SCORE_PERPETUAL_CHASE) {
+            str = "perpetual chase score";
+        } else {
+            str = "perpetual leading-score";
+        }
+    } else
+#endif
     switch (score) {
         case EGTB_SCORE_DRAW:
             str = "draw";
@@ -770,20 +787,20 @@ std::string EgtbFile::explainScore(int score)
             str = "illegal";
             break;
             
-#ifdef _FELICITY_XQ_
-        case EGTB_SCORE_PERPETUAL_CHECK_WIN:
-            str = "perpetual check win";
-            break;
-        case EGTB_SCORE_PERPETUAL_CHECK_LOSS:
-            str = "perpetual check lose";
-            break;
-        case EGTB_SCORE_PERPETUAL_CHASE_WIN:
-            str = "perpetual chase win";
-            break;
-        case EGTB_SCORE_PERPETUAL_CHASE_LOSS:
-            str = "perpetual chase lose";
-            break;
-#endif
+//#ifdef _FELICITY_XQ_
+//        case EGTB_SCORE_PERPETUAL_CHECK_WIN:
+//            str = "perpetual check win";
+//            break;
+//        case EGTB_SCORE_PERPETUAL_CHECK_LOSS:
+//            str = "perpetual check lose";
+//            break;
+//        case EGTB_SCORE_PERPETUAL_CHASE_WIN:
+//            str = "perpetual chase win";
+//            break;
+//        case EGTB_SCORE_PERPETUAL_CHASE_LOSS:
+//            str = "perpetual chase lose";
+//            break;
+//#endif
 
         default: {
             auto mateInPly = EGTB_SCORE_MATE - abs(score);

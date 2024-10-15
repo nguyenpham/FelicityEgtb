@@ -21,7 +21,7 @@
 #include <mutex>
 #include <thread>
 
-#include "../fegtb/egtbdb.h"
+#include "../fegtb/fegtbdb.h"
 
 #include "../xq/xqchasejudge.h"
 
@@ -133,6 +133,9 @@ public:
     
 protected:
     
+    /// For debugging purposes
+    void changeOneThread();
+
     void writeLog();
     
 protected:
@@ -181,32 +184,42 @@ private:
 
     void perpetuation_process();
     i64 perpetuation_detect();
-    void perpetuation_propaganda();
+    void perpetuation_propaganda(int lap);
+    
+    void perpetuation_thread_detect_checkchase(int threadIdx);
+    void perpetuation_fill(EgtbGenThreadRecord& rcd, std::vector<std::map<i64, bslib::Side>>& v, const bslib::Side side, bool check);
+    
     void perpetuation_thread_detect_check(int threadIdx);
     void perpetuation_thread_detect_chase(int threadIdx);
-    void perpetuation_thread_propaganda(int threadIdx);
-    void perpetuation_thread_propaganda_init(int threadIdx);
+    void perpetuation_thread_propaganda(int threadIdx, int ply, int sd, int phase);
+    void perpetuation_thread_propaganda_init(int threadIdx, int lap);
     int perpetuation_thread_propaganda_set_parent_flag(EgtbGenThreadRecord&, i64 idx, GenBoard* board, bslib::Side side, int oscore);
     
     std::pair<int, i64> perpetual_check_probe(EgtbGenThreadRecord&, const bslib::Hist&, bool drawIfNotIncheck);
     
     static bool perpetuation_score_valid(int score);
-    std::vector<std::map<i64, bslib::Side>> perpetual_check_evasion(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, std::set<i64>&, bool evasion_checking);
+    std::vector<std::map<i64, bslib::Side>> perpetual_check_evasion(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, const i64 startIdx, std::set<i64>&, bool evasion_checking);
 
-    std::vector<std::map<i64, bslib::Side>> perpetual_check_attack(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, std::set<i64>&, bool evasion_checking);
+    std::vector<std::map<i64, bslib::Side>> perpetual_check_attack(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, const i64 startIdx, std::set<i64>&, bool evasion_checking);
 
     
     
     std::pair<int, i64> perpetual_chase_probe(EgtbGenThreadRecord&, const bslib::Hist&);
 
-    std::vector<std::map<i64, bslib::Side>> perpetual_chase(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side);
+//    std::vector<std::map<i64, bslib::Side>> perpetual_chase(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side);
 
-    std::vector<std::map<i64, bslib::Side>> perpetual_chase_evasion(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, const i64 startIdx, std::set<i64>&, bslib::XqChaseJudge&);
+    std::vector<std::map<i64, bslib::Side>> perpetual_chase_evasion(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, const i64 startIdx, std::set<i64>&, bslib::XqChaseJudge&, std::set<i64>& notEvasionSet, std::set<i64>& notAttackSet);
 
-    std::vector<std::map<i64, bslib::Side>> perpetual_chase_attack(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, const i64 startIdx, std::set<i64>&, bslib::XqChaseJudge&);
+    std::vector<std::map<i64, bslib::Side>> perpetual_chase_attack(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, const i64 startIdx, std::set<i64>&, bslib::XqChaseJudge&, std::set<i64>& notEvasionSet, std::set<i64>& notAttackSet);
+
+    void perpetuation_propaganda0();
 
     int perpetuation_propaganda_probe(GenBoard& board, bslib::Side side);
     
+    
+    void perpetuation_thread_propaganda_init0(int threadIdx);
+    void perpetuation_thread_propaganda0(int threadIdx, int ply);
+
 #endif
     
 private:
@@ -219,6 +232,11 @@ private:
 
 #ifdef _FELICITY_XQ_
     std::chrono::milliseconds::rep time_perpetuation = 0, elapsed_perpetuation = 0, total_elapsed_perpetuation = 0;
+    
+    i64 chase_atk_cnt, chase_evasion_cnt, chase_len_max;
+    void printChaseStats();
+
+
 #endif
 };
 

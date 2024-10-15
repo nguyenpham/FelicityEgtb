@@ -66,25 +66,25 @@ ChessBoard::~ChessBoard()
 {
 }
 
-int ChessBoard::columnCount() const
-{
-    return 8;
-}
-
-int ChessBoard::rankCount() const
-{
-    return 8;
-}
-
-int ChessBoard::getColumn(int pos) const
-{
-    return pos & 7;
-}
-
-int ChessBoard::getRank(int pos) const
-{
-    return pos >> 3;
-}
+//int ChessBoard::columnCount() const
+//{
+//    return 8;
+//}
+//
+//int ChessBoard::rankCount() const
+//{
+//    return 8;
+//}
+//
+//int ChessBoard::getColumn(int pos) const
+//{
+//    return pos & 7;
+//}
+//
+//int ChessBoard::getRank(int pos) const
+//{
+//    return pos >> 3;
+//}
 
 
 int ChessBoard::coordinateStringToPos(const std::string& str) const
@@ -159,7 +159,7 @@ bool ChessBoard::isValid() const
     }
     
     if (enpassant > 0) {
-        auto row = getRank(enpassant);
+        auto row = getRow(enpassant);
         if (row != 2 && row != 5) {
             return false;
         }
@@ -239,7 +239,7 @@ std::string ChessBoard::toString() const
         stringStream << toString(Piece(piece.type, piece.side)) << " ";
         
         if (i > 0 && getColumn(i) == 7) {
-            int row = 8 - getRank(i);
+            int row = 8 - getRow(i);
             stringStream << " " << row << "\n";
         }
     }
@@ -410,7 +410,7 @@ std::string ChessBoard::getFenCastleRights() const {
 bool ChessBoard::canRivalCaptureEnpassant() const
 {
     if (enpassant > 0 && enpassant < 64) {
-        auto col = getColumn(enpassant), row = getRank(enpassant);
+        auto col = getColumn(enpassant), row = getRow(enpassant);
         if (row == 2) {
             return ((col && isPiece(enpassant + 7, PieceType::pawn, Side::white)) ||
                     (col < 7 && isPiece(enpassant + 9, PieceType::pawn, Side::white)));
@@ -747,7 +747,7 @@ void ChessBoard::gen_castling(std::vector<MoveFull>& moves, int kingPos) const
 
 bool ChessBoard::beAttacked(int pos, Side attackerSide) const
 {
-    int row = getRank(pos), col = getColumn(pos);
+    int row = getRow(pos), col = getColumn(pos);
     /* Check attacking of Knight */
     if (col > 0 && row > 1 && isPiece(pos - 17, PieceType::knight, attackerSide))
         return true;

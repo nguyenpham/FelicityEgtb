@@ -29,18 +29,15 @@ using namespace fegtb;
 using namespace bslib;
 
 extern bool check2Flip;
-static i64 debugIdx = -1; //123355051; // 3aka3/7R1/7c1/9/9/9/9/9/4A4/3AK1p2 b 0 1
+static i64 debugIdx = -10;
 static Side debugSide = Side::black;
 
-static i64 debugIdx2 = -1;//23558020;
 static i64 debugCnt = 0;
 
 std::string toResultString(const Result& result);
 
-static i64 chase_atk_cnt = 0, chase_evasion_cnt = 0, chase_len_max = 0;
 
-
-void printChaseStats()
+void EgtbGenDb::printChaseStats()
 {
     std::cout << "\tchase_atk_cnt: " << chase_atk_cnt
         << ", evasion_cnt: " << chase_evasion_cnt
@@ -57,16 +54,18 @@ void EgtbGenDb::showData(const std::string& msg)
 void EgtbGenDb::perpetuation_process()
 {
     elapsed_perpetuation = 0;
-//    if (!egtbFile->isBothArmed()) {
-//        if (egtbVerbose) {
-//            std::cout << "\tOne side is not armed!" << std::endl;
-//        }
-//        return;
-//    }
+    if (!egtbFile->isBothArmed()) {
+        if (egtbVerbose) {
+            std::cout << "\tOne side is not armed!" << std::endl;
+        }
+        return;
+    }
     
 #ifdef _FELICITY_FLIP_MAP_
     assert(!flipIdxMap.empty());
 #endif
+    
+    chase_atk_cnt = chase_evasion_cnt = chase_len_max = 0;
     
     showStringWithCurrentTime("\tperpetuation process");
     
@@ -76,47 +75,27 @@ void EgtbGenDb::perpetuation_process()
     debug_print = false;
 #endif
 
-//    showData("Before perpetuation_detect", debugIdx, debugSide, false);
+    egtbFile->clearFlagBuffer();
     
-    showData("Before perpetuation_detect");
 
-//    /// 1 thread only
-//    {
-//        while(threadRecordVec.size() > 1) {
-//            threadRecordVec.pop_back();
-//        }
-//        threadRecordVec[0].toIdx = egtbFile->getSize();
-//        std::cout << "WARNING: 1 thread only" << std::endl;
-//    }
-
-//    perpetuation_debug();
-
-    if (perpetuation_detect() != 0) {
+    for (auto lap = 0; ; lap++) {
+        auto changes = perpetuation_detect();
+        std::cout << "\tperpetuation_process, lap = " << lap << ", changes = " << changes << std::endl;
+        if (changes == 0) {
+            break;
+        }
         
 #ifdef _DEBUG_PRINT_
         printChaseStats();
 #endif
-//        showData("Before propaganda", debugIdx, debugSide, false);
-        showData("Before propaganda");
+        showData("Before propaganda", debugIdx, debugSide, false);
         
-        {
-            EgtbFileStats stats;
-            stats.createStats(egtbFile);
-            std::cout << "Before propaganda, perpCnt = " << stats.perpCnt << std::endl;
-        }
-
-        perpetuation_propaganda();
-        
-        {
-            EgtbFileStats stats;
-            stats.createStats(egtbFile);
-            std::cout << "After propaganda, perpCnt = " << stats.perpCnt << std::endl;
-        }
+//        perpetuation_propaganda0();
+        perpetuation_propaganda(lap);
     }
     
 //    showData("After propaganda", debugIdx, debugSide, true);
-
-    showData("After propaganda");
+//    showData("After propaganda");
 
     {
         /// All done, get some stats
@@ -125,10 +104,10 @@ void EgtbGenDb::perpetuation_process()
             for (auto sd = 0; sd < 2; sd++) {
                 auto score = egtbFile->getBufScore(idx, static_cast<Side>(sd));
                 
-                if (score == EGTB_SCORE_PERPETUAL_CHECK_WIN) check_win++;
-                else if (score == EGTB_SCORE_PERPETUAL_CHECK_LOSS) check_lose++;
-                if (score == EGTB_SCORE_PERPETUAL_CHASE_WIN) chase_win++;
-                else if (score == EGTB_SCORE_PERPETUAL_CHASE_LOSS) chase_lose++;
+                if (score == EGTB_SCORE_PERPETUAL_CHECK) check_win++;
+                else if (score == -EGTB_SCORE_PERPETUAL_CHECK) check_lose++;
+                if (score == EGTB_SCORE_PERPETUAL_CHASE) chase_win++;
+                else if (score == -EGTB_SCORE_PERPETUAL_CHASE) chase_lose++;
             }
         }
         
@@ -154,62 +133,87 @@ void EgtbGenDb::perpetuation_process()
         std::cout << "\tcompleted perpetuation process " << egtbFile->getName() << ", elapse: " << GenLib::formatPeriod(int(elapsed_perpetuation / 1000))
         << std::endl;
     }
-    
-//    std::cerr << "WARNING: stop here!" << std::endl;
-//    exit(0);
 }
 
 i64 EgtbGenDb::perpetuation_detect()
 {
-    resetAllThreadRecordCounters();
-
-    /// Perpetual checks
-    {
-        if (egtbVerbose) {
-            std::cout << "\tperpetuation_detect checks BEGIN" << std::endl;
-        }
-        
-        egtbFile->clearFlagBuffer();
-
-        std::vector<std::thread> threadVec;
-        for (auto i = 1; i < threadRecordVec.size(); ++i) {
-            threadVec.push_back(std::thread(&EgtbGenDb::perpetuation_thread_detect_check, this, i));
-        }
-
-        perpetuation_thread_detect_check(0);
-        
-        for (auto && t : threadVec) {
-            t.join();
-        }
-        threadVec.clear();
-    }
-    
-    /// Perpetual chases
-    {
-        if (egtbVerbose) {
-            std::cout << "\tperpetuation_detect chases BEGIN" << std::endl;
-        }
-        
-        egtbFile->clearFlagBuffer();
-
-        std::vector<std::thread> threadVec;
-        for (auto i = 1; i < threadRecordVec.size(); ++i) {
-            threadVec.push_back(std::thread(&EgtbGenDb::perpetuation_thread_detect_chase, this, i));
-        }
-
-        perpetuation_thread_detect_chase(0);
-        
-        for (auto && t : threadVec) {
-            t.join();
-        }
-        threadVec.clear();
-    }
-
     if (egtbVerbose) {
-        std::cout << "\tperpetuation_detect END." << std::endl;
+        std::cout << "\tperpetuation_detect checks & chases BEGIN" << std::endl;
     }
     
-    return allThreadChangeCount();
+    resetAllThreadRecordCounters();
+    
+    std::vector<std::thread> threadVec;
+    for (auto i = 1; i < threadRecordVec.size(); ++i) {
+        threadVec.push_back(std::thread(&EgtbGenDb::perpetuation_thread_detect_checkchase, this, i));
+    }
+
+    perpetuation_thread_detect_checkchase(0);
+
+    for (auto && t : threadVec) {
+        t.join();
+    }
+    threadVec.clear();
+
+    auto changeCnt = allThreadChangeCount();
+    if (egtbVerbose) {
+        std::cout << "\tperpetuation_detect END, changeCnt=" << changeCnt << std::endl;
+    }
+
+    return changeCnt;
+    
+        
+//    resetAllThreadRecordCounters();
+//    
+//    /// Perpetual checks
+//    {
+//        if (egtbVerbose) {
+//            std::cout << "\tperpetuation_detect checks BEGIN" << std::endl;
+//        }
+//        
+//        egtbFile->clearFlagBuffer();
+//        
+//        std::vector<std::thread> threadVec;
+//        for (auto i = 1; i < threadRecordVec.size(); ++i) {
+//            threadVec.push_back(std::thread(&EgtbGenDb::perpetuation_thread_detect_check, this, i));
+//        }
+//        
+//        perpetuation_thread_detect_check(0);
+//        
+//        for (auto && t : threadVec) {
+//            t.join();
+//        }
+//        threadVec.clear();
+//    }
+//    
+//    /// Perpetual chases
+//    {
+//        if (egtbVerbose) {
+//            std::cout << "\tperpetuation_detect chases BEGIN" << std::endl;
+//        }
+//        
+//        egtbFile->clearFlagBuffer();
+//        
+//        std::vector<std::thread> threadVec;
+//        for (auto i = 1; i < threadRecordVec.size(); ++i) {
+//            threadVec.push_back(std::thread(&EgtbGenDb::perpetuation_thread_detect_chase, this, i));
+//        }
+//        
+//        perpetuation_thread_detect_chase(0);
+//        
+//        for (auto && t : threadVec) {
+//            t.join();
+//        }
+//        threadVec.clear();
+//    }
+//    
+//    auto changeCnt = allThreadChangeCount();
+//    
+//    if (egtbVerbose) {
+//        std::cout << "\tperpetuation_detect END." << std::endl;
+//    }
+//    
+//    return changeCnt;
 }
 
 
@@ -244,6 +248,8 @@ void EgtbGenDb::perpetuation_thread_detect_check(int threadIdx)
             egtbFile->getBufScore(idx, Side::white)
         };
         
+        auto d = false;//idx == 12686640 || idx == 23621659;
+        
         if ((scores[0] != EGTB_SCORE_UNSET && scores[1] != EGTB_SCORE_UNSET)
             || (scores[0] != EGTB_SCORE_ILLEGAL && scores[1] != EGTB_SCORE_ILLEGAL)) {
             continue;
@@ -252,6 +258,10 @@ void EgtbGenDb::perpetuation_thread_detect_check(int threadIdx)
         auto ok = egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white); assert(ok);
         rcd.board->setFenComplete();
         
+        if (d) {
+            rcd.board->printOut("board idx=" + std::to_string(idx));
+        }
+
         auto sd = scores[0] == EGTB_SCORE_UNSET ? 0 : 1;
         assert(scores[1 - sd] == EGTB_SCORE_ILLEGAL);
         
@@ -260,14 +270,19 @@ void EgtbGenDb::perpetuation_thread_detect_check(int threadIdx)
         assert(rcd.board->isIncheck(side));
         
         std::set<i64> idxSet { idx };
-        auto v = perpetual_check_evasion(rcd, idx, side, idxSet, true);
+        auto v = perpetual_check_evasion(rcd, idx, side, idx, idxSet, true);
+        
+        if (d) {
+            rcd.board->printOut("perpetuation_thread_detect_check, v sz=" + std::to_string(v.size()));
+        }
+        
         if (!v.empty()) {
             for(auto && m : v) {
                 for(auto && p : m) {
                     auto rIdx = p.first;
                     auto rSide = p.second;
                     
-                    auto value = side != rSide ? EGTB_SCORE_PERPETUAL_CHECK_LOSS : EGTB_SCORE_PERPETUAL_CHECK_WIN;
+                    auto value = side != rSide ? -EGTB_SCORE_PERPETUAL_CHECK : EGTB_SCORE_PERPETUAL_CHECK;
                     
                     egtbFile->setBufScore(rIdx, value, rSide);
                     auto ok = egtbFile->setupBoard(*rcd.board, rIdx, FlipMode::none, Side::white); assert(ok);
@@ -276,9 +291,6 @@ void EgtbGenDb::perpetuation_thread_detect_check(int threadIdx)
                     if (idx2 >= 0) {
                         egtbFile->setBufScore(idx2, value, rSide);
                     }
-                    
-//                    auto vec = setBufScore(rcd, rIdx, value, rSide);
-//                    assert(vec.size() > 0 && vec.size() <= 2);
                 }
             }
             rcd.changes++;
@@ -287,13 +299,14 @@ void EgtbGenDb::perpetuation_thread_detect_check(int threadIdx)
 }
 
 /// The side being checked tries to escape
-std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_check_evasion(EgtbGenThreadRecord& rcd, const i64 idx, const Side side, std::set<i64>& idxSet, bool evasion_checking)
+std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_check_evasion(EgtbGenThreadRecord& rcd, const i64 idx, const Side side, const i64 startIdx, std::set<i64>& idxSet, bool evasion_checking)
 {
     assert(rcd.board->isIncheck(side));
     
     Hist hist;
 
     std::vector<std::map<i64, Side>> rVec;
+    auto check = true;
 
     /// test escape check for the side being checked
     for(auto && move : rcd.board->gen(side)) {
@@ -302,29 +315,31 @@ std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_check_evasion(EgtbGenThrea
         auto r = perpetual_check_probe(rcd, hist, false);
         
         auto score = r.first;
-        auto check = true;
 
-        assert(perpetuation_score_valid(score));
-        
         /// it has an option to win by letting opposite be pertuation
-        if (score == EGTB_SCORE_UNSET) {
-            auto xside = getXSide(side);
-            auto checking = evasion_checking && rcd.board->isIncheck(xside);
-            assert(r.second >= 0);
-            idxSet.insert(r.second);
-            auto v = perpetual_check_attack(rcd, r.second, xside, idxSet, checking);
-            if (!v.empty()) {
-                for(auto && m : v) {
-                    m[idx] = side;
-                    rVec.push_back(m);
+        if (score < EGTB_SCORE_DRAW) {   /// winning score
+            check = false;
+        } else if (score == EGTB_SCORE_UNSET) {
+            if (idxSet.find(r.second) == idxSet.end()
+                && (move.piece.type != PieceType::pawn || abs(move.dest - move.from) != 9)
+                ) {
+                assert(r.second >= 0);
+                
+                auto xside = getXSide(side);
+                auto checking = evasion_checking && rcd.board->isIncheck(xside);
+                assert(r.second >= 0);
+                idxSet.insert(r.second);
+                auto v = perpetual_check_attack(rcd, r.second, xside, startIdx, idxSet, checking);
+                idxSet.erase(r.second);
+                assert(idxSet.find(r.second) == idxSet.end());
+
+                if (!v.empty()) {
+                    for(auto && m : v) {
+                        m[idx] = side;
+                        rVec.push_back(m);
+                    }
                 }
             }
-            idxSet.erase(r.second);
-            assert(idxSet.find(r.second) == idxSet.end());
-        } else if (score == EGTB_SCORE_PERPETUAL_CHECK_LOSS 
-                   || score == EGTB_SCORE_PERPETUAL_CHASE_LOSS) {
-            check = false;
-        } else {
         }
 
         rcd.board->takeBack(hist);
@@ -337,12 +352,20 @@ std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_check_evasion(EgtbGenThrea
     return rVec;
 }
 
-std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_check_attack(EgtbGenThreadRecord& rcd, const i64 idx, const bslib::Side side, std::set<i64>& idxSet, bool evasion_checking)
+std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_check_attack(EgtbGenThreadRecord& rcd, const i64 idx, const Side side, const i64 startIdx, std::set<i64>& idxSet, bool evasion_checking)
 {
     Hist hist;
-    
+    auto xside = getXSide(side);
+
     std::vector<std::map<i64, Side>> rVec;
-    
+
+    if (idxSet.size() >= DRAW_LEN / 3) {
+        return rVec;
+    }
+
+    std::vector<std::pair<i64, MoveFull>> list;
+    auto d = false; //startIdx == 12686640
+
     /// for the side checking
     for(auto && move : rcd.board->gen(side)) {
         rcd.board->make(move, hist);
@@ -351,33 +374,40 @@ std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_check_attack(EgtbGenThread
         
         auto score = r.first;
 
-        assert(perpetuation_score_valid(score));
-        
+//        if (d && score != EGTB_SCORE_ILLEGAL) {
+//            std::string s = "perpetual_check_attack, " + std::to_string(idxSet.size())
+//            + ", after move " + rcd.board->toString(move)
+//            + ", sub idx=" + std::to_string(r.second)
+//            + ", score=" + std::to_string(score)
+//            ;
+//            rcd.board->printOut(s);
+//        }
+
         auto check = true;
 
-        if (score == EGTB_SCORE_DRAW 
-            || score == EGTB_SCORE_PERPETUAL_CHECK_LOSS
-            || score == EGTB_SCORE_PERPETUAL_CHASE_LOSS) {
+        if (score <= EGTB_SCORE_DRAW) {         /// not loss scores
             check = false;
-        } else if (score == EGTB_SCORE_UNSET) {
-            auto xside = getXSide(side);
+        } else if (score == EGTB_SCORE_UNSET
+//                   && rcd.board->isIncheck(xside)
+                   ) {
             assert(rcd.board->isIncheck(xside));
-            if (idxSet.find(r.second) == idxSet.end()) {
-                assert(r.second >= 0);
-                idxSet.insert(r.second);
-                auto v = perpetual_check_evasion(rcd, r.second, xside, idxSet, evasion_checking);
-                idxSet.erase(r.second);
-                
-                if (v.empty()) {
-                    check = false;
-                } else {
-                    for(auto && m : v) {
-                        m[idx] = side;
-                        rVec.push_back(m);
-                    }
-                }
+            if (move.piece.type == PieceType::pawn && abs(move.dest - move.from) == 9) {
+                check = false;
+            } else if (idxSet.find(r.second) == idxSet.end()) {
+                /// verify later
+                std::pair<i64, MoveFull> p;
+                p.first = r.second;
+                p.second = move;
+                list.push_back(p);
+
+            } else if (r.second != startIdx) {
+                check = false;
             } else {
-                /// the position is in a repitition
+                /// repetition
+                assert(r.second >= 0 && rcd.board->isIncheck(xside));
+                //auto xside = getXSide(side);
+                //if (rcd.board->isIncheck(xside)) {
+                
                 check = !evasion_checking;
                 if (check) {
                     std::map<i64, Side> m;
@@ -394,6 +424,28 @@ std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_check_attack(EgtbGenThread
         }
     }
     
+    for(auto && m : list) {
+        rcd.board->make(m.second, hist);
+        assert(idxSet.find(m.first) == idxSet.end());
+        assert(m.first >= 0);
+        
+        idxSet.insert(m.first);
+        auto v = perpetual_check_evasion(rcd, m.first, getXSide(side), startIdx, idxSet, evasion_checking);
+        idxSet.erase(m.first);
+        
+        rcd.board->takeBack(hist);
+        
+        if (v.empty()) {
+            /// this move is a better alternative -> no chase
+            rVec.clear();
+            break;
+        }
+        for(auto && m : v) {
+            m[idx] = side;
+            rVec.push_back(m);
+        }
+    }
+
     return rVec;
 }
 
@@ -404,18 +456,18 @@ std::pair<int, i64> EgtbGenDb::perpetual_check_probe(EgtbGenThreadRecord& rcd, c
     std::pair<int, i64> r;
     
     auto side = hist.move.piece.side;
-    
+
     /// illegal move
     if (rcd.board->isIncheck(side)) {
-        r.first = EGTB_SCORE_MISSING;
+        r.first = EGTB_SCORE_ILLEGAL;
         return r;
     }
-    
+
     auto xside = getXSide(side);
     if (hist.cap.isEmpty()) {
         r.second = egtbFile->getIdx(*rcd.board).key; assert(r.second >= 0);
         r.first = egtbFile->getBufScore(r.second, xside);
-        
+
         /// Use for testing escape opptions
         if (r.first == EGTB_SCORE_UNSET && drawIfNotIncheck && egtbFile->getBufScore(r.second, side) != EGTB_SCORE_ILLEGAL) {
             r.first = EGTB_SCORE_DRAW;
@@ -431,9 +483,9 @@ std::pair<int, i64> EgtbGenDb::perpetual_check_probe(EgtbGenThreadRecord& rcd, c
                 exit(-1);
             }
             
-            if (r.first != EGTB_SCORE_DRAW && drawIfNotIncheck && !rcd.board->isIncheck(xside)) {
-                r.first = EGTB_SCORE_DRAW;
-            }
+//            if (r.first != EGTB_SCORE_DRAW && drawIfNotIncheck && !rcd.board->isIncheck(xside)) {
+//                r.first = EGTB_SCORE_DRAW;
+//            }
 
         } else {
             r.first = EGTB_SCORE_DRAW;
@@ -442,6 +494,109 @@ std::pair<int, i64> EgtbGenDb::perpetual_check_probe(EgtbGenThreadRecord& rcd, c
 
     return r;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////
+/// Check & chase
+//////////////////////////////////////////////////////////////////////////////////////////
+/// Will flip the board
+void EgtbGenDb::perpetuation_fill(EgtbGenThreadRecord& rcd, std::vector<std::map<i64, Side>>& v, const Side side, bool check)
+{
+    for(auto && m : v) {
+        for(auto && p : m) {
+            auto rIdx = p.first;
+            auto rSide = p.second;
+            
+            int value;
+            
+            if (check) {
+                value = side != rSide ? -EGTB_SCORE_PERPETUAL_CHECK : EGTB_SCORE_PERPETUAL_CHECK;
+            } else {
+                value = side != rSide ? -EGTB_SCORE_PERPETUAL_CHASE : EGTB_SCORE_PERPETUAL_CHASE;
+            }
+            
+            egtbFile->setBufScore(rIdx, value, rSide);
+            assert(rcd.board);
+            auto ok = egtbFile->setupBoard(*rcd.board, rIdx, FlipMode::none, Side::white); assert(ok);
+            
+            auto idx2 = getFlipIdx(rcd, rIdx);
+            if (idx2 >= 0) {
+                assert(rcd.board->needSymmetryFlip() != FlipMode::none);
+                egtbFile->setBufScore(idx2, value, rSide);
+            }
+        }
+    }
+}
+
+
+void EgtbGenDb::perpetuation_thread_detect_checkchase(int threadIdx)
+{
+    auto& rcd = threadRecordVec.at(threadIdx);
+    rcd.createBoards();
+    assert(rcd.fromIdx < rcd.toIdx && rcd.board && rcd.board2);
+
+    for (auto idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
+        int scores[2] = {
+            egtbFile->getBufScore(idx, Side::black),
+            egtbFile->getBufScore(idx, Side::white)
+        };
+
+        /// cap flag is caputre with perpetual scores
+        bool caps[2] = {
+            egtbFile->flag_is_cap(idx, Side::black),
+            egtbFile->flag_is_cap(idx, Side::white)
+        };
+
+        if ((scores[0] != EGTB_SCORE_UNSET || caps[0]) &&
+            (scores[1] != EGTB_SCORE_UNSET || caps[1])) {
+            continue;
+        }
+
+        auto ok = egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white); assert(ok);
+        rcd.board->setFenComplete();
+
+        
+        /// check
+        if (scores[0] == EGTB_SCORE_ILLEGAL || scores[1] == EGTB_SCORE_ILLEGAL) {
+            auto sd = scores[1] == EGTB_SCORE_ILLEGAL ? 0 : 1;
+            assert(scores[1 - sd] != EGTB_SCORE_ILLEGAL);
+            
+            auto side = static_cast<Side>(sd);
+            
+            assert(rcd.board->isIncheck(side));
+            
+            std::set<i64> idxSet { idx };
+            auto v = perpetual_check_evasion(rcd, idx, side, idx, idxSet, true);
+            
+            if (!v.empty()) {
+                perpetuation_fill(rcd, v, side, true);
+                rcd.changes++;
+                continue;
+            }
+        }
+
+        /// chase
+        for(auto sd = 0; sd < 2; ++sd) {
+            auto side = static_cast<Side>(sd);
+            if (scores[sd] == EGTB_SCORE_UNSET || caps[sd]
+//                && !egtbFile->flag_is_side(idx, side)
+                ) {
+//                perpetual_chase(rcd, idx, side);
+                
+                std::set<i64> idxSet { idx }, notEvasionSet, notAttackSet;
+                XqChaseJudge xqChaseJudge;
+
+                auto v = perpetual_chase_evasion(rcd, idx, side, idx, idxSet, xqChaseJudge, notEvasionSet, notAttackSet);
+                
+                if (!v.empty()) {
+                    perpetuation_fill(rcd, v, side, false);
+                    rcd.changes++;
+                }
+
+            }
+        }
+    } /// for idx
+}
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -471,7 +626,7 @@ void EgtbGenDb::perpetuation_debug()
     assert (scores[sd] == EGTB_SCORE_UNSET
             && !egtbFile->flag_is_side(idx, side));
     
-    perpetual_chase(rcd, idx, side);
+//    perpetual_chase(rcd, idx, side);
     
     std::cout << "perpetuation_debug END." << std::endl;
 
@@ -503,83 +658,37 @@ void EgtbGenDb::perpetuation_thread_detect_chase(int threadIdx)
             if (scores[sd] == EGTB_SCORE_UNSET
 //                && !egtbFile->flag_is_side(idx, side)
                 ) {
-                perpetual_chase(rcd, idx, side);
+//                perpetual_chase(rcd, idx, side);
+                                
+                std::set<i64> idxSet { idx }, notEvasionSet, notAttackSet;
+                XqChaseJudge xqChaseJudge;
+
+                auto v = perpetual_chase_evasion(rcd, idx, side, idx, idxSet, xqChaseJudge, notEvasionSet, notAttackSet);
+                
+                if (!v.empty()) {
+                    perpetuation_fill(rcd, v, side, false);
+                    rcd.changes++;
+                }
             }
         }
     } /// for idx
 }
 
-std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_chase(EgtbGenThreadRecord& rcd, const i64 idx, const Side side)
-{
-    std::set<i64> idxSet { idx };
-    XqChaseJudge xqChaseJudge;
-
-    auto v = perpetual_chase_evasion(rcd, idx, side, idx, idxSet, xqChaseJudge);
-    
-    auto d = idx == debugIdx;
-    if (v.empty()) {
-        egtbFile->flag_set_side(idx, side);
-    } else {
-        rcd.changes++;
-        
-        if (d) {
-            rcd.board->printOut(std::string("perpetual chase detected idx=") + std::to_string(idx)
-                                + ", side=" + Funcs::side2String(side, false));
-        }
-        
-        for(auto && m : v) {
-            
-            if (d) {
-                std::cout << "a line, sz: " << std::to_string(m.size()) << std::endl;
-            }
-
-            for(auto && p : m) {
-                auto rIdx = p.first;
-                auto rSide = p.second;
-                
-                auto value = side != rSide ? EGTB_SCORE_PERPETUAL_CHASE_LOSS : EGTB_SCORE_PERPETUAL_CHASE_WIN;
-                
-//                auto vec = setBufScore(rcd, rIdx, value, rSide);
-//                assert(vec.size() > 0 && vec.size() <= 2);
-                
-                egtbFile->setBufScore(rIdx, value, rSide);
-                auto ok = egtbFile->setupBoard(*rcd.board, rIdx, FlipMode::none, Side::white); assert(ok);
-                
-                auto idx2 = getFlipIdx(rcd, rIdx);
-                if (idx2 >= 0) {
-                    egtbFile->setBufScore(idx2, value, rSide);
-                }
-
-            }
-            
-        }
-        
-//        if (d) {
-//            Hist hist;
-//            for(auto && move : rcd.board->gen(side)) {
-//                rcd.board->make(move, hist);
-//                
-//                auto r = perpetual_chase_probe(rcd, hist);
-//                
-//                auto score = r.first;
-//                if (score != EGTB_SCORE_ILLEGAL) {
-//                    std::string s = "idx: " + std::to_string(r.second) + ", score: " + std::to_string(score);
-//                    rcd.board->printOut(s);
-//                }
-//                
-//                rcd.board->takeBack(hist);
-//            }
+//std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_chase(EgtbGenThreadRecord& rcd, const i64 idx, const Side side)
+//{
+//    std::set<i64> idxSet { idx };
+//    XqChaseJudge xqChaseJudge;
 //
-//            auto v2 = perpetual_chase_evasion(rcd, idx, side, idx, idxSet, xqChaseJudge);
-//        }
-
-    }
-    
-    if (d) {
-        std::cout << "debugCnt = " << debugCnt << std::endl;
-    }
-    return v;
-}
+//    auto v = perpetual_chase_evasion(rcd, idx, side, idx, idxSet, xqChaseJudge);
+//    
+//    if (v.empty()) {
+//        egtbFile->flag_set_side(idx, side);
+//    } else {
+//        perpetuation_fill(rcd, v, side, false);
+//        rcd.changes++;
+//    }
+//    return v;
+//}
 
 
 /*
@@ -587,29 +696,34 @@ std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_chase(EgtbGenThreadRecord&
  * If it has a chance, it will remain the status of being chased
  * for further moves
  */
-std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_chase_evasion(EgtbGenThreadRecord& rcd, const i64 idx, const Side side, const i64 startIdx, std::set<i64>& idxSet, XqChaseJudge& chaseJudge)
+std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_chase_evasion(EgtbGenThreadRecord& rcd, const i64 idx, const Side side, const i64 startIdx, std::set<i64>& idxSet, XqChaseJudge& chaseJudge, std::set<i64>& notEvasionSet, std::set<i64>& notAttackSet)
 {
     chase_evasion_cnt++;
     
-    auto d = startIdx == debugIdx;
-    if (d) {
-        debugCnt++;
-    }
+//    auto d = false;//startIdx == debugIdx;
+//    if (d) {
+//        debugCnt++;
+//    }
     
     std::vector<std::map<i64, Side>> rVec;
-
-    if (!chaseJudge.addBoard(*rcd.board, side)) {
-        chaseJudge.removeLastBoard();
-        if (d) {
-            rcd.board->printOut("chase_evasion chaseJudge not chase, side = " + Funcs::side2String(side));
-        }
+    
+    if (notEvasionSet.find(idx) != notEvasionSet.end()) {
         return rVec;
     }
 
-    if (d) {
-        rcd.board->printOut("chase_evasion in progress, startIdx=" + std::to_string(startIdx) +
-                            ", idx=" + std::to_string(idx) + ", side=" + Funcs::side2String(side));
+    if (!chaseJudge.addBoard(*rcd.board, side)) {
+        chaseJudge.removeLastBoard();
+        notEvasionSet.insert(idx);
+//        if (d) {
+//            rcd.board->printOut("chase_evasion chaseJudge not chase, side = " + Funcs::side2String(side));
+//        }
+        return rVec;
     }
+
+//    if (d) {
+//        rcd.board->printOut("chase_evasion in progress, startIdx=" + std::to_string(startIdx) +
+//                            ", idx=" + std::to_string(idx) + ", side=" + Funcs::side2String(side));
+//    }
 
     chase_len_max = std::max<i64>(chase_len_max, chaseJudge.addingCnt);
     auto beingChased = true;
@@ -625,62 +739,34 @@ std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_chase_evasion(EgtbGenThrea
         
         assert(perpetuation_score_valid(score));
         
+        if (score < EGTB_SCORE_DRAW) { /// wining scores
+            beingChased = false;
+            rVec.clear();
+            notEvasionSet.insert(idx);
+        } else if (score == EGTB_SCORE_UNSET) {
 
-        switch (score) {
-            case EGTB_SCORE_UNSET:
-                if (d) {
-                    std::string s = "chase_evasion after move=" + rcd.board->toString(move) + ", score=" + std::to_string(score) +  + ", sIdx=" + std::to_string(r.second);
-                    rcd.board->printOut(s);
-                }
+            if (idxSet.find(r.second) == idxSet.end()
+                && (move.piece.type != PieceType::pawn || abs(move.dest - move.from) != 9)
+                ) {
+                assert(r.second >= 0);
+                idxSet.insert(r.second);
+                auto v = perpetual_chase_attack(rcd, r.second, getXSide(side), startIdx, idxSet, chaseJudge, notEvasionSet, notAttackSet);
+                idxSet.erase(r.second);
+                assert(idxSet.find(r.second) == idxSet.end());
 
-                
-                if (idxSet.find(r.second) == idxSet.end()
-                    && (move.piece.type != PieceType::pawn || abs(move.dest - move.from) != 9)
-                    ) {
-                    assert(r.second >= 0);
-                    idxSet.insert(r.second);
-                    auto v = perpetual_chase_attack(rcd, r.second, getXSide(side), startIdx, idxSet, chaseJudge);
-                    idxSet.erase(r.second);
-                    assert(idxSet.find(r.second) == idxSet.end());
-
-                    if (!v.empty()) {
-                        for(auto && m : v) {
-                            m[idx] = side;
-                            rVec.push_back(m);
-                        }
+                if (!v.empty()) {
+                    for(auto && m : v) {
+                        m[idx] = side;
+                        rVec.push_back(m);
                     }
-                    
-                    if (d) {
-                        std::string s = "chase_evasion after move=" + rcd.board->toString(move) + ", v size=" + std::to_string(v.size());
-                        rcd.board->printOut(s);
-                    }
-//                } else {
-//                    /// something wrong
-//                    beingChased = false;
                 }
-                break;
                 
-            case EGTB_SCORE_PERPETUAL_CHASE_LOSS:
-//            {
-//                std::map<i64, Side> m;
-//                m[idx] = side;
-//                rVec.push_back(m);
 //                if (d) {
-//                    std::cout << "IMHERE 01" << std::endl;
+//                    std::string s = "chase_evasion after move=" + rcd.board->toString(move) + ", v size=" + std::to_string(v.size());
+//                    rcd.board->printOut(s);
 //                }
-//                break;
-//            }
-//                
-            case EGTB_SCORE_PERPETUAL_CHECK_LOSS:
-                beingChased = false;
-                rVec.clear();
-                if (d) {
-                    std::cout << "IMHERE 03" << std::endl;
-                }
-                break;
-                
-            default:
-                break;
+            }
+
         }
                 
         rcd.board->takeBack(hist);
@@ -698,36 +784,28 @@ std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_chase_evasion(EgtbGenThrea
  * The side tries to chase some pieces
  * if it has any chance to be win or draw, it will take instead
  */
-std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_chase_attack(EgtbGenThreadRecord& rcd, const i64 idx, const Side side, const i64 startIdx, std::set<i64>& idxSet, XqChaseJudge& chaseJudge)
+std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_chase_attack(EgtbGenThreadRecord& rcd, const i64 idx, const Side side, const i64 startIdx, std::set<i64>& idxSet, XqChaseJudge& chaseJudge, std::set<i64>& notEvasionSet, std::set<i64>& notAttackSet)
 {
     chase_atk_cnt++;
-    auto d = startIdx == debugIdx;
+    auto d = false;//startIdx == debugIdx;
     if (d) {
         debugCnt++;
     }
-
+    
     std::vector<std::map<i64, Side>> rVec;
-//    if (egtbFile->flag_is_side(idx, side) || chaseJudge.addingCnt >= 120) {
-//        if (d) {
-//            rcd.board->printOut("chase_attack flag side not chase, side = " + Funcs::side2String(side) + ", idxSet sz = " + std::to_string(idxSet.size()));
-//        }
-//        return rVec;
-//    }
-    if (idxSet.size() > 120) {
+    if (idxSet.size() >= DRAW_LEN / 3
+        || notAttackSet.find(idx) != notAttackSet.end()
+        ) {
         return rVec;
     }
-
+    
     if (!chaseJudge.addBoard(*rcd.board, side)) {
         chaseJudge.removeLastBoard();
-//        /// mark it as not-chasing
-//        egtbFile->flag_set_side(idx, side);
-//        if (d) {
-//            rcd.board->printOut("chase_attack chaseJudge not chase, side = " + Funcs::side2String(side));
-//        }
+        notAttackSet.insert(idx);
         return rVec;
     }
     chase_len_max = std::max<i64>(chase_len_max, chaseJudge.addingCnt);
-
+    
     if (d) {
         rcd.board->printOut("chase_attack in progress, startIdx=" + std::to_string(startIdx) +
                             ", idx=" + std::to_string(idx) + ", side=" + Funcs::side2String(side));
@@ -739,31 +817,18 @@ std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_chase_attack(EgtbGenThread
     /// Find any better alternative moves, before going deeper
     std::vector<std::pair<i64, MoveFull>> list;
     for(auto && move : rcd.board->gen(side)) {
-        
-//        /// All captures must be losing, not better as alternative ones, avoid anyway
-//        if (!rcd.board->getPiece(move.dest).isEmpty()) {
-//            continue;
-//        }
-
         rcd.board->make(move, hist);
         
         auto r = perpetual_chase_probe(rcd, hist);
         
         auto score = r.first; /// score in xside view
         
-        /// can't have wining captures
-//        assert(hist.cap.isEmpty() || score < 0);
-        assert(perpetuation_score_valid(score));
-        
-        switch (score) {
-            case EGTB_SCORE_UNSET:
-                if (d) {
-                    std::string s = "chase_attack after move=" + rcd.board->toString(move) + ", score=" + std::to_string(score) +  + ", sIdx=" + std::to_string(r.second);
-                    rcd.board->printOut(s);
-                }
-                if (move.piece.type == PieceType::pawn && abs(move.dest - move.from) == 9) {
-                    chasing = false;
-                } else
+        if (score == EGTB_SCORE_UNSET) {
+            if (move.piece.type == PieceType::pawn && abs(move.dest - move.from) == 9) {
+                chasing = false;
+                notEvasionSet.insert(idx);
+            } else {
+                
                 /// no repetition - will be visted later in the next step
                 if (idxSet.find(r.second) == idxSet.end()
                     ) {
@@ -772,6 +837,7 @@ std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_chase_attack(EgtbGenThread
                     p.second = move;
                     list.push_back(p);
                 } else {
+                    /// repetition
                     if (r.second != startIdx) {
                         chasing = false;
                     } else {
@@ -782,43 +848,27 @@ std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_chase_attack(EgtbGenThread
                             std::map<i64, Side> m;
                             m[idx] = side;
                             rVec.push_back(m);
-                            
-//                            std::string s = "chase_attack chased after move=" + rcd.board->toString(move) + ", score=" + std::to_string(score);
-//                            rcd.board->printOut(s);
-
-                        }
-                        
-                        if (d) {
-                            std::cout << "Repetition with startIdx=" << startIdx
-                            << ", chasing=" << chasing << std::endl;
                         }
                     }
                 }
-                break;
-                /// score from opposite view -> winning for the current side
-            case EGTB_SCORE_PERPETUAL_CHASE_LOSS:
-            case EGTB_SCORE_PERPETUAL_CHECK_LOSS:
-            case EGTB_SCORE_DRAW:
-                /// this move is a better alternative -> no chase
+            }
+            
+        } else {
+            if (score <= EGTB_SCORE_DRAW) {     /// not lossing scores
                 chasing = false;
-                if (d) {
-                    rcd.board->printOut("IMHERE 04, Not chased because score = " + std::to_string(score));
-                }
-                break;
-
-            default:
-                break;
+                notAttackSet.insert(idx);
+            }
         }
         
         rcd.board->takeBack(hist);
-        
+                
         if (!chasing) {
             /// if there is any better alternative/draw -> return empty
             chaseJudge.removeLastBoard();
-//            egtbFile->flag_set_side(idx, side);
             return std::vector<std::map<i64, Side>>();
         }
     }
+
     
     for(auto && m : list) {
         rcd.board->make(m.second, hist);
@@ -826,22 +876,12 @@ std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_chase_attack(EgtbGenThread
         assert(m.first >= 0);
         
         idxSet.insert(m.first);
-        auto v = perpetual_chase_evasion(rcd, m.first, getXSide(side), startIdx, idxSet, chaseJudge);
+        auto v = perpetual_chase_evasion(rcd, m.first, getXSide(side), startIdx, idxSet, chaseJudge, notEvasionSet, notAttackSet);
         idxSet.erase(m.first);
         
         rcd.board->takeBack(hist);
         
         if (v.empty()) {
-//            if (!rVec.empty()) {
-//                if (d) {
-//                    std::cout << "Chase cancelled with startIdx=" << startIdx
-//                    << ", rVec.size()=" << rVec.size() << std::endl;
-//                    
-//                    std::string s = "chase_attack after move=" + rcd.board->toString(m.second);
-//                    rcd.board->printOut(s);
-//                }
-//            }
-
             /// this move is a better alternative -> no chase
             rVec.clear();
             break;
@@ -853,9 +893,6 @@ std::vector<std::map<i64, Side>> EgtbGenDb::perpetual_chase_attack(EgtbGenThread
     }
     
     chaseJudge.removeLastBoard();
-//    if (rVec.empty()) {
-//        egtbFile->flag_set_side(idx, side);
-//    }
     return rVec;
 } /// perpetual_chase_attack
 
@@ -898,10 +935,8 @@ std::pair<int, i64> EgtbGenDb::perpetual_chase_probe(EgtbGenThreadRecord& rcd, c
 /// Propaganda
 //////////////////////////////////////////////////////////////////////////////////////////
 
-void EgtbGenDb::perpetuation_propaganda()
+void EgtbGenDb::perpetuation_propaganda(int lap)
 {
-//    std::cout << "\tperpetuation_propaganda BEGIN" << std::endl;
-
     resetAllThreadRecordCounters();
     egtbFile->clearFlagBuffer();
 
@@ -909,10 +944,10 @@ void EgtbGenDb::perpetuation_propaganda()
     {
         std::vector<std::thread> threadVec;
         for (auto i = 1; i < threadRecordVec.size(); ++i) {
-            threadVec.push_back(std::thread(&EgtbGenDb::perpetuation_thread_propaganda_init, this, i));
+            threadVec.push_back(std::thread(&EgtbGenDb::perpetuation_thread_propaganda_init, this, i, lap));
         }
         
-        perpetuation_thread_propaganda_init(0);
+        perpetuation_thread_propaganda_init(0, lap);
         
         for (auto && t : threadVec) {
             t.join();
@@ -920,46 +955,55 @@ void EgtbGenDb::perpetuation_propaganda()
         threadVec.clear();
     }
 
-    showData("After perpetuation_thread_propaganda_init", debugIdx, Side::none, false);
+//    showData("After perpetuation_thread_propaganda_init", 11213257, Side::none, false);
+    
+    auto maxPly = 0;
+    for(auto && rcd : threadRecordVec) {
+        maxPly = std::max(maxPly, int(rcd.n));
+    }
+    maxPly++;
+    
 
-    for (auto cnt = 0; ; ++cnt) {
+    i64 allChangeCnt = 0;
+    auto side = Side::black;
+    for(auto tryCnt = 2, ply = 0; ply < maxPly; ply++, side = getXSide(side)) {
+        
         resetAllThreadRecordCounters();
         
-        for (i64 idx = 0; idx < egtbFile->getSize(); idx++) {
-            bool flags[2] = {
-                egtbFile->flag_is_cap(idx, Side::black),
-                egtbFile->flag_is_cap(idx, Side::white)
-            };
-            
+//        /// Clear all side-marks
+//        for(i64 idx = 0; idx < egtbFile->getSize() / 2 + 1; idx++) {
+//            egtbFile->flags[idx] &= ~(3 | 3 << 4);
+//        }
+        
+        /// Fill positions by two phrases and two sides, we should not combine them info one to avoid being
+        /// conflicted on writting between threads
+        /// phase 0: fill winning positions, mark losing positions by retro/backward moves
+        /// phase 1: probe and fill marked positions
+
+        for(auto phase = 0; phase < 2; phase++) {
             for(auto sd = 0; sd < 2; sd++) {
-                if (flags[sd]) {
-                    auto side = static_cast<Side>(sd);
-                    egtbFile->flag_clear_cap(idx, side);
-                    egtbFile->flag_set_side(idx, side);
+                
+                std::vector<std::thread> threadVec;
+                for (auto i = 1; i < threadRecordVec.size(); ++i) {
+                    threadVec.push_back(std::thread(&EgtbGenDb::perpetuation_thread_propaganda, this, i, ply, sd, phase));
+                }
+                
+                perpetuation_thread_propaganda(0, ply, sd, phase);
+                
+                for (auto && t : threadVec) {
+                    t.join();
                 }
             }
         }
-        
-        std::vector<std::thread> threadVec;
-        for (auto i = 1; i < threadRecordVec.size(); ++i) {
-            threadVec.push_back(std::thread(&EgtbGenDb::perpetuation_thread_propaganda, this, i));
-        }
-        
-        perpetuation_thread_propaganda(0);
-        
-        for (auto && t : threadVec) {
-            t.join();
-        }
-        threadVec.clear();
 
         auto changeCnt = allThreadChangeCount();
+        allChangeCnt += changeCnt;
+        //if (egtbVerbose) {
+            std::cout << " Ply: " << ply << ", perpetuation_propaganda changeCnt = " << changeCnt << std::endl;
+        //}
         
-        if (egtbVerbose) {
-            std::cout << " Loop: " << cnt << ", perpetuation_propaganda changeCnt=" << changeCnt << std::endl;
-        }
-        
-        if (changeCnt == 0) {
-            break;
+        if (changeCnt == 0 && ply + 1 >= maxPly) {
+            maxPly++;
         }
     }
 }
@@ -972,10 +1016,10 @@ int EgtbGenDb::perpetuation_thread_propaganda_set_parent_flag(EgtbGenThreadRecor
     
     auto cnt = 0;
     
-//    auto d = false;//idx == debugIdx2 && side == Side::white;
-//    if (d) {
-//        board->printOut("perpetuation_thread_propaganda_set_parent_flag idx=" + std::to_string(idx));
-//    }
+    auto d = false;//idx == 297104599;
+    if (d) {
+        board->printOut("perpetuation_thread_propaganda_set_parent_flag, starting");
+    }
     
     for(auto && move : board->gen_backward_quiet(side)) {
         board->make(move, hist); assert(hist.cap.isEmpty());
@@ -987,25 +1031,28 @@ int EgtbGenDb::perpetuation_thread_propaganda_set_parent_flag(EgtbGenThreadRecor
             
             /// parents
             auto sc = egtbFile->getBufScore(rIdx, side);
+            auto asc = std::abs(sc);
+            
+            if (d) {
+                std::string s = "set_parent_flag, idx=" + std::to_string(idx)
+                + ", move=" + board->toString(move)
+                + ", rIdx=" + std::to_string(rIdx)
+                + ", sc=" + std::to_string(sc);
+
+                board->printOut(s);
+            }
             
             if (sc == EGTB_SCORE_UNSET 
-                || (EgtbFile::isPerpetualScore(sc) && sc != -oscore)
-//                || EgtbFile::isPerpetualScore(sc)
+                || (EgtbFile::isPerpetualScore(sc) 
+//                    && sc != -oscore
+                    && asc != EGTB_SCORE_PERPETUAL_CHECK && asc != EGTB_SCORE_PERPETUAL_CHASE)
                 ) {
-//                egtbFile->flag_set_side(rIdx, side);
                 egtbFile->flag_set_cap(rIdx, side);
                 cnt++;
-//                if (d) {
-//                    std::cout << "set flag for rIdx=" << rIdx << ", side=" << Funcs::side2String(side, true) << std::endl;
-//                }
                 auto sIdx = getFlipIdx(rcd, rIdx);
                 if (sIdx >= 0) {
-//                    egtbFile->flag_set_side(sIdx, side);
                     egtbFile->flag_set_cap(sIdx, side);
                     cnt++;
-//                    if (d) {
-//                        std::cout << "set flag for sIdx=" << sIdx << ", side=" << Funcs::side2String(side, true) << std::endl;
-//                    }
                 }
             }
             
@@ -1013,40 +1060,351 @@ int EgtbGenDb::perpetuation_thread_propaganda_set_parent_flag(EgtbGenThreadRecor
         
         board->takeBack(hist);
     }
+    rcd.changes += cnt;
     return cnt;
 }
 
 
-void EgtbGenDb::perpetuation_thread_propaganda_init(int threadIdx)
+void EgtbGenDb::perpetuation_thread_propaganda_init(int threadIdx, int lap)
 {
     auto& rcd = threadRecordVec.at(threadIdx);
     assert(rcd.fromIdx < rcd.toIdx && rcd.board);
-
+    rcd.n = 0;
+    
+    Hist hist;
     for (auto idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
         int scores[2] = {
             egtbFile->getBufScore(idx, Side::black),
             egtbFile->getBufScore(idx, Side::white)
         };
+        
+        for(auto sd = 0; sd < 2; ++sd) {
+            if (!EgtbFile::isPerpetualScore(scores[sd])) {
+                continue;
+            }
+            auto aScore = std::abs(scores[sd]);
+            if (aScore < EGTB_SCORE_PERPETUAL_CHASE) {
+                auto n = EGTB_SCORE_PERPETUAL_CHASE - aScore;
+                assert(n > 0 && n <= DRAW_LEN);
+                rcd.n = std::max<i64>(n, rcd.n);
+            }
+        }
+        
+        if (lap > 0 ||
+            (scores[0] != EGTB_SCORE_UNSET && scores[1] != EGTB_SCORE_UNSET)) {
+            continue;
+        }
+        
+        auto ok = egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white); assert(ok);
+        
+        /// perpetual captures, set flag caps
+        for(auto sd = 0; sd < 2; ++sd) {
+            if (scores[sd] != EGTB_SCORE_UNSET) {
+                continue;
+            }
+            
+            auto side = static_cast<Side>(sd);
+            auto xside = static_cast<Side>(1 - sd);
+            
+            auto bestScore = EGTB_SCORE_UNSET;
+            for(auto && move : rcd.board->gen(side)) {
+                if (rcd.board->isEmpty(move.dest)) {
+                    continue;
+                }
+                
+                rcd.board->make(move, hist);
+                assert(!hist.cap.isEmpty());
+                if (!rcd.board->isIncheck(side)) {
+                    auto score = getScore(*rcd.board, xside);
+                    EgtbFile::pickBestFromRivalScore(bestScore, score);
+                }
+                rcd.board->takeBack(hist);
+            }
+            
+            if (EgtbGenFile::isPerpetualScore(bestScore)) {
+                auto vec = setBufScore(rcd, idx, bestScore, side);
+                egtbFile->flag_set_cap(idx, side);
+                
+                if (vec.size() > 1) {
+                    egtbFile->flag_set_cap(vec[1], side);
+                }
+                
+                auto aScore = std::abs(bestScore);
+                if (aScore < EGTB_SCORE_PERPETUAL_CHASE) {
+                    auto n = EGTB_SCORE_PERPETUAL_CHASE - aScore;
+                    assert(n > 0 && n <= DRAW_LEN);
+                    rcd.n = std::max<i64>(n, rcd.n);
+                }
 
+            }
+        } /// for sd
+    }
+}
+
+
+
+void EgtbGenDb::perpetuation_thread_propaganda(int threadIdx, int ply, int sd, int phase)
+{
+    auto& rcd = threadRecordVec.at(threadIdx);
+    assert(rcd.fromIdx < rcd.toIdx && rcd.board);
+    
+    Hist hist;
+    
+    const auto score_check = EGTB_SCORE_PERPETUAL_CHECK - ply;
+    const auto score_chase = EGTB_SCORE_PERPETUAL_CHASE - ply;
+    auto fillScore_check = -score_check + 1;
+    if (ply == 0) {
+        fillScore_check++;
+    }
+    const auto fillScore_chase = -score_chase + 1;
+    
+    const auto side = static_cast<Side>(sd), xside = getXSide(side);
+    
+    for (auto idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
+        
+        if (phase == 0) {
+            auto oScore = egtbFile->getBufScore(idx, side);
+            if (!EgtbFile::isPerpetualScore(oScore)) {
+                continue;
+            }
+
+            auto aScore = std::abs(oScore);
+            
+            /// process captures
+            if (egtbFile->flag_is_cap(idx, side)) {
+                if (aScore == std::abs(fillScore_check) || aScore == std::abs(fillScore_chase)) {
+                    auto ok = egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white); assert(ok);
+                    auto idx2 = getFlipIdx(rcd, idx);
+                    
+                    if (oScore > 0) {
+                        egtbFile->flag_clear_side(idx, side);
+                        egtbFile->setBufScore(idx, oScore, side);
+                        egtbFile->flag_clear_cap(idx, side);
+                        if (idx2 >= 0) {
+                            egtbFile->setBufScore(idx2, oScore, side);
+                            egtbFile->flag_clear_cap(idx2, side);
+                            egtbFile->flag_clear_side(idx2, side);
+                        }
+                        rcd.changes++;
+                    } else {
+                        egtbFile->flag_set_side(idx, side);
+                        if (idx2 >= 0) {
+                            egtbFile->flag_set_side(idx2, side);
+                        }
+                        
+                    }
+                } /// if (oScore == fillScore_check
+                else if ((score_check == oScore || score_chase == oScore) && oScore > 0)
+                {
+                    egtbFile->flag_clear_side(idx, side);
+                    
+                    auto vec = setBufScore(rcd, idx, oScore, side);
+                    assert(vec.size() > 0 && vec.size() <= 2);
+                    egtbFile->flag_clear_cap(idx, side);
+                    if (vec.size() > 1) {
+                        egtbFile->flag_clear_cap(vec[1], side);
+                        egtbFile->flag_clear_side(vec[1], side);
+                    }
+                    rcd.changes++;
+                    
+                }
+                
+                continue;
+            }  /// flag_is_cap
+            
+            /// In phase 0, consider only positions with perpetual check, chase
+            if (aScore != score_check && aScore != score_chase) {
+                continue;
+            }
+            
+            auto fillScore = aScore == score_check ? fillScore_check : fillScore_chase;
+            
+            if (oScore != aScore) {
+                fillScore = -fillScore;
+            }
+            
+            auto ok = egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white); assert(ok);
+            
+            for(auto && move : rcd.board->gen_backward_quiet(xside)) {
+                
+                rcd.board->make(move, hist); assert(hist.cap.isEmpty());
+                
+                if (!rcd.board->isIncheck(side)) {
+                    
+                    assert(rcd.board->isValid());
+                    
+                    auto rIdx = egtbFile->getIdx(*rcd.board).key; assert(rIdx >= 0);
+                    
+                    auto rScore = egtbFile->getBufScore(rIdx, xside);
+                    
+                    if (rScore != EGTB_SCORE_ILLEGAL) {
+                        
+                        /// Winning score will be filled right now (they are parents's positions of the given one)
+                        if (fillScore > 0) {
+                            if (rScore == EGTB_SCORE_UNSET
+                                || egtbFile->flag_is_cap(rIdx, xside)
+                                || rScore == fillScore
+                                || EgtbFile::isSmallerScore(rScore, fillScore)
+                                ) {
+                                egtbFile->flag_clear_cap(rIdx, xside);
+                                egtbFile->flag_clear_side(rIdx, xside);
+
+                                auto vec = setBufScore(rcd, rIdx, fillScore, xside);
+                                assert(vec.size() > 0 && vec.size() <= 2);
+                                egtbFile->flag_clear_cap(rIdx, xside);
+                                if (vec.size() > 1) {
+                                    egtbFile->flag_clear_cap(vec[1], xside);
+                                    egtbFile->flag_clear_side(vec[1], xside);
+                                }
+                                rcd.changes++;
+                            }
+                            
+                            
+                        } else if (rScore == EGTB_SCORE_UNSET || egtbFile->flag_is_cap(rIdx, xside)) {
+                            /// Losing positions, mark them to consider later in phase 1
+                            egtbFile->flag_set_side(rIdx, xside);
+                            
+                            auto sIdx = getFlipIdx(rcd, rIdx);
+                            if (sIdx >= 0) {
+                                egtbFile->flag_set_side(sIdx, xside);
+                            }
+                        }
+                    } /// if (rScore != EGTB_SCORE_ILLEGAL)
+                }
+                
+                rcd.board->takeBack(hist);
+            }
+            
+            continue;
+        } /// if phase == 0
+        
+        /// phase == 1
+        if (!egtbFile->flag_is_side(idx, side)) {
+            continue;
+        }
+        
+        /// phase 1 - work with marked positions only, they are lossing ones
+        /// those positions have at least one lossing child but they may have
+        /// better choices/children to draw or win back. We need to probe fully
+        
+        auto ok = egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white); assert(ok);
+        
+        auto bestScore = perpetuation_propaganda_probe(*rcd.board, side);
+        
+        if (bestScore != EGTB_SCORE_UNSET) {
+            egtbFile->flag_clear_side(idx, side);
+            
+            auto vec = setBufScore(rcd, idx, bestScore, side);
+            assert(vec.size() > 0 && vec.size() <= 2);
+            egtbFile->flag_clear_cap(idx, side);
+            egtbFile->flag_clear_side(idx, side);
+
+            if (vec.size() > 1) {
+                egtbFile->flag_clear_cap(vec[1], side);
+                egtbFile->flag_clear_side(vec[1], side);
+            }
+            rcd.changes++;
+        }
+    }
+}
+
+/////////////////////////
+void EgtbGenDb::perpetuation_propaganda0()
+{
+    if (egtbVerbose) {
+        std::cout << "\tperpetuation_propaganda BEGIN" << std::endl;
+    }
+    
+    resetAllThreadRecordCounters();
+    egtbFile->clearFlagBuffer();
+    
+    /// Init
+    {
+        std::vector<std::thread> threadVec;
+        for (auto i = 1; i < threadRecordVec.size(); ++i) {
+            threadVec.push_back(std::thread(&EgtbGenDb::perpetuation_thread_propaganda_init0, this, i));
+        }
+        
+        perpetuation_thread_propaganda_init0(0);
+        
+        for (auto && t : threadVec) {
+            t.join();
+        }
+        threadVec.clear();
+    }
+    
+    for(auto ply = 0; ply < 200; ply++) {
+        resetAllThreadRecordCounters();
+        
+        /// convert flags
+        for(i64 idx = 0; idx < egtbFile->getSize(); idx++) {
+            for(auto sd = 0; sd < 2; sd++) {
+                auto side = static_cast<Side>(sd);
+                if (egtbFile->flag_is_cap(idx, side)) {
+                    egtbFile->flag_set_side(idx, side);
+                    egtbFile->flag_clear_cap(idx, side);
+                }
+            }
+        }
+        
+        
+        std::vector<std::thread> threadVec;
+        for (auto i = 1; i < threadRecordVec.size(); ++i) {
+            threadVec.push_back(std::thread(&EgtbGenDb::perpetuation_thread_propaganda0, this, i, ply));
+        }
+        
+        perpetuation_thread_propaganda0(0, ply);
+        
+        for (auto && t : threadVec) {
+            t.join();
+        }
+        
+        auto changeCnt = allThreadChangeCount();
+        
+        if (egtbVerbose) {
+            std::cout << "\tPly: " << ply << ", changeCnt = " << changeCnt << std::endl;
+        }
+        
+        if (changeCnt == 0) {
+            break;
+        }
+    }
+    
+    if (egtbVerbose) {
+        std::cout << "\tperpetuation_propaganda DONE!" << std::endl;
+    }
+}
+
+void EgtbGenDb::perpetuation_thread_propaganda_init0(int threadIdx)
+{
+    auto& rcd = threadRecordVec.at(threadIdx);
+    assert(rcd.fromIdx < rcd.toIdx && rcd.board);
+    
+    Hist hist;
+    for (auto idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
+        int scores[2] = {
+            egtbFile->getBufScore(idx, Side::black),
+            egtbFile->getBufScore(idx, Side::white)
+        };
+        
         if (scores[0] == EGTB_SCORE_ILLEGAL && scores[1] == EGTB_SCORE_ILLEGAL) {
             continue;
         }
         
         auto ok = egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white); assert(ok);
         
-        auto d = false;//idx == debugIdx2;
+        auto d = false; //idx == debugIdx;
         if (d) {
             rcd.board->printOut("perpetuation_thread_propaganda_init");
         }
         
-        Hist hist;
         for(auto sd = 0; sd < 2; ++sd) {
             auto side = static_cast<Side>(sd);
             auto xside = static_cast<Side>(1 - sd);
             if (EgtbGenFile::isPerpetualScore(scores[sd])) {
                 rcd.changes += perpetuation_thread_propaganda_set_parent_flag(rcd, idx, rcd.board, xside, scores[sd]);
             }
-
+            
             /// If the position can capture and it is a perpetuations, mark itself
             if (!rcd.board->isIncheck(xside)) {
                 auto b = false;
@@ -1054,15 +1412,16 @@ void EgtbGenDb::perpetuation_thread_propaganda_init(int threadIdx)
                     if (rcd.board->isEmpty(move.dest)) {
                         continue;
                     }
-
+                    
                     rcd.board->make(move, hist);
-                    if (!rcd.board->isIncheck(side) && !hist.cap.isEmpty()) {
+                    if (!rcd.board->isIncheck(side)) {
+                        assert(!hist.cap.isEmpty());
                         auto score = getScore(*rcd.board, xside);
                         
                         if (d) {
                             rcd.board->printOut("perpetuation_thread_propaganda_init, score: " + std::to_string(score));
                         }
-
+                        
                         if (EgtbGenFile::isPerpetualScore(score)) {
                             egtbFile->flag_set_side(idx, side);
                             b = true;
@@ -1074,80 +1433,89 @@ void EgtbGenDb::perpetuation_thread_propaganda_init(int threadIdx)
                     }
                 }
             }
-
+            
         } /// for sd
     } /// for idx
 }
 
-
-void EgtbGenDb::perpetuation_thread_propaganda(int threadIdx)
+void EgtbGenDb::perpetuation_thread_propaganda0(int threadIdx, int ply)
 {
     auto& rcd = threadRecordVec.at(threadIdx);
     assert(rcd.fromIdx < rcd.toIdx && rcd.board);
     
     Hist hist;
     
+    
     for (auto idx = rcd.fromIdx; idx < rcd.toIdx; idx++) {
         bool flags[2] = {
             egtbFile->flag_is_side(idx, Side::black),
             egtbFile->flag_is_side(idx, Side::white)
         };
+
+        auto d = false; //idx == 136753;
         
+        if (d) {
+            d = d;
+        }
+
         if (!flags[0] && !flags[1]) {
             continue;
         }
-
+        
         auto ok = egtbFile->setupBoard(*rcd.board, idx, FlipMode::none, Side::white); assert(ok);
-
+        
+        if (d) {
+            rcd.board->printOut("Imhere");
+            showData("", idx, Side::black, true);
+        }
         for(auto sd = 0; sd < 2; ++sd) {
             if (!flags[sd]) {
                 continue;
             }
             
             auto side = static_cast<Side>(sd);
-//            auto xside = static_cast<Side>(1 - sd);
-
-//            auto sc = egtbFile->getBufScore(idx, side);
             
-            /// Chase-win could be replace by check-win
-//            if (sc != EGTB_SCORE_UNSET
-//                && !EgtbFile::isPerpetualScore(sc)
-//                ) {
-//                egtbFile->flag_clear_side(idx, side);
-//                continue;
-//            }
-
             auto score = perpetuation_propaganda_probe(*rcd.board, side);
             
-            if (score != EGTB_SCORE_UNSET) {
-                auto sc = egtbFile->getBufScore(idx, side);
-                if (score == sc) {
-                    egtbFile->flag_clear_side(idx, side);
-                    auto sIdx = getFlipIdx(rcd, idx);
-                    if (sIdx >= 0) {
-                        egtbFile->flag_clear_side(sIdx, side);
-                    }
-                } else {
-                    auto vec = setBufScore(rcd, idx, score, side);
-                    assert(vec.size() > 0 && vec.size() <= 2);
-                    egtbFile->flag_clear_side(idx, side);
-                    
-                    if (vec.size() > 1) {
-                        egtbFile->flag_clear_side(vec[1], side);
-                    }
-                    
-                    if (vec.front() == debugIdx || vec.back() == debugIdx) {
-                        showData("Set data", debugIdx, debugSide);
-                    }
-                    
-                    if (EgtbGenFile::isPerpetualScore(score)) {
-                        auto xside = static_cast<Side>(1 - sd);
-                        perpetuation_thread_propaganda_set_parent_flag(rcd, idx, rcd.board, xside, score);
-                    }
-                    
-                    rcd.changes++;
-                }
+            if (idx == debugIdx) {
+                std::cout << "perpetuation_thread_propaganda0, idx=" << idx << ", score=" << score << std::endl;
             }
+
+            if (score == EGTB_SCORE_UNSET) {
+                continue;
+            }
+            assert(!EgtbFile::isPerpetualScoreOver120(score));
+            
+            auto sc = egtbFile->getBufScore(idx, side);
+            if (score == sc) {
+                egtbFile->flag_clear_side(idx, side);
+                auto sIdx = getFlipIdx(rcd, idx);
+                if (sIdx >= 0) {
+                    egtbFile->flag_clear_side(sIdx, side);
+                }
+                continue;
+            }
+            
+            auto vec = setBufScore(rcd, idx, score, side);
+            assert(vec.size() > 0 && vec.size() <= 2);
+            egtbFile->flag_clear_side(idx, side);
+            
+            if (vec.size() > 1) {
+                egtbFile->flag_clear_side(vec[1], side);
+            }
+            
+            if (vec.front() == debugIdx || vec.back() == debugIdx) {
+                auto b = EgtbGenFile::isPerpetualScore(score);
+                showData("Set data score = " + std::to_string(score) + ", b=" + std::to_string(b), vec.front(), Side::none, true);
+            }
+            
+            if (EgtbGenFile::isPerpetualScore(score))
+            {
+                auto xside = static_cast<Side>(1 - sd);
+                perpetuation_thread_propaganda_set_parent_flag(rcd, idx, rcd.board, xside, score);
+            }
+            
+            rcd.changes++;
         } /// for sd
     } /// for idx
 }
@@ -1164,7 +1532,7 @@ int EgtbGenDb::perpetuation_propaganda_probe(GenBoard& board, Side side)
         board.make(move, hist);
         if (!board.isIncheck(side)) {
             legalCount++;
-
+            
             int score;
             if (hist.cap.isEmpty()) {
                 auto idx2 = egtbFile->getIdx(board).key;
@@ -1183,9 +1551,29 @@ int EgtbGenDb::perpetuation_propaganda_probe(GenBoard& board, Side side)
                 }
             }
             
-            if (!EgtbFile::pickBestFromRivalScore(bestScore, score)) {
-                assert(score != EGTB_SCORE_MISSING);
+            
+            if (score == EGTB_SCORE_UNSET) {
                 unsetCount++;
+            } else {
+                if (score <= EGTB_SCORE_MATE && score != EGTB_SCORE_DRAW) {
+                    score = -score;
+                    if (score == EGTB_SCORE_PERPETUAL_CHECK || score == -EGTB_SCORE_PERPETUAL_CHECK) {
+                        if (score > 0) score -= 2;
+                        else score += 2;
+                    } else {
+                        if (score > 0) score -= 1;
+                        else score += 1;
+                        if (EgtbFile::isPerpetualScoreOver120(score)) {
+                            score = EGTB_SCORE_UNSET;
+                            unsetCount++;
+                        }
+                    }
+                    
+                }
+                
+                if (score != EGTB_SCORE_UNSET && EgtbFile::isSmallerScore(bestScore, score)) {
+                    bestScore = score;
+                }
             }
         }
         board.takeBack(hist);
@@ -1193,10 +1581,10 @@ int EgtbGenDb::perpetuation_propaganda_probe(GenBoard& board, Side side)
 
     assert(legalCount > 0);
 
-    if (bestScore == EGTB_SCORE_PERPETUAL_CHECK_WIN || bestScore == EGTB_SCORE_PERPETUAL_CHASE_WIN) {
+    if (bestScore > 0 && bestScore <= EGTB_SCORE_MATE) {
         return bestScore;
     }
-    
+
     return unsetCount ? EGTB_SCORE_UNSET : bestScore;
 }
 

@@ -19,7 +19,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "egtb.h"
+#include "fegtb.h"
 
 /// for scaning files from a given path
 #ifdef _WIN32
