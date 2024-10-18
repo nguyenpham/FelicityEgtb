@@ -236,6 +236,7 @@ public:
 
 #ifdef _FELICITY_XQ_
     static bool isPerpetualScore(int score);
+    static bool isPerpetualForwardScore(int score);
     static bool isPerpetualScoreOver120(int score);
 
 #endif

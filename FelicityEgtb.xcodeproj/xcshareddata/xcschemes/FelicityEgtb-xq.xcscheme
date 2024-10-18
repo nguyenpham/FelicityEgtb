@@ -72,7 +72,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-n krkcn"
+            argument = "-n krkn"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -105,11 +105,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-core 8"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-core 1"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = " -stats"

@@ -731,6 +731,12 @@ bool EgtbFile::isPerpetualScore(int score)
     return ascore > EGTB_SCORE_PERPETUAL_BELOW && ascore < EGTB_SCORE_PERPETUAL_ABOVE;
 }
 
+bool EgtbFile::isPerpetualForwardScore(int score)
+{
+    auto ascore = std::abs(score);
+    return ascore > EGTB_SCORE_PERPETUAL_BELOW && ascore < EGTB_SCORE_PERPETUAL_CHASE;
+}
+
 bool EgtbFile::isPerpetualScoreOver120(int score)
 {
     auto ascore = std::abs(score);

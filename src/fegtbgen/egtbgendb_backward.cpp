@@ -470,12 +470,6 @@ int EgtbGenDb::gen_probeByChildren(EgtbBoard& board, Side side, bool debugging)
                 unsetCount++;
                 bestScore = EGTB_SCORE_UNSET;
             }
-//            if (score == EGTB_SCORE_UNSET) {
-//                unsetCount++;
-//                bestScore = EGTB_SCORE_UNSET;
-//            } else if (!unsetCount) {
-//                EgtbFile::pickBestFromRivalScore(bestScore, score);
-//            }
             
             if (debugging) {
                 board.printOut("after a move=" + board.toString(move)
@@ -667,8 +661,6 @@ void EgtbGenDb::gen_backward(const std::string& folder)
 #endif
     
     showData("After init", debugIdx, Side::none, false);
-//    showData("After init", 2577018, Side::none, false);
-//    showData("After init", 51806, Side::none, false);
 
     /// Main loops
     i64 totalChangeCnt = 0;
